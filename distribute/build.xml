@@ -25,7 +25,9 @@
 
 	<target name="PreBuild" depends="RunTests">
 		<mkdir dir="${build}" />
-		<delete file="${build}/*.log" />
+		<delete>
+		    <fileset dir="${build}" includes="*.log" />
+		</delete>
 		<copy file="../TableLayout.jar" todir="${build}" />
 		<copy file="abcfile.ico" todir="${build}" />
 		<copy file="midifile.ico" todir="${build}" />
