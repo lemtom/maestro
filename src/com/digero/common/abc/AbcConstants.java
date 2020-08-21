@@ -23,7 +23,7 @@ public interface AbcConstants
 	public static final double NOTE_RELEASE_SECONDS = 0.5;
 
 	// MIDI Preview controller values
-	public static final int MIDI_REVERB = 3;
+	public static final int MIDI_REVERB = 0;
 	public static final int MIDI_CHORUS = 0;
 
 	/** Note ID used in ABC files for Cowbells. Somewhat arbitrary */
