@@ -153,7 +153,8 @@ public class AbcExporter
 			List<ExportTrackInfo> infoList = new ArrayList<ExportTrackInfo>();
 			for (AbcPart part : parts)
 			{
-				int pan = (parts.size() > 1) ? panner.get(part.getInstrument(), part.getTitle()) : PanGenerator.CENTER;
+				//int pan = (parts.size() > 1) ? panner.get(part.getInstrument(), part.getTitle()) : PanGenerator.CENTER;
+				int pan = PanGenerator.CENTER;
 				infoList.add(exportPartToPreview(part, sequence, exportStartTick, exportEndTick, pan,
 						useLotroInstruments));
 			}

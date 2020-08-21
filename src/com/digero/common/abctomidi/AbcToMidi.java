@@ -46,7 +46,7 @@ public class AbcToMidi
 		public boolean useLotroInstruments = true;
 		public Map<Integer, LotroInstrument> instrumentOverrideMap = null;
 		public boolean enableLotroErrors = false;
-		public boolean stereo = true;
+		public boolean stereo = false;
 		public boolean generateRegions = false;
 		public AbcInfo abcInfo = null;
 
