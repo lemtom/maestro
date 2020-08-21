@@ -365,7 +365,7 @@ public class AbcExporter
 		out.println("M: " + qtm.getMeter());
 		out.println("Q: " + qtm.getPrimaryExportTempoBPM());
 		out.println("K: " + keySignature);
-		out.println("L: " + ((qtm.getMeter().numerator/qtm.getMeter().denominator)<0.75?"1/16":"1/8"));
+		out.println("L: " + ((qtm.getMeter().numerator/ (double) qtm.getMeter().denominator)<0.75?"1/16":"1/8"));
 		out.println();
 
 		// Keep track of which notes have been sharped or flatted so 
