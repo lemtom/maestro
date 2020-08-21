@@ -10,7 +10,7 @@ public interface AbcConstants
 	// TimingInfo
 	public static final int ONE_SECOND_MICROS = 1000000;
 	public static final int ONE_MINUTE_MICROS = 60 * ONE_SECOND_MICROS;
-	public static final int SHORTEST_NOTE_MICROS = ONE_MINUTE_MICROS / 1000;
+	public static final int SHORTEST_NOTE_MICROS = ONE_MINUTE_MICROS / 960;
 	public static final int LONGEST_NOTE_MICROS = 8 * ONE_SECOND_MICROS;
 	public static final int LONGEST_NOTE_MICROS_WORST_CASE = (2 * SHORTEST_NOTE_MICROS - 1)
 			* (LONGEST_NOTE_MICROS / (2 * SHORTEST_NOTE_MICROS - 1));

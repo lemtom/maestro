@@ -7,7 +7,7 @@ public class TimingInfo
 {
 	public static final long ONE_SECOND_MICROS = 1000000;
 	public static final long ONE_MINUTE_MICROS = 60 * ONE_SECOND_MICROS;
-	public static final long SHORTEST_NOTE_MICROS = ONE_MINUTE_MICROS / 1000;
+	public static final long SHORTEST_NOTE_MICROS = ONE_MINUTE_MICROS / 960;
 	public static final long LONGEST_NOTE_MICROS = ONE_MINUTE_MICROS / 10;
 	public static final int MAX_TEMPO_BPM = (int) (ONE_MINUTE_MICROS / SHORTEST_NOTE_MICROS);
 	public static final int MIN_TEMPO_BPM = (int) ((ONE_MINUTE_MICROS + LONGEST_NOTE_MICROS / 2) / LONGEST_NOTE_MICROS); // Round up
