@@ -547,6 +547,8 @@ public class AbcToMidi
 						// Parse the note
 						int numerator;
 						int denominator;
+						int numerator_abc;
+						int denominator_abc;
 
 						numerator = (m.group(NOTE_LEN_NUMER) == null) ? 1 : Integer.parseInt(m.group(NOTE_LEN_NUMER));
 						String denom = m.group(NOTE_LEN_DENOM);
@@ -559,6 +561,9 @@ public class AbcToMidi
 						else
 							denominator = Integer.parseInt(denom.substring(1));
 
+						numerator_abc = numerator;
+						denominator_abc = denominator;
+						
 						String brokenRhythm = m.group(NOTE_BROKEN_RHYTHM);
 						if (brokenRhythm != null)
 						{
@@ -645,6 +650,19 @@ public class AbcToMidi
 							{
 								throw new ParseException("Unexpected octave indicator on a rest", fileName, lineNumber,
 										m.start(NOTE_OCTAVE));
+							}
+							
+							double lengthSeconds = info.getWholeNoteTime()*(numerator_abc/(double)denominator_abc);
+							
+							if (enableLotroErrors && lengthSeconds < AbcConstants.SHORTEST_NOTE_SECONDS)
+							{
+								throw new LotroParseException("Rest's duration is too short ("+lengthSeconds+"s)("+noteLetter+" "+numerator_abc+"/"+denominator_abc+")", fileName, lineNumber,
+										m.start());
+							}
+							else if (enableLotroErrors && lengthSeconds > AbcConstants.LONGEST_NOTE_SECONDS)
+							{
+								throw new LotroParseException("Rest's duration is too long", fileName, lineNumber,
+										m.start());
 							}
 
 							if (generateRegions)
@@ -780,14 +798,15 @@ public class AbcToMidi
 							else
 							{
 								double MPQN = MidiUtils.convertTempo(curTempoBPM);
-								double lengthMicros = (noteEndTick - chordStartTick) * MPQN / PPQN;
-
-								if (enableLotroErrors && lengthMicros < AbcConstants.SHORTEST_NOTE_MICROS)
+								//double lengthMicros = (noteEndTick - chordStartTick) * MPQN / PPQN;
+								double lengthSeconds = info.getWholeNoteTime()*(numerator_abc/(double)denominator_abc);
+								
+								if (enableLotroErrors && lengthSeconds < AbcConstants.SHORTEST_NOTE_SECONDS)
 								{
-									throw new LotroParseException("Note's duration is too short", fileName, lineNumber,
+									throw new LotroParseException("Note's duration is too short ("+lengthSeconds+"s)("+octaveStr+noteLetter+" "+numerator_abc+"/"+denominator_abc+")", fileName, lineNumber,
 											m.start());
 								}
-								else if (enableLotroErrors && lengthMicros > AbcConstants.LONGEST_NOTE_MICROS)
+								else if (enableLotroErrors && lengthSeconds > AbcConstants.LONGEST_NOTE_SECONDS)
 								{
 									throw new LotroParseException("Note's duration is too long", fileName, lineNumber,
 											m.start());
