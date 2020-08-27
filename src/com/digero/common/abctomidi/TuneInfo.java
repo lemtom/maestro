@@ -25,6 +25,7 @@ class TuneInfo
 	private boolean compoundMeter;
 	private int meterNumerator;
 	private int meterDenominator;
+	private double noteDivisor;
 
 	public TuneInfo()
 	{
@@ -40,6 +41,7 @@ class TuneInfo
 		instrumentSet = false;
 		dynamics = Dynamics.mf;
 		compoundMeter = false;
+		noteDivisor = -1.0;
 	}
 
 	public void newPart(int partNumber)
@@ -69,7 +71,20 @@ class TuneInfo
 
 	public void setNoteDivisor(String str)
 	{
-		this.ppqn = parseDivisor(str) * AbcToMidi.DEFAULT_NOTE_TICKS / meterDenominator;
+		this.noteDivisor = parseNoteDivisor(str);
+		calcPPQN();
+	}
+	
+	private void calcPPQN() {
+		this.ppqn = (long)(AbcToMidi.DEFAULT_NOTE_TICKS / (this.meterDenominator * this.noteDivisor));
+	}
+	
+	public double getWholeNoteTime() {
+		if (this.noteDivisor > 0.0) {
+			return (60.0/this.primaryTempoBPM) * this.meterDenominator * this.noteDivisor;
+		} else {
+			return (60.0/this.primaryTempoBPM) * this.meterDenominator * ((this.meterNumerator/(double)this.meterDenominator)<0.75?1.0/16:1.0/8);
+		}
 	}
 
 	public void setMeter(String str)
@@ -96,9 +111,13 @@ class TuneInfo
 			meterNumerator = Integer.parseInt(parts[0]);
 			meterDenominator = Integer.parseInt(parts[1]);
 		}
-
-		this.ppqn = ((4 * meterNumerator / meterDenominator) < 3 ? 16 : 8) * AbcToMidi.DEFAULT_NOTE_TICKS
+		
+		if (this.noteDivisor < 0) {
+			this.ppqn = ((4 * meterNumerator / meterDenominator) < 3 ? 16 : 8) * AbcToMidi.DEFAULT_NOTE_TICKS
 				/ meterDenominator;
+		} else {
+			calcPPQN();
+		}
 		this.compoundMeter = (meterNumerator % 3) == 0;
 	}
 
@@ -174,7 +193,7 @@ class TuneInfo
 		return allPartsTempoMap;
 	}
 
-	private int parseDivisor(String str)
+	/*private int parseDivisor(String str)
 	{
 		String[] parts = str.trim().split("[/:| ]");
 		if (parts.length != 2)
@@ -196,6 +215,35 @@ class TuneInfo
 		}
 
 		return denominator;
+	}*/
+	
+	private double parseNoteDivisor(String str)
+	{
+		String[] parts = str.trim().split("[/:| ]");
+		if (parts.length != 2)
+		{
+			throw new IllegalArgumentException("\"" + str + "\" is not a valid note length"
+					+ " (example of valid note length: 1/4)");
+		}
+		int numerator = Integer.parseInt(parts[0]);
+		int denominator = Integer.parseInt(parts[1]);
+		/*if (numerator != 1)
+		{
+			throw new IllegalArgumentException("The numerator of the note length must be 1"
+					+ " (example of valid note length: 1/4)");
+		}**/
+		if (numerator < 1)
+		{
+			throw new IllegalArgumentException("The numerator of the note length must be positive"
+					+ " (example of valid note length: 3/8)");
+		}
+		if (denominator < 1)
+		{
+			throw new IllegalArgumentException("The denominator of the note length must be positive"
+					+ " (example of valid note length: 3/8)");
+		}
+
+		return numerator/(double) denominator;
 	}
 
 	public void setInstrument(LotroInstrument instrument)
