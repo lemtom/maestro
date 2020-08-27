@@ -149,7 +149,7 @@ public class AbcExporter
 			track0.add(MidiFactory.createTrackNameEvent(metadata.getSongTitle()));
 			addMidiTempoEvents(track0);
 
-			PanGenerator panner = new PanGenerator();
+			//PanGenerator panner = new PanGenerator();
 			List<ExportTrackInfo> infoList = new ArrayList<ExportTrackInfo>();
 			for (AbcPart part : parts)
 			{
