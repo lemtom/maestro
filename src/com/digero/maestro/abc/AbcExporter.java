@@ -529,6 +529,17 @@ public class AbcExporter
 
 				int numerator = (int) (evt.getLengthTicks() / tm.getMinNoteLengthTicks()) * tm.getDefaultDivisor();
 				int denominator = tm.getMinNoteDivisor();
+				
+				int numerator3 = (int) (evt.getLengthTicks() / (tm.getMinNoteLengthTicks3())) * tm.getDefaultDivisor();
+				int denominator3 = tm.getMinNoteDivisor3();
+				
+				double note_fraction = numerator/(double)denominator;
+				double note_fraction3 = numerator3/(double)denominator3;
+				
+				if (note_fraction3 < note_fraction) {
+					numerator = numerator3;
+					denominator = denominator3;
+				}
 
 				// Apply tempo
 				if (curExportTempoBPM != primaryExportTempoBPM)

@@ -20,6 +20,8 @@ public class TimingInfo
 
 	private final int defaultDivisor;
 	private final int minNoteDivisor;
+	private final int minNoteDivisor3;
+	private final long minNoteLengthTicks3;
 	private final long minNoteLengthTicks;
 	private final long maxNoteLengthTicks;
 
@@ -56,11 +58,10 @@ public class TimingInfo
 		// 6/8 = 0.75, so the default is an eighth note.
 		this.defaultDivisor = ((meter.numerator / (double) meter.denominator < 0.75) ? 16 : 8) * 4 / meter.denominator;
 
-		// Calculate min note length
 		{
 			int minNoteDivisor = defaultDivisor;
-			if (useTripletTiming)
-				minNoteDivisor *= 3;
+			//if (useTripletTiming)
+			//	minNoteDivisor *= 3;
 			long minNoteTicks = resolutionPPQ / (minNoteDivisor / 4);
 
 			while (minNoteTicks < SHORTEST_NOTE_TICKS)
@@ -86,6 +87,16 @@ public class TimingInfo
 			this.minNoteLengthTicks = minNoteTicks;
 			this.minNoteDivisor = minNoteDivisor;
 			this.maxNoteLengthTicks = minNoteTicks * (LONGEST_NOTE_TICKS / minNoteTicks);
+
+			// Calculate min note length for triplets
+			if (minNoteTicks/3 < SHORTEST_NOTE_TICKS)
+			{
+				this.minNoteLengthTicks3 = minNoteTicks;
+				this.minNoteDivisor3 = minNoteDivisor;
+			} else {
+				this.minNoteLengthTicks3 = minNoteTicks/3;
+				this.minNoteDivisor3 = minNoteDivisor*3;				
+			}
 		}
 	}
 
@@ -140,6 +151,16 @@ public class TimingInfo
 	public int getMinNoteDivisor()
 	{
 		return minNoteDivisor;
+	}
+	
+	public int getMinNoteDivisor3()
+	{
+		return minNoteDivisor3;
+	}
+
+	public long getMinNoteLengthTicks3()
+	{
+		return minNoteLengthTicks3;
 	}
 
 	public long getMinNoteLengthTicks()

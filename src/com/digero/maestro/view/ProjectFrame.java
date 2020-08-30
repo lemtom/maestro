@@ -423,8 +423,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		tripletCheckBox = new JCheckBox("Triplets/swing rhythm");
 		tripletCheckBox.setToolTipText("<html>Tweak the timing to allow for triplets or a swing rhythm.<br><br>"
-				+ "This can cause short/fast notes to incorrectly be detected as triplets.<br>"
-				+ "Leave it unchecked unless the song has triplets or a swing rhythm.</html>");
+				+ "As this is done automatically now, the checkbox is disabled</html>");
+		//tripletCheckBox.setToolTipText("<html>Tweak the timing to allow for triplets or a swing rhythm.<br><br>"
+		//		+ "This can cause short/fast notes to incorrectly be detected as triplets.<br>"
+		//		+ "Leave it unchecked unless the song has triplets or a swing rhythm.</html>");
 		tripletCheckBox.addActionListener(new ActionListener()
 		{
 			@Override public void actionPerformed(ActionEvent e)
@@ -1186,7 +1188,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			resetTempoButton.setVisible(resetTempoButton.isEnabled());
 			keySignatureField.setEnabled(midiLoaded);
 			timeSignatureField.setEnabled(midiLoaded);
-			tripletCheckBox.setEnabled(midiLoaded);
+			tripletCheckBox.setEnabled(false);
 
 			updateButtonsPending = false;
 		}
