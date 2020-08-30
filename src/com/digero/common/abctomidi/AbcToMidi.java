@@ -485,9 +485,9 @@ public class AbcToMidi
 										{
 											for (int j = i + 1; j < line.length(); j++)
 											{
-												if (line.charAt(i) != ':' && !Character.isDigit(line.charAt(i)))
+												if (line.charAt(j) != ':' && !Character.isDigit(line.charAt(j)))
 												{
-													tuplet = new Tuplet(line.substring(i + 1, j + 1),
+													tuplet = new Tuplet(line.substring(i + 1, j),
 															info.isCompoundMeter());
 													i = j;
 													break;
