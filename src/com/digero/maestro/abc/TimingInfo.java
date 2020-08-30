@@ -54,7 +54,7 @@ public class TimingInfo
 		// otherwise it is an eighth note. For example, 2/4 = 0.5, so the
 		// default note length is a sixteenth note, while 4/4 = 1.0 or
 		// 6/8 = 0.75, so the default is an eighth note.
-		this.defaultDivisor = (((double) meter.numerator / meter.denominator < 0.75) ? 16 : 8) * 4 / meter.denominator;
+		this.defaultDivisor = ((meter.numerator / (double) meter.denominator < 0.75) ? 16 : 8) * 4 / meter.denominator;
 
 		// Calculate min note length
 		{
