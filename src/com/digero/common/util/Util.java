@@ -237,9 +237,19 @@ public final class Util
 	}
 
 	/** Rounds value to the nearest multiple of grid */
-	public static long roundGrid(long value, long grid)
+	public static long roundGrid(long value, long grid, boolean tripletTiming, long smallGrid)
 	{
-		return ((value + grid / 2) / grid) * grid;
+		if (!tripletTiming) {
+			return ((value + grid / 2) / grid) * grid;
+		}
+		// case triplet is shortest:
+		long def3 = ((value + grid / 2) / grid) * grid;
+		long def2 = ((value + smallGrid / 2) / smallGrid) * smallGrid;
+		if (Math.abs(def2-value) > Math.abs(def3-value)) {
+			return def3;
+		} else {
+			return def2;
+		}
 	}
 
 	public static int floorGrid(int value, int grid)

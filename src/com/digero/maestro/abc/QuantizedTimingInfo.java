@@ -30,21 +30,23 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	private final float exportTempoFactor;
 	private final TimeSignature meter;
 	private final boolean tripletTiming;
+	private final boolean mixTiming;
 
 	public QuantizedTimingInfo(SequenceInfo source, float exportTempoFactor, TimeSignature meter,
-			boolean useTripletTiming) throws AbcConversionException
+			boolean useTripletTiming, boolean useMixTiming) throws AbcConversionException
 	{
 		double exportPrimaryTempoMPQ = TimingInfo.roundTempoMPQ(source.getPrimaryTempoMPQ() / exportTempoFactor);
 		this.primaryTempoMPQ = (int) Math.round(exportPrimaryTempoMPQ * exportTempoFactor);
 		this.exportTempoFactor = exportTempoFactor;
 		this.meter = meter;
 		this.tripletTiming = useTripletTiming;
+		this.mixTiming = useMixTiming;
 		this.tickResolution = source.getDataCache().getTickResolution();
 		this.songLengthTicks = source.getDataCache().getSongLengthTicks();
 		final int resolution = source.getDataCache().getTickResolution();
 
 		TimingInfo defaultTiming = new TimingInfo(source.getPrimaryTempoMPQ(), resolution, exportTempoFactor, meter,
-				useTripletTiming);
+				useTripletTiming, useMixTiming);
 		timingInfoByTick.put(0L, new TimingInfoEvent(0, 0, 0, defaultTiming));
 
 		Collection<TimingInfoEvent> reversedEvents = timingInfoByTick.descendingMap().values();
@@ -59,7 +61,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 			long micros = 0;
 			double barNumber = 0;
 			TimingInfo info = new TimingInfo(sourceEvent.tempoMPQ, resolution, exportTempoFactor, meter,
-					useTripletTiming);
+					useTripletTiming, useMixTiming);
 
 			// Iterate over the existing events in reverse order
 			Iterator<TimingInfoEvent> reverseIterator = reversedEvents.iterator();
@@ -143,16 +145,44 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	{
 		return tripletTiming;
 	}
+	
+	public boolean isMixTiming()
+	{
+		return mixTiming;
+	}
 
 	public TimingInfo getTimingInfo(long tick)
 	{
 		return getTimingEventForTick(tick).info;
 	}
 
+	public long [] quantize(long tickS, long tickE)
+	{
+		TimingInfoEvent es = getTimingEventForTick(tickS);
+		TimingInfoEvent ee = getTimingEventForTick(tickE);
+		long s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks(), tripletTiming && mixTiming, es.info.getMinSmallNoteLengthTicks());
+		long e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks(), tripletTiming && mixTiming, ee.info.getMinSmallNoteLengthTicks());
+		long dura = e-s;
+		long[] longArray = new long[2];
+		if (dura < es.info.getMinGridLengthTicks() && tripletTiming && mixTiming) {
+			e = 0L;
+		} else if (tickE - tickS < (es.info.getMinGridLengthTicks()*2L)/3L && tripletTiming && mixTiming) {
+			e = 0L;
+		} else if (dura == es.info.getMinGridLengthTicks() && tripletTiming && mixTiming) {
+			if ((double)(s / dura) != s/(double)dura) {
+				s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks(), tripletTiming && mixTiming, es.info.getMinGridLengthTicks());
+				e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks(), tripletTiming && mixTiming, ee.info.getMinGridLengthTicks());
+			}
+		}
+		longArray[0] = s;
+		longArray[1] = e;
+		return longArray;
+	}
+	
 	public long quantize(long tick)
 	{
 		TimingInfoEvent e = getTimingEventForTick(tick);
-		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinNoteLengthTicks());
+		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinGridLengthTicks(), tripletTiming && mixTiming, e.info.getMinGridLengthTicks());
 	}
 
 	@Override public long tickToMicros(long tick)

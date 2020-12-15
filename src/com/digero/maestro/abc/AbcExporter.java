@@ -628,17 +628,24 @@ public class AbcExporter
 		while (neIter.hasNext())
 		{
 			NoteEvent ne = neIter.next();
+			
+			long quant[] = qtm.quantize(ne.getStartTick(),ne.getEndTick());
+			
+			ne.setStartTick(quant[0]);
+			ne.setEndTick(quant[1]);
 
-			ne.setStartTick(qtm.quantize(ne.getStartTick()));
-			ne.setEndTick(qtm.quantize(ne.getEndTick()));
-
+			// Make sure notes shorter than minimum size gets removed so rests shorter than minimum do not get generated or notes get stacked and produce dissonance.
+			if (quant[1] == 0L)
+			{
+				neIter.remove();
+			}
 			// Make sure the note didn't get quantized to zero length
-			if (ne.getLengthTicks() == 0)
+			else if (ne.getLengthTicks() == 0) //  || ne.getLengthTicks() < qtm.getTimingInfo(ne.getStartTick()).getMinGridLengthTicks()
 			{
 				if (ne.note == Note.REST)
 					neIter.remove();
 				else
-					ne.setLengthTicks(qtm.getTimingInfo(ne.getStartTick()).getMinNoteLengthTicks());
+					ne.setLengthTicks(qtm.getTimingInfo(ne.getStartTick()).getMinGridLengthTicks());
 			}
 		}
 
@@ -835,7 +842,7 @@ public class AbcExporter
 			long maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks();
 
 			// Make a hard break for notes that are longer than LotRO can play
-			// Bagpipe notes up to B2 can sustain indefinitey; don't break them
+			// Bagpipe notes up to B2 can sustain indefinitely; don't break them
 			if (ne.getEndTick() > maxNoteEndTick
 					&& ne.note != Note.REST
 					&& !(part.getInstrument() == LotroInstrument.BASIC_BAGPIPE && ne.note.id <= AbcConstants.BAGPIPE_LAST_DRONE_NOTE_ID))
@@ -889,7 +896,7 @@ public class AbcExporter
 				 * boundary if they start past the boundary. */
 				{
 					long barStartTick = qtm.tickToBarStartTick(ne.getStartTick());
-					long gridTicks = tm.getMinNoteLengthTicks();
+					long gridTicks = tm.getMinGridLengthTicks();
 					long wholeNoteTicks = tm.getBarLengthTicks() * tm.getMeter().denominator / tm.getMeter().numerator;
 
 					// Try unit note lengths of whole, then half, quarter, eighth, sixteenth, etc.

@@ -55,6 +55,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private KeySignature keySignature = KeySignature.C_MAJOR;
 	private TimeSignature timeSignature = TimeSignature.FOUR_FOUR;
 	private boolean tripletTiming = false;
+	private boolean mixTiming = false;
 	private boolean skipSilenceAtStart = true;
 
 	private final boolean fromAbcFile;
@@ -256,6 +257,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				keySignature = SaveUtil.parseValue(songEle, "exportSettings/@keySignature", keySignature);
 			timeSignature = SaveUtil.parseValue(songEle, "exportSettings/@timeSignature", timeSignature);
 			tripletTiming = SaveUtil.parseValue(songEle, "exportSettings/@tripletTiming", tripletTiming);
+			mixTiming = SaveUtil.parseValue(songEle, "exportSettings/@mixTiming", mixTiming);
 
 			for (Element ele : XmlUtil.selectElements(songEle, "part"))
 			{
@@ -308,6 +310,9 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 			if (tripletTiming)
 				exportSettingsEle.setAttribute("tripletTiming", String.valueOf(tripletTiming));
+			
+			if (mixTiming)
+				exportSettingsEle.setAttribute("mixTiming", String.valueOf(mixTiming));
 
 			if (exportSettingsEle.getAttributes().getLength() > 0 || exportSettingsEle.getChildNodes().getLength() > 0)
 				songEle.appendChild(exportSettingsEle);
@@ -485,6 +490,20 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			fireChangeEvent(AbcSongProperty.TRIPLET_TIMING);
 		}
 	}
+	
+	public boolean isMixTiming()
+	{
+		return mixTiming;
+	}
+
+	public void setMixTiming(boolean mixTiming)
+	{
+		if (this.mixTiming != mixTiming)
+		{
+			this.mixTiming = mixTiming;
+			fireChangeEvent(AbcSongProperty.MIX_TIMING);
+		}
+	}
 
 	public boolean isSkipSilenceAtStart()
 	{
@@ -607,9 +626,10 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		if (timingInfo == null //
 				|| timingInfo.getExportTempoFactor() != getTempoFactor() //
 				|| timingInfo.getMeter() != getTimeSignature() //
-				|| timingInfo.isTripletTiming() != isTripletTiming())
+				|| timingInfo.isTripletTiming() != isTripletTiming() //
+				|| timingInfo.isMixTiming() != isMixTiming())
 		{
-			timingInfo = new QuantizedTimingInfo(sequenceInfo, getTempoFactor(), getTimeSignature(), isTripletTiming());
+			timingInfo = new QuantizedTimingInfo(sequenceInfo, getTempoFactor(), getTimeSignature(), isTripletTiming(), isMixTiming());
 		}
 
 		return timingInfo;

@@ -8,9 +8,11 @@ public interface AbcConstants
 	public static final int MAX_CHORD_NOTES = 6;
 
 	// TimingInfo
+	//
+	// The longest/shortest notes listed here is what will be played. For what will be genereated, see TimingInfo.java
 	public static final int ONE_SECOND_MICROS = 1000000;
 	public static final int ONE_MINUTE_MICROS = 60 * ONE_SECOND_MICROS;
-	public static final int SHORTEST_NOTE_MICROS = ONE_MINUTE_MICROS / 1000;// Some times LOTRO will play this short a note, sometimes not..
+	public static final int SHORTEST_NOTE_MICROS = ONE_MINUTE_MICROS / 1000;// Some times LOTRO will play 0.06 durations, sometimes not..
 	public static final int LONGEST_NOTE_MICROS = 8 * ONE_SECOND_MICROS;
 	public static final double SHORTEST_NOTE_SECONDS = 0.06;// Some times LOTRO will play this short a note, sometimes not..
 	public static final double LONGEST_NOTE_SECONDS = 8.0;//This limits goes for rests also
