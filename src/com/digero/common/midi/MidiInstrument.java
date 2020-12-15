@@ -2,13 +2,14 @@ package com.digero.common.midi;
 
 public enum MidiInstrument
 {
-	PIANO("Piano"), // 0
-	BRIGHT_PIANO("Bright Piano"), // 1
+	// Official name list is at: https://www.midi.org/specifications-old/item/gm-level-1-sound-set
+	PIANO("Acoustic Grand Piano"), // 0
+	BRIGHT_PIANO("Bright Acoustic Piano"), // 1
 	ELEC_PIANO("Elec Piano"), // 2
 	HONKY_TONK_PIANO("Honky-tonk Piano"), // 3
 	RHODES_PIANO("Rhodes Piano"), // 4
 	CHORUS_PIANO("Chorus Piano"), // 5
-	HARPSCHORD("Harpschord"), // 6
+	HARPSCHORD("Harpsichord"), // 6
 	CLAVINET("Clavinet"), // 7
 	CELESTA("Celesta"), // 8
 	GLOCKENSPIEL("Glockenspiel"), // 9
@@ -25,15 +26,15 @@ public enum MidiInstrument
 	REED_ORGAN("Reed Organ"), // 20
 	ACCORDION("Accordion"), // 21
 	HARMONICA("Harmonica"), // 22
-	TANGO_ACORDN("Tango Acordn"), // 23
+	TANGO_ACORDN("Tango Acordian"), // 23
 	NYLON_GUITAR("Nylon Guitar"), // 24
 	STEEL_STRING_GUITAR("Steel String Guitar"), // 25
-	JAZZ_GUITAR("Jazz Guitar"), // 26
+	JAZZ_GUITAR("Jazz Elec. Guitar"), // 26
 	CLEAN_ELEC_GUITAR("Clean Elec. Guitar"), // 27
 	MUTE_ELEC_GUITAR("Mute Elec. Guitar"), // 28
 	OVRDRIVE_GUITAR("Ovrdrive Guitar"), // 29
 	DISTORTED_GUITAR("Distorted Guitar"), // 30
-	HARMONICS("Harmonics"), // 31
+	HARMONICS("Guitar Harmonics"), // 31
 	ACOUSTIC_BASS("Acoustic Bass"), // 32
 	FINGERED_ELEC_BASS("Fingered Elec. Bass"), // 33
 	PICKED_ELEC_BASS("Picked Elec. Bass"), // 34
@@ -52,8 +53,8 @@ public enum MidiInstrument
 	TIMPANI("Timpani"), // 47
 	STRING_ENSEMBLE_1("String Ensemble 1"), // 48
 	STRING_ENSEMBLE_2("String Ensemble 2"), // 49
-	SYNTH_STRING_1("Synth String 1"), // 50
-	SYNTH_STRING_2("Synth String 2"), // 51
+	SYNTH_STRING_1("Synth Strings 1"), // 50
+	SYNTH_STRING_2("Synth Strings 2"), // 51
 	CHOIR_AAHS("Choir Aahs"), // 52
 	VOICE_OOHS("Voice Oohs"), // 53
 	SYNTH_VOICE("Synth Voice"), // 54
@@ -88,24 +89,24 @@ public enum MidiInstrument
 	CHIFF_LEAD("Chiff Lead"), // 83
 	CHARANG("Charang"), // 84
 	SOLO_SYNTH_VOX("Solo Synth Vox"), // 85
-	BRITE_SAW("Brite Saw"), // 86
-	BRASS_AND_LEAD("Brass & Lead"), // 87
-	FANTASA_PAD("Fantasa Pad"), // 88
+	BRITE_SAW("Fifths lead"), // 86
+	BRASS_AND_LEAD("Bass & Lead"), // 87
+	FANTASA_PAD("New age Pad"), // 88
 	WARM_PAD("Warm Pad"), // 89
 	POLY_SYNTH_PAD("Poly Synth Pad"), // 90
-	SPACE_VOX_PAD("Space Vox Pad"), // 91
-	BOW_GLASS_PAD("Bow Glass Pad"), // 92
+	SPACE_VOX_PAD("Choir Pad"), // 91
+	BOW_GLASS_PAD("Bowed Pad"), // 92
 	METAL_PAD("Metal Pad"), // 93
 	HALO_PAD("Halo Pad"), // 94
 	SWEEP_PAD("Sweep Pad"), // 95
-	ICE_RAIN("Ice Rain"), // 96
+	ICE_RAIN("Rain"), // 96
 	SOUND_TRACK("Sound Track"), // 97
 	CRYSTAL("Crystal"), // 98
 	ATMOSPHERE("Atmosphere"), // 99
 	BRIGHTNESS("Brightness"), // 100
 	GOBLIN("Goblin"), // 101
-	ECHO_DROPS("Echo Drops"), // 102
-	STAR_THEME("Star Theme"), // 103
+	ECHO_DROPS("Echoes"), // 102
+	STAR_THEME("Sci-fi"), // 103
 	SITAR("Sitar"), // 104
 	BANJO("Banjo"), // 105
 	SHAMISEN("Shamisen"), // 106
