@@ -816,13 +816,31 @@ public class AbcExporter
 				// Insert a rest between the chords if needed
 				if (curChord.getEndTick() < nextChord.getStartTick())
 				{
-					tmpEvents.clear();
-					tmpEvents.add(new NoteEvent(Note.REST, Dynamics.DEFAULT.midiVol, curChord.getEndTick(), nextChord
-							.getStartTick(), qtm));
-					breakLongNotes(part, tmpEvents, addTies);
-
-					for (NoteEvent restEvent : tmpEvents)
-						chords.add(new Chord(restEvent));
+					long minRest = qtm.getTimingInfo(curChord.getEndTick()).getMinGridLengthTicks();
+					if (qtm.isMixTiming() && qtm.isTripletTiming() && nextChord.getStartTick() - curChord.getEndTick() < minRest) {
+						for (int j = 0; j < curChord.size(); j++)
+						{
+							NoteEvent jne = curChord.get(j);
+							jne.setEndTick(nextChord.getStartTick());
+						}
+						curChord.recalcEndTick();
+					} else {
+						tmpEvents.clear();
+						tmpEvents.add(new NoteEvent(Note.REST, Dynamics.DEFAULT.midiVol, curChord.getEndTick(), nextChord
+								.getStartTick(), qtm));
+						breakLongNotes(part, tmpEvents, addTies);
+	
+						for (NoteEvent restEvent : tmpEvents)
+							chords.add(new Chord(restEvent));
+					}
+				} else if (curChord.getEndTick() > nextChord.getStartTick())
+				{
+					for (int j = 0; j < curChord.size(); j++)
+					{
+						NoteEvent jne = curChord.get(j);
+						jne.setEndTick(nextChord.getStartTick());
+					}
+					curChord.recalcEndTick();
 				}
 
 				chords.add(nextChord);

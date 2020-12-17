@@ -164,14 +164,21 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		long e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks(), tripletTiming && mixTiming, ee.info.getMinSmallNoteLengthTicks());
 		long dura = e-s;
 		long[] longArray = new long[2];
-		if (dura < es.info.getMinGridLengthTicks() && tripletTiming && mixTiming) {
-			e = 0L;
-		} else if (tickE - tickS < (es.info.getMinGridLengthTicks()*2L)/3L && tripletTiming && mixTiming) {
-			e = 0L;
-		} else if (dura == es.info.getMinGridLengthTicks() && tripletTiming && mixTiming) {
-			if ((double)(s / dura) != s/(double)dura) {
-				s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks(), tripletTiming && mixTiming, es.info.getMinGridLengthTicks());
-				e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks(), tripletTiming && mixTiming, ee.info.getMinGridLengthTicks());
+		if (tripletTiming && mixTiming) {
+			if (dura < es.info.getMinGridLengthTicks()) {
+				e = 0L;
+			} else if (tickE - tickS < (es.info.getMinGridLengthTicks()*2L)/3L) {
+				e = 0L;
+			} else if (dura % es.info.getMinGridLengthTicks() == 0) {
+				if (s % es.info.getMinGridLengthTicks() != 0) {
+					// Has multiple of minimum triplet size, but does not start on the triplet grid. We do not allow that.
+					s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks(), false, es.info.getMinGridLengthTicks());
+					e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks(), false, ee.info.getMinGridLengthTicks());
+				}
+			} else if (dura > es.info.getMinSmallNoteLengthTicks()) {
+				// Recalc as multiple of smallest triplet grid for long notes
+				s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks(), false, es.info.getMinGridLengthTicks());
+				e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks(), false, ee.info.getMinGridLengthTicks());
 			}
 		}
 		longArray[0] = s;
@@ -182,7 +189,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	public long quantize(long tick)
 	{
 		TimingInfoEvent e = getTimingEventForTick(tick);
-		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinGridLengthTicks(), tripletTiming && mixTiming, e.info.getMinGridLengthTicks());
+		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinGridLengthTicks(), false, e.info.getMinGridLengthTicks());
 	}
 
 	@Override public long tickToMicros(long tick)
