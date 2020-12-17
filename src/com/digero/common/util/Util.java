@@ -235,20 +235,10 @@ public final class Util
 	{
 		return ((value + grid / 2) / grid) * grid;
 	}
-
-	/** Rounds value to the nearest multiple of grid */
-	public static long roundGrid(long value, long grid, boolean mixTiming, long smallGrid)
+	
+	public static long roundGrid(long value, long grid)
 	{
-		if (!mixTiming) {
-			return ((value + grid / 2) / grid) * grid;
-		}
-		long def3 = ((value + grid / 2) / grid) * grid;
-		long def2 = ((value + smallGrid / 2) / smallGrid) * smallGrid;
-		if (Math.abs(def2-value) > Math.abs(def3-value)) {
-			return def3;
-		} else {
-			return def2;
-		}
+		return ((value + grid / 2) / grid) * grid;
 	}
 
 	public static int floorGrid(int value, int grid)

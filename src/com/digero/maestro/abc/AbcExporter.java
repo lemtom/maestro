@@ -11,6 +11,7 @@ import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
+import javax.swing.JOptionPane;
 
 import com.digero.common.abc.AbcConstants;
 import com.digero.common.abc.AbcField;
@@ -640,7 +641,7 @@ public class AbcExporter
 				neIter.remove();
 			}
 			// Make sure the note didn't get quantized to zero length
-			else if (ne.getLengthTicks() == 0) //  || ne.getLengthTicks() < qtm.getTimingInfo(ne.getStartTick()).getMinGridLengthTicks()
+			else if (ne.getLengthTicks() == 0L) //  || ne.getLengthTicks() < qtm.getTimingInfo(ne.getStartTick()).getMinGridLengthTicks()
 			{
 				if (ne.note == Note.REST)
 					neIter.remove();
@@ -755,7 +756,13 @@ public class AbcExporter
 					// before the next chord starts.
 					boolean reprocessCurrentNote = false;
 					long targetEndTick = Math.min(nextChord.getStartTick(), curChord.getEndTick());
-
+					
+					long grid = qtm.getTimingInfo(curChord.getStartTick()).getMinGridLengthTicks();
+					
+					if (curChord.getEndTick() - curChord.getStartTick() < grid) { 
+						JOptionPane.showMessageDialog(null, "Mixed rythm option failed", "Error writing ABC", JOptionPane.ERROR_MESSAGE);
+					}
+					
 					for (int j = 0; j < curChord.size(); j++)
 					{
 						NoteEvent jne = curChord.get(j);
@@ -800,7 +807,7 @@ public class AbcExporter
 						// Make sure there's room to add the rest
 						while (curChord.size() >= Chord.MAX_CHORD_NOTES)
 						{
-							removeNote(events, curChord.remove(curChord.size() - 1));
+							removeNote(events, curChord.remove(curChord.size() - 1));//TODO: make the removal less arbitrary
 						}
 					}
 
@@ -818,10 +825,13 @@ public class AbcExporter
 				{
 					long minRest = qtm.getTimingInfo(curChord.getEndTick()).getMinGridLengthTicks();
 					if (qtm.isMixTiming() && qtm.isTripletTiming() && nextChord.getStartTick() - curChord.getEndTick() < minRest) {
+						// Due to mix timing, the rest would be too small to be created, so we elongate the shortest notes in the chord to eliminate need for rest
 						for (int j = 0; j < curChord.size(); j++)
 						{
 							NoteEvent jne = curChord.get(j);
-							jne.setEndTick(nextChord.getStartTick());
+							if (jne.getEndTick() < nextChord.getStartTick()) {
+								jne.setEndTick(nextChord.getStartTick());
+							}
 						}
 						curChord.recalcEndTick();
 					} else {
@@ -833,14 +843,6 @@ public class AbcExporter
 						for (NoteEvent restEvent : tmpEvents)
 							chords.add(new Chord(restEvent));
 					}
-				} else if (curChord.getEndTick() > nextChord.getStartTick())
-				{
-					for (int j = 0; j < curChord.size(); j++)
-					{
-						NoteEvent jne = curChord.get(j);
-						jne.setEndTick(nextChord.getStartTick());
-					}
-					curChord.recalcEndTick();
 				}
 
 				chords.add(nextChord);

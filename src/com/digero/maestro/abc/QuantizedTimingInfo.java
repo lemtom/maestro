@@ -70,7 +70,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				TimingInfoEvent prev = reverseIterator.next();
 				assert prev.tick <= sourceEvent.tick;
 
-				long gridUnitTicks = prev.info.getMinNoteLengthTicks();
+				long gridUnitTicks = prev.info.getMinGridLengthTicks();
 
 				// Quantize the tick length to the floor multiple of gridUnitTicks
 				long lengthTicks = Util.floorGrid(sourceEvent.tick - prev.tick, gridUnitTicks);
@@ -83,7 +83,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				{
 					double barNumberTmp = prev.barNumber + lengthTicks / ((double) prev.info.getBarLengthTicks());
 					double gridUnitsRemaining = ((Math.ceil(barNumberTmp) - barNumberTmp) * info.getBarLengthTicks())
-							/ info.getMinNoteLengthTicks();
+							/ info.getMinGridLengthTicks();
 
 					final double epsilon = TimingInfo.MIN_TEMPO_BPM / (2.0 * TimingInfo.MAX_TEMPO_BPM);
 					if (Math.abs(gridUnitsRemaining - Math.round(gridUnitsRemaining)) <= epsilon)
@@ -160,8 +160,28 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	{
 		TimingInfoEvent es = getTimingEventForTick(tickS);
 		TimingInfoEvent ee = getTimingEventForTick(tickE);
-		long s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks(), tripletTiming && mixTiming, es.info.getMinSmallNoteLengthTicks());
-		long e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks(), tripletTiming && mixTiming, ee.info.getMinSmallNoteLengthTicks());
+		long def3 = Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks());
+		long def2 = Util.roundGrid(tickS - es.tick, es.info.getMinNoteLengthTicks());
+		boolean uneven = false;
+		long def = 0L;
+		if (Math.abs(def2-(tickS - es.tick)) > Math.abs(def3-(tickS - es.tick)) || !(tripletTiming && mixTiming)) {
+			def = def3;
+		} else {
+			def = def2;
+			uneven = true;
+		}
+		long s = es.tick + def;
+		
+		def3 = Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks());
+		def2 = Util.roundGrid(tickE - ee.tick, ee.info.getMinNoteLengthTicks());
+		if (Math.abs(def2-(tickE - ee.tick)) > Math.abs(def3-(tickE - ee.tick)) || uneven || !(tripletTiming && mixTiming)) {
+			def = def3;
+		} else {
+			def = def2;
+			uneven = true;
+		}
+		long e = ee.tick + def;
+		
 		long dura = e-s;
 		long[] longArray = new long[2];
 		if (tripletTiming && mixTiming) {
@@ -172,13 +192,13 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 			} else if (dura % es.info.getMinGridLengthTicks() == 0) {
 				if (s % es.info.getMinGridLengthTicks() != 0) {
 					// Has multiple of minimum triplet size, but does not start on the triplet grid. We do not allow that.
-					s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks(), false, es.info.getMinGridLengthTicks());
-					e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks(), false, ee.info.getMinGridLengthTicks());
+					s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks());
+					e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks());
 				}
 			} else if (dura > es.info.getMinSmallNoteLengthTicks()) {
 				// Recalc as multiple of smallest triplet grid for long notes
-				s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks(), false, es.info.getMinGridLengthTicks());
-				e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks(), false, ee.info.getMinGridLengthTicks());
+				s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks());
+				e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks());
 			}
 		}
 		longArray[0] = s;
@@ -189,7 +209,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	public long quantize(long tick)
 	{
 		TimingInfoEvent e = getTimingEventForTick(tick);
-		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinGridLengthTicks(), false, e.info.getMinGridLengthTicks());
+		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinGridLengthTicks());
 	}
 
 	@Override public long tickToMicros(long tick)
