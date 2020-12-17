@@ -235,7 +235,8 @@ public final class Util
 	{
 		return ((value + grid / 2) / grid) * grid;
 	}
-	
+
+	/** Rounds value to the nearest multiple of grid */
 	public static long roundGrid(long value, long grid)
 	{
 		return ((value + grid / 2) / grid) * grid;

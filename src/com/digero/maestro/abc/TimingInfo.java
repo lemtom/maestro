@@ -5,7 +5,6 @@ import com.sun.media.sound.MidiUtils;
 
 public class TimingInfo
 {
-	// The longest/shortest notes listed here is what will be created. For what will be played, see AbcConstants.java
 	public static final long ONE_SECOND_MICROS = 1000000;
 	public static final long ONE_MINUTE_MICROS = 60 * ONE_SECOND_MICROS;
 	public static final long SHORTEST_NOTE_MICROS = 60001;
@@ -22,10 +21,9 @@ public class TimingInfo
 	private final int defaultDivisor;
 	private final int minNoteDivisor;
 	private final long minNoteLengthTicks;
-	private final long minSmallNoteLengthTicks;
 	private final long maxNoteLengthTicks;
 
-	TimingInfo(int tempoMPQ, int resolutionPPQ, float exportTempoFactor, TimeSignature meter, boolean useTripletTiming, boolean useMixTiming)
+	TimingInfo(int tempoMPQ, int resolutionPPQ, float exportTempoFactor, TimeSignature meter, boolean useTripletTiming)
 			throws AbcConversionException
 	{
 		// Compute the export tempo and round it to a whole-number BPM
@@ -56,7 +54,7 @@ public class TimingInfo
 		// otherwise it is an eighth note. For example, 2/4 = 0.5, so the
 		// default note length is a sixteenth note, while 4/4 = 1.0 or
 		// 6/8 = 0.75, so the default is an eighth note.
-		this.defaultDivisor =  ((meter.numerator / (double) meter.denominator < 0.75) ? 16 : 8) * 4 / meter.denominator;
+		this.defaultDivisor = ((meter.numerator / (double) meter.denominator < 0.75) ? 16 : 8) * 4 / meter.denominator;
 
 		// Calculate min note length
 		{
@@ -78,46 +76,15 @@ public class TimingInfo
 				minNoteTicks /= 2;
 				minNoteDivisor *= 2;
 			}
-			
-			if (useTripletTiming && useMixTiming) {
-				int minNoteDivisor2 = defaultDivisor;
-				
-				long minNoteTicks2 = resolutionPPQ / (minNoteDivisor2 / 4);
-
-				while (minNoteTicks2 < minNoteTicks)
-				{
-					minNoteTicks2 *= 2;
-					minNoteDivisor2 /= 2;
-				}
-
-				assert minNoteDivisor2 > 0;
-
-				while (minNoteTicks2 >= minNoteTicks * 2)
-				{
-					minNoteTicks2 /= 2;
-					minNoteDivisor2 *= 2;
-				}
-				if (minNoteTicks2 > minNoteTicks) {
-					this.minSmallNoteLengthTicks = minNoteTicks2;
-					minNoteTicks /= 2;
-					minNoteDivisor *= 2;
-				} else {
-					this.minSmallNoteLengthTicks = minNoteTicks;			
-				}
-			} else {
-				this.minSmallNoteLengthTicks = minNoteTicks;
-			}
 
 			if (meter.denominator > minNoteDivisor)
 			{
 				throw new AbcConversionException("The denominator of the meter must be no greater than "
 						+ minNoteDivisor);
 			}
-												   // defaultDivisor/minNoteDivisor = shortest note grid size in this tempo
-												   // MPQ from BPM: mpq = 60000000 / bpm  (Microseconds per quarter)
-												   // resolutionPPQ = Pulses (ticks) per quarter note (Is here: ticks per L: note)
-			this.minNoteLengthTicks = minNoteTicks;// resolutionPPQ/2 (resolutionPPQ/6 for triplet timing)
-			this.minNoteDivisor = minNoteDivisor;  // for 'L: 1/8 M: 4/4': 8 (24 for triplet timing)  
+
+			this.minNoteLengthTicks = minNoteTicks;
+			this.minNoteDivisor = minNoteDivisor;
 			this.maxNoteLengthTicks = minNoteTicks * (LONGEST_NOTE_TICKS / minNoteTicks);
 		}
 	}
@@ -178,19 +145,6 @@ public class TimingInfo
 	public long getMinNoteLengthTicks()
 	{
 		return minNoteLengthTicks;
-	}
-	
-	public long getMinGridLengthTicks()
-	{
-		if (minNoteLengthTicks != minSmallNoteLengthTicks) {
-			return minNoteLengthTicks * 2;
-		}
-		return minNoteLengthTicks;
-	}
-	
-	public long getMinSmallNoteLengthTicks()
-	{
-		return minSmallNoteLengthTicks;
 	}
 
 	public long getMaxNoteLengthTicks()

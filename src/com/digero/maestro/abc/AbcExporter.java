@@ -11,7 +11,6 @@ import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
-import javax.swing.JOptionPane;
 
 import com.digero.common.abc.AbcConstants;
 import com.digero.common.abc.AbcField;
@@ -629,24 +628,17 @@ public class AbcExporter
 		while (neIter.hasNext())
 		{
 			NoteEvent ne = neIter.next();
-			
-			long quant[] = qtm.quantize(ne.getStartTick(),ne.getEndTick());
-			
-			ne.setStartTick(quant[0]);
-			ne.setEndTick(quant[1]);
 
-			// Make sure notes shorter than minimum size gets removed so rests shorter than minimum do not get generated or notes get stacked and produce dissonance.
-			if (quant[1] == 0L)
-			{
-				neIter.remove();
-			}
+			ne.setStartTick(qtm.quantize(ne.getStartTick()));
+			ne.setEndTick(qtm.quantize(ne.getEndTick()));
+
 			// Make sure the note didn't get quantized to zero length
-			else if (ne.getLengthTicks() == 0L) //  || ne.getLengthTicks() < qtm.getTimingInfo(ne.getStartTick()).getMinGridLengthTicks()
+			if (ne.getLengthTicks() == 0)
 			{
 				if (ne.note == Note.REST)
 					neIter.remove();
 				else
-					ne.setLengthTicks(qtm.getTimingInfo(ne.getStartTick()).getMinGridLengthTicks());
+					ne.setLengthTicks(qtm.getTimingInfo(ne.getStartTick()).getMinNoteLengthTicks());
 			}
 		}
 
@@ -756,13 +748,7 @@ public class AbcExporter
 					// before the next chord starts.
 					boolean reprocessCurrentNote = false;
 					long targetEndTick = Math.min(nextChord.getStartTick(), curChord.getEndTick());
-					
-					long grid = qtm.getTimingInfo(curChord.getStartTick()).getMinGridLengthTicks();
-					
-					if (curChord.getEndTick() - curChord.getStartTick() < grid) { 
-						JOptionPane.showMessageDialog(null, "Mixed rythm option failed", "Error writing ABC", JOptionPane.ERROR_MESSAGE);
-					}
-					
+
 					for (int j = 0; j < curChord.size(); j++)
 					{
 						NoteEvent jne = curChord.get(j);
@@ -807,7 +793,7 @@ public class AbcExporter
 						// Make sure there's room to add the rest
 						while (curChord.size() >= Chord.MAX_CHORD_NOTES)
 						{
-							removeNote(events, curChord.remove(curChord.size() - 1));//TODO: make the removal less arbitrary
+							removeNote(events, curChord.remove(curChord.size() - 1));
 						}
 					}
 
@@ -823,26 +809,13 @@ public class AbcExporter
 				// Insert a rest between the chords if needed
 				if (curChord.getEndTick() < nextChord.getStartTick())
 				{
-					long minRest = qtm.getTimingInfo(curChord.getEndTick()).getMinGridLengthTicks();
-					if (qtm.isMixTiming() && qtm.isTripletTiming() && nextChord.getStartTick() - curChord.getEndTick() < minRest) {
-						// Due to mix timing, the rest would be too small to be created, so we elongate the shortest notes in the chord to eliminate need for rest
-						for (int j = 0; j < curChord.size(); j++)
-						{
-							NoteEvent jne = curChord.get(j);
-							if (jne.getEndTick() < nextChord.getStartTick()) {
-								jne.setEndTick(nextChord.getStartTick());
-							}
-						}
-						curChord.recalcEndTick();
-					} else {
-						tmpEvents.clear();
-						tmpEvents.add(new NoteEvent(Note.REST, Dynamics.DEFAULT.midiVol, curChord.getEndTick(), nextChord
-								.getStartTick(), qtm));
-						breakLongNotes(part, tmpEvents, addTies);
-	
-						for (NoteEvent restEvent : tmpEvents)
-							chords.add(new Chord(restEvent));
-					}
+					tmpEvents.clear();
+					tmpEvents.add(new NoteEvent(Note.REST, Dynamics.DEFAULT.midiVol, curChord.getEndTick(), nextChord
+							.getStartTick(), qtm));
+					breakLongNotes(part, tmpEvents, addTies);
+
+					for (NoteEvent restEvent : tmpEvents)
+						chords.add(new Chord(restEvent));
 				}
 
 				chords.add(nextChord);
@@ -862,7 +835,7 @@ public class AbcExporter
 			long maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks();
 
 			// Make a hard break for notes that are longer than LotRO can play
-			// Bagpipe notes up to B2 can sustain indefinitely; don't break them
+			// Bagpipe notes up to B2 can sustain indefinitey; don't break them
 			if (ne.getEndTick() > maxNoteEndTick
 					&& ne.note != Note.REST
 					&& !(part.getInstrument() == LotroInstrument.BASIC_BAGPIPE && ne.note.id <= AbcConstants.BAGPIPE_LAST_DRONE_NOTE_ID))
@@ -916,7 +889,7 @@ public class AbcExporter
 				 * boundary if they start past the boundary. */
 				{
 					long barStartTick = qtm.tickToBarStartTick(ne.getStartTick());
-					long gridTicks = tm.getMinGridLengthTicks();
+					long gridTicks = tm.getMinNoteLengthTicks();
 					long wholeNoteTicks = tm.getBarLengthTicks() * tm.getMeter().denominator / tm.getMeter().numerator;
 
 					// Try unit note lengths of whole, then half, quarter, eighth, sixteenth, etc.

@@ -22,7 +22,6 @@ public class AbcSongEvent extends EventObject
 		PART_LIST_ORDER, //
 		//
 		EXPORT_FILE, //
-		MIX_TIMING, //
 		;
 	}
 

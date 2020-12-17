@@ -30,23 +30,21 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	private final float exportTempoFactor;
 	private final TimeSignature meter;
 	private final boolean tripletTiming;
-	private final boolean mixTiming;
 
 	public QuantizedTimingInfo(SequenceInfo source, float exportTempoFactor, TimeSignature meter,
-			boolean useTripletTiming, boolean useMixTiming) throws AbcConversionException
+			boolean useTripletTiming) throws AbcConversionException
 	{
 		double exportPrimaryTempoMPQ = TimingInfo.roundTempoMPQ(source.getPrimaryTempoMPQ() / exportTempoFactor);
 		this.primaryTempoMPQ = (int) Math.round(exportPrimaryTempoMPQ * exportTempoFactor);
 		this.exportTempoFactor = exportTempoFactor;
 		this.meter = meter;
 		this.tripletTiming = useTripletTiming;
-		this.mixTiming = useMixTiming;
 		this.tickResolution = source.getDataCache().getTickResolution();
 		this.songLengthTicks = source.getDataCache().getSongLengthTicks();
 		final int resolution = source.getDataCache().getTickResolution();
 
 		TimingInfo defaultTiming = new TimingInfo(source.getPrimaryTempoMPQ(), resolution, exportTempoFactor, meter,
-				useTripletTiming, useMixTiming);
+				useTripletTiming);
 		timingInfoByTick.put(0L, new TimingInfoEvent(0, 0, 0, defaultTiming));
 
 		Collection<TimingInfoEvent> reversedEvents = timingInfoByTick.descendingMap().values();
@@ -61,7 +59,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 			long micros = 0;
 			double barNumber = 0;
 			TimingInfo info = new TimingInfo(sourceEvent.tempoMPQ, resolution, exportTempoFactor, meter,
-					useTripletTiming, useMixTiming);
+					useTripletTiming);
 
 			// Iterate over the existing events in reverse order
 			Iterator<TimingInfoEvent> reverseIterator = reversedEvents.iterator();
@@ -70,7 +68,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				TimingInfoEvent prev = reverseIterator.next();
 				assert prev.tick <= sourceEvent.tick;
 
-				long gridUnitTicks = prev.info.getMinGridLengthTicks();
+				long gridUnitTicks = prev.info.getMinNoteLengthTicks();
 
 				// Quantize the tick length to the floor multiple of gridUnitTicks
 				long lengthTicks = Util.floorGrid(sourceEvent.tick - prev.tick, gridUnitTicks);
@@ -83,7 +81,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				{
 					double barNumberTmp = prev.barNumber + lengthTicks / ((double) prev.info.getBarLengthTicks());
 					double gridUnitsRemaining = ((Math.ceil(barNumberTmp) - barNumberTmp) * info.getBarLengthTicks())
-							/ info.getMinGridLengthTicks();
+							/ info.getMinNoteLengthTicks();
 
 					final double epsilon = TimingInfo.MIN_TEMPO_BPM / (2.0 * TimingInfo.MAX_TEMPO_BPM);
 					if (Math.abs(gridUnitsRemaining - Math.round(gridUnitsRemaining)) <= epsilon)
@@ -145,71 +143,16 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	{
 		return tripletTiming;
 	}
-	
-	public boolean isMixTiming()
-	{
-		return mixTiming;
-	}
 
 	public TimingInfo getTimingInfo(long tick)
 	{
 		return getTimingEventForTick(tick).info;
 	}
 
-	public long [] quantize(long tickS, long tickE)
-	{
-		TimingInfoEvent es = getTimingEventForTick(tickS);
-		TimingInfoEvent ee = getTimingEventForTick(tickE);
-		long def3 = Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks());
-		long def2 = Util.roundGrid(tickS - es.tick, es.info.getMinNoteLengthTicks());
-		boolean uneven = false;
-		long def = 0L;
-		if (Math.abs(def2-(tickS - es.tick)) > Math.abs(def3-(tickS - es.tick)) || !(tripletTiming && mixTiming)) {
-			def = def3;
-		} else {
-			def = def2;
-			uneven = true;
-		}
-		long s = es.tick + def;
-		
-		def3 = Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks());
-		def2 = Util.roundGrid(tickE - ee.tick, ee.info.getMinNoteLengthTicks());
-		if (Math.abs(def2-(tickE - ee.tick)) > Math.abs(def3-(tickE - ee.tick)) || uneven || !(tripletTiming && mixTiming)) {
-			def = def3;
-		} else {
-			def = def2;
-			uneven = true;
-		}
-		long e = ee.tick + def;
-		
-		long dura = e-s;
-		long[] longArray = new long[2];
-		if (tripletTiming && mixTiming) {
-			if (dura < es.info.getMinGridLengthTicks()) {
-				e = 0L;
-			} else if (tickE - tickS < (es.info.getMinGridLengthTicks()*2L)/3L) {
-				e = 0L;
-			} else if (dura % es.info.getMinGridLengthTicks() == 0) {
-				if (s % es.info.getMinGridLengthTicks() != 0) {
-					// Has multiple of minimum triplet size, but does not start on the triplet grid. We do not allow that.
-					s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks());
-					e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks());
-				}
-			} else if (dura > es.info.getMinSmallNoteLengthTicks()) {
-				// Recalc as multiple of smallest triplet grid for long notes
-				s = es.tick + Util.roundGrid(tickS - es.tick, es.info.getMinGridLengthTicks());
-				e = ee.tick + Util.roundGrid(tickE - ee.tick, ee.info.getMinGridLengthTicks());
-			}
-		}
-		longArray[0] = s;
-		longArray[1] = e;
-		return longArray;
-	}
-	
 	public long quantize(long tick)
 	{
 		TimingInfoEvent e = getTimingEventForTick(tick);
-		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinGridLengthTicks());
+		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinNoteLengthTicks());
 	}
 
 	@Override public long tickToMicros(long tick)
