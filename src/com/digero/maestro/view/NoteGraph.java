@@ -446,7 +446,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 
 	private void fillNoteVelocity(Graphics2D g2, NoteEvent ne, Dynamics dynamics)
 	{
-		int velocity = dynamics.midiVol;
+		//int velocity = dynamics.midiVol;
 
 		AffineTransform xform = getTransform();
 
@@ -454,7 +454,8 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 		double width = Math.max(minWidth, ne.getLengthMicros());
 
 		double minHeight = Math.abs(NOTE_VELOCITY_MIN_HEIGHT_PX / xform.getScaleY());
-		double height = ((double) (velocity - Dynamics.MINIMUM.midiVol) / Dynamics.MAXIMUM.midiVol)
+		//double height = ((double) (velocity - Dynamics.MINIMUM.midiVol) / Dynamics.MAXIMUM.midiVol)
+		double height = ((double) (dynamics.ordinal()) / (double) Dynamics.MAXIMUM.ordinal())
 				* (MAX_RENDERED - MIN_RENDERED - minHeight) + minHeight;
 
 		rectTmp.setRect(ne.getStartMicros(), MIN_RENDERED, width, height);
@@ -474,7 +475,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 		// Adjust the brightness based on the volume dynamics
 		hsb[BRT] *= (1 - weight) + weight * dyn.midiVol / 128.0f;
 
-		// If the brightness is nearing max, also reduce the saturation to enahance the effect
+		// If the brightness is nearing max, also reduce the saturation to enhance the effect
 		if (hsb[BRT] > 0.9f)
 		{
 			hsb[SAT] = Math.max(0.0f, hsb[SAT] - (hsb[BRT] - 0.9f));
