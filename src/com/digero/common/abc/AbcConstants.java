@@ -20,9 +20,9 @@ public interface AbcConstants
 	public static final int MIN_TEMPO = (ONE_MINUTE_MICROS + LONGEST_NOTE_MICROS / 2) / LONGEST_NOTE_MICROS; // Round up
 
 	// Modifications to the ABC note lengths to sound more like the instruments in the game
-	public static final double NON_SUSTAINED_NOTE_HOLD_SECONDS = 1.0;
-	public static final double SUSTAINED_NOTE_HOLD_SECONDS = 0.1;
-	public static final double NOTE_RELEASE_SECONDS = 0.5;
+	public static final double NON_SUSTAINED_NOTE_HOLD_SECONDS = 1.1;
+	public static final double SUSTAINED_NOTE_HOLD_SECONDS = 0.0;
+	public static final double NOTE_RELEASE_SECONDS = 0.2;
 
 	// MIDI Preview controller values
 	public static final int MIDI_REVERB = 0;
