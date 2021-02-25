@@ -47,7 +47,6 @@ public class GenerateSoundFontInfo
 			case LONELY_MOUNTAIN_FIDDLE:
 			case SPRIGHTLY_FIDDLE:
 			case BASIC_FLUTE:
-			case BASIC_CLARINET:
 			case BASIC_HORN:
 			case BASIC_BASSOON:
 			case LONELY_MOUNTAIN_BASSOON:
@@ -56,9 +55,10 @@ public class GenerateSoundFontInfo
 			case BASIC_BAGPIPE:
 				return 4;
 
+			case BASIC_CLARINET:
 			case BASIC_PIBGORN:
-				return 6;
-
+				return 1;
+				
 			case STUDENT_FIDDLE:
 			case BASIC_COWBELL:
 			case MOOR_COWBELL:
@@ -187,11 +187,11 @@ public class GenerateSoundFontInfo
 			out.println("Name=LotroInstruments.sf2");
 			out.println("ROMName=");
 			out.println("ROMVersion=0.0");
-			out.println("Date=4/12/2015 12:34:56 PM");
+			out.println("Date=2/25/2021 12:13:14 PM");
 			out.println("Designer=Digero");
 			out.println("Product=Maestro");
-			out.println("Copyright=Turbine Entertainment");
-			out.println("Editor=Digero");
+			out.println("Copyright=Standing Stone Games");
+			out.println("Editor=Digero,Aifel");
 			out.println("Comments=");
 		}
 
