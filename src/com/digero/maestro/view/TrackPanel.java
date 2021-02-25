@@ -33,6 +33,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.Note;
 import com.digero.common.midi.NoteFilterSequencerWrapper;
@@ -99,6 +100,8 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	private boolean showDrumPanels;
 	private boolean wasDrumPart;
 	private boolean isAbcPreviewMode = false;
+	
+	private String badString = ""; 
 
 	public TrackPanel(TrackInfo info, NoteFilterSequencerWrapper sequencer, AbcPart part, SequencerWrapper abcSequencer_)
 	{
@@ -130,6 +133,8 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				abcPart.setTrackEnabled(track, enabled);
 				if (MUTE_DISABLED_TRACKS)
 					seq.setTrackMute(track, !enabled);
+				updateBadTooltipText();
+				updateTitleText();
 			}
 		});
 
@@ -209,6 +214,8 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 					{
 						abcPart.setTrackTranspose(trackInfo.getTrackNumber(), value);
 					}
+					updateBadTooltipText();
+					updateTitleText();
 				}
 			});
 		}
@@ -242,6 +249,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		add(controlPanel, CONTROL_COLUMN + ", 0, f, c");
 		add(noteGraph, NOTE_COLUMN + ", 0, " + NOTE_COLUMN + ", 1");
 
+		updateBadTooltipText();
 		updateTitleText();
 
 		abcPart.addAbcListener(abcListener = new Listener<AbcPartEvent>()
@@ -252,10 +260,15 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				{
 					updateState();
 					noteGraph.repaint();
+					updateBadTooltipText();
+					updateTitleText();
 				}
 
-				if (e.getProperty() == AbcPartProperty.INSTRUMENT || e.getProperty() == AbcPartProperty.TRACK_ENABLED)
+				if (e.getProperty() == AbcPartProperty.INSTRUMENT || e.getProperty() == AbcPartProperty.TRACK_ENABLED) {
 					updateColors();
+					updateBadTooltipText();
+					updateTitleText();
+				}
 			}
 		});
 
@@ -350,6 +363,47 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	{
 		return abcSequencer != null && isAbcPreviewMode;
 	}
+	
+	private void updateBadTooltipText() {
+		if (abcPart.getInstrument().ordinal() == LotroInstrument.BASIC_CLARINET.ordinal()) {
+			int g3count = 0;
+			List<NoteEvent> nel = trackInfo.getEvents();
+			for (NoteEvent ne : nel) {
+				if (ne.tiesFrom != null) {
+					continue;
+				}
+				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id);
+				if (mn != null && mn.id == Note.G3.id) {
+					g3count += 1;
+				}
+			}		
+			if (g3count == 0) {
+				badString = "</b><br>" + "Bad G3 notes: " + g3count;
+			} else {
+				badString = "</b><br><p style='color:red;'>" + "Bad G3 notes: " + g3count + "</p>";
+			}
+			
+		} else if (abcPart.getInstrument().ordinal() == LotroInstrument.BASIC_PIBGORN.ordinal()) {
+				int acount = 0;
+				List<NoteEvent> nel = trackInfo.getEvents();
+				for (NoteEvent ne : nel) {
+					if (ne.tiesFrom != null) {
+						continue;
+					}
+					Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id);
+					if (mn != null && (mn.id == Note.A2.id || mn.id == Note.A3.id || mn.id == Note.A4.id)) {
+						acount += 1;
+					}
+				}		
+				if (acount == 0) {
+					badString = "</b><br>" + "Bad A notes: " + acount;
+				} else {
+					badString = "</b><br><p style='color:red;'>" + "Bad A notes: " + acount + "</p>";
+				}
+		} else {
+			badString = "";
+		}
+	}
 
 	private void updateTitleText()
 	{
@@ -357,7 +411,8 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 		String title = trackInfo.getTrackNumber() + ". " + trackInfo.getName();
 		String instr = trackInfo.getInstrumentNames();
-		checkBox.setToolTipText("<html><b>" + title + "</b><br>" + instr + "</html>");
+				
+		checkBox.setToolTipText("<html><b>" + title + "</b><br>" + instr + badString + "</html>");
 
 		int titleWidth = TITLE_WIDTH;
 		if (!trackVolumeBar.isVisible())
@@ -502,7 +557,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			layout.setConstraints(checkBox, newCheckBoxLayout);
 			updateTitleText();
 		}
-
+		
 		noteGraph.setShowingNoteVelocity(trackVolumeBar.isDragging());
 
 		if (trackVolumeBar.isDragging())
