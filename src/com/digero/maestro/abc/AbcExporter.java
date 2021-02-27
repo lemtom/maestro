@@ -669,6 +669,8 @@ public class AbcExporter
 			}
 		}
 
+		Collections.sort(events);
+				
 		// Remove duplicate notes
 		List<NoteEvent> notesOn = new ArrayList<NoteEvent>();
 		neIter = events.iterator();
@@ -729,11 +731,16 @@ public class AbcExporter
 			if (curChord.getStartTick() == ne.getStartTick())
 			{
 				// This note starts at the same time as the rest of the notes in the chord
-				if (!curChord.add(ne))
-				{
-					// Couldn't add the note (too many notes in the chord)
-					removeNote(events, i);
-					i--;
+				
+				if (addTies) {
+					curChord.addAlways(ne);
+				} else {
+					if (!curChord.add(ne))
+					{
+						// Couldn't add the note (too many notes in the chord)
+						removeNote(events, i);
+						i--;
+					}
 				}
 			}
 			else
@@ -741,6 +748,15 @@ public class AbcExporter
 				// Create a new chord
 				Chord nextChord = new Chord(ne);
 
+				if (addTies) {
+					List<NoteEvent> deadnotes = curChord.prune();
+					removeNotes(events, deadnotes);
+					if (deadnotes.size() > 0) {
+						i--;
+						continue;
+					}
+				}
+				
 				if (addTies)
 				{
 					// The curChord has all the notes it will get. But before continuing, 
@@ -821,6 +837,9 @@ public class AbcExporter
 				chords.add(nextChord);
 				curChord = nextChord;
 			}
+		}
+		if (addTies) {
+			curChord.prune();
 		}
 
 		return chords;
@@ -942,6 +961,26 @@ public class AbcExporter
 		for (NoteEvent neTie = ne.tiesTo; neTie != null; neTie = neTie.tiesTo)
 		{
 			events.remove(neTie);
+		}
+	}
+	
+	private void removeNotes(List<NoteEvent> events, List<NoteEvent> notes)
+	{
+		for(NoteEvent ne : notes) {
+
+			// If the note is tied from another (previous) note, break the incoming tie
+			if (ne.tiesFrom != null)
+			{
+				ne.tiesFrom.tiesTo = null;
+				ne.tiesFrom = null;
+			}
+	
+			// Remove the remainder of the notes that this is tied to (if any)
+			for (NoteEvent neTie = ne.tiesTo; neTie != null; neTie = neTie.tiesTo)
+			{
+				events.remove(neTie);
+			}
+			ne.tiesTo = null;
 		}
 	}
 

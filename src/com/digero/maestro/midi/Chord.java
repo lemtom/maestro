@@ -24,6 +24,7 @@ package com.digero.maestro.midi;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.digero.common.abc.AbcConstants;
@@ -38,6 +39,9 @@ public class Chord implements AbcConstants
 	private long endTick;
 	private boolean hasTooManyNotes = false;
 	private List<NoteEvent> notes = new ArrayList<NoteEvent>();
+	private int highest = 0;
+	private int lowest = 200; 
+	private boolean pruned = false;
 
 	public Chord(NoteEvent firstNote)
 	{
@@ -45,6 +49,8 @@ public class Chord implements AbcConstants
 		startTick = firstNote.getStartTick();
 		endTick = firstNote.getEndTick();
 		notes.add(firstNote);
+		highest = firstNote.note.id;
+		lowest = firstNote.note.id;
 	}
 
 	public long getStartTick()
@@ -163,5 +169,120 @@ public class Chord implements AbcConstants
 	public void sort()
 	{
 		Collections.sort(notes);
+	}
+
+	public List<NoteEvent> prune() {
+		// Determine which notes to prune to remain with a max of 6
+		List<NoteEvent> deadNotes = new ArrayList<NoteEvent>();
+		if (size() > MAX_CHORD_NOTES) {
+			// Tied?      Keep these                       tiesFrom
+			// Velocity?  Keep loudest!                    velocity
+			// Pitch?     Keep highest, Keep lowest        note.id
+			// Duration?  All things equal, keep lonbgest  getLengthTicks()
+			List<NoteEvent> newNotes = new ArrayList<NoteEvent>();
+			
+			Comparator<NoteEvent> keepMe = new Comparator<NoteEvent>() {
+
+				@Override
+				public int compare(NoteEvent n1, NoteEvent n2) {
+					
+					List<Integer> removeFirst = new ArrayList<Integer>();
+					
+					removeFirst.add(highest-32);
+					removeFirst.add(highest-24);
+					removeFirst.add(highest-12);
+					removeFirst.add(lowest+32);
+					removeFirst.add(lowest+24);
+					removeFirst.add(lowest+12);					
+					
+					// Keep tied notes, there can max be 6 of them anyway
+					if (n1.tiesFrom != null) {
+						return 1;
+					}
+					if (n2.tiesFrom != null) {
+						return -1;
+					}
+					// return the note if its the highest in the chord
+					if (highest == n1.note.id && n1.note.id != n2.note.id) {
+						return 1;
+					}
+					if (highest == n2.note.id && n1.note.id != n2.note.id) {
+						return -1;
+					}
+					// return the note if its the lowest in the chord
+					if (lowest == n1.note.id && n1.note.id != n2.note.id) {
+						return 1;
+					}					
+					if (lowest == n2.note.id && n1.note.id != n2.note.id) {
+						return -1;
+					}
+					if (n1.velocity != n2.velocity) {
+						// The notes differ in volume, return the loudest
+						return n1.velocity - n2.velocity;
+					}
+					if (n1.note.id == n2.note.id) {
+						// The notes have same pitch and same volume. Return the longest.
+						return (int) (n1.getFullLengthTicks() - n2.getFullLengthTicks());
+					}
+										
+					int index1 = removeFirst.indexOf(n1.note.id);
+					int index2 = removeFirst.indexOf(n2.note.id);
+					
+					if (index1 != index2) {
+						// Discard notes first that has octave spacing from highest or lowest notes
+						return index2 - index1;
+					}
+										
+					if (Math.abs(n1.note.id - n2.note.id) == 12 || Math.abs(n1.note.id - n2.note.id) == 24 || Math.abs(n1.note.id - n2.note.id) == 32) {
+						// If has octave spacing, keep the highest.
+						return n1.note.id - n2.note.id;
+					}
+					
+					// discard the center-most note
+					return Math.abs(n1.note.id - (lowest + (highest-lowest)/2))-Math.abs(n2.note.id - (lowest + (highest-lowest)/2));
+					//1: n1 big -1: n2 big 0:equal
+				}
+			};
+			notes.sort(keepMe);
+			
+			//System.err.print("Prune\n");
+			
+			for (int i = notes.size()-1; i >= 0; i--) {
+				if (newNotes.size() < 6) {
+					newNotes.add(notes.get(i));
+					//System.err.print(" keep  " + notes.get(i).printout()+"\n");
+				} else {
+					deadNotes.add(notes.get(i));
+					//System.err.print(" prune " + notes.get(i).printout()+"\n");
+				}
+			}
+			notes = newNotes;
+			recalcEndTick();
+			pruned = true;
+		}
+		return deadNotes;
+	}
+
+	public boolean addAlways(NoteEvent ne) {
+		if (ne.getLengthTicks() == 0)
+		{
+			hasTooManyNotes = true;
+			return false;
+		}
+		if (pruned) {
+			return false;
+		}
+		notes.add(ne);
+		if (ne.note.id > highest) {
+			highest = ne.note.id;
+		}
+		if (ne.note.id < lowest) {
+			lowest = ne.note.id;
+		}
+		if (ne.getEndTick() < endTick)
+		{
+			endTick = ne.getEndTick();
+		}
+		return true;		
 	}
 }

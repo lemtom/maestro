@@ -85,6 +85,16 @@ public class NoteEvent implements Comparable<NoteEvent>
 	{
 		return endTick - startTick;
 	}
+	
+	public long getFullLengthTicks()
+	{
+		long fullEndTick = endTick;
+		for (NoteEvent neTie = tiesTo; neTie != null; neTie = neTie.tiesTo)
+		{
+			fullEndTick = neTie.endTick;
+		}
+		return fullEndTick - startTick;
+	}
 
 	public long getStartMicros()
 	{
@@ -181,5 +191,9 @@ public class NoteEvent implements Comparable<NoteEvent>
 			return (this.endTick > that.endTick) ? 1 : -1;
 
 		return 0;
+	}
+	
+	public String printout() {
+		return "Note " + note.id + " dura " + getFullLengthTicks() + " |";
 	}
 }
