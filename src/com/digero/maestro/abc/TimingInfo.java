@@ -154,6 +154,7 @@ public class TimingInfo
 
 	public long getBarLengthTicks()
 	{
-		return (((meter.numerator / (double) meter.denominator < 0.75) ? 16 : 8)) * minNoteDivisor * minNoteLengthTicks * meter.numerator / (meter.denominator * defaultDivisor);
+		// for some songs this gives wrong result, but for most it works:
+		return minNoteDivisor * minNoteLengthTicks * meter.numerator / meter.denominator;
 	}
 }
