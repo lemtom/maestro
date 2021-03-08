@@ -384,22 +384,22 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			}
 			
 		} else if (abcPart.getInstrument().ordinal() == LotroInstrument.BASIC_PIBGORN.ordinal()) {
-				int acount = 0;
-				List<NoteEvent> nel = trackInfo.getEvents();
-				for (NoteEvent ne : nel) {
-					if (ne.tiesFrom != null) {
-						continue;
-					}
-					Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id);
-					if (mn != null && (mn.id == Note.A2.id || mn.id == Note.A3.id || mn.id == Note.A4.id)) {
-						acount += 1;
-					}
-				}		
-				if (acount == 0) {
-					badString = "</b><br>" + "Bad A notes: " + acount;
-				} else {
-					badString = "</b><br><p style='color:red;'>" + "Bad A notes: " + acount + "</p>";
+			int acount = 0;
+			List<NoteEvent> nel = trackInfo.getEvents();
+			for (NoteEvent ne : nel) {
+				if (ne.tiesFrom != null) {
+					continue;
 				}
+				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id);
+				if (mn != null && (mn.id == Note.A2.id || mn.id == Note.A3.id || mn.id == Note.A4.id)) {
+					acount += 1;
+				}
+			}		
+			if (acount == 0) {
+				badString = "</b><br>" + "Bad A notes: " + acount;
+			} else {
+				badString = "</b><br><p style='color:red;'>" + "Bad A notes: " + acount + "</p>";
+			}
 		} else {
 			badString = "";
 		}
