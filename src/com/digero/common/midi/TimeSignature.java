@@ -55,6 +55,7 @@ public class TimeSignature implements MidiConstants
 			this.denominator = 1 << data[1];
 			this.metronome = data[2];
 			this.thirtySecondNotes = data[3];
+			//System.err.println("MIDI time signature: "+this.numerator+"/"+this.denominator+" - "+this.thirtySecondNotes+" 32nd notes per "+this.metronome+" MIDI clocks.");
 		}
 	}
 
