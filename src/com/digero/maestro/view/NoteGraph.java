@@ -133,6 +133,10 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 		return noteId;
 	}
 	
+	protected boolean[] getSectionsModified() {
+		return null;
+	}
+	
 	protected boolean audibleNote(NoteEvent ne) {
 		return true;
 	}
@@ -547,7 +551,6 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 
 		if (sequenceInfo != null)
 		{
-			g2.setColor(ColorTable.BAR_LINE.get());
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
 			double lineWidth = Math.abs(1.0 / xform.getScaleX());
@@ -558,10 +561,23 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 			long firstBarTick = (data.microsToTick(clipPosStart) / barLengthTicks) * barLengthTicks;
 			long lastBarTick = (data.microsToTick(clipPosEnd) / barLengthTicks) * barLengthTicks;
 
-			for (long barTick = firstBarTick; barTick <= lastBarTick; barTick += barLengthTicks)
+			boolean[] barArray = getSectionsModified();
+			long barCount = data.microsToTick(clipPosStart) / barLengthTicks-1;
+			long barMicros = clipPosStart;
+			for (long barTick = firstBarTick; barTick <= lastBarTick + barLengthTicks; barTick += barLengthTicks)
 			{
-				long barMicros = data.tickToMicros(barTick);
+				long barTempMicros = data.tickToMicros(barTick);
+				if (barArray != null && barCount < barArray.length && barCount > -1) {
+					if (barArray[(int)barCount]) {
+						rectTmp.setRect(barMicros+lineWidth, MIN_RENDERED - 1, barTempMicros-barMicros-lineWidth, MAX_RENDERED - MIN_RENDERED + 2);
+						g2.setColor(ColorTable.BAR_EDITED.get());
+						g2.fill(rectTmp);
+					}
+				}
+				barCount++;
+				barMicros = barTempMicros;
 				rectTmp.setRect(barMicros, MIN_RENDERED - 1, lineWidth, MAX_RENDERED - MIN_RENDERED + 2);
+				g2.setColor(ColorTable.BAR_LINE.get());
 				g2.fill(rectTmp);
 			}
 		}

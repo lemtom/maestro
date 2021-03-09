@@ -806,6 +806,10 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			}
 			return true;
 		}
+		
+		@Override protected boolean[] getSectionsModified() {
+			return abcPart.sectionsModified.get(trackInfo.getTrackNumber());
+		}
 
 		@Override protected boolean isNotePlayable(int noteId)
 		{

@@ -271,9 +271,17 @@ public class SectionEditor {
 							}
 						}
 						if (lastEnd == 0) {
-							SectionDialog.this.abcPart.sections.set(SectionDialog.this.track, null);							
+							SectionDialog.this.abcPart.sections.set(SectionDialog.this.track, null);
+							SectionDialog.this.abcPart.sectionsModified.set(SectionDialog.this.track, null);
 						} else {
 							SectionDialog.this.abcPart.sections.set(SectionDialog.this.track, tm);
+							boolean[] booleanArray = new boolean[lastEnd+1];
+							for(int i = 0; i<lastEnd+1;i++) {
+								Entry<Integer, PartSection> entry = tm.floorEntry(i+1);
+								booleanArray[i] = entry != null && entry.getValue().startBar <= i+1 && entry.getValue().endBar >= i+1;
+							}
+							
+							SectionDialog.this.abcPart.sectionsModified.set(SectionDialog.this.track, booleanArray);
 						}
 						SectionDialog.this.abcPart.sectionEdited(SectionDialog.this.track);
 						//SectionDialog.this.noteGraph.repaint();

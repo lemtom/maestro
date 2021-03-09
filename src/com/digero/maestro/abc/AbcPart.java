@@ -58,6 +58,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	private Preferences drumPrefs = Preferences.userNodeForPackage(AbcPart.class).node("drums");
 	
 	public ArrayList<TreeMap<Integer, PartSection>> sections;
+	public ArrayList<boolean[]> sectionsModified;
 
 	public AbcPart(AbcSong abcSong)
 	{
@@ -74,6 +75,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		this.sections = new ArrayList<TreeMap<Integer, PartSection>>();
 		for (int i = 0; i < t; i++) {
 			this.sections.add(null);
+		}
+		this.sectionsModified = new ArrayList<boolean[]>();
+		for (int j = 0; j < t; j++) {
+			this.sectionsModified.add(null);
 		}
 	}
 
@@ -212,6 +217,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				}
 				
 				TreeMap<Integer, PartSection> tree = sections.get(t);
+				int lastEnd = 0;
 				for (Element sectionEle : XmlUtil.selectElements(trackEle, "section")) {
 					PartSection ps = new PartSection();
 					ps.startBar = SaveUtil.parseValue(sectionEle, "startBar", 0);
@@ -222,10 +228,22 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					if (ps.startBar > 0 && ps.endBar > ps.startBar-1 && (ps.volumeStep != 0 || ps.octaveStep != 0)) {
 						if (tree == null) {
 							tree = new TreeMap<Integer, PartSection>();
-							sections.add(t, tree);
+							sections.set(t, tree);
+						}
+						if (ps.endBar > lastEnd) {
+							lastEnd = ps.endBar;
 						}
 						tree.put(ps.startBar, ps);
 					}
+				}
+				boolean[] booleanArray = new boolean[lastEnd+1];
+				if (tree != null) {
+					for(int i = 0; i<lastEnd+1; i++) {
+						Entry<Integer, PartSection> entry = tree.floorEntry(i+1);
+						booleanArray[i] = entry != null && entry.getValue().startBar <= i+1 && entry.getValue().endBar >= i+1;
+					}
+					
+					sectionsModified.set(t, booleanArray);
 				}
 
 				// Now set the track info

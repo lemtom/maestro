@@ -62,7 +62,9 @@ public enum ColorTable
 	ABC_BORDER_UNSELECTED_OFF(GRAPH_BACKGROUND_OFF),
 
 	CONTROLS_TEXT(Color.WHITE),
-	CONTROLS_BACKGROUND(new Color(0x222222));
+	CONTROLS_BACKGROUND(new Color(0x222222)),
+	
+	BAR_EDITED(new Color(0,32,0));
 
 	private Color value;
 
