@@ -255,7 +255,7 @@ public class Chord implements AbcConstants
 					}
 										
 					if (Math.abs(n1.note.id - n2.note.id) == 12 || Math.abs(n1.note.id - n2.note.id) == 24 || Math.abs(n1.note.id - n2.note.id) == 32) {
-						// If has octave spacing, keep the highest.
+						// If 2 notes have octave spacing, keep the highest pitched.
 						return n1.note.id - n2.note.id;
 					}
 					
