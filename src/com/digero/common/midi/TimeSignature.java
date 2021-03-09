@@ -8,7 +8,7 @@ import javax.sound.midi.MetaMessage;
  */
 public class TimeSignature implements MidiConstants
 {
-	public static final int MAX_DENOMINATOR = 8;
+	public static final int MAX_DENOMINATOR = 32;
 	public static final TimeSignature FOUR_FOUR = new TimeSignature(4, 4);
 
 	public final int numerator;
@@ -55,7 +55,11 @@ public class TimeSignature implements MidiConstants
 			this.denominator = 1 << data[1];
 			this.metronome = data[2];
 			this.thirtySecondNotes = data[3];
-			//System.err.println("MIDI time signature: "+this.numerator+"/"+this.denominator+" - "+this.thirtySecondNotes+" 32nd notes per "+this.metronome+" MIDI clocks.");
+			
+			/*
+			int unsignedByte3 = data[3] & 0xFF;// convert the byte to unsigned since javas byte is signed but MIDIs is unsigned.
+			System.err.println("MIDI time signature: "+this.numerator+"/"+this.denominator+" - "+unsignedByte3+" 32nd notes per "+this.metronome+" MIDI clocks.");
+			*/
 		}
 	}
 
