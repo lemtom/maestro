@@ -1,5 +1,6 @@
 package com.digero.maestro.view;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -28,7 +29,7 @@ public class SectionEditor {
 		class SectionDialog extends JDialog {
 			
 			private final double[] LAYOUT_COLS = new double[] { 0.20,0.20,0.20,0.20,0.20 };
-			private final double[] LAYOUT_ROWS = new double[] { TableLayoutConstants.PREFERRED,20,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.FILL,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED};
+			private final double[] LAYOUT_ROWS = new double[] { TableLayoutConstants.PREFERRED,20,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.FILL,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED};
 			private AbcPart abcPart;
 			private int track;
 			private boolean active = false;
@@ -124,7 +125,7 @@ public class SectionEditor {
 			        }
 		        }
 		        
-		        this.setSize(350,300);
+		        this.setSize(350,350);
 		        JPanel panel=new JPanel();
 		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
 		        panel.add(new JLabel(abcPart.getTitle()+": "+abcPart.getInstrument().toString()+" on track "+track), "0, 0, 4, 0, C, C");
@@ -282,6 +283,15 @@ public class SectionEditor {
 		        panel.add(okButton, "4,9,f,f");
 		        panel.add(new JLabel("Enabled sections must be chronological and no overlap."), "0, 11, 4, 11, c, c");
 		        panel.add(new JLabel("Bar numbers are inclusive and use original meter."), "0, 12, 4, 12, c, c");
+		        JLabel warn1 = new JLabel("Warning: If you have 'Remove initial silence' enabled,");
+		        JLabel warn2 = new JLabel("then the bar counter in lower right wont match up unless");
+		        JLabel warn3 = new JLabel("you preview mode is in 'Original'.");
+		        warn1.setForeground(new Color(1f,0f,0f));
+		        warn2.setForeground(new Color(1f,0f,0f));
+		        warn3.setForeground(new Color(1f,0f,0f));
+		        panel.add(warn1, "0, 13, 4, 13, c, c");
+		        panel.add(warn2, "0, 14, 4, 14, c, c");
+		        panel.add(warn3, "0, 15, 4, 15, c, c");
 		        this.getContentPane().add(panel);
 		        this.setVisible(true);
 		    }
