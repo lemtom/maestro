@@ -481,7 +481,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			{
 				if (part != this.abcPart)
 					trackEnabledOtherPart = true;
-				else {
+				else if (sectionButton != null) {
 					if (this.abcPart.sections.get(trackNumber) == null) {
 						sectionButton.setForeground(new Color(0.5f, 0.5f, 0.5f));
 					} else {
