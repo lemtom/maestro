@@ -29,6 +29,7 @@ import java.util.List;
 
 import com.digero.common.abc.AbcConstants;
 import com.digero.common.abc.Dynamics;
+import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.Note;
 
@@ -171,11 +172,11 @@ public class Chord implements AbcConstants
 		Collections.sort(notes);
 	}
 
-	public List<NoteEvent> prune() {
+	public List<NoteEvent> prune(final boolean sustained) {
 		// Determine which notes to prune to remain with a max of 6
 		List<NoteEvent> deadNotes = new ArrayList<NoteEvent>();
 		if (size() > MAX_CHORD_NOTES) {
-			// Tied?      Keep these                       tiesFrom
+			// Tied?      Keep these, unless non-sustained instr. and durationis over 1.2s  tiesFrom
 			// Velocity?  Keep loudest!                    velocity
 			// Pitch?     Keep highest, Keep lowest        note.id
 			// Duration?  All things equal, keep lonbgest  getLengthTicks()
@@ -197,9 +198,29 @@ public class Chord implements AbcConstants
 					
 					// Keep tied notes, there can max be 6 of them anyway
 					if (n1.tiesFrom != null) {
+						if (!sustained) {
+							long dura = 0;
+							for (NoteEvent neTie = n1.tiesFrom; neTie != null; neTie = neTie.tiesFrom)
+							{
+								dura += neTie.getLengthMicros();
+							}
+							if (dura > AbcConstants.NON_SUSTAINED_NOTE_HOLD_SECONDS) {
+								return -1;
+							}
+						}						
 						return 1;
 					}
 					if (n2.tiesFrom != null) {
+						if (!sustained) {
+							long dura = 0;
+							for (NoteEvent neTie = n2.tiesFrom; neTie != null; neTie = neTie.tiesFrom)
+							{
+								dura += neTie.getLengthMicros();
+							}
+							if (dura > AbcConstants.NON_SUSTAINED_NOTE_HOLD_SECONDS) {
+								return 1;
+							}
+						}
 						return -1;
 					}
 					// return the note if its the highest in the chord

@@ -749,7 +749,7 @@ public class AbcExporter
 				Chord nextChord = new Chord(ne);
 
 				if (addTies) {
-					List<NoteEvent> deadnotes = curChord.prune();
+					List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
 					removeNotes(events, deadnotes);
 					if (deadnotes.size() > 0) {
 						i--;
@@ -839,7 +839,7 @@ public class AbcExporter
 			}
 		}
 		if (addTies) {
-			curChord.prune();
+			curChord.prune(part.getInstrument().sustainable);
 		}
 
 		return chords;
