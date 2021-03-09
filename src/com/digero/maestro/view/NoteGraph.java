@@ -132,6 +132,10 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 	{
 		return noteId;
 	}
+	
+	protected boolean audibleNote(NoteEvent ne) {
+		return true;
+	}
 
 	protected boolean isNotePlayable(int noteId)
 	{
@@ -615,7 +619,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 				if (ne.getEndMicros() < clipPosStart || ne.getStartMicros() > clipPosEnd)
 					continue;
 
-				if (isNoteVisible(ne))
+				if (isNoteVisible(ne) && audibleNote(ne))
 				{
 					int noteId = transposeNote(ne.note.id, ne.getStartMicros());
 

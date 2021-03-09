@@ -128,7 +128,8 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		        	SaveUtil.appendChildTextElement(sectionEle, "startBar", String.valueOf(ps.startBar));
 		        	SaveUtil.appendChildTextElement(sectionEle, "endBar", String.valueOf(ps.endBar));
 		        	SaveUtil.appendChildTextElement(sectionEle, "octaveStep", String.valueOf(ps.octaveStep));
-		        	SaveUtil.appendChildTextElement(sectionEle, "volumeStep", String.valueOf(ps.volumeStep));
+		        	//SaveUtil.appendChildTextElement(sectionEle, "volumeStep", String.valueOf(ps.volumeStep));
+		        	SaveUtil.appendChildTextElement(sectionEle, "silence", String.valueOf(ps.silence));
 		        }
 	        }
 			
@@ -215,8 +216,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					PartSection ps = new PartSection();
 					ps.startBar = SaveUtil.parseValue(sectionEle, "startBar", 0);
 					ps.endBar = SaveUtil.parseValue(sectionEle, "endBar", 0);
-					ps.volumeStep = SaveUtil.parseValue(sectionEle, "volumeStep", 0);
+					//ps.volumeStep = SaveUtil.parseValue(sectionEle, "volumeStep", 0);
 					ps.octaveStep = SaveUtil.parseValue(sectionEle, "octaveStep", 0);
+					ps.silence = SaveUtil.parseValue(sectionEle, "silence", false);
 					if (ps.startBar > 0 && ps.endBar > ps.startBar-1 && (ps.volumeStep != 0 || ps.octaveStep != 0)) {
 						if (tree == null) {
 							tree = new TreeMap<Integer, PartSection>();
@@ -339,6 +341,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 		else
 		{
+			if (!getAudible(track, microStart)) {
+				return null;
+			}
 			noteId += getTranspose(track, microStart);
 			while (noteId < instrument.lowestPlayable.id)
 				noteId += 12;
@@ -554,6 +559,39 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}		
 		
 		return secTrans;
+	}
+	
+	public boolean getAudible(int track, long microStart) {
+		SequenceInfo se = getSequenceInfo();
+		
+		if (se != null && sections.get(track) != null) {
+			SequenceDataCache data = se.getDataCache();
+			long barLengthTicks = data.getBarLengthTicks();
+
+			long startTick = barLengthTicks;
+			long endTick = data.getSongLengthTicks();
+
+			int bar = -1;
+			int curBar = 1;
+			for (long barTick = startTick; barTick <= endTick; barTick += barLengthTicks) {
+				long barMicros = data.tickToMicros(barTick);
+				if (microStart < barMicros) {
+					bar = curBar;
+					break;
+				}
+				curBar += 1;
+			}
+			if (bar != -1) {
+				Entry<Integer, PartSection> entry = sections.get(track).floorEntry(bar);
+				if (entry != null) {
+					if (bar <= entry.getValue().endBar) {
+						return !entry.getValue().silence;
+					}
+				}
+			}
+		}
+		
+		return true;
 	}
 
 	public boolean isTrackEnabled(int track)
