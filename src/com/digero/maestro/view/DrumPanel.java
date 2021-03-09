@@ -145,7 +145,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 						if (abcPart.isTrackEnabled(trackNumber))
 						{
 							soloAbcTrack = abcPart.getPreviewSequenceTrackNumber();
-							Note soloDrumNote = abcPart.mapNote(trackNumber, drumId);
+							Note soloDrumNote = abcPart.mapNote(trackNumber, drumId, 0);
 							soloAbcDrumId = (soloDrumNote == null) ? -1 : soloDrumNote.id;
 						}
 
@@ -280,7 +280,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 
 				if (abcPreviewMode)
 				{
-					Note drumNote = part.mapNote(trackNumber, drumId);
+					Note drumNote = part.mapNote(trackNumber, drumId, 0);
 					if (drumNote != null && abcSequencer.isTrackActive(part.getPreviewSequenceTrackNumber())
 							&& abcSequencer.isNoteActive(drumNote.id))
 					{
@@ -364,7 +364,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 			}
 		}
 
-		@Override protected int transposeNote(int noteId)
+		@Override protected int transposeNote(int noteId, long microStart)
 		{
 			return 0;
 		}

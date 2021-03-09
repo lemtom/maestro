@@ -128,7 +128,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 		sequencer.removeChangeListener(this);
 	}
 
-	protected int transposeNote(int noteId)
+	protected int transposeNote(int noteId, long microStart)
 	{
 		return noteId;
 	}
@@ -617,7 +617,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 
 				if (isNoteVisible(ne))
 				{
-					int noteId = transposeNote(ne.note.id);
+					int noteId = transposeNote(ne.note.id, ne.getStartMicros());
 
 					if (showNotesOn && songPos >= ne.getStartMicros() && minSongPos <= ne.getEndMicros()
 							&& sequencer.isNoteActive(ne.note.id))
@@ -646,7 +646,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 				{
 					NoteEvent ne = noteEvents.get(i);
 					g2.setColor(getBadNoteColor(ne));
-					int noteId = transposeNote(ne.note.id);
+					int noteId = transposeNote(ne.note.id, ne.getStartMicros());
 					fillNote(g2, ne, noteId, minLength, height);
 				}
 			}
@@ -661,7 +661,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 				for (int i = notesOn.nextSetBit(0); i >= 0; i = notesOn.nextSetBit(i + 1))
 				{
 					NoteEvent ne = noteEvents.get(i);
-					int noteId = transposeNote(ne.note.id);
+					int noteId = transposeNote(ne.note.id, ne.getStartMicros());
 
 					fillNote(g2, noteEvents.get(i), noteId, minLength, height, noteOnOutlineWidthX, noteOnExtraHeightY
 							+ noteOnOutlineWidthY);
@@ -671,7 +671,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 				for (int i = notesOn.nextSetBit(0); i >= 0; i = notesOn.nextSetBit(i + 1))
 				{
 					NoteEvent ne = noteEvents.get(i);
-					int noteId = transposeNote(ne.note.id);
+					int noteId = transposeNote(ne.note.id, ne.getStartMicros());
 
 					fillNote(g2, noteEvents.get(i), noteId, minLength, height, 0, noteOnExtraHeightY);
 				}

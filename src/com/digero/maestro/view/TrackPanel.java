@@ -7,8 +7,11 @@ import info.clearthought.layout.TableLayoutConstraints;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,8 +26,10 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -74,6 +79,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	static final int NOTE_COLUMN = 3;
 
 	static final int HGAP = 4;
+	static final int SECTIONBUTTON_WIDTH = 22;
 	static final int GUTTER_WIDTH = 8;
 	static final int TITLE_WIDTH = 150;
 	static final int CONTROL_WIDTH = 64;
@@ -89,6 +95,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	private JCheckBox checkBox;
 	private TableLayoutConstraints checkBoxLayout_ControlsHidden;
 	private TableLayoutConstraints checkBoxLayout_ControlsVisible;
+	private JButton sectionButton;
 	private JSpinner transposeSpinner;
 	private TrackVolumeBar trackVolumeBar;
 	private JPanel drumSavePanel;
@@ -218,6 +225,20 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 					updateTitleText();
 				}
 			});
+			
+			sectionButton = new JButton();
+			sectionButton.setPreferredSize(new Dimension(SECTIONBUTTON_WIDTH, SECTIONBUTTON_WIDTH));
+			sectionButton.setMargin( new Insets(5, 5, 5, 5) );
+			sectionButton.setText("s");
+			sectionButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int track = trackInfo.getTrackNumber();
+					SectionEditor.show((JFrame)sectionButton.getTopLevelAncestor(), noteGraph, abcPart, track);// super hack! :(
+				}
+				
+			});
 		}
 
 		trackVolumeBar = new TrackVolumeBar(trackInfo.getMinVelocity(), trackInfo.getMaxVelocity());
@@ -237,6 +258,8 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 		JPanel controlPanel = new JPanel(new BorderLayout(0, 4));
 		controlPanel.setOpaque(false);
+		if (sectionButton != null)
+			controlPanel.add(sectionButton, BorderLayout.WEST);
 		if (transposeSpinner != null)
 			controlPanel.add(transposeSpinner, BorderLayout.CENTER);
 		controlPanel.add(trackVolumeBar, BorderLayout.SOUTH);
@@ -372,7 +395,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				if (ne.tiesFrom != null) {
 					continue;
 				}
-				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id);
+				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id, ne.getStartMicros());
 				if (mn != null && mn.id == Note.G3.id) {
 					g3count += 1;
 				}
@@ -390,7 +413,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				if (ne.tiesFrom != null) {
 					continue;
 				}
-				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id);
+				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id, ne.getStartMicros());
 				if (mn != null && (mn.id == Note.A2.id || mn.id == Note.A3.id || mn.id == Note.A4.id)) {
 					acount += 1;
 				}
@@ -458,6 +481,13 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			{
 				if (part != this.abcPart)
 					trackEnabledOtherPart = true;
+				else {
+					if (this.abcPart.sections.get(trackNumber) == null) {
+						sectionButton.setForeground(new Color(0.5f, 0.5f, 0.5f));
+					} else {
+						sectionButton.setForeground(new Color(0.2f, 0.8f, 0.2f));
+					}
+				}
 
 				if (abcPreviewMode)
 				{
@@ -547,6 +577,8 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		trackVolumeBar.setVisible(trackEnabled);
 		if (transposeSpinner != null)
 			transposeSpinner.setVisible(trackEnabled && !abcPart.isDrumPart());
+		if (sectionButton != null)
+			sectionButton.setVisible(trackEnabled && !abcPart.isDrumPart());
 
 		TableLayout layout = (TableLayout) getLayout();
 		TableLayoutConstraints newCheckBoxLayout = trackEnabled ? checkBoxLayout_ControlsVisible
@@ -757,11 +789,11 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			}
 		}
 
-		@Override protected int transposeNote(int noteId)
+		@Override protected int transposeNote(int noteId, long microStart)
 		{
 			if (!trackInfo.isDrumTrack())
 			{
-				noteId += abcPart.getTranspose(trackInfo.getTrackNumber());
+				noteId += abcPart.getTranspose(trackInfo.getTrackNumber(), microStart);
 			}
 			return noteId;
 		}

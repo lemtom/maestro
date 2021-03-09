@@ -1,9 +1,13 @@
 package com.digero.maestro.abc;
 
+import java.awt.RenderingHints;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map.Entry;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.prefs.Preferences;
 import java.util.regex.MatchResult;
 
@@ -25,9 +29,11 @@ import com.digero.common.util.ListenerList;
 import com.digero.common.util.Pair;
 import com.digero.common.util.ParseException;
 import com.digero.common.util.Version;
+import com.digero.common.view.ColorTable;
 import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
 import com.digero.maestro.abc.AbcSongEvent.AbcSongProperty;
 import com.digero.maestro.midi.NoteEvent;
+import com.digero.maestro.midi.SequenceDataCache;
 import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.midi.TrackInfo;
 import com.digero.maestro.util.SaveUtil;
@@ -50,6 +56,8 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	private int previewSequenceTrackNumber = -1;
 	private final ListenerList<AbcPartEvent> listeners = new ListenerList<AbcPartEvent>();
 	private Preferences drumPrefs = Preferences.userNodeForPackage(AbcPart.class).node("drums");
+	
+	public ArrayList<TreeMap<Integer, PartSection>> sections;
 
 	public AbcPart(AbcSong abcSong)
 	{
@@ -63,6 +71,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		this.trackEnabled = new boolean[t];
 		this.trackVolumeAdjust = new int[t];
 		this.drumNoteMap = new DrumNoteMap[t];
+		this.sections = new ArrayList<TreeMap<Integer, PartSection>>();
+		for (int i = 0; i < t; i++) {
+			this.sections.add(null);
+		}
 	}
 
 	public AbcPart(AbcSong abcSong, Element loadFrom)
@@ -108,6 +120,18 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			if (trackVolumeAdjust[t] != 0)
 				SaveUtil.appendChildTextElement(trackEle, "volumeAdjust", String.valueOf(trackVolumeAdjust[t]));
 
+			TreeMap<Integer, PartSection> tree = sections.get(t);
+	        if (tree != null) {
+		        for(Entry<Integer, PartSection> entry : tree.entrySet()) {
+		        	PartSection ps = entry.getValue();
+		        	Element sectionEle = (Element) trackEle.appendChild(doc.createElement("section"));
+		        	SaveUtil.appendChildTextElement(sectionEle, "startBar", String.valueOf(ps.startBar));
+		        	SaveUtil.appendChildTextElement(sectionEle, "endBar", String.valueOf(ps.endBar));
+		        	SaveUtil.appendChildTextElement(sectionEle, "octaveStep", String.valueOf(ps.octaveStep));
+		        	SaveUtil.appendChildTextElement(sectionEle, "volumeStep", String.valueOf(ps.volumeStep));
+		        }
+	        }
+			
 			if (instrument.isPercussion)
 			{
 				BitSet[] enabledSetByTrack = isCowbellPart() ? cowbellsEnabled : drumsEnabled;
@@ -173,6 +197,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			instrument = SaveUtil.parseValue(ele, "instrument", instrument);
 			for (Element trackEle : XmlUtil.selectElements(ele, "track"))
 			{
+				
 				// Try to find the specified track in the midi sequence by name, in case it moved
 				int t = findTrackNumberByName(SaveUtil.parseValue(trackEle, "@name", ""));
 				// Fall back to the track ID if that didn't work
@@ -183,6 +208,22 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				{
 					throw SaveUtil.invalidValueException(trackEle, "Could not find track number " + t
 							+ " in original MIDI file");
+				}
+				
+				TreeMap<Integer, PartSection> tree = sections.get(t);
+				for (Element sectionEle : XmlUtil.selectElements(trackEle, "section")) {
+					PartSection ps = new PartSection();
+					ps.startBar = SaveUtil.parseValue(sectionEle, "startBar", 0);
+					ps.endBar = SaveUtil.parseValue(sectionEle, "endBar", 0);
+					ps.volumeStep = SaveUtil.parseValue(sectionEle, "volumeStep", 0);
+					ps.octaveStep = SaveUtil.parseValue(sectionEle, "octaveStep", 0);
+					if (ps.startBar > 0 && ps.endBar > ps.startBar-1 && (ps.volumeStep != 0 || ps.octaveStep != 0)) {
+						if (tree == null) {
+							tree = new TreeMap<Integer, PartSection>();
+							sections.add(t, tree);
+						}
+						tree.put(ps.startBar, ps);
+					}
 				}
 
 				// Now set the track info
@@ -279,7 +320,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	/**
 	 * Maps from a MIDI note to an ABC note. If no mapping is available, returns <code>null</code>.
 	 */
-	public Note mapNote(int track, int noteId)
+	public Note mapNote(int track, int noteId, long microStart)
 	{
 		if (isDrumPart())
 		{
@@ -298,7 +339,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 		else
 		{
-			noteId += getTranspose(track);
+			noteId += getTranspose(track, microStart);
 			while (noteId < instrument.lowestPlayable.id)
 				noteId += 12;
 			while (noteId > instrument.highestPlayable.id)
@@ -317,7 +358,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			{
 				for (NoteEvent ne : getTrackEvents(t))
 				{
-					if (mapNote(t, ne.note.id) != null)
+					if (mapNote(t, ne.note.id, ne.getStartMicros()) != null)
 					{
 						if (ne.getStartTick() < startTick)
 							startTick = ne.getStartTick();
@@ -350,7 +391,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				while (iter.hasPrevious())
 				{
 					NoteEvent ne = iter.previous();
-					if (mapNote(t, ne.note.id) != null)
+					if (mapNote(t, ne.note.id, ne.getStartMicros()) != null)
 					{
 						long noteEndTick;
 						if (!accountForSustain || instrument.isSustainable(ne.note.id))
@@ -473,11 +514,46 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 	}
 
-	public int getTranspose(int track)
+	public int getTranspose(int track, long microStart)
 	{
 		if (isDrumPart())
 			return 0;
-		return abcSong.getTranspose() + trackTranspose[track] - getInstrument().octaveDelta * 12;
+		return abcSong.getTranspose() + trackTranspose[track] - getInstrument().octaveDelta * 12 + getSectionTranspose(microStart, track);
+	}
+	
+	public int getSectionTranspose(long microStart, int track) {
+		int secTrans = 0;
+		SequenceInfo se = getSequenceInfo();
+		
+		if (se != null && sections.get(track) != null) {
+			SequenceDataCache data = se.getDataCache();
+			long barLengthTicks = data.getBarLengthTicks();
+
+			long startTick = barLengthTicks;
+			long endTick = data.getSongLengthTicks();
+
+			int bar = -1;
+			int curBar = 1;
+			for (long barTick = startTick; barTick <= endTick; barTick += barLengthTicks) {
+				long barMicros = data.tickToMicros(barTick);
+				if (microStart < barMicros) {
+					bar = curBar;
+					break;
+				}
+				curBar += 1;
+			}
+			if (bar != -1) {
+				Entry<Integer, PartSection> entry = sections.get(track).floorEntry(bar);
+				if (entry != null) {
+					if (bar <= entry.getValue().endBar) {
+						secTrans = entry.getValue().octaveStep*12;
+						//System.err.println(secTrans);
+					}
+				}
+			}
+		}		
+		
+		return secTrans;
 	}
 
 	public boolean isTrackEnabled(int track)
@@ -689,5 +765,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			enabledSet[track].set(drumId, enabled);
 			fireChangeEvent(AbcPartProperty.DRUM_ENABLED);
 		}
+	}
+
+	public void sectionEdited(int track) {
+		fireChangeEvent(AbcPartProperty.TRACK_SECTION_EDIT, track);
 	}
 }
