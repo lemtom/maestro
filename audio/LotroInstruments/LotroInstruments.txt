@@ -1,59 +1,5 @@
 [Samples]
 
-    SampleName=bagpipe_37
-        SampleRate=44100
-        Key=37
-        FineTune=0
-        Type=1
-
-    SampleName=bagpipe_41
-        SampleRate=44100
-        Key=41
-        FineTune=0
-        Type=1
-
-    SampleName=bagpipe_45
-        SampleRate=44100
-        Key=45
-        FineTune=0
-        Type=1
-
-    SampleName=bagpipe_49
-        SampleRate=44100
-        Key=49
-        FineTune=0
-        Type=1
-
-    SampleName=bagpipe_53
-        SampleRate=44100
-        Key=53
-        FineTune=0
-        Type=1
-
-    SampleName=bagpipe_57
-        SampleRate=44100
-        Key=57
-        FineTune=0
-        Type=1
-
-    SampleName=bagpipe_61
-        SampleRate=44100
-        Key=61
-        FineTune=0
-        Type=1
-
-    SampleName=bagpipe_65
-        SampleRate=44100
-        Key=65
-        FineTune=0
-        Type=1
-
-    SampleName=bagpipe_69
-        SampleRate=44100
-        Key=69
-        FineTune=0
-        Type=1
-
     SampleName=bardic_fiddle_36
         SampleRate=44100
         Key=36
@@ -165,6 +111,60 @@
     SampleName=bardic_fiddle_72
         SampleRate=44100
         Key=72
+        FineTune=0
+        Type=1
+
+    SampleName=bagpipe_37
+        SampleRate=44100
+        Key=37
+        FineTune=0
+        Type=1
+
+    SampleName=bagpipe_41
+        SampleRate=44100
+        Key=41
+        FineTune=0
+        Type=1
+
+    SampleName=bagpipe_45
+        SampleRate=44100
+        Key=45
+        FineTune=0
+        Type=1
+
+    SampleName=bagpipe_49
+        SampleRate=44100
+        Key=49
+        FineTune=0
+        Type=1
+
+    SampleName=bagpipe_53
+        SampleRate=44100
+        Key=53
+        FineTune=0
+        Type=1
+
+    SampleName=bagpipe_57
+        SampleRate=44100
+        Key=57
+        FineTune=0
+        Type=1
+
+    SampleName=bagpipe_61
+        SampleRate=44100
+        Key=61
+        FineTune=0
+        Type=1
+
+    SampleName=bagpipe_65
+        SampleRate=44100
+        Key=65
+        FineTune=0
+        Type=1
+
+    SampleName=bagpipe_69
+        SampleRate=44100
+        Key=69
         FineTune=0
         Type=1
 
@@ -282,459 +282,15 @@
         FineTune=0
         Type=1
 
-    SampleName=basic_fiddle_36
-        SampleRate=44100
-        Key=36
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_38
-        SampleRate=44100
-        Key=38
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_40
-        SampleRate=44100
-        Key=40
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_42
-        SampleRate=44100
-        Key=42
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_44
-        SampleRate=44100
-        Key=44
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_46
-        SampleRate=44100
-        Key=46
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_48
-        SampleRate=44100
-        Key=48
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_50
-        SampleRate=44100
-        Key=50
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_52
-        SampleRate=44100
-        Key=52
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_54
-        SampleRate=44100
-        Key=54
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_56
-        SampleRate=44100
-        Key=56
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_58
-        SampleRate=44100
-        Key=58
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_60
-        SampleRate=44100
-        Key=60
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_62
-        SampleRate=44100
-        Key=62
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_64
-        SampleRate=44100
-        Key=64
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_66
-        SampleRate=44100
-        Key=66
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_68
-        SampleRate=44100
-        Key=68
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_70
-        SampleRate=44100
-        Key=70
-        FineTune=0
-        Type=1
-
-    SampleName=basic_fiddle_72
-        SampleRate=44100
-        Key=72
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_36
-        SampleRate=44100
-        Key=36
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_38
-        SampleRate=44100
-        Key=38
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_40
-        SampleRate=44100
-        Key=40
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_42
-        SampleRate=44100
-        Key=42
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_44
-        SampleRate=44100
-        Key=44
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_46
-        SampleRate=44100
-        Key=46
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_48
-        SampleRate=44100
-        Key=48
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_50
-        SampleRate=44100
-        Key=50
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_52
-        SampleRate=44100
-        Key=52
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_54
-        SampleRate=44100
-        Key=54
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_56
-        SampleRate=44100
-        Key=56
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_58
-        SampleRate=44100
-        Key=58
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_60
-        SampleRate=44100
-        Key=60
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_62
-        SampleRate=44100
-        Key=62
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_64
-        SampleRate=44100
-        Key=64
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_66
-        SampleRate=44100
-        Key=66
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_68
-        SampleRate=44100
-        Key=68
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_70
-        SampleRate=44100
-        Key=70
-        FineTune=0
-        Type=1
-
-    SampleName=basic_lute_72
-        SampleRate=44100
-        Key=72
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_36
-        SampleRate=44100
-        Key=36
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_37
-        SampleRate=44100
-        Key=37
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_38
-        SampleRate=44100
-        Key=38
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_39
-        SampleRate=44100
-        Key=39
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_40
-        SampleRate=44100
-        Key=40
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_41
-        SampleRate=44100
-        Key=41
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_42
-        SampleRate=44100
-        Key=42
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_43
-        SampleRate=44100
-        Key=43
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_44
-        SampleRate=44100
-        Key=44
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_45
-        SampleRate=44100
-        Key=45
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_46
-        SampleRate=44100
-        Key=46
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_47
-        SampleRate=44100
-        Key=47
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_48
-        SampleRate=44100
-        Key=48
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_49
-        SampleRate=44100
-        Key=49
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_50
-        SampleRate=44100
-        Key=50
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_51
-        SampleRate=44100
-        Key=51
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_52
-        SampleRate=44100
-        Key=52
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_53
-        SampleRate=44100
-        Key=53
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_54
-        SampleRate=44100
-        Key=54
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_55
-        SampleRate=44100
-        Key=55
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_56
-        SampleRate=44100
-        Key=56
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_57
-        SampleRate=44100
-        Key=57
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_58
-        SampleRate=44100
-        Key=58
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_59
-        SampleRate=44100
-        Key=59
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_60
-        SampleRate=44100
-        Key=60
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_61
-        SampleRate=44100
-        Key=61
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_62
-        SampleRate=44100
-        Key=62
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_63
-        SampleRate=44100
-        Key=63
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_64
-        SampleRate=44100
-        Key=64
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_65
-        SampleRate=44100
-        Key=65
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_66
-        SampleRate=44100
-        Key=66
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_67
-        SampleRate=44100
-        Key=67
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_68
-        SampleRate=44100
-        Key=68
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_69
-        SampleRate=44100
-        Key=69
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_70
-        SampleRate=44100
-        Key=70
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_71
-        SampleRate=44100
-        Key=71
-        FineTune=0
-        Type=1
-
-    SampleName=brusque_bassoon_72
-        SampleRate=44100
-        Key=72
-        FineTune=0
-        Type=1
-
     SampleName=clarinet_36
         SampleRate=44100
         Key=36
+        FineTune=0
+        Type=1
+
+    SampleName=clarinet_37
+        SampleRate=44100
+        Key=37
         FineTune=0
         Type=1
 
@@ -744,9 +300,21 @@
         FineTune=0
         Type=1
 
+    SampleName=clarinet_39
+        SampleRate=44100
+        Key=39
+        FineTune=0
+        Type=1
+
     SampleName=clarinet_40
         SampleRate=44100
         Key=40
+        FineTune=0
+        Type=1
+
+    SampleName=clarinet_41
+        SampleRate=44100
+        Key=41
         FineTune=0
         Type=1
 
@@ -756,9 +324,21 @@
         FineTune=0
         Type=1
 
+    SampleName=clarinet_43
+        SampleRate=44100
+        Key=43
+        FineTune=0
+        Type=1
+
     SampleName=clarinet_44
         SampleRate=44100
         Key=44
+        FineTune=0
+        Type=1
+
+    SampleName=clarinet_45
+        SampleRate=44100
+        Key=45
         FineTune=0
         Type=1
 
@@ -768,9 +348,21 @@
         FineTune=0
         Type=1
 
+    SampleName=clarinet_47
+        SampleRate=44100
+        Key=47
+        FineTune=0
+        Type=1
+
     SampleName=clarinet_48
         SampleRate=44100
         Key=48
+        FineTune=0
+        Type=1
+
+    SampleName=clarinet_49
+        SampleRate=44100
+        Key=49
         FineTune=0
         Type=1
 
@@ -780,9 +372,21 @@
         FineTune=0
         Type=1
 
+    SampleName=clarinet_51
+        SampleRate=44100
+        Key=51
+        FineTune=0
+        Type=1
+
     SampleName=clarinet_52
         SampleRate=44100
         Key=52
+        FineTune=0
+        Type=1
+
+    SampleName=clarinet_53
+        SampleRate=44100
+        Key=53
         FineTune=0
         Type=1
 
@@ -792,9 +396,21 @@
         FineTune=0
         Type=1
 
+    SampleName=clarinet_55
+        SampleRate=44100
+        Key=55
+        FineTune=0
+        Type=1
+
     SampleName=clarinet_56
         SampleRate=44100
         Key=56
+        FineTune=0
+        Type=1
+
+    SampleName=clarinet_57
+        SampleRate=44100
+        Key=57
         FineTune=0
         Type=1
 
@@ -804,9 +420,21 @@
         FineTune=0
         Type=1
 
+    SampleName=clarinet_59
+        SampleRate=44100
+        Key=59
+        FineTune=0
+        Type=1
+
     SampleName=clarinet_60
         SampleRate=44100
         Key=60
+        FineTune=0
+        Type=1
+
+    SampleName=clarinet_61
+        SampleRate=44100
+        Key=61
         FineTune=0
         Type=1
 
@@ -816,9 +444,21 @@
         FineTune=0
         Type=1
 
+    SampleName=clarinet_63
+        SampleRate=44100
+        Key=63
+        FineTune=0
+        Type=1
+
     SampleName=clarinet_64
         SampleRate=44100
         Key=64
+        FineTune=0
+        Type=1
+
+    SampleName=clarinet_65
+        SampleRate=44100
+        Key=65
         FineTune=0
         Type=1
 
@@ -828,15 +468,33 @@
         FineTune=0
         Type=1
 
+    SampleName=clarinet_67
+        SampleRate=44100
+        Key=67
+        FineTune=0
+        Type=1
+
     SampleName=clarinet_68
         SampleRate=44100
         Key=68
         FineTune=0
         Type=1
 
+    SampleName=clarinet_69
+        SampleRate=44100
+        Key=69
+        FineTune=0
+        Type=1
+
     SampleName=clarinet_70
         SampleRate=44100
         Key=70
+        FineTune=0
+        Type=1
+
+    SampleName=clarinet_71
+        SampleRate=44100
+        Key=71
         FineTune=0
         Type=1
 
@@ -1069,6 +727,120 @@
         Type=1
 
     SampleName=drums_72
+        SampleRate=44100
+        Key=72
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_36
+        SampleRate=44100
+        Key=36
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_38
+        SampleRate=44100
+        Key=38
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_40
+        SampleRate=44100
+        Key=40
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_42
+        SampleRate=44100
+        Key=42
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_44
+        SampleRate=44100
+        Key=44
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_46
+        SampleRate=44100
+        Key=46
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_48
+        SampleRate=44100
+        Key=48
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_50
+        SampleRate=44100
+        Key=50
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_52
+        SampleRate=44100
+        Key=52
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_54
+        SampleRate=44100
+        Key=54
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_56
+        SampleRate=44100
+        Key=56
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_58
+        SampleRate=44100
+        Key=58
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_60
+        SampleRate=44100
+        Key=60
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_62
+        SampleRate=44100
+        Key=62
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_64
+        SampleRate=44100
+        Key=64
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_66
+        SampleRate=44100
+        Key=66
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_68
+        SampleRate=44100
+        Key=68
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_70
+        SampleRate=44100
+        Key=70
+        FineTune=0
+        Type=1
+
+    SampleName=basic_fiddle_72
         SampleRate=44100
         Key=72
         FineTune=0
@@ -1519,6 +1291,678 @@
         Type=1
 
     SampleName=horn_72
+        SampleRate=44100
+        Key=72
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_36
+        SampleRate=44100
+        Key=36
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_38
+        SampleRate=44100
+        Key=38
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_40
+        SampleRate=44100
+        Key=40
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_42
+        SampleRate=44100
+        Key=42
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_44
+        SampleRate=44100
+        Key=44
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_46
+        SampleRate=44100
+        Key=46
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_48
+        SampleRate=44100
+        Key=48
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_50
+        SampleRate=44100
+        Key=50
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_52
+        SampleRate=44100
+        Key=52
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_54
+        SampleRate=44100
+        Key=54
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_56
+        SampleRate=44100
+        Key=56
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_58
+        SampleRate=44100
+        Key=58
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_60
+        SampleRate=44100
+        Key=60
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_62
+        SampleRate=44100
+        Key=62
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_64
+        SampleRate=44100
+        Key=64
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_66
+        SampleRate=44100
+        Key=66
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_68
+        SampleRate=44100
+        Key=68
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_70
+        SampleRate=44100
+        Key=70
+        FineTune=0
+        Type=1
+
+    SampleName=basic_lute_72
+        SampleRate=44100
+        Key=72
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_36
+        SampleRate=44100
+        Key=36
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_37
+        SampleRate=44100
+        Key=37
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_38
+        SampleRate=44100
+        Key=38
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_39
+        SampleRate=44100
+        Key=39
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_40
+        SampleRate=44100
+        Key=40
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_41
+        SampleRate=44100
+        Key=41
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_42
+        SampleRate=44100
+        Key=42
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_43
+        SampleRate=44100
+        Key=43
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_44
+        SampleRate=44100
+        Key=44
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_45
+        SampleRate=44100
+        Key=45
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_46
+        SampleRate=44100
+        Key=46
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_47
+        SampleRate=44100
+        Key=47
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_48
+        SampleRate=44100
+        Key=48
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_49
+        SampleRate=44100
+        Key=49
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_50
+        SampleRate=44100
+        Key=50
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_51
+        SampleRate=44100
+        Key=51
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_52
+        SampleRate=44100
+        Key=52
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_53
+        SampleRate=44100
+        Key=53
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_54
+        SampleRate=44100
+        Key=54
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_55
+        SampleRate=44100
+        Key=55
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_56
+        SampleRate=44100
+        Key=56
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_57
+        SampleRate=44100
+        Key=57
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_58
+        SampleRate=44100
+        Key=58
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_59
+        SampleRate=44100
+        Key=59
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_60
+        SampleRate=44100
+        Key=60
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_61
+        SampleRate=44100
+        Key=61
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_62
+        SampleRate=44100
+        Key=62
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_63
+        SampleRate=44100
+        Key=63
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_64
+        SampleRate=44100
+        Key=64
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_65
+        SampleRate=44100
+        Key=65
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_66
+        SampleRate=44100
+        Key=66
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_67
+        SampleRate=44100
+        Key=67
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_68
+        SampleRate=44100
+        Key=68
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_69
+        SampleRate=44100
+        Key=69
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_70
+        SampleRate=44100
+        Key=70
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_71
+        SampleRate=44100
+        Key=71
+        FineTune=0
+        Type=1
+
+    SampleName=pibgorn_72
+        SampleRate=44100
+        Key=72
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_36
+        SampleRate=44100
+        Key=36
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_38
+        SampleRate=44100
+        Key=38
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_40
+        SampleRate=44100
+        Key=40
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_42
+        SampleRate=44100
+        Key=42
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_44
+        SampleRate=44100
+        Key=44
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_46
+        SampleRate=44100
+        Key=46
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_48
+        SampleRate=44100
+        Key=48
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_50
+        SampleRate=44100
+        Key=50
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_52
+        SampleRate=44100
+        Key=52
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_54
+        SampleRate=44100
+        Key=54
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_56
+        SampleRate=44100
+        Key=56
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_58
+        SampleRate=44100
+        Key=58
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_60
+        SampleRate=44100
+        Key=60
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_62
+        SampleRate=44100
+        Key=62
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_64
+        SampleRate=44100
+        Key=64
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_66
+        SampleRate=44100
+        Key=66
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_68
+        SampleRate=44100
+        Key=68
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_70
+        SampleRate=44100
+        Key=70
+        FineTune=0
+        Type=1
+
+    SampleName=theorbo_72
+        SampleRate=44100
+        Key=72
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_36
+        SampleRate=44100
+        Key=36
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_37
+        SampleRate=44100
+        Key=37
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_38
+        SampleRate=44100
+        Key=38
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_39
+        SampleRate=44100
+        Key=39
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_40
+        SampleRate=44100
+        Key=40
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_41
+        SampleRate=44100
+        Key=41
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_42
+        SampleRate=44100
+        Key=42
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_43
+        SampleRate=44100
+        Key=43
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_44
+        SampleRate=44100
+        Key=44
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_45
+        SampleRate=44100
+        Key=45
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_46
+        SampleRate=44100
+        Key=46
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_47
+        SampleRate=44100
+        Key=47
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_48
+        SampleRate=44100
+        Key=48
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_49
+        SampleRate=44100
+        Key=49
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_50
+        SampleRate=44100
+        Key=50
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_51
+        SampleRate=44100
+        Key=51
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_52
+        SampleRate=44100
+        Key=52
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_53
+        SampleRate=44100
+        Key=53
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_54
+        SampleRate=44100
+        Key=54
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_55
+        SampleRate=44100
+        Key=55
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_56
+        SampleRate=44100
+        Key=56
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_57
+        SampleRate=44100
+        Key=57
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_58
+        SampleRate=44100
+        Key=58
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_59
+        SampleRate=44100
+        Key=59
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_60
+        SampleRate=44100
+        Key=60
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_61
+        SampleRate=44100
+        Key=61
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_62
+        SampleRate=44100
+        Key=62
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_63
+        SampleRate=44100
+        Key=63
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_64
+        SampleRate=44100
+        Key=64
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_65
+        SampleRate=44100
+        Key=65
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_66
+        SampleRate=44100
+        Key=66
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_67
+        SampleRate=44100
+        Key=67
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_68
+        SampleRate=44100
+        Key=68
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_69
+        SampleRate=44100
+        Key=69
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_70
+        SampleRate=44100
+        Key=70
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_71
+        SampleRate=44100
+        Key=71
+        FineTune=0
+        Type=1
+
+    SampleName=brusque_bassoon_72
         SampleRate=44100
         Key=72
         FineTune=0
@@ -2202,42 +2646,6 @@
         FineTune=0
         Type=1
 
-    SampleName=pibgorn_38
-        SampleRate=44100
-        Key=38
-        FineTune=0
-        Type=1
-
-    SampleName=pibgorn_44
-        SampleRate=44100
-        Key=44
-        FineTune=0
-        Type=1
-
-    SampleName=pibgorn_50
-        SampleRate=44100
-        Key=50
-        FineTune=0
-        Type=1
-
-    SampleName=pibgorn_56
-        SampleRate=44100
-        Key=56
-        FineTune=0
-        Type=1
-
-    SampleName=pibgorn_62
-        SampleRate=44100
-        Key=62
-        FineTune=0
-        Type=1
-
-    SampleName=pibgorn_68
-        SampleRate=44100
-        Key=68
-        FineTune=0
-        Type=1
-
     SampleName=sprightly_fiddle_36
         SampleRate=44100
         Key=36
@@ -2391,120 +2799,6 @@
     SampleName=student_fiddle_42
         SampleRate=16000
         Key=42
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_36
-        SampleRate=44100
-        Key=36
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_38
-        SampleRate=44100
-        Key=38
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_40
-        SampleRate=44100
-        Key=40
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_42
-        SampleRate=44100
-        Key=42
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_44
-        SampleRate=44100
-        Key=44
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_46
-        SampleRate=44100
-        Key=46
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_48
-        SampleRate=44100
-        Key=48
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_50
-        SampleRate=44100
-        Key=50
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_52
-        SampleRate=44100
-        Key=52
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_54
-        SampleRate=44100
-        Key=54
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_56
-        SampleRate=44100
-        Key=56
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_58
-        SampleRate=44100
-        Key=58
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_60
-        SampleRate=44100
-        Key=60
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_62
-        SampleRate=44100
-        Key=62
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_64
-        SampleRate=44100
-        Key=64
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_66
-        SampleRate=44100
-        Key=66
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_68
-        SampleRate=44100
-        Key=68
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_70
-        SampleRate=44100
-        Key=70
-        FineTune=0
-        Type=1
-
-    SampleName=theorbo_72
-        SampleRate=44100
-        Key=72
         FineTune=0
         Type=1
 
@@ -2733,78 +3027,6 @@
 
 [Instruments]
 
-    InstrumentName=Bagpipe Drones
-
-        Sample=bagpipe_37
-            Z_LowKey=36
-            Z_HighKey=39
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-            Z_sampleModes=1
-
-        Sample=bagpipe_41
-            Z_LowKey=40
-            Z_HighKey=43
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-            Z_sampleModes=1
-
-        Sample=bagpipe_45
-            Z_LowKey=44
-            Z_HighKey=47
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-            Z_sampleModes=1
-
-
-    InstrumentName=Bagpipe
-
-        Sample=bagpipe_49
-            Z_LowKey=48
-            Z_HighKey=51
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=bagpipe_53
-            Z_LowKey=52
-            Z_HighKey=55
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=bagpipe_57
-            Z_LowKey=56
-            Z_HighKey=59
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=bagpipe_61
-            Z_LowKey=60
-            Z_HighKey=63
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=bagpipe_65
-            Z_LowKey=64
-            Z_HighKey=67
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=bagpipe_69
-            Z_LowKey=68
-            Z_HighKey=72
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-
     InstrumentName=Bardic Fiddle
 
         Sample=bardic_fiddle_36
@@ -2812,133 +3034,205 @@
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_38
             Z_LowKey=38
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_40
             Z_LowKey=40
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_42
             Z_LowKey=42
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_44
             Z_LowKey=44
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_46
             Z_LowKey=46
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_48
             Z_LowKey=48
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_50
             Z_LowKey=50
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_52
             Z_LowKey=52
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_54
             Z_LowKey=54
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_56
             Z_LowKey=56
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_58
             Z_LowKey=58
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_60
             Z_LowKey=60
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_62
             Z_LowKey=62
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_64
             Z_LowKey=64
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_66
             Z_LowKey=66
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_68
             Z_LowKey=68
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_70
             Z_LowKey=70
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=bardic_fiddle_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
+
+
+    InstrumentName=Basic Bagpipe Drones
+
+        Sample=bagpipe_37
+            Z_LowKey=36
+            Z_HighKey=39
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+            Z_sampleModes=1
+
+        Sample=bagpipe_41
+            Z_LowKey=40
+            Z_HighKey=43
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+            Z_sampleModes=1
+
+        Sample=bagpipe_45
+            Z_LowKey=44
+            Z_HighKey=47
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+            Z_sampleModes=1
+
+
+    InstrumentName=Basic Bagpipe
+
+        Sample=bagpipe_49
+            Z_LowKey=48
+            Z_HighKey=51
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=bagpipe_53
+            Z_LowKey=52
+            Z_HighKey=55
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=bagpipe_57
+            Z_LowKey=56
+            Z_HighKey=59
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=bagpipe_61
+            Z_LowKey=60
+            Z_HighKey=63
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=bagpipe_65
+            Z_LowKey=64
+            Z_HighKey=67
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=bagpipe_69
+            Z_LowKey=68
+            Z_HighKey=72
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
 
 
     InstrumentName=Basic Bassoon
@@ -2948,806 +3242,398 @@
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_38
             Z_LowKey=38
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_40
             Z_LowKey=40
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_42
             Z_LowKey=42
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_44
             Z_LowKey=44
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_46
             Z_LowKey=46
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_48
             Z_LowKey=48
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_50
             Z_LowKey=50
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_52
             Z_LowKey=52
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_54
             Z_LowKey=54
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_56
             Z_LowKey=56
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_58
             Z_LowKey=58
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_60
             Z_LowKey=60
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_62
             Z_LowKey=62
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_64
             Z_LowKey=64
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_66
             Z_LowKey=66
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_68
             Z_LowKey=68
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_70
             Z_LowKey=70
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=basic_bassoon_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
-    InstrumentName=Basic Fiddle
+    InstrumentName=Basic Clarinet
 
-        Sample=basic_fiddle_36
-            Z_LowKey=36
-            Z_HighKey=37
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_38
-            Z_LowKey=38
-            Z_HighKey=39
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_40
-            Z_LowKey=40
-            Z_HighKey=41
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_42
-            Z_LowKey=42
-            Z_HighKey=43
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_44
-            Z_LowKey=44
-            Z_HighKey=45
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_46
-            Z_LowKey=46
-            Z_HighKey=47
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_48
-            Z_LowKey=48
-            Z_HighKey=49
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_50
-            Z_LowKey=50
-            Z_HighKey=51
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_52
-            Z_LowKey=52
-            Z_HighKey=53
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_54
-            Z_LowKey=54
-            Z_HighKey=55
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_56
-            Z_LowKey=56
-            Z_HighKey=57
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_58
-            Z_LowKey=58
-            Z_HighKey=59
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_60
-            Z_LowKey=60
-            Z_HighKey=61
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_62
-            Z_LowKey=62
-            Z_HighKey=63
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_64
-            Z_LowKey=64
-            Z_HighKey=65
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_66
-            Z_LowKey=66
-            Z_HighKey=67
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_68
-            Z_LowKey=68
-            Z_HighKey=69
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_70
-            Z_LowKey=70
-            Z_HighKey=71
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_fiddle_72
-            Z_LowKey=72
-            Z_HighKey=72
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-
-    InstrumentName=Basic Lute
-
-        Sample=basic_lute_36
-            Z_LowKey=36
-            Z_HighKey=37
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_38
-            Z_LowKey=38
-            Z_HighKey=39
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_40
-            Z_LowKey=40
-            Z_HighKey=41
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_42
-            Z_LowKey=42
-            Z_HighKey=43
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_44
-            Z_LowKey=44
-            Z_HighKey=45
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_46
-            Z_LowKey=46
-            Z_HighKey=47
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_48
-            Z_LowKey=48
-            Z_HighKey=49
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_50
-            Z_LowKey=50
-            Z_HighKey=51
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_52
-            Z_LowKey=52
-            Z_HighKey=53
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_54
-            Z_LowKey=54
-            Z_HighKey=55
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_56
-            Z_LowKey=56
-            Z_HighKey=57
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_58
-            Z_LowKey=58
-            Z_HighKey=59
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_60
-            Z_LowKey=60
-            Z_HighKey=61
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_62
-            Z_LowKey=62
-            Z_HighKey=63
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_64
-            Z_LowKey=64
-            Z_HighKey=65
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_66
-            Z_LowKey=66
-            Z_HighKey=67
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_68
-            Z_LowKey=68
-            Z_HighKey=69
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_70
-            Z_LowKey=70
-            Z_HighKey=71
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=basic_lute_72
-            Z_LowKey=72
-            Z_HighKey=72
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-
-    InstrumentName=Brusque Bassoon
-
-        Sample=brusque_bassoon_36
+        Sample=clarinet_36
             Z_LowKey=36
             Z_HighKey=36
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_37
+        Sample=clarinet_37
             Z_LowKey=37
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_38
+        Sample=clarinet_38
             Z_LowKey=38
             Z_HighKey=38
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_39
+        Sample=clarinet_39
             Z_LowKey=39
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_40
+        Sample=clarinet_40
             Z_LowKey=40
             Z_HighKey=40
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_41
+        Sample=clarinet_41
             Z_LowKey=41
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_42
+        Sample=clarinet_42
             Z_LowKey=42
             Z_HighKey=42
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_43
+        Sample=clarinet_43
             Z_LowKey=43
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_44
+        Sample=clarinet_44
             Z_LowKey=44
             Z_HighKey=44
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_45
+        Sample=clarinet_45
             Z_LowKey=45
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_46
+        Sample=clarinet_46
             Z_LowKey=46
             Z_HighKey=46
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_47
+        Sample=clarinet_47
             Z_LowKey=47
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_48
+        Sample=clarinet_48
             Z_LowKey=48
             Z_HighKey=48
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_49
+        Sample=clarinet_49
             Z_LowKey=49
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_50
+        Sample=clarinet_50
             Z_LowKey=50
             Z_HighKey=50
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_51
+        Sample=clarinet_51
             Z_LowKey=51
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_52
+        Sample=clarinet_52
             Z_LowKey=52
             Z_HighKey=52
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_53
+        Sample=clarinet_53
             Z_LowKey=53
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_54
+        Sample=clarinet_54
             Z_LowKey=54
             Z_HighKey=54
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_55
+        Sample=clarinet_55
             Z_LowKey=55
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_56
+        Sample=clarinet_56
             Z_LowKey=56
             Z_HighKey=56
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_57
+        Sample=clarinet_57
             Z_LowKey=57
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_58
+        Sample=clarinet_58
             Z_LowKey=58
             Z_HighKey=58
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_59
+        Sample=clarinet_59
             Z_LowKey=59
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_60
+        Sample=clarinet_60
             Z_LowKey=60
             Z_HighKey=60
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_61
+        Sample=clarinet_61
             Z_LowKey=61
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_62
+        Sample=clarinet_62
             Z_LowKey=62
             Z_HighKey=62
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_63
+        Sample=clarinet_63
             Z_LowKey=63
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_64
+        Sample=clarinet_64
             Z_LowKey=64
             Z_HighKey=64
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_65
+        Sample=clarinet_65
             Z_LowKey=65
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_66
+        Sample=clarinet_66
             Z_LowKey=66
             Z_HighKey=66
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_67
+        Sample=clarinet_67
             Z_LowKey=67
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_68
+        Sample=clarinet_68
             Z_LowKey=68
             Z_HighKey=68
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_69
+        Sample=clarinet_69
             Z_LowKey=69
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_70
+        Sample=clarinet_70
             Z_LowKey=70
             Z_HighKey=70
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
-        Sample=brusque_bassoon_71
+        Sample=clarinet_71
             Z_LowKey=71
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=brusque_bassoon_72
-            Z_LowKey=72
-            Z_HighKey=72
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-
-    InstrumentName=Clarinet
-
-        Sample=clarinet_36
-            Z_LowKey=36
-            Z_HighKey=37
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_38
-            Z_LowKey=38
-            Z_HighKey=39
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_40
-            Z_LowKey=40
-            Z_HighKey=41
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_42
-            Z_LowKey=42
-            Z_HighKey=43
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_44
-            Z_LowKey=44
-            Z_HighKey=45
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_46
-            Z_LowKey=46
-            Z_HighKey=47
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_48
-            Z_LowKey=48
-            Z_HighKey=49
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_50
-            Z_LowKey=50
-            Z_HighKey=51
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_52
-            Z_LowKey=52
-            Z_HighKey=53
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_54
-            Z_LowKey=54
-            Z_HighKey=55
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_56
-            Z_LowKey=56
-            Z_HighKey=57
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_58
-            Z_LowKey=58
-            Z_HighKey=59
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_60
-            Z_LowKey=60
-            Z_HighKey=61
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_62
-            Z_LowKey=62
-            Z_HighKey=63
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_64
-            Z_LowKey=64
-            Z_HighKey=65
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_66
-            Z_LowKey=66
-            Z_HighKey=67
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_68
-            Z_LowKey=68
-            Z_HighKey=69
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=clarinet_70
-            Z_LowKey=70
-            Z_HighKey=71
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=clarinet_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
-    InstrumentName=Cowbell
+    InstrumentName=Basic Cowbell
 
         Sample=cowbell
             Z_LowKey=36
@@ -4044,800 +3930,1732 @@
             Z_overridingRootKey=72
 
 
-    InstrumentName=Drums
+    InstrumentName=Basic Drum
 
         Sample=drums_36
             Z_LowKey=36
             Z_HighKey=36
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_37
             Z_LowKey=37
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_38
             Z_LowKey=38
             Z_HighKey=38
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_39
             Z_LowKey=39
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_40
             Z_LowKey=40
             Z_HighKey=40
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_41
             Z_LowKey=41
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_42
             Z_LowKey=42
             Z_HighKey=42
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_43
             Z_LowKey=43
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_44
             Z_LowKey=44
             Z_HighKey=44
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_45
             Z_LowKey=45
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_46
             Z_LowKey=46
             Z_HighKey=46
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_47
             Z_LowKey=47
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_48
             Z_LowKey=48
             Z_HighKey=48
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_49
             Z_LowKey=49
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_50
             Z_LowKey=50
             Z_HighKey=50
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_51
             Z_LowKey=51
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_52
             Z_LowKey=52
             Z_HighKey=52
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_53
             Z_LowKey=53
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_54
             Z_LowKey=54
             Z_HighKey=54
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_55
             Z_LowKey=55
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_56
             Z_LowKey=56
             Z_HighKey=56
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_57
             Z_LowKey=57
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_58
             Z_LowKey=58
             Z_HighKey=58
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_59
             Z_LowKey=59
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_60
             Z_LowKey=60
             Z_HighKey=60
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_61
             Z_LowKey=61
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_62
             Z_LowKey=62
             Z_HighKey=62
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_63
             Z_LowKey=63
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_64
             Z_LowKey=64
             Z_HighKey=64
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_65
             Z_LowKey=65
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_66
             Z_LowKey=66
             Z_HighKey=66
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_67
             Z_LowKey=67
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_68
             Z_LowKey=68
             Z_HighKey=68
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_69
             Z_LowKey=69
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_70
             Z_LowKey=70
             Z_HighKey=70
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_71
             Z_LowKey=71
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=drums_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
-    InstrumentName=Flute
+    InstrumentName=Basic Fiddle
+
+        Sample=basic_fiddle_36
+            Z_LowKey=36
+            Z_HighKey=37
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_38
+            Z_LowKey=38
+            Z_HighKey=39
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_40
+            Z_LowKey=40
+            Z_HighKey=41
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_42
+            Z_LowKey=42
+            Z_HighKey=43
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_44
+            Z_LowKey=44
+            Z_HighKey=45
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_46
+            Z_LowKey=46
+            Z_HighKey=47
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_48
+            Z_LowKey=48
+            Z_HighKey=49
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_50
+            Z_LowKey=50
+            Z_HighKey=51
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_52
+            Z_LowKey=52
+            Z_HighKey=53
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_54
+            Z_LowKey=54
+            Z_HighKey=55
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_56
+            Z_LowKey=56
+            Z_HighKey=57
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_58
+            Z_LowKey=58
+            Z_HighKey=59
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_60
+            Z_LowKey=60
+            Z_HighKey=61
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_62
+            Z_LowKey=62
+            Z_HighKey=63
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_64
+            Z_LowKey=64
+            Z_HighKey=65
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_66
+            Z_LowKey=66
+            Z_HighKey=67
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_68
+            Z_LowKey=68
+            Z_HighKey=69
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_70
+            Z_LowKey=70
+            Z_HighKey=71
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_fiddle_72
+            Z_LowKey=72
+            Z_HighKey=72
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+
+    InstrumentName=Basic Flute
 
         Sample=flute_36
             Z_LowKey=36
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_38
             Z_LowKey=38
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_40
             Z_LowKey=40
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_42
             Z_LowKey=42
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_44
             Z_LowKey=44
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_46
             Z_LowKey=46
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_48
             Z_LowKey=48
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_50
             Z_LowKey=50
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_52
             Z_LowKey=52
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_54
             Z_LowKey=54
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_56
             Z_LowKey=56
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_58
             Z_LowKey=58
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_60
             Z_LowKey=60
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_62
             Z_LowKey=62
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_64
             Z_LowKey=64
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_66
             Z_LowKey=66
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_68
             Z_LowKey=68
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_70
             Z_LowKey=70
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=flute_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
-    InstrumentName=Harp
+    InstrumentName=Basic Harp
 
         Sample=harp_36
             Z_LowKey=36
             Z_HighKey=36
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_37
             Z_LowKey=37
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_38
             Z_LowKey=38
             Z_HighKey=38
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_39
             Z_LowKey=39
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_40
             Z_LowKey=40
             Z_HighKey=40
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_41
             Z_LowKey=41
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_42
             Z_LowKey=42
             Z_HighKey=42
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_43
             Z_LowKey=43
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_44
             Z_LowKey=44
             Z_HighKey=44
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_45
             Z_LowKey=45
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_46
             Z_LowKey=46
             Z_HighKey=46
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_47
             Z_LowKey=47
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_48
             Z_LowKey=48
             Z_HighKey=48
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_49
             Z_LowKey=49
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_50
             Z_LowKey=50
             Z_HighKey=50
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_51
             Z_LowKey=51
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_52
             Z_LowKey=52
             Z_HighKey=52
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_53
             Z_LowKey=53
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_54
             Z_LowKey=54
             Z_HighKey=54
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_55
             Z_LowKey=55
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_56
             Z_LowKey=56
             Z_HighKey=56
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_57
             Z_LowKey=57
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_58
             Z_LowKey=58
             Z_HighKey=58
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_59
             Z_LowKey=59
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_60
             Z_LowKey=60
             Z_HighKey=60
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_61
             Z_LowKey=61
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_62
             Z_LowKey=62
             Z_HighKey=62
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_63
             Z_LowKey=63
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_64
             Z_LowKey=64
             Z_HighKey=64
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_65
             Z_LowKey=65
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_66
             Z_LowKey=66
             Z_HighKey=66
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_67
             Z_LowKey=67
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_68
             Z_LowKey=68
             Z_HighKey=68
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_69
             Z_LowKey=69
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_70
             Z_LowKey=70
             Z_HighKey=70
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_71
             Z_LowKey=71
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=harp_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
-    InstrumentName=Horn
+    InstrumentName=Basic Horn
 
         Sample=horn_36
             Z_LowKey=36
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_38
             Z_LowKey=38
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_40
             Z_LowKey=40
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_42
             Z_LowKey=42
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_44
             Z_LowKey=44
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_46
             Z_LowKey=46
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_48
             Z_LowKey=48
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_50
             Z_LowKey=50
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_52
             Z_LowKey=52
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_54
             Z_LowKey=54
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_56
             Z_LowKey=56
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_58
             Z_LowKey=58
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_60
             Z_LowKey=60
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_62
             Z_LowKey=62
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_64
             Z_LowKey=64
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_66
             Z_LowKey=66
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_68
             Z_LowKey=68
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_70
             Z_LowKey=70
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=horn_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
+
+
+    InstrumentName=Basic Lute
+
+        Sample=basic_lute_36
+            Z_LowKey=36
+            Z_HighKey=37
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_38
+            Z_LowKey=38
+            Z_HighKey=39
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_40
+            Z_LowKey=40
+            Z_HighKey=41
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_42
+            Z_LowKey=42
+            Z_HighKey=43
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_44
+            Z_LowKey=44
+            Z_HighKey=45
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_46
+            Z_LowKey=46
+            Z_HighKey=47
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_48
+            Z_LowKey=48
+            Z_HighKey=49
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_50
+            Z_LowKey=50
+            Z_HighKey=51
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_52
+            Z_LowKey=52
+            Z_HighKey=53
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_54
+            Z_LowKey=54
+            Z_HighKey=55
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_56
+            Z_LowKey=56
+            Z_HighKey=57
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_58
+            Z_LowKey=58
+            Z_HighKey=59
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_60
+            Z_LowKey=60
+            Z_HighKey=61
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_62
+            Z_LowKey=62
+            Z_HighKey=63
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_64
+            Z_LowKey=64
+            Z_HighKey=65
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_66
+            Z_LowKey=66
+            Z_HighKey=67
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_68
+            Z_LowKey=68
+            Z_HighKey=69
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_70
+            Z_LowKey=70
+            Z_HighKey=71
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=basic_lute_72
+            Z_LowKey=72
+            Z_HighKey=72
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+
+    InstrumentName=Basic Pibgorn
+
+        Sample=pibgorn_36
+            Z_LowKey=36
+            Z_HighKey=36
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_37
+            Z_LowKey=37
+            Z_HighKey=37
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_38
+            Z_LowKey=38
+            Z_HighKey=38
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_39
+            Z_LowKey=39
+            Z_HighKey=39
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_40
+            Z_LowKey=40
+            Z_HighKey=40
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_41
+            Z_LowKey=41
+            Z_HighKey=41
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_42
+            Z_LowKey=42
+            Z_HighKey=42
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_43
+            Z_LowKey=43
+            Z_HighKey=43
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_44
+            Z_LowKey=44
+            Z_HighKey=44
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_45
+            Z_LowKey=45
+            Z_HighKey=45
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_46
+            Z_LowKey=46
+            Z_HighKey=46
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_47
+            Z_LowKey=47
+            Z_HighKey=47
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_48
+            Z_LowKey=48
+            Z_HighKey=48
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_49
+            Z_LowKey=49
+            Z_HighKey=49
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_50
+            Z_LowKey=50
+            Z_HighKey=50
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_51
+            Z_LowKey=51
+            Z_HighKey=51
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_52
+            Z_LowKey=52
+            Z_HighKey=52
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_53
+            Z_LowKey=53
+            Z_HighKey=53
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_54
+            Z_LowKey=54
+            Z_HighKey=54
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_55
+            Z_LowKey=55
+            Z_HighKey=55
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_56
+            Z_LowKey=56
+            Z_HighKey=56
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_57
+            Z_LowKey=57
+            Z_HighKey=57
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_58
+            Z_LowKey=58
+            Z_HighKey=58
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_59
+            Z_LowKey=59
+            Z_HighKey=59
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_60
+            Z_LowKey=60
+            Z_HighKey=60
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_61
+            Z_LowKey=61
+            Z_HighKey=61
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_62
+            Z_LowKey=62
+            Z_HighKey=62
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_63
+            Z_LowKey=63
+            Z_HighKey=63
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_64
+            Z_LowKey=64
+            Z_HighKey=64
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_65
+            Z_LowKey=65
+            Z_HighKey=65
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_66
+            Z_LowKey=66
+            Z_HighKey=66
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_67
+            Z_LowKey=67
+            Z_HighKey=67
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_68
+            Z_LowKey=68
+            Z_HighKey=68
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_69
+            Z_LowKey=69
+            Z_HighKey=69
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_70
+            Z_LowKey=70
+            Z_HighKey=70
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_71
+            Z_LowKey=71
+            Z_HighKey=71
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=pibgorn_72
+            Z_LowKey=72
+            Z_HighKey=72
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+
+    InstrumentName=Basic Theorbo
+
+        Sample=theorbo_36
+            Z_LowKey=36
+            Z_HighKey=37
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_38
+            Z_LowKey=38
+            Z_HighKey=39
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_40
+            Z_LowKey=40
+            Z_HighKey=41
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_42
+            Z_LowKey=42
+            Z_HighKey=43
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_44
+            Z_LowKey=44
+            Z_HighKey=45
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_46
+            Z_LowKey=46
+            Z_HighKey=47
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_48
+            Z_LowKey=48
+            Z_HighKey=49
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_50
+            Z_LowKey=50
+            Z_HighKey=51
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_52
+            Z_LowKey=52
+            Z_HighKey=53
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_54
+            Z_LowKey=54
+            Z_HighKey=55
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_56
+            Z_LowKey=56
+            Z_HighKey=57
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_58
+            Z_LowKey=58
+            Z_HighKey=59
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_60
+            Z_LowKey=60
+            Z_HighKey=61
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_62
+            Z_LowKey=62
+            Z_HighKey=63
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_64
+            Z_LowKey=64
+            Z_HighKey=65
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_66
+            Z_LowKey=66
+            Z_HighKey=67
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_68
+            Z_LowKey=68
+            Z_HighKey=69
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_70
+            Z_LowKey=70
+            Z_HighKey=71
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=theorbo_72
+            Z_LowKey=72
+            Z_HighKey=72
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+
+    InstrumentName=Brusque Bassoon
+
+        Sample=brusque_bassoon_36
+            Z_LowKey=36
+            Z_HighKey=36
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_37
+            Z_LowKey=37
+            Z_HighKey=37
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_38
+            Z_LowKey=38
+            Z_HighKey=38
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_39
+            Z_LowKey=39
+            Z_HighKey=39
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_40
+            Z_LowKey=40
+            Z_HighKey=40
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_41
+            Z_LowKey=41
+            Z_HighKey=41
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_42
+            Z_LowKey=42
+            Z_HighKey=42
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_43
+            Z_LowKey=43
+            Z_HighKey=43
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_44
+            Z_LowKey=44
+            Z_HighKey=44
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_45
+            Z_LowKey=45
+            Z_HighKey=45
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_46
+            Z_LowKey=46
+            Z_HighKey=46
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_47
+            Z_LowKey=47
+            Z_HighKey=47
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_48
+            Z_LowKey=48
+            Z_HighKey=48
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_49
+            Z_LowKey=49
+            Z_HighKey=49
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_50
+            Z_LowKey=50
+            Z_HighKey=50
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_51
+            Z_LowKey=51
+            Z_HighKey=51
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_52
+            Z_LowKey=52
+            Z_HighKey=52
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_53
+            Z_LowKey=53
+            Z_HighKey=53
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_54
+            Z_LowKey=54
+            Z_HighKey=54
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_55
+            Z_LowKey=55
+            Z_HighKey=55
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_56
+            Z_LowKey=56
+            Z_HighKey=56
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_57
+            Z_LowKey=57
+            Z_HighKey=57
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_58
+            Z_LowKey=58
+            Z_HighKey=58
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_59
+            Z_LowKey=59
+            Z_HighKey=59
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_60
+            Z_LowKey=60
+            Z_HighKey=60
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_61
+            Z_LowKey=61
+            Z_HighKey=61
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_62
+            Z_LowKey=62
+            Z_HighKey=62
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_63
+            Z_LowKey=63
+            Z_HighKey=63
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_64
+            Z_LowKey=64
+            Z_HighKey=64
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_65
+            Z_LowKey=65
+            Z_HighKey=65
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_66
+            Z_LowKey=66
+            Z_HighKey=66
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_67
+            Z_LowKey=67
+            Z_HighKey=67
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_68
+            Z_LowKey=68
+            Z_HighKey=68
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_69
+            Z_LowKey=69
+            Z_HighKey=69
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_70
+            Z_LowKey=70
+            Z_HighKey=70
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_71
+            Z_LowKey=71
+            Z_HighKey=71
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
+
+        Sample=brusque_bassoon_72
+            Z_LowKey=72
+            Z_HighKey=72
+            Z_LowVelocity=0
+            Z_HighVelocity=127
+            Z_releaseVolEnv=-2786
 
 
     InstrumentName=Lonely Mountain Bassoon
@@ -4847,133 +5665,133 @@
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_38
             Z_LowKey=38
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_40
             Z_LowKey=40
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_42
             Z_LowKey=42
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_44
             Z_LowKey=44
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_46
             Z_LowKey=46
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_48
             Z_LowKey=48
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_50
             Z_LowKey=50
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_52
             Z_LowKey=52
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_54
             Z_LowKey=54
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_56
             Z_LowKey=56
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_58
             Z_LowKey=58
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_60
             Z_LowKey=60
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_62
             Z_LowKey=62
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_64
             Z_LowKey=64
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_66
             Z_LowKey=66
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_68
             Z_LowKey=68
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_70
             Z_LowKey=70
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_bassoon_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
     InstrumentName=Lonely Mountain Fiddle
@@ -4983,133 +5801,133 @@
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_38
             Z_LowKey=38
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_40
             Z_LowKey=40
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_42
             Z_LowKey=42
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_44
             Z_LowKey=44
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_46
             Z_LowKey=46
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_48
             Z_LowKey=48
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_50
             Z_LowKey=50
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_52
             Z_LowKey=52
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_54
             Z_LowKey=54
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_56
             Z_LowKey=56
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_58
             Z_LowKey=58
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_60
             Z_LowKey=60
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_62
             Z_LowKey=62
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_64
             Z_LowKey=64
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_66
             Z_LowKey=66
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_68
             Z_LowKey=68
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_70
             Z_LowKey=70
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lonely_fiddle_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
     InstrumentName=Lute of Ages
@@ -5119,259 +5937,259 @@
             Z_HighKey=36
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_37
             Z_LowKey=37
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_38
             Z_LowKey=38
             Z_HighKey=38
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_39
             Z_LowKey=39
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_40
             Z_LowKey=40
             Z_HighKey=40
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_41
             Z_LowKey=41
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_42
             Z_LowKey=42
             Z_HighKey=42
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_43
             Z_LowKey=43
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_44
             Z_LowKey=44
             Z_HighKey=44
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_45
             Z_LowKey=45
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_46
             Z_LowKey=46
             Z_HighKey=46
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_47
             Z_LowKey=47
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_48
             Z_LowKey=48
             Z_HighKey=48
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_49
             Z_LowKey=49
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_50
             Z_LowKey=50
             Z_HighKey=50
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_51
             Z_LowKey=51
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_52
             Z_LowKey=52
             Z_HighKey=52
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_53
             Z_LowKey=53
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_54
             Z_LowKey=54
             Z_HighKey=54
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_55
             Z_LowKey=55
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_56
             Z_LowKey=56
             Z_HighKey=56
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_57
             Z_LowKey=57
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_58
             Z_LowKey=58
             Z_HighKey=58
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_59
             Z_LowKey=59
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_60
             Z_LowKey=60
             Z_HighKey=60
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_61
             Z_LowKey=61
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_62
             Z_LowKey=62
             Z_HighKey=62
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_63
             Z_LowKey=63
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_64
             Z_LowKey=64
             Z_HighKey=64
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_65
             Z_LowKey=65
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_66
             Z_LowKey=66
             Z_HighKey=66
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_67
             Z_LowKey=67
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_68
             Z_LowKey=68
             Z_HighKey=68
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_69
             Z_LowKey=69
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_70
             Z_LowKey=70
             Z_HighKey=70
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_71
             Z_LowKey=71
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=lute_of_ages_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
     InstrumentName=Misty Mountain Harp
@@ -5381,259 +6199,259 @@
             Z_HighKey=36
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_37
             Z_LowKey=37
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_38
             Z_LowKey=38
             Z_HighKey=38
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_39
             Z_LowKey=39
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_40
             Z_LowKey=40
             Z_HighKey=40
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_41
             Z_LowKey=41
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_42
             Z_LowKey=42
             Z_HighKey=42
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_43
             Z_LowKey=43
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_44
             Z_LowKey=44
             Z_HighKey=44
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_45
             Z_LowKey=45
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_46
             Z_LowKey=46
             Z_HighKey=46
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_47
             Z_LowKey=47
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_48
             Z_LowKey=48
             Z_HighKey=48
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_49
             Z_LowKey=49
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_50
             Z_LowKey=50
             Z_HighKey=50
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_51
             Z_LowKey=51
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_52
             Z_LowKey=52
             Z_HighKey=52
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_53
             Z_LowKey=53
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_54
             Z_LowKey=54
             Z_HighKey=54
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_55
             Z_LowKey=55
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_56
             Z_LowKey=56
             Z_HighKey=56
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_57
             Z_LowKey=57
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_58
             Z_LowKey=58
             Z_HighKey=58
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_59
             Z_LowKey=59
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_60
             Z_LowKey=60
             Z_HighKey=60
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_61
             Z_LowKey=61
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_62
             Z_LowKey=62
             Z_HighKey=62
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_63
             Z_LowKey=63
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_64
             Z_LowKey=64
             Z_HighKey=64
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_65
             Z_LowKey=65
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_66
             Z_LowKey=66
             Z_HighKey=66
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_67
             Z_LowKey=67
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_68
             Z_LowKey=68
             Z_HighKey=68
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_69
             Z_LowKey=69
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_70
             Z_LowKey=70
             Z_HighKey=70
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_71
             Z_LowKey=71
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=misty_harp_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
     InstrumentName=Moor Cowbell
@@ -5933,51 +6751,6 @@
             Z_overridingRootKey=72
 
 
-    InstrumentName=Pibgorn
-
-        Sample=pibgorn_38
-            Z_LowKey=36
-            Z_HighKey=41
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=pibgorn_44
-            Z_LowKey=42
-            Z_HighKey=47
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=pibgorn_50
-            Z_LowKey=48
-            Z_HighKey=53
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=pibgorn_56
-            Z_LowKey=54
-            Z_HighKey=59
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=pibgorn_62
-            Z_LowKey=60
-            Z_HighKey=65
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=pibgorn_68
-            Z_LowKey=66
-            Z_HighKey=72
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-
     InstrumentName=Sprightly Fiddle
 
         Sample=sprightly_fiddle_36
@@ -5985,133 +6758,133 @@
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_38
             Z_LowKey=38
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_40
             Z_LowKey=40
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_42
             Z_LowKey=42
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_44
             Z_LowKey=44
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_46
             Z_LowKey=46
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_48
             Z_LowKey=48
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_50
             Z_LowKey=50
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_52
             Z_LowKey=52
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_54
             Z_LowKey=54
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_56
             Z_LowKey=56
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_58
             Z_LowKey=58
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_60
             Z_LowKey=60
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_62
             Z_LowKey=62
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_64
             Z_LowKey=64
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_66
             Z_LowKey=66
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_68
             Z_LowKey=68
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_70
             Z_LowKey=70
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=sprightly_fiddle_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
     InstrumentName=Student's Fiddle Flubs
@@ -6121,185 +6894,49 @@
             Z_HighKey=36
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=student_fiddle_37
             Z_LowKey=37
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=student_fiddle_38
             Z_LowKey=38
             Z_HighKey=38
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=student_fiddle_39
             Z_LowKey=39
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=student_fiddle_40
             Z_LowKey=40
             Z_HighKey=40
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=student_fiddle_41
             Z_LowKey=41
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=student_fiddle_42
             Z_LowKey=42
             Z_HighKey=42
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-
-    InstrumentName=Theorbo
-
-        Sample=theorbo_36
-            Z_LowKey=36
-            Z_HighKey=37
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_38
-            Z_LowKey=38
-            Z_HighKey=39
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_40
-            Z_LowKey=40
-            Z_HighKey=41
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_42
-            Z_LowKey=42
-            Z_HighKey=43
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_44
-            Z_LowKey=44
-            Z_HighKey=45
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_46
-            Z_LowKey=46
-            Z_HighKey=47
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_48
-            Z_LowKey=48
-            Z_HighKey=49
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_50
-            Z_LowKey=50
-            Z_HighKey=51
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_52
-            Z_LowKey=52
-            Z_HighKey=53
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_54
-            Z_LowKey=54
-            Z_HighKey=55
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_56
-            Z_LowKey=56
-            Z_HighKey=57
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_58
-            Z_LowKey=58
-            Z_HighKey=59
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_60
-            Z_LowKey=60
-            Z_HighKey=61
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_62
-            Z_LowKey=62
-            Z_HighKey=63
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_64
-            Z_LowKey=64
-            Z_HighKey=65
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_66
-            Z_LowKey=66
-            Z_HighKey=67
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_68
-            Z_LowKey=68
-            Z_HighKey=69
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_70
-            Z_LowKey=70
-            Z_HighKey=71
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=theorbo_72
-            Z_LowKey=72
-            Z_HighKey=72
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
     InstrumentName=Traveller's Trusty Fiddle
@@ -6309,281 +6946,262 @@
             Z_HighKey=36
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_37
             Z_LowKey=37
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_38
             Z_LowKey=38
             Z_HighKey=38
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_39
             Z_LowKey=39
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_40
             Z_LowKey=40
             Z_HighKey=40
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_41
             Z_LowKey=41
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_42
             Z_LowKey=42
             Z_HighKey=42
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_43
             Z_LowKey=43
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_44
             Z_LowKey=44
             Z_HighKey=44
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_45
             Z_LowKey=45
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_46
             Z_LowKey=46
             Z_HighKey=46
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_47
             Z_LowKey=47
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_48
             Z_LowKey=48
             Z_HighKey=48
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_49
             Z_LowKey=49
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_50
             Z_LowKey=50
             Z_HighKey=50
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_51
             Z_LowKey=51
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_52
             Z_LowKey=52
             Z_HighKey=52
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_53
             Z_LowKey=53
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_54
             Z_LowKey=54
             Z_HighKey=54
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_55
             Z_LowKey=55
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_56
             Z_LowKey=56
             Z_HighKey=56
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_57
             Z_LowKey=57
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_58
             Z_LowKey=58
             Z_HighKey=58
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_59
             Z_LowKey=59
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_60
             Z_LowKey=60
             Z_HighKey=60
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_61
             Z_LowKey=61
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_62
             Z_LowKey=62
             Z_HighKey=62
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_63
             Z_LowKey=63
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_64
             Z_LowKey=64
             Z_HighKey=64
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_65
             Z_LowKey=65
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_66
             Z_LowKey=66
             Z_HighKey=66
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_67
             Z_LowKey=67
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_68
             Z_LowKey=68
             Z_HighKey=68
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_69
             Z_LowKey=69
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_70
             Z_LowKey=70
             Z_HighKey=70
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_71
             Z_LowKey=71
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
         Sample=travellers_fiddle_72
             Z_LowKey=72
             Z_HighKey=72
             Z_LowVelocity=0
             Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
+            Z_releaseVolEnv=-2786
 
 
 [Presets]
-
-    PresetName=Bagpipe
-        Bank=0
-        Program=109
-
-        Instrument=Bagpipe Drones
-            L_LowKey=36
-            L_HighKey=47
-            L_LowVelocity=0
-            L_HighVelocity=127
-            L_initialAttenuation=15
-
-        Instrument=Bagpipe
-            L_LowKey=48
-            L_HighKey=72
-            L_LowVelocity=0
-            L_HighVelocity=127
-            L_initialAttenuation=15
-
 
     PresetName=Bardic Fiddle
         Bank=0
@@ -6595,6 +7213,25 @@
             L_LowVelocity=0
             L_HighVelocity=127
             L_initialAttenuation=65476
+
+
+    PresetName=Basic Bagpipe
+        Bank=0
+        Program=109
+
+        Instrument=Basic Bagpipe Drones
+            L_LowKey=36
+            L_HighKey=47
+            L_LowVelocity=0
+            L_HighVelocity=127
+            L_initialAttenuation=15
+
+        Instrument=Basic Bagpipe
+            L_LowKey=48
+            L_HighKey=72
+            L_LowVelocity=0
+            L_HighVelocity=127
+            L_initialAttenuation=15
 
 
     PresetName=Basic Bassoon
@@ -6609,6 +7246,40 @@
             L_initialAttenuation=65486
 
 
+    PresetName=Basic Clarinet
+        Bank=0
+        Program=71
+
+        Instrument=Basic Clarinet
+            L_LowKey=36
+            L_HighKey=72
+            L_LowVelocity=0
+            L_HighVelocity=127
+            L_initialAttenuation=20
+
+
+    PresetName=Basic Cowbell
+        Bank=0
+        Program=115
+
+        Instrument=Basic Cowbell
+            L_LowKey=36
+            L_HighKey=72
+            L_LowVelocity=0
+            L_HighVelocity=127
+
+
+    PresetName=Basic Drum
+        Bank=0
+        Program=118
+
+        Instrument=Basic Drum
+            L_LowKey=36
+            L_HighKey=72
+            L_LowVelocity=0
+            L_HighVelocity=127
+
+
     PresetName=Basic Fiddle
         Bank=0
         Program=41
@@ -6618,7 +7289,43 @@
             L_HighKey=72
             L_LowVelocity=0
             L_HighVelocity=127
-            L_initialAttenuation=65491
+            L_initialAttenuation=65474
+
+
+    PresetName=Basic Flute
+        Bank=0
+        Program=73
+
+        Instrument=Basic Flute
+            L_LowKey=36
+            L_HighKey=72
+            L_LowVelocity=0
+            L_HighVelocity=127
+            L_initialAttenuation=35
+
+
+    PresetName=Basic Harp
+        Bank=0
+        Program=46
+
+        Instrument=Basic Harp
+            L_LowKey=36
+            L_HighKey=72
+            L_LowVelocity=0
+            L_HighVelocity=127
+            L_initialAttenuation=65476
+
+
+    PresetName=Basic Horn
+        Bank=0
+        Program=69
+
+        Instrument=Basic Horn
+            L_LowKey=36
+            L_HighKey=72
+            L_LowVelocity=0
+            L_HighVelocity=127
+            L_initialAttenuation=20
 
 
     PresetName=Basic Lute
@@ -6633,6 +7340,30 @@
             L_initialAttenuation=190
 
 
+    PresetName=Basic Pibgorn
+        Bank=0
+        Program=84
+
+        Instrument=Basic Pibgorn
+            L_LowKey=36
+            L_HighKey=72
+            L_LowVelocity=0
+            L_HighVelocity=127
+            L_initialAttenuation=35
+
+
+    PresetName=Basic Theorbo
+        Bank=0
+        Program=32
+
+        Instrument=Basic Theorbo
+            L_LowKey=36
+            L_HighKey=72
+            L_LowVelocity=0
+            L_HighVelocity=127
+            L_initialAttenuation=120
+
+
     PresetName=Brusque Bassoon
         Bank=0
         Program=68
@@ -6643,76 +7374,6 @@
             L_LowVelocity=0
             L_HighVelocity=127
             L_initialAttenuation=65486
-
-
-    PresetName=Clarinet
-        Bank=0
-        Program=71
-
-        Instrument=Clarinet
-            L_LowKey=36
-            L_HighKey=72
-            L_LowVelocity=0
-            L_HighVelocity=127
-            L_initialAttenuation=20
-
-
-    PresetName=Cowbell
-        Bank=0
-        Program=115
-
-        Instrument=Cowbell
-            L_LowKey=36
-            L_HighKey=72
-            L_LowVelocity=0
-            L_HighVelocity=127
-
-
-    PresetName=Drums
-        Bank=0
-        Program=118
-
-        Instrument=Drums
-            L_LowKey=36
-            L_HighKey=72
-            L_LowVelocity=0
-            L_HighVelocity=127
-
-
-    PresetName=Flute
-        Bank=0
-        Program=73
-
-        Instrument=Flute
-            L_LowKey=36
-            L_HighKey=72
-            L_LowVelocity=0
-            L_HighVelocity=127
-            L_initialAttenuation=35
-
-
-    PresetName=Harp
-        Bank=0
-        Program=46
-
-        Instrument=Harp
-            L_LowKey=36
-            L_HighKey=72
-            L_LowVelocity=0
-            L_HighVelocity=127
-            L_initialAttenuation=65476
-
-
-    PresetName=Horn
-        Bank=0
-        Program=69
-
-        Instrument=Horn
-            L_LowKey=36
-            L_HighKey=72
-            L_LowVelocity=0
-            L_HighVelocity=127
-            L_initialAttenuation=20
 
 
     PresetName=Lonely Mountain Bassoon
@@ -6736,7 +7397,7 @@
             L_HighKey=72
             L_LowVelocity=0
             L_HighVelocity=127
-            L_initialAttenuation=65521
+            L_initialAttenuation=65481
 
 
     PresetName=Lute of Ages
@@ -6784,18 +7445,6 @@
             L_HighVelocity=127
 
 
-    PresetName=Pibgorn
-        Bank=0
-        Program=84
-
-        Instrument=Pibgorn
-            L_LowKey=36
-            L_HighKey=72
-            L_LowVelocity=0
-            L_HighVelocity=127
-            L_initialAttenuation=35
-
-
     PresetName=Sprightly Fiddle
         Bank=0
         Program=110
@@ -6825,18 +7474,6 @@
             L_HighVelocity=127
 
 
-    PresetName=Theorbo
-        Bank=0
-        Program=32
-
-        Instrument=Theorbo
-            L_LowKey=36
-            L_HighKey=72
-            L_LowVelocity=0
-            L_HighVelocity=127
-            L_initialAttenuation=120
-
-
     PresetName=Traveller's Trusty Fiddle
         Bank=0
         Program=45
@@ -6846,7 +7483,7 @@
             L_HighKey=72
             L_LowVelocity=0
             L_HighVelocity=127
-            L_initialAttenuation=65521
+            L_initialAttenuation=30
 
 
 [Info]
@@ -6855,9 +7492,9 @@ Engine=E-mu 10K1
 Name=LotroInstruments.sf2
 ROMName=
 ROMVersion=0.0
-Date=4/12/2015 12:34:56 PM
+Date=03/10/2021 11:01:20 pm
 Designer=Digero
 Product=Maestro
-Copyright=Turbine Entertainment
-Editor=Digero
+Copyright=Standing Stone Games
+Editor=Digero,Aifel
 Comments=

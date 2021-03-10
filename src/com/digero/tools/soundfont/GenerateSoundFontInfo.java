@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.digero.common.abc.AbcConstants;
 import com.digero.common.abc.LotroInstrument;
@@ -187,7 +189,7 @@ public class GenerateSoundFontInfo
 			out.println("Name=LotroInstruments.sf2");
 			out.println("ROMName=");
 			out.println("ROMVersion=0.0");
-			out.println("Date=2/25/2021 12:13:14 PM");
+			out.println("Date="+new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a").format(new Date()));
 			out.println("Designer=Digero");
 			out.println("Product=Maestro");
 			out.println("Copyright=Standing Stone Games");
