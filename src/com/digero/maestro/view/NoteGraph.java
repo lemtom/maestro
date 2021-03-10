@@ -713,7 +713,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 					if (ne.getEndMicros() < clipPosStart || ne.getStartMicros() > clipPosEnd)
 						continue;
 
-					int velocity = ne.velocity + deltaVolume;
+					int velocity = ne.velocity + deltaVolume + getSectionVelocity(ne);
 
 					Dynamics dynamicsRenderedInThisPass = null;
 					if (d == dynamicsValues.length)
@@ -847,5 +847,9 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 				}
 			}
 		}
+	}
+
+	protected int getSectionVelocity(NoteEvent note) {
+		return 0;
 	}
 }

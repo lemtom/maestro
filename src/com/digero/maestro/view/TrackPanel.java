@@ -810,6 +810,15 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		@Override protected boolean[] getSectionsModified() {
 			return abcPart.sectionsModified.get(trackInfo.getTrackNumber());
 		}
+		
+		@Override protected int getSectionVelocity(NoteEvent note)
+		{
+			if (!trackInfo.isDrumTrack())
+			{
+				return abcPart.getSectionVolumeAdjust(trackInfo.getTrackNumber(), note);
+			}
+			return 0;
+		}
 
 		@Override protected boolean isNotePlayable(int noteId)
 		{

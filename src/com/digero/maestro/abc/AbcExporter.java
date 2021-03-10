@@ -611,7 +611,7 @@ public class AbcExporter
 						assert mappedNote.id <= part.getInstrument().highestPlayable.id : mappedNote;
 						long startTick = Math.max(ne.getStartTick(), songStartTick);
 						long endTick = Math.min(ne.getEndTick(), songEndTick);
-						int velocity = ne.velocity + part.getTrackVolumeAdjust(t);
+						int velocity = ne.velocity + part.getTrackVolumeAdjust(t) + part.getSectionVolumeAdjust(t, ne);
 						events.add(new NoteEvent(mappedNote, velocity, startTick, endTick, qtm));
 					}
 				}
