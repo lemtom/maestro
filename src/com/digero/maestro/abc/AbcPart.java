@@ -135,6 +135,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		        	SaveUtil.appendChildTextElement(sectionEle, "octaveStep", String.valueOf(ps.octaveStep));
 		        	SaveUtil.appendChildTextElement(sectionEle, "volumeStep", String.valueOf(ps.volumeStep));
 		        	SaveUtil.appendChildTextElement(sectionEle, "silence", String.valueOf(ps.silence));
+		        	SaveUtil.appendChildTextElement(sectionEle, "fadeout", String.valueOf(ps.fadeout));
 		        }
 	        }
 			
@@ -225,7 +226,8 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					ps.volumeStep = SaveUtil.parseValue(sectionEle, "volumeStep", 0);
 					ps.octaveStep = SaveUtil.parseValue(sectionEle, "octaveStep", 0);
 					ps.silence = SaveUtil.parseValue(sectionEle, "silence", false);
-					if (ps.startBar > 0 && ps.endBar > ps.startBar-1 && (ps.volumeStep != 0 || ps.octaveStep != 0 || ps.silence)) {
+					ps.fadeout = SaveUtil.parseValue(sectionEle, "fadeout", false);
+					if (ps.startBar > 0 && ps.endBar > ps.startBar-1 && (ps.volumeStep != 0 || ps.octaveStep != 0 || ps.silence || ps.fadeout)) {
 						if (tree == null) {
 							tree = new TreeMap<Integer, PartSection>();
 							sections.set(t, tree);
@@ -578,9 +580,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		return secTrans;
 	}
 	
-	public int getSectionVolumeAdjust(int track, NoteEvent ne) {
+	public int[] getSectionVolumeAdjust(int track, NoteEvent ne) {
 		SequenceInfo se = getSequenceInfo();
 		int delta = 0;
+		int factor = 100;
 		TreeMap<Integer, PartSection> tree = sections.get(track);
 		if (se != null && tree != null) {
 			SequenceDataCache data = se.getDataCache();
@@ -603,13 +606,30 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				Entry<Integer, PartSection> entry = tree.floorEntry(bar);
 				if (entry != null) {
 					if (bar <= entry.getValue().endBar) {
-						return entry.getValue().volumeStep;						
+						delta = entry.getValue().volumeStep;
+						if (entry.getValue().fadeout) {
+							factor = map(ne.getStartTick(), entry.getValue().startBar*barLengthTicks-barLengthTicks, entry.getValue().endBar*barLengthTicks,100,0);
+						}
 					}
 				}
 			}
 		}		
-		
-		return delta;
+		int[] retur = new int[2];
+		retur[0] = delta;
+		retur[1] = factor;
+		return retur;
+	}
+	
+	private int map(long value, long leftMin, long leftMax, int rightMin, int rightMax) {
+	    // Figure out how 'wide' each range is
+	    long leftSpan = leftMax - leftMin;
+	    int rightSpan = rightMax - rightMin;
+
+	    // Convert the left range into a 0-1 range (float)
+	    double valueScaled = (value - leftMin) / (double)leftSpan;
+
+	    // Convert the 0-1 range into a value in the right range.
+	    return (int)(rightMin + (valueScaled * rightSpan));
 	}
 	
 	public boolean getAudible(int track, long microStart) {
