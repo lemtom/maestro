@@ -604,7 +604,7 @@ public class AbcExporter
 					if (ne.getEndTick() <= songStartTick || ne.getStartTick() >= songEndTick)
 						continue;
 
-					Note mappedNote = part.mapNote(t, ne.note.id, ne.getStartMicros());
+					Note mappedNote = part.mapNote(t, ne.note.id, ne.getStartTick());
 					if (mappedNote != null)
 					{
 						assert mappedNote.id >= part.getInstrument().lowestPlayable.id : mappedNote;

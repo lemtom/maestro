@@ -395,7 +395,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				if (ne.tiesFrom != null) {
 					continue;
 				}
-				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id, ne.getStartMicros());
+				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id, ne.getStartTick());
 				if (mn != null && mn.id == Note.G3.id) {
 					g3count += 1;
 				}
@@ -413,7 +413,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				if (ne.tiesFrom != null) {
 					continue;
 				}
-				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id, ne.getStartMicros());
+				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id, ne.getStartTick());
 				if (mn != null && (mn.id == Note.A2.id || mn.id == Note.A3.id || mn.id == Note.A4.id)) {
 					acount += 1;
 				}
@@ -789,11 +789,11 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			}
 		}
 
-		@Override protected int transposeNote(int noteId, long microStart)
+		@Override protected int transposeNote(int noteId, long tickStart)
 		{
 			if (!trackInfo.isDrumTrack())
 			{
-				noteId += abcPart.getTranspose(trackInfo.getTrackNumber(), microStart);
+				noteId += abcPart.getTranspose(trackInfo.getTrackNumber(), tickStart);
 			}
 			return noteId;
 		}
@@ -802,7 +802,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		{
 			if (!trackInfo.isDrumTrack())
 			{
-				return abcPart.getAudible(trackInfo.getTrackNumber(), ne.getStartMicros());
+				return abcPart.getAudible(trackInfo.getTrackNumber(), ne.getStartTick());
 			}
 			return true;
 		}

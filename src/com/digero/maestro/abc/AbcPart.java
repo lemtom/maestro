@@ -342,7 +342,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	/**
 	 * Maps from a MIDI note to an ABC note. If no mapping is available, returns <code>null</code>.
 	 */
-	public Note mapNote(int track, int noteId, long microStart)
+	public Note mapNote(int track, int noteId, long tickStart)
 	{
 		if (isDrumPart())
 		{
@@ -361,10 +361,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 		else
 		{
-			if (!getAudible(track, microStart)) {
+			if (!getAudible(track, tickStart)) {
 				return null;
 			}
-			noteId += getTranspose(track, microStart);
+			noteId += getTranspose(track, tickStart);
 			while (noteId < instrument.lowestPlayable.id)
 				noteId += 12;
 			while (noteId > instrument.highestPlayable.id)
@@ -383,7 +383,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			{
 				for (NoteEvent ne : getTrackEvents(t))
 				{
-					if (mapNote(t, ne.note.id, ne.getStartMicros()) != null)
+					if (mapNote(t, ne.note.id, ne.getStartTick()) != null)
 					{
 						if (ne.getStartTick() < startTick)
 							startTick = ne.getStartTick();
@@ -416,7 +416,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				while (iter.hasPrevious())
 				{
 					NoteEvent ne = iter.previous();
-					if (mapNote(t, ne.note.id, ne.getStartMicros()) != null)
+					if (mapNote(t, ne.note.id, ne.getStartTick()) != null)
 					{
 						long noteEndTick;
 						if (!accountForSustain || instrument.isSustainable(ne.note.id))
@@ -539,14 +539,14 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 	}
 
-	public int getTranspose(int track, long microStart)
+	public int getTranspose(int track, long tickStart)
 	{
 		if (isDrumPart())
 			return 0;
-		return abcSong.getTranspose() + trackTranspose[track] - getInstrument().octaveDelta * 12 + getSectionTranspose(microStart, track);
+		return abcSong.getTranspose() + trackTranspose[track] - getInstrument().octaveDelta * 12 + getSectionTranspose(tickStart, track);
 	}
 	
-	public int getSectionTranspose(long microStart, int track) {
+	public int getSectionTranspose(long tickStart, int track) {
 		int secTrans = 0;
 		SequenceInfo se = getSequenceInfo();
 		TreeMap<Integer, PartSection> tree = sections.get(track);
@@ -560,8 +560,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			int bar = -1;
 			int curBar = 1;
 			for (long barTick = startTick; barTick <= endTick; barTick += barLengthTicks) {
-				long barMicros = data.tickToMicros(barTick);
-				if (microStart < barMicros) {
+				if (tickStart < barTick) {
 					bar = curBar;
 					break;
 				}
@@ -632,7 +631,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	    return (int)(rightMin + (valueScaled * rightSpan));
 	}
 	
-	public boolean getAudible(int track, long microStart) {
+	public boolean getAudible(int track, long tickStart) {
 		SequenceInfo se = getSequenceInfo();
 		TreeMap<Integer, PartSection> tree = sections.get(track);
 		if (se != null && tree != null) {
@@ -645,8 +644,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			int bar = -1;
 			int curBar = 1;
 			for (long barTick = startTick; barTick <= endTick; barTick += barLengthTicks) {
-				long barMicros = data.tickToMicros(barTick);
-				if (microStart < barMicros) {
+				if (tickStart < barTick) {
 					bar = curBar;
 					break;
 				}
