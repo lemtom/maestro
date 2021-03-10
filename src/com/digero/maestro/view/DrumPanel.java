@@ -364,7 +364,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 			}
 		}
 
-		@Override protected int transposeNote(int noteId, long microStart)
+		@Override protected int transposeNote(int noteId, long tickStart)
 		{
 			return 0;
 		}
