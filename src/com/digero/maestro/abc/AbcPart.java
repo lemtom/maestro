@@ -559,7 +559,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 
 			int bar = -1;
 			int curBar = 1;
-			for (long barTick = startTick; barTick <= endTick; barTick += barLengthTicks) {
+			for (long barTick = startTick; barTick <= endTick+barLengthTicks; barTick += barLengthTicks) {
 				if (tickStart < barTick) {
 					bar = curBar;
 					break;
@@ -593,7 +593,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 
 			int bar = -1;
 			int curBar = 1;
-			for (long barTick = startTick; barTick <= endTick; barTick += barLengthTicks) {
+			for (long barTick = startTick; barTick <= endTick+barLengthTicks; barTick += barLengthTicks) {
 				//long barMicros = data.tickToMicros(barTick);
 				if (ne.getStartTick() < barTick) {
 					bar = curBar;
@@ -643,7 +643,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 
 			int bar = -1;
 			int curBar = 1;
-			for (long barTick = startTick; barTick <= endTick; barTick += barLengthTicks) {
+			for (long barTick = startTick; barTick <= endTick+barLengthTicks; barTick += barLengthTicks) {
 				if (tickStart < barTick) {
 					bar = curBar;
 					break;
