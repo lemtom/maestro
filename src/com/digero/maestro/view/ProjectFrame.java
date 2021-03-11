@@ -681,15 +681,25 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		abcBarLabel.setVisible(!midiBarLabel.isVisible());
 
 		JPanel playControlPanel = new JPanel(new TableLayout(//
-				new double[] { 4, 0.50, 4, PREFERRED, 4, 0.50, 4, PREFERRED, 4 },//
+				new double[] { 4, 0.50, 4, PREFERRED, 4, 0.50, 4, PREFERRED, PREFERRED, 4 },//
 				new double[] { PREFERRED, 4, PREFERRED }));
 		playControlPanel.add(playButtonPanel, "3, 0, 3, 2, C, C");
 		playControlPanel.add(modeButtonPanel, "1, 0, 1, 2, C, F");
 		playControlPanel.add(volumePanel, "5, 0, 5, 2, C, C");
-		playControlPanel.add(midiPositionLabel, "7, 0, R, B");
-		playControlPanel.add(abcPositionLabel, "7, 0, R, B");
-		playControlPanel.add(midiBarLabel, "7, 2, R, T");
-		playControlPanel.add(abcBarLabel, "7, 2, R, T");
+		playControlPanel.add(midiPositionLabel, "8, 0, R, B");
+		playControlPanel.add(abcPositionLabel, "8, 0, R, B");
+		playControlPanel.add(midiBarLabel, "8, 2, R, T");
+		playControlPanel.add(abcBarLabel, "8, 2, R, T");
+		
+		JButton zoom = new JButton("Zoom");
+		zoom.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				partPanel.zoom();
+			}
+		});
+		playControlPanel.add(zoom, "7, 2, C, C");
 
 		JPanel abcPartsAndSettings = new JPanel(new BorderLayout(HGAP, VGAP));
 		abcPartsAndSettings.add(songInfoPanel, BorderLayout.NORTH);

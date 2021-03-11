@@ -5,6 +5,7 @@ import info.clearthought.layout.TableLayoutConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -68,6 +69,8 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 	private GroupLayout.Group trackListHGroup;
 
 	private boolean initialized = false;
+	
+	private boolean zoomed = false;
 
 	public PartPanel(NoteFilterSequencerWrapper sequencer, PartAutoNumberer partAutoNumberer,
 			SequencerWrapper abcSequencer)
@@ -372,6 +375,7 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		trackListPanel.removeAll();
 		trackListLayout.setVerticalGroup(trackListVGroup = trackListLayout.createSequentialGroup());
 		trackListLayout.setHorizontalGroup(trackListHGroup = trackListLayout.createParallelGroup());
+		zoomed = false;
 	}
 
 	public void setSequencer(NoteFilterSequencerWrapper sequencer)
@@ -392,5 +396,20 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		{
 			// Ignore
 		}
+	}
+
+	public void zoom() {
+		for (Component child : trackListPanel.getComponents())
+		{
+			if (child instanceof TrackPanel)
+			{
+				if (!zoomed) {
+					child.setPreferredSize(new Dimension(3840, 49));
+				} else {
+					child.setPreferredSize(null);
+				}
+			}
+		}
+		zoomed = !zoomed;
 	}
 }
