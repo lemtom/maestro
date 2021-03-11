@@ -408,8 +408,11 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 				} else {
 					child.setPreferredSize(null);
 				}
+				child.invalidate();
 			}
 		}
+		revalidate();
+		repaint();
 		zoomed = !zoomed;
 	}
 }
