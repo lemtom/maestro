@@ -892,6 +892,25 @@ public class AbcExporter
 				}
 
 				ne.setEndTick(maxNoteEndTick);
+			} else if (ne.getEndTick() > maxNoteEndTick	&& ne.note == Note.REST) {
+				// Align with a bar boundary if it extends across 1 or more full bars.
+				long endBarTick = qtm.tickToBarStartTick(maxNoteEndTick);
+				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick)
+				{
+					maxNoteEndTick = endBarTick;
+					assert ne.getEndTick() > maxNoteEndTick;
+				}
+
+				// Since the note is a rest, add another one after 
+				// this ends to keep it going...
+				NoteEvent next = new NoteEvent(ne.note, ne.velocity, maxNoteEndTick, ne.getEndTick(), qtm);
+				int ins = Collections.binarySearch(events, next);
+				if (ins < 0)
+					ins = -ins - 1;
+				assert (ins > i);
+				events.add(ins, next);
+
+				ne.setEndTick(maxNoteEndTick);
 			}
 
 			if (addTies)
