@@ -227,7 +227,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					ps.octaveStep = SaveUtil.parseValue(sectionEle, "octaveStep", 0);
 					ps.silence = SaveUtil.parseValue(sectionEle, "silence", false);
 					ps.fadeout = SaveUtil.parseValue(sectionEle, "fadeout", false);
-					if (ps.startBar > 0 && ps.endBar > ps.startBar-1 && (ps.volumeStep != 0 || ps.octaveStep != 0 || ps.silence || ps.fadeout)) {
+					if (ps.startBar > 0 && ps.endBar > ps.startBar-1) {//  && (ps.volumeStep != 0 || ps.octaveStep != 0 || ps.silence || ps.fadeout)
 						if (tree == null) {
 							tree = new TreeMap<Integer, PartSection>();
 							sections.set(t, tree);
