@@ -387,7 +387,7 @@ public class SectionEditor {
 		        panel.add(new JLabel("Bar numbers must be positive and greater than zero."), "0, 14, 6, 14, c, c");
 		        panel.add(new JLabel("Clicking APPLY will also disable faulty sections."), "0, 15, 6, 15, c, c");
 		        JLabel warn1 = new JLabel("Warning: If you have 'Remove initial silence' enabled,");
-		        JLabel warn2 = new JLabel("then the bar counter in lower right wont match up unless");
+		        JLabel warn2 = new JLabel("then the bar counter in lower right likely wont match up unless");
 		        JLabel warn3 = new JLabel("you preview mode is in 'Original'.");
 		        warn1.setForeground(new Color(1f,0f,0f));
 		        warn2.setForeground(new Color(1f,0f,0f));
