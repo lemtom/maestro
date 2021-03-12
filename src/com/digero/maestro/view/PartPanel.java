@@ -405,7 +405,7 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		try {
 			int width = Toolkit.getDefaultToolkit().getScreenSize().width;
 			if (width > 1920) {
-				horiz = width * 2;
+				horiz = Math.max(horiz, width * 2);
 			}
 		} catch (java.awt.HeadlessException e) {
 			
