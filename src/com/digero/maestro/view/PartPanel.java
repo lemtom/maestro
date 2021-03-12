@@ -414,7 +414,7 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		{
 			if (child instanceof TrackPanel)
 			{
-				if (!zoomed) {
+				if (!zoomed && child.getHeight() == 49) {
 					child.setPreferredSize(new Dimension(horiz, 49));
 				} else {
 					child.setPreferredSize(null);

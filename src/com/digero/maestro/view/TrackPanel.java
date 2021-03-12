@@ -602,12 +602,17 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		}
 
 		boolean showDrumPanelsNew = abcPart.isDrumPart() && trackEnabled;
+		
+		if (showDrumPanelsNew || initDrumPanels) {
+			this.setPreferredSize(null);
+		}
+		
 		if (initDrumPanels || showDrumPanels != showDrumPanelsNew || wasDrumPart != abcPart.isDrumPart())
 		{
 			if (showDrumPanels != showDrumPanelsNew)
 			{
 				noteGraph.repaint();
-				showDrumPanels = showDrumPanelsNew;
+				showDrumPanels = showDrumPanelsNew;				
 			}
 			wasDrumPart = abcPart.isDrumPart();
 
