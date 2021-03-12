@@ -168,6 +168,10 @@ public class SectionEditor {
 		        panel.add(velo0, "4,3,f,f");
 		        panel.add(silent0, "5,3,c,f");
 		        panel.add(fadeout0, "6,3,c,f");
+		        barA0.setHorizontalAlignment(JTextField.CENTER);
+		        barB0.setHorizontalAlignment(JTextField.CENTER);
+		        transpose0.setHorizontalAlignment(JTextField.CENTER);
+		        velo0.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable1, "0,4,C,C");
 		        panel.add(barA1, "1,4,f,f");
@@ -176,6 +180,10 @@ public class SectionEditor {
 		        panel.add(velo1, "4,4,f,f");
 		        panel.add(silent1, "5,4,c,f");
 		        panel.add(fadeout1, "6,4,c,f");
+		        barA1.setHorizontalAlignment(JTextField.CENTER);
+		        barB1.setHorizontalAlignment(JTextField.CENTER);
+		        transpose1.setHorizontalAlignment(JTextField.CENTER);
+		        velo1.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable2, "0,5,C,C");
 		        panel.add(barA2, "1,5,f,f");
@@ -184,6 +192,10 @@ public class SectionEditor {
 		        panel.add(velo2, "4,5,f,f");
 		        panel.add(silent2, "5,5,c,f");
 		        panel.add(fadeout2, "6,5,c,f");
+		        barA2.setHorizontalAlignment(JTextField.CENTER);
+		        barB2.setHorizontalAlignment(JTextField.CENTER);
+		        transpose2.setHorizontalAlignment(JTextField.CENTER);
+		        velo2.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable3, "0,6,C,C");
 		        panel.add(barA3, "1,6,f,f");
@@ -192,6 +204,10 @@ public class SectionEditor {
 		        panel.add(velo3, "4,6,f,f");
 		        panel.add(silent3, "5,6,c,f");
 		        panel.add(fadeout3, "6,6,c,f");
+		        barA3.setHorizontalAlignment(JTextField.CENTER);
+		        barB3.setHorizontalAlignment(JTextField.CENTER);
+		        transpose3.setHorizontalAlignment(JTextField.CENTER);
+		        velo3.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable4, "0,7,C,C");
 		        panel.add(barA4, "1,7,f,f");
@@ -200,6 +216,10 @@ public class SectionEditor {
 		        panel.add(velo4, "4,7,f,f");
 		        panel.add(silent4, "5,7,c,f");
 		        panel.add(fadeout4, "6,7,c,f");
+		        barA4.setHorizontalAlignment(JTextField.CENTER);
+		        barB4.setHorizontalAlignment(JTextField.CENTER);
+		        transpose4.setHorizontalAlignment(JTextField.CENTER);
+		        velo4.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable5, "0,8,C,C");
 		        panel.add(barA5, "1,8,f,f");
@@ -208,6 +228,10 @@ public class SectionEditor {
 		        panel.add(velo5, "4,8,f,f");
 		        panel.add(silent5, "5,8,c,f");
 		        panel.add(fadeout5, "6,8,c,f");
+		        barA5.setHorizontalAlignment(JTextField.CENTER);
+		        barB5.setHorizontalAlignment(JTextField.CENTER);
+		        transpose5.setHorizontalAlignment(JTextField.CENTER);
+		        velo5.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        JButton okButton = new JButton("APPLY");
 		        //okButton.setPreferredSize(new Dimension(SECTIONBUTTON_WIDTH, SECTIONBUTTON_WIDTH));
