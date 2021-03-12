@@ -37,6 +37,7 @@ public final class AboutDialog
 				+ "Version " + appVersion + "<br>" //
 				+ "Created by Digero of Landroval<br>" //
 				+ "Copyright &copy; 2015 Ben Howell<br>" //
+				+ "Upgraded by Aifel of Laurelin<br>" //
 				+ "<a href='" + appUrl + "'>" + appUrl + "</a>" //
 				+ "</html>");
 		aboutMessage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
