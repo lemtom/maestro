@@ -7,7 +7,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
@@ -399,12 +401,21 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 	}
 
 	public void zoom() {
+		int horiz = 1920*3;
+		try {
+			int width = Toolkit.getDefaultToolkit().getScreenSize().width;
+			if (width > 1920) {
+				horiz = width * 2;
+			}
+		} catch (java.awt.HeadlessException e) {
+			
+		}
 		for (Component child : trackListPanel.getComponents())
 		{
 			if (child instanceof TrackPanel)
 			{
 				if (!zoomed) {
-					child.setPreferredSize(new Dimension(3840, 49));
+					child.setPreferredSize(new Dimension(horiz, 49));
 				} else {
 					child.setPreferredSize(null);
 				}
