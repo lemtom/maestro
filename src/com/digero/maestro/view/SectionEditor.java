@@ -227,7 +227,7 @@ public class SectionEditor {
 									ps.endBar = Integer.parseInt(barB0.getText());
 									ps.silence = silent0.isSelected();
 									ps.fadeout = fadeout0.isSelected();
-									if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
+									if (ps.endBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 										tm.put(ps.startBar, ps);
 										lastEnd = ps.endBar; 
 									} else {
@@ -247,7 +247,7 @@ public class SectionEditor {
 								ps.endBar = Integer.parseInt(barB1.getText());
 								ps.silence = silent1.isSelected();
 								ps.fadeout = fadeout1.isSelected();
-								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
+								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
 								} else {
@@ -267,7 +267,7 @@ public class SectionEditor {
 								ps.endBar = Integer.parseInt(barB2.getText());
 								ps.silence = silent2.isSelected();
 								ps.fadeout = fadeout2.isSelected();
-								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
+								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
 								} else {
@@ -287,7 +287,7 @@ public class SectionEditor {
 								ps.endBar = Integer.parseInt(barB3.getText());
 								ps.silence = silent3.isSelected();
 								ps.fadeout = fadeout3.isSelected();
-								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
+								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
 								} else {
@@ -307,7 +307,7 @@ public class SectionEditor {
 								ps.endBar = Integer.parseInt(barB4.getText());
 								ps.silence = silent4.isSelected();
 								ps.fadeout = fadeout4.isSelected();
-								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
+								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
 								} else {
@@ -327,7 +327,7 @@ public class SectionEditor {
 								ps.endBar = Integer.parseInt(barB5.getText());
 								ps.silence = silent5.isSelected();
 								ps.fadeout = fadeout5.isSelected();
-								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
+								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
 								} else {
