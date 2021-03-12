@@ -29,7 +29,7 @@ public class SectionEditor {
 		class SectionDialog extends JDialog {
 			
 			private final double[] LAYOUT_COLS = new double[] { 0.10,0.15,0.15,0.15,0.15,0.12,0.18 };
-			private final double[] LAYOUT_ROWS = new double[] { TableLayoutConstants.PREFERRED,20,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.FILL,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED};
+			private final double[] LAYOUT_ROWS = new double[] { TableLayoutConstants.PREFERRED,20,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.FILL,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED};
 			private AbcPart abcPart;
 			private int track;
 			private boolean active = false;
@@ -230,9 +230,12 @@ public class SectionEditor {
 									if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
 										tm.put(ps.startBar, ps);
 										lastEnd = ps.endBar; 
+									} else {
+										SectionDialog.this.enable0.setSelected(false);
 									}
 							} catch (NumberFormatException nfe) {
-								System.err.println("NumberFormatException in first section in section-editor.");
+								//System.err.println("NumberFormatException in first section in section-editor.");
+								SectionDialog.this.enable0.setSelected(false);
 							}
 						}
 						if (SectionDialog.this.enable1.isSelected()) {
@@ -247,9 +250,12 @@ public class SectionEditor {
 								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+								} else {
+									SectionDialog.this.enable1.setSelected(false);
 								}
 							} catch (NumberFormatException nfe) {
-								System.err.println("NumberFormatException in second section in section-editor.");
+								//System.err.println("NumberFormatException in second section in section-editor.");
+								SectionDialog.this.enable1.setSelected(false);
 							}
 						}
 						if (SectionDialog.this.enable2.isSelected()) {
@@ -264,9 +270,12 @@ public class SectionEditor {
 								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+								} else {
+									SectionDialog.this.enable2.setSelected(false);
 								}
 							} catch (NumberFormatException nfe) {
-								System.err.println("NumberFormatException in third section in section-editor.");
+								//System.err.println("NumberFormatException in third section in section-editor.");
+								SectionDialog.this.enable2.setSelected(false);
 							}
 						}
 						if (SectionDialog.this.enable3.isSelected()) {
@@ -281,9 +290,12 @@ public class SectionEditor {
 								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+								} else {
+									SectionDialog.this.enable3.setSelected(false);
 								}
 							} catch (NumberFormatException nfe) {
-								System.err.println("NumberFormatException in fourth section in section-editor.");
+								//System.err.println("NumberFormatException in fourth section in section-editor.");
+								SectionDialog.this.enable3.setSelected(false);
 							}
 						}
 						if (SectionDialog.this.enable4.isSelected()) {
@@ -298,9 +310,12 @@ public class SectionEditor {
 								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+								} else {
+									SectionDialog.this.enable4.setSelected(false);
 								}
 							} catch (NumberFormatException nfe) {
-								System.err.println("NumberFormatException in fifth section in section-editor.");
+								//System.err.println("NumberFormatException in fifth section in section-editor.");
+								SectionDialog.this.enable4.setSelected(false);
 							}
 						}
 						if (SectionDialog.this.enable5.isSelected()) {
@@ -315,9 +330,12 @@ public class SectionEditor {
 								if (ps.endBar > lastEnd && ps.startBar <= ps.endBar) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+								} else {
+									SectionDialog.this.enable5.setSelected(false);
 								}
 							} catch (NumberFormatException nfe) {
-								System.err.println("NumberFormatException in sixth section in section-editor.");
+								//System.err.println("NumberFormatException in sixth section in section-editor.");
+								SectionDialog.this.enable5.setSelected(false);
 							}
 						}
 						if (lastEnd == 0) {
@@ -341,15 +359,18 @@ public class SectionEditor {
 		        panel.add(okButton, "6,9,f,f");
 		        panel.add(new JLabel("Enabled sections must be chronological and no overlap."), "0, 11, 6, 11, c, c");
 		        panel.add(new JLabel("Bar numbers are inclusive and use original meter."), "0, 12, 6, 12, c, c");
+		        panel.add(new JLabel("No decimal numbers allowed, only whole numbers."), "0, 13, 6, 13, c, c");
+		        panel.add(new JLabel("Bar numbers must be positive and greater than zero."), "0, 14, 6, 14, c, c");
+		        panel.add(new JLabel("Clicking APPLY will also disable faulty sections."), "0, 15, 6, 15, c, c");
 		        JLabel warn1 = new JLabel("Warning: If you have 'Remove initial silence' enabled,");
 		        JLabel warn2 = new JLabel("then the bar counter in lower right wont match up unless");
 		        JLabel warn3 = new JLabel("you preview mode is in 'Original'.");
 		        warn1.setForeground(new Color(1f,0f,0f));
 		        warn2.setForeground(new Color(1f,0f,0f));
 		        warn3.setForeground(new Color(1f,0f,0f));
-		        panel.add(warn1, "0, 13, 6, 13, c, c");
-		        panel.add(warn2, "0, 14, 6, 14, c, c");
-		        panel.add(warn3, "0, 15, 6, 15, c, c");
+		        panel.add(warn1, "0, 16, 6, 16, c, c");
+		        panel.add(warn2, "0, 17, 6, 17, c, c");
+		        panel.add(warn3, "0, 18, 6, 18, c, c");
 		        this.getContentPane().add(panel);
 		        this.setVisible(true);
 		    }
