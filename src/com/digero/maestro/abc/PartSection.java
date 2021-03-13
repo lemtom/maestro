@@ -5,6 +5,7 @@ public class PartSection {
 	public int volumeStep = 0;
 	public boolean fadeout = false;
 	public boolean silence = false;
+	public int dialogLine = -1;
 	
 	// inclusive:
 	public int startBar = 0;

@@ -92,8 +92,15 @@ public class SectionEditor {
 		        TreeMap<Integer, PartSection> tree = abcPart.sections.get(track);
 		        if (tree != null) {
 			        int number = 0;
+			        boolean useDialogLineNumbers = true;
 			        for(Entry<Integer, PartSection> entry : tree.entrySet()) {
 			        	PartSection ps = entry.getValue();
+			        	if (ps.dialogLine == -1) {
+			        		useDialogLineNumbers = false;
+			        	}
+			        	if (useDialogLineNumbers) {
+			        		number = ps.dialogLine;
+			        	}
 			        	if (number == 0) {
 			        		enable0.setSelected(true);
 			        		barA0.setText(""+ps.startBar);
@@ -143,7 +150,7 @@ public class SectionEditor {
 			        		silent5.setSelected(ps.silence);
 			        		fadeout5.setSelected(ps.fadeout);
 			        	} else {
-			        		System.err.println("Too many sections in treemap in section-editor.");
+			        		System.err.println("Too many sections in treemap in section-editor, or line numbers was badly edited in .msx file.");
 			        	}
 			        	number ++;
 			        }
@@ -253,7 +260,8 @@ public class SectionEditor {
 									ps.fadeout = fadeout0.isSelected();
 									if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 										tm.put(ps.startBar, ps);
-										lastEnd = ps.endBar; 
+										lastEnd = ps.endBar;
+										ps.dialogLine = 0;
 									} else {
 										SectionDialog.this.enable0.setSelected(false);
 									}
@@ -274,6 +282,7 @@ public class SectionEditor {
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+									ps.dialogLine = 1;
 								} else {
 									SectionDialog.this.enable1.setSelected(false);
 								}
@@ -294,6 +303,7 @@ public class SectionEditor {
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+									ps.dialogLine = 2;
 								} else {
 									SectionDialog.this.enable2.setSelected(false);
 								}
@@ -314,6 +324,7 @@ public class SectionEditor {
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+									ps.dialogLine = 3;
 								} else {
 									SectionDialog.this.enable3.setSelected(false);
 								}
@@ -334,6 +345,7 @@ public class SectionEditor {
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+									ps.dialogLine = 4;
 								} else {
 									SectionDialog.this.enable4.setSelected(false);
 								}
@@ -354,6 +366,7 @@ public class SectionEditor {
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
+									ps.dialogLine = 5;
 								} else {
 									SectionDialog.this.enable5.setSelected(false);
 								}

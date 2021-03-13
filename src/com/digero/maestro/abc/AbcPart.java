@@ -136,6 +136,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		        	SaveUtil.appendChildTextElement(sectionEle, "volumeStep", String.valueOf(ps.volumeStep));
 		        	SaveUtil.appendChildTextElement(sectionEle, "silence", String.valueOf(ps.silence));
 		        	SaveUtil.appendChildTextElement(sectionEle, "fadeout", String.valueOf(ps.fadeout));
+		        	SaveUtil.appendChildTextElement(sectionEle, "dialogLine", String.valueOf(ps.dialogLine));
 		        }
 	        }
 			
@@ -227,7 +228,8 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					ps.octaveStep = SaveUtil.parseValue(sectionEle, "octaveStep", 0);
 					ps.silence = SaveUtil.parseValue(sectionEle, "silence", false);
 					ps.fadeout = SaveUtil.parseValue(sectionEle, "fadeout", false);
-					if (ps.startBar > 0 && ps.endBar > ps.startBar-1) {//  && (ps.volumeStep != 0 || ps.octaveStep != 0 || ps.silence || ps.fadeout)
+					ps.dialogLine = SaveUtil.parseValue(sectionEle, "dialogLine", -1);
+					if (ps.startBar > 0 && ps.endBar >= ps.startBar) {//  && (ps.volumeStep != 0 || ps.octaveStep != 0 || ps.silence || ps.fadeout)
 						if (tree == null) {
 							tree = new TreeMap<Integer, PartSection>();
 							sections.set(t, tree);
