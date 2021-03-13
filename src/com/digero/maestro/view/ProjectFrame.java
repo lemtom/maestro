@@ -481,6 +481,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				sequencer.getFilter().onAbcPartChanged(abcPart != null);
 				abcSequencer.getFilter().onAbcPartChanged(abcPart != null);
 				partPanel.setAbcPart(abcPart);
+				if (abcPart != null) {
+					updateButtons(false);
+				}
 			}
 		});
 
