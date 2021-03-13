@@ -1,16 +1,15 @@
 package com.digero.maestro.view;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,68 +31,58 @@ public class SectionEditor {
 		class SectionDialog extends JDialog {
 			
 			private final double[] LAYOUT_COLS = new double[] { 0.10,0.15,0.15,0.15,0.15,0.12,0.18 };
-			private final double[] LAYOUT_ROWS = new double[] { TableLayoutConstants.PREFERRED,20,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.FILL,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED,TableLayoutConstants.PREFERRED};
+			private double[] LAYOUT_ROWS;
 			private AbcPart abcPart;
 			private int track;
-			private boolean active = false;
+			private int numberOfSections = 6;
 			
-			JCheckBox enable0 = new JCheckBox();
-	        JTextField barA0 = new JTextField("0");
-	        JTextField barB0 = new JTextField("0");
-	        JTextField transpose0 = new JTextField("0");
-	        JTextField velo0 = new JTextField("0");
-	        JCheckBox silent0 = new JCheckBox();
-	        JTextField fade0 = new JTextField("0");
-	        
-	        JCheckBox enable1 = new JCheckBox();
-	        JTextField barA1 = new JTextField("0");
-	        JTextField barB1 = new JTextField("0");
-	        JTextField transpose1 = new JTextField("0");
-	        JTextField velo1 = new JTextField("0");
-	        JCheckBox silent1 = new JCheckBox();
-	        JTextField fade1 = new JTextField("0");
-	        
-	        JCheckBox enable2 = new JCheckBox();
-	        JTextField barA2 = new JTextField("0");
-	        JTextField barB2 = new JTextField("0");
-	        JTextField transpose2 = new JTextField("0");
-	        JTextField velo2 = new JTextField("0");
-	        JCheckBox silent2 = new JCheckBox();
-	        JTextField fade2 = new JTextField("0");
-	        
-	        JCheckBox enable3 = new JCheckBox();
-	        JTextField barA3 = new JTextField("0");
-	        JTextField barB3 = new JTextField("0");
-	        JTextField transpose3 = new JTextField("0");
-	        JTextField velo3 = new JTextField("0");
-	        JCheckBox silent3 = new JCheckBox();
-	        JTextField fade3 = new JTextField("0");
-	        
-	        JCheckBox enable4 = new JCheckBox();
-	        JTextField barA4 = new JTextField("0");
-	        JTextField barB4 = new JTextField("0");
-	        JTextField transpose4 = new JTextField("0");
-	        JTextField velo4 = new JTextField("0");
-	        JCheckBox silent4 = new JCheckBox();
-	        JTextField fade4 = new JTextField("0");
-	        
-	        JCheckBox enable5 = new JCheckBox();
-	        JTextField barA5 = new JTextField("0");
-	        JTextField barB5 = new JTextField("0");
-	        JTextField transpose5 = new JTextField("0");
-	        JTextField velo5 = new JTextField("0");
-	        JCheckBox silent5 = new JCheckBox();
-	        JTextField fade5 = new JTextField("0");
-	        
+			private List<SectionEditorLine> sectionInputs = new ArrayList<SectionEditorLine>(numberOfSections);
+			     
 	        JButton showVolume = new JButton("Show");
 	        
-	        NoteGraph noteGraph = null;
+	        //NoteGraph noteGraph = null;
 		    
 		    public SectionDialog(JFrame jf, final NoteGraph noteGraph, String title, boolean modal, AbcPart abcPart, int track) {
 		        super(jf, title, modal);
 		        this.abcPart = abcPart;
 		        this.track = track;
-		        this.noteGraph = noteGraph;
+		        //this.noteGraph = noteGraph;
+		        
+		        this.setSize(425,250+21*numberOfSections);
+		        JPanel panel=new JPanel();
+		        
+		        LAYOUT_ROWS = new double[3+numberOfSections+10]; 
+		        LAYOUT_ROWS[0] = TableLayoutConstants.PREFERRED;
+		        LAYOUT_ROWS[1] = 20;
+		        LAYOUT_ROWS[2] = TableLayoutConstants.PREFERRED;
+		        for (int l = 0;l<numberOfSections;l++) {
+		        	LAYOUT_ROWS[3+l] = TableLayoutConstants.PREFERRED;		        	
+		        }
+		        LAYOUT_ROWS[3+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        LAYOUT_ROWS[4+numberOfSections] = TableLayoutConstants.FILL;
+		        LAYOUT_ROWS[5+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        LAYOUT_ROWS[6+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        LAYOUT_ROWS[7+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        LAYOUT_ROWS[8+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        LAYOUT_ROWS[9+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        LAYOUT_ROWS[10+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        LAYOUT_ROWS[11+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        LAYOUT_ROWS[12+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        
+		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
+		        panel.add(new JLabel("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>"), "0, 0, 6, 0, C, C");
+		        panel.add(new JLabel("Enable"), "0, 2, c, c");
+		        panel.add(new JLabel("From bar"), "1, 2, c, c");
+		        panel.add(new JLabel("To bar"), "2, 2, c, c");
+		        panel.add(new JLabel("Octave"), "3, 2, c, c");
+		        panel.add(new JLabel("Volume"), "4, 2, c, c");
+		        panel.add(new JLabel("Silence"), "5, 2, c, c");
+		        panel.add(new JLabel("Fade %"), "6, 2, c, c");
+		        
+		        for (int j = 0;j<numberOfSections;j++) {
+		        	sectionInputs.add(new SectionEditorLine());
+		        }
+		        
 		        TreeMap<Integer, PartSection> tree = abcPart.sections.get(track);
 		        if (tree != null) {
 			        int number = 0;
@@ -106,73 +95,20 @@ public class SectionEditor {
 			        	if (useDialogLineNumbers) {
 			        		number = ps.dialogLine;
 			        	}
-			        	if (number == 0) {
-			        		enable0.setSelected(true);
-			        		barA0.setText(""+ps.startBar);
-			        		barB0.setText(""+ps.endBar);
-			        		transpose0.setText(""+ps.octaveStep);
-			        		velo0.setText(""+ps.volumeStep);
-			        		silent0.setSelected(ps.silence);
-			        		fade0.setText(""+ps.fade);
-			        	} else if (number == 1) {
-			        		enable1.setSelected(true);
-			        		barA1.setText(""+ps.startBar);
-			        		barB1.setText(""+ps.endBar);
-			        		transpose1.setText(""+ps.octaveStep);
-			        		velo1.setText(""+ps.volumeStep);
-			        		silent1.setSelected(ps.silence);
-			        		fade1.setText(""+ps.fade);
-			        	} else if (number == 2) {
-			        		enable2.setSelected(true);
-			        		barA2.setText(""+ps.startBar);
-			        		barB2.setText(""+ps.endBar);
-			        		transpose2.setText(""+ps.octaveStep);
-			        		velo2.setText(""+ps.volumeStep);
-			        		silent2.setSelected(ps.silence);
-			        		fade2.setText(""+ps.fade);
-			        	} else if (number == 3) {
-			        		enable3.setSelected(true);
-			        		barA3.setText(""+ps.startBar);
-			        		barB3.setText(""+ps.endBar);
-			        		transpose3.setText(""+ps.octaveStep);
-			        		velo3.setText(""+ps.volumeStep);
-			        		silent3.setSelected(ps.silence);
-			        		fade3.setText(""+ps.fade);
-			        	} else if (number == 4) {
-			        		enable4.setSelected(true);
-			        		barA4.setText(""+ps.startBar);
-			        		barB4.setText(""+ps.endBar);
-			        		transpose4.setText(""+ps.octaveStep);
-			        		velo4.setText(""+ps.volumeStep);
-			        		silent4.setSelected(ps.silence);
-			        		fade4.setText(""+ps.fade);
-			        	} else if (number == 5) {
-			        		enable5.setSelected(true);
-			        		barA5.setText(""+ps.startBar);
-			        		barB5.setText(""+ps.endBar);
-			        		transpose5.setText(""+ps.octaveStep);
-			        		velo5.setText(""+ps.volumeStep);
-			        		silent5.setSelected(ps.silence);
-			        		fade5.setText(""+ps.fade);
-			        	} else {
-			        		System.err.println("Too many sections in treemap in section-editor, or line numbers was badly edited in .msx file.");
+		        		if (number >= numberOfSections || number < 0) {
+		        			System.err.println("Too many sections in treemap in section-editor, or line numbers was badly edited in .msx file.");
+		        		} else {
+			        		sectionInputs.get(number).enable.setSelected(true);
+			        		sectionInputs.get(number).barA.setText(""+ps.startBar);
+			        		sectionInputs.get(number).barB.setText(""+ps.endBar);
+			        		sectionInputs.get(number).transpose.setText(""+ps.octaveStep);
+			        		sectionInputs.get(number).velo.setText(""+ps.volumeStep);
+			        		sectionInputs.get(number).silent.setSelected(ps.silence);
+			        		sectionInputs.get(number).fade.setText(""+ps.fade);
 			        	}
 			        	number ++;
 			        }
 		        }
-		        
-		        this.setSize(425,350);
-		        JPanel panel=new JPanel();
-		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
-		        panel.add(new JLabel("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>"), "0, 0, 6, 0, C, C");
-
-		        panel.add(new JLabel("Enable"), "0, 2, c, c");
-		        panel.add(new JLabel("From bar"), "1, 2, c, c");
-		        panel.add(new JLabel("To bar"), "2, 2, c, c");
-		        panel.add(new JLabel("Octave"), "3, 2, c, c");
-		        panel.add(new JLabel("Volume"), "4, 2, c, c");
-		        panel.add(new JLabel("Silence"), "5, 2, c, c");
-		        panel.add(new JLabel("Fade %"), "6, 2, c, c");
 		        
 		        // Tooltips
 		        String enable = "<html><b> Enable a specific section edit. </b><br> Pressing APPLY will disable a section if it is bad.</html>";
@@ -183,131 +119,29 @@ public class SectionEditor {
 		        String silent = "<html><b> Silence this section. </b></html>";
 		        String fade = "<html><b> Fade in/out the volume of this section. </b><br> 0 = no fading <br> 100 = fade out full <br> -100 = fade in full <br> 150 = fade out before section ends <br> Etc. etc.. </html>";
 		        
-		        fade0.setToolTipText(fade);
-		        silent0.setToolTipText(silent);
-		        velo0.setToolTipText(velo);
-		        transpose0.setToolTipText(transpose);
-		        barB0.setToolTipText(barB);
-		        barA0.setToolTipText(barA);
-		        enable0.setToolTipText(enable);
-		        
-		        fade1.setToolTipText(fade);
-		        silent1.setToolTipText(silent);
-		        velo1.setToolTipText(velo);
-		        transpose1.setToolTipText(transpose);
-		        barB1.setToolTipText(barB);
-		        barA1.setToolTipText(barA);
-		        enable1.setToolTipText(enable);
-		        
-		        fade2.setToolTipText(fade);
-		        silent2.setToolTipText(silent);
-		        velo2.setToolTipText(velo);
-		        transpose2.setToolTipText(transpose);
-		        barB2.setToolTipText(barB);
-		        barA2.setToolTipText(barA);
-		        enable2.setToolTipText(enable);
-		        
-		        fade3.setToolTipText(fade);
-		        silent3.setToolTipText(silent);
-		        velo3.setToolTipText(velo);
-		        transpose3.setToolTipText(transpose);
-		        barB3.setToolTipText(barB);
-		        barA3.setToolTipText(barA);
-		        enable3.setToolTipText(enable);
-		        
-		        fade4.setToolTipText(fade);
-		        silent4.setToolTipText(silent);
-		        velo4.setToolTipText(velo);
-		        transpose4.setToolTipText(transpose);
-		        barB4.setToolTipText(barB);
-		        barA4.setToolTipText(barA);
-		        enable4.setToolTipText(enable);
-		        
-		        fade5.setToolTipText(fade);
-		        silent5.setToolTipText(silent);
-		        velo5.setToolTipText(velo);
-		        transpose5.setToolTipText(transpose);
-		        barB5.setToolTipText(barB);
-		        barA5.setToolTipText(barA);
-		        enable5.setToolTipText(enable);
-		        
-		        panel.add(enable0, "0,3,C,C");
-		        panel.add(barA0, "1,3,f,f");
-		        panel.add(barB0, "2,3,f,f");
-		        panel.add(transpose0, "3,3,f,f");
-		        panel.add(velo0, "4,3,f,f");
-		        panel.add(silent0, "5,3,c,f");
-		        panel.add(fade0, "6,3,f,f");
-		        barA0.setHorizontalAlignment(JTextField.CENTER);
-		        barB0.setHorizontalAlignment(JTextField.CENTER);
-		        transpose0.setHorizontalAlignment(JTextField.CENTER);
-		        velo0.setHorizontalAlignment(JTextField.CENTER);
-		        fade0.setHorizontalAlignment(JTextField.CENTER);
-		        
-		        panel.add(enable1, "0,4,C,C");
-		        panel.add(barA1, "1,4,f,f");
-		        panel.add(barB1, "2,4,f,f");
-		        panel.add(transpose1, "3,4,f,f");
-		        panel.add(velo1, "4,4,f,f");
-		        panel.add(silent1, "5,4,c,f");
-		        panel.add(fade1, "6,4,f,f");
-		        barA1.setHorizontalAlignment(JTextField.CENTER);
-		        barB1.setHorizontalAlignment(JTextField.CENTER);
-		        transpose1.setHorizontalAlignment(JTextField.CENTER);
-		        velo1.setHorizontalAlignment(JTextField.CENTER);
-		        fade1.setHorizontalAlignment(JTextField.CENTER);
-		        
-		        panel.add(enable2, "0,5,C,C");
-		        panel.add(barA2, "1,5,f,f");
-		        panel.add(barB2, "2,5,f,f");
-		        panel.add(transpose2, "3,5,f,f");
-		        panel.add(velo2, "4,5,f,f");
-		        panel.add(silent2, "5,5,c,f");
-		        panel.add(fade2, "6,5,f,f");
-		        barA2.setHorizontalAlignment(JTextField.CENTER);
-		        barB2.setHorizontalAlignment(JTextField.CENTER);
-		        transpose2.setHorizontalAlignment(JTextField.CENTER);
-		        velo2.setHorizontalAlignment(JTextField.CENTER);
-		        fade2.setHorizontalAlignment(JTextField.CENTER);
-		        
-		        panel.add(enable3, "0,6,C,C");
-		        panel.add(barA3, "1,6,f,f");
-		        panel.add(barB3, "2,6,f,f");
-		        panel.add(transpose3, "3,6,f,f");
-		        panel.add(velo3, "4,6,f,f");
-		        panel.add(silent3, "5,6,c,f");
-		        panel.add(fade3, "6,6,f,f");
-		        barA3.setHorizontalAlignment(JTextField.CENTER);
-		        barB3.setHorizontalAlignment(JTextField.CENTER);
-		        transpose3.setHorizontalAlignment(JTextField.CENTER);
-		        velo3.setHorizontalAlignment(JTextField.CENTER);
-		        fade3.setHorizontalAlignment(JTextField.CENTER);
-		        
-		        panel.add(enable4, "0,7,C,C");
-		        panel.add(barA4, "1,7,f,f");
-		        panel.add(barB4, "2,7,f,f");
-		        panel.add(transpose4, "3,7,f,f");
-		        panel.add(velo4, "4,7,f,f");
-		        panel.add(silent4, "5,7,c,f");
-		        panel.add(fade4, "6,7,f,f");
-		        barA4.setHorizontalAlignment(JTextField.CENTER);
-		        barB4.setHorizontalAlignment(JTextField.CENTER);
-		        transpose4.setHorizontalAlignment(JTextField.CENTER);
-		        velo4.setHorizontalAlignment(JTextField.CENTER);
-		        fade4.setHorizontalAlignment(JTextField.CENTER);
-		        
-		        panel.add(enable5, "0,8,C,C");
-		        panel.add(barA5, "1,8,f,f");
-		        panel.add(barB5, "2,8,f,f");
-		        panel.add(transpose5, "3,8,f,f");
-		        panel.add(velo5, "4,8,f,f");
-		        panel.add(silent5, "5,8,c,f");
-		        panel.add(fade5, "6,8,f,f");
-		        barA5.setHorizontalAlignment(JTextField.CENTER);
-		        barB5.setHorizontalAlignment(JTextField.CENTER);
-		        transpose5.setHorizontalAlignment(JTextField.CENTER);
-		        velo5.setHorizontalAlignment(JTextField.CENTER);
-		        fade5.setHorizontalAlignment(JTextField.CENTER);
+		        for (int i = 0;i<numberOfSections;i++) {
+		        	sectionInputs.get(i).fade.setToolTipText(fade);
+		        	sectionInputs.get(i).silent.setToolTipText(silent);
+		        	sectionInputs.get(i).velo.setToolTipText(velo);
+		        	sectionInputs.get(i).transpose.setToolTipText(transpose);
+		        	sectionInputs.get(i).barB.setToolTipText(barB);
+		        	sectionInputs.get(i).barA.setToolTipText(barA);
+		        	sectionInputs.get(i).enable.setToolTipText(enable);
+		        	
+		        	sectionInputs.get(i).barA.setHorizontalAlignment(JTextField.CENTER);
+		        	sectionInputs.get(i).barB.setHorizontalAlignment(JTextField.CENTER);
+		        	sectionInputs.get(i).transpose.setHorizontalAlignment(JTextField.CENTER);
+		        	sectionInputs.get(i).velo.setHorizontalAlignment(JTextField.CENTER);
+		        	sectionInputs.get(i).fade.setHorizontalAlignment(JTextField.CENTER);
+		        	
+		        	panel.add(sectionInputs.get(i).enable, "0,"+(3+i)+",C,C");
+			        panel.add(sectionInputs.get(i).barA, "1,"+(3+i)+",f,f");
+			        panel.add(sectionInputs.get(i).barB, "2,"+(3+i)+",f,f");
+			        panel.add(sectionInputs.get(i).transpose, "3,"+(3+i)+",f,f");
+			        panel.add(sectionInputs.get(i).velo, "4,"+(3+i)+",f,f");
+			        panel.add(sectionInputs.get(i).silent, "5,"+(3+i)+",c,f");
+			        panel.add(sectionInputs.get(i).fade, "6,"+(3+i)+",f,f");
+		        }
 		        
 		        showVolume.getModel().addChangeListener(new ChangeListener() {
 	                @Override
@@ -321,141 +155,35 @@ public class SectionEditor {
 	                }
 	            });
 		        showVolume.setToolTipText("<html><b> Press and hold to see the note volumes on the track. </b><br> Only edits after clicking APPLY will show. </html>");
-		        panel.add(showVolume, "4,9,f,f");
+		        panel.add(showVolume, "4,"+(3+numberOfSections)+",f,f");
 		        
 		        JButton okButton = new JButton("APPLY");
-		        //okButton.setPreferredSize(new Dimension(SECTIONBUTTON_WIDTH, SECTIONBUTTON_WIDTH));
-		        //okButton.setMargin( new Insets(5, 5, 5, 5) );
 		        okButton.addActionListener(new ActionListener() {
 		        	
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						TreeMap<Integer, PartSection> tm = new TreeMap<Integer, PartSection>();
 						int lastEnd = 0;
-						if (SectionDialog.this.enable0.isSelected()) {
-							PartSection ps = new PartSection();
-							try {
-									ps.octaveStep =  Integer.parseInt(transpose0.getText());
-									ps.volumeStep =  Integer.parseInt(velo0.getText());
-									ps.startBar = Integer.parseInt(barA0.getText());
-									ps.endBar = Integer.parseInt(barB0.getText());
-									ps.silence = silent0.isSelected();
-									ps.fade = Integer.parseInt(fade0.getText());
-									if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
-										tm.put(ps.startBar, ps);
-										lastEnd = ps.endBar;
-										ps.dialogLine = 0;
-									} else {
-										SectionDialog.this.enable0.setSelected(false);
-									}
-							} catch (NumberFormatException nfe) {
-								//System.err.println("NumberFormatException in first section in section-editor.");
-								SectionDialog.this.enable0.setSelected(false);
-							}
-						}
-						if (SectionDialog.this.enable1.isSelected()) {
-							PartSection ps = new PartSection();
-							try {
-								ps.octaveStep =  Integer.parseInt(transpose1.getText());
-								ps.volumeStep =  Integer.parseInt(velo1.getText());
-								ps.startBar = Integer.parseInt(barA1.getText());
-								ps.endBar = Integer.parseInt(barB1.getText());
-								ps.silence = silent1.isSelected();
-								ps.fade = Integer.parseInt(fade1.getText());
-								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
-									tm.put(ps.startBar, ps);
-									lastEnd = ps.endBar;
-									ps.dialogLine = 1;
-								} else {
-									SectionDialog.this.enable1.setSelected(false);
+						for (int k = 0;k<numberOfSections;k++) {
+							if (SectionDialog.this.sectionInputs.get(k).enable.isSelected()) {
+								PartSection ps = new PartSection();
+								try {
+										ps.octaveStep =  Integer.parseInt(sectionInputs.get(k).transpose.getText());
+										ps.volumeStep =  Integer.parseInt(sectionInputs.get(k).velo.getText());
+										ps.startBar = Integer.parseInt(sectionInputs.get(k).barA.getText());
+										ps.endBar = Integer.parseInt(sectionInputs.get(k).barB.getText());
+										ps.silence = sectionInputs.get(k).silent.isSelected();
+										ps.fade = Integer.parseInt(sectionInputs.get(k).fade.getText());
+										if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
+											tm.put(ps.startBar, ps);
+											lastEnd = ps.endBar;
+											ps.dialogLine = k;
+										} else {
+											SectionDialog.this.sectionInputs.get(k).enable.setSelected(false);
+										}
+								} catch (NumberFormatException nfe) {
+									SectionDialog.this.sectionInputs.get(k).enable.setSelected(false);
 								}
-							} catch (NumberFormatException nfe) {
-								//System.err.println("NumberFormatException in second section in section-editor.");
-								SectionDialog.this.enable1.setSelected(false);
-							}
-						}
-						if (SectionDialog.this.enable2.isSelected()) {
-							PartSection ps = new PartSection();
-							try {
-								ps.octaveStep =  Integer.parseInt(transpose2.getText());
-								ps.volumeStep =  Integer.parseInt(velo2.getText());
-								ps.startBar = Integer.parseInt(barA2.getText());
-								ps.endBar = Integer.parseInt(barB2.getText());
-								ps.silence = silent2.isSelected();
-								ps.fade = Integer.parseInt(fade2.getText());
-								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
-									tm.put(ps.startBar, ps);
-									lastEnd = ps.endBar;
-									ps.dialogLine = 2;
-								} else {
-									SectionDialog.this.enable2.setSelected(false);
-								}
-							} catch (NumberFormatException nfe) {
-								//System.err.println("NumberFormatException in third section in section-editor.");
-								SectionDialog.this.enable2.setSelected(false);
-							}
-						}
-						if (SectionDialog.this.enable3.isSelected()) {
-							PartSection ps = new PartSection();
-							try {
-								ps.octaveStep =  Integer.parseInt(transpose3.getText());
-								ps.volumeStep =  Integer.parseInt(velo3.getText());
-								ps.startBar = Integer.parseInt(barA3.getText());
-								ps.endBar = Integer.parseInt(barB3.getText());
-								ps.silence = silent3.isSelected();
-								ps.fade = Integer.parseInt(fade3.getText());
-								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
-									tm.put(ps.startBar, ps);
-									lastEnd = ps.endBar;
-									ps.dialogLine = 3;
-								} else {
-									SectionDialog.this.enable3.setSelected(false);
-								}
-							} catch (NumberFormatException nfe) {
-								//System.err.println("NumberFormatException in fourth section in section-editor.");
-								SectionDialog.this.enable3.setSelected(false);
-							}
-						}
-						if (SectionDialog.this.enable4.isSelected()) {
-							PartSection ps = new PartSection();
-							try {
-								ps.octaveStep =  Integer.parseInt(transpose4.getText());
-								ps.volumeStep =  Integer.parseInt(velo4.getText());
-								ps.startBar = Integer.parseInt(barA4.getText());
-								ps.endBar = Integer.parseInt(barB4.getText());
-								ps.silence = silent4.isSelected();
-								ps.fade = Integer.parseInt(fade4.getText());
-								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
-									tm.put(ps.startBar, ps);
-									lastEnd = ps.endBar;
-									ps.dialogLine = 4;
-								} else {
-									SectionDialog.this.enable4.setSelected(false);
-								}
-							} catch (NumberFormatException nfe) {
-								//System.err.println("NumberFormatException in fifth section in section-editor.");
-								SectionDialog.this.enable4.setSelected(false);
-							}
-						}
-						if (SectionDialog.this.enable5.isSelected()) {
-							PartSection ps = new PartSection();
-							try {
-								ps.octaveStep =  Integer.parseInt(transpose5.getText());
-								ps.volumeStep =  Integer.parseInt(velo5.getText());
-								ps.startBar = Integer.parseInt(barA5.getText());
-								ps.endBar = Integer.parseInt(barB5.getText());
-								ps.silence = silent5.isSelected();
-								ps.fade = Integer.parseInt(fade5.getText());
-								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
-									tm.put(ps.startBar, ps);
-									lastEnd = ps.endBar;
-									ps.dialogLine = 5;
-								} else {
-									SectionDialog.this.enable5.setSelected(false);
-								}
-							} catch (NumberFormatException nfe) {
-								//System.err.println("NumberFormatException in sixth section in section-editor.");
-								SectionDialog.this.enable5.setSelected(false);
 							}
 						}
 						if (lastEnd == 0) {
@@ -464,9 +192,9 @@ public class SectionEditor {
 						} else {
 							SectionDialog.this.abcPart.sections.set(SectionDialog.this.track, tm);
 							boolean[] booleanArray = new boolean[lastEnd+1];
-							for(int i = 0; i<lastEnd+1;i++) {
-								Entry<Integer, PartSection> entry = tm.floorEntry(i+1);
-								booleanArray[i] = entry != null && entry.getValue().startBar <= i+1 && entry.getValue().endBar >= i+1;
+							for(int m = 0; m<lastEnd+1;m++) {
+								Entry<Integer, PartSection> entry = tm.floorEntry(m+1);
+								booleanArray[m] = entry != null && entry.getValue().startBar <= m+1 && entry.getValue().endBar >= m+1;
 							}
 							
 							SectionDialog.this.abcPart.sectionsModified.set(SectionDialog.this.track, booleanArray);
@@ -476,27 +204,27 @@ public class SectionEditor {
 					}
 					
 				});
-		        panel.add(okButton, "6,9,f,f");
-		        panel.add(new JLabel("Enabled sections must be chronological and no overlap."), "0, 11, 6, 11, c, c");
-		        panel.add(new JLabel("Bar numbers are inclusive and use original meter."), "0, 12, 6, 12, c, c");
-		        panel.add(new JLabel("No decimal numbers allowed, only whole numbers."), "0, 13, 6, 13, c, c");
-		        panel.add(new JLabel("Bar numbers must be positive and greater than zero."), "0, 14, 6, 14, c, c");
-		        panel.add(new JLabel("Clicking APPLY will also disable faulty sections."), "0, 15, 6, 15, c, c");
+		        panel.add(okButton, "6,"+(3+numberOfSections)+",f,f");
+		        panel.add(new JLabel("Enabled sections must be chronological and no overlap."), "0,"+(5+numberOfSections)+", 6," +(5+numberOfSections)+", c, c");
+		        panel.add(new JLabel("Bar numbers are inclusive and use original meter."), "0, "+(6+numberOfSections)+", 6, "+(6+numberOfSections)+", c, c");
+		        panel.add(new JLabel("No decimal numbers allowed, only whole numbers."), "0, "+(7+numberOfSections)+", 6," +(7+numberOfSections)+", c, c");
+		        panel.add(new JLabel("Bar numbers must be positive and greater than zero."), "0, "+(8+numberOfSections)+", 6," +(8+numberOfSections)+", c, c");
+		        panel.add(new JLabel("Clicking APPLY will also disable faulty sections."), "0, "+(9+numberOfSections)+", 6," +(9+numberOfSections)+", c, c");
 		        JLabel warn1 = new JLabel("Warning: If you have 'Remove initial silence' enabled,");
 		        JLabel warn2 = new JLabel("then the bar counter in lower right likely wont match up unless");
 		        JLabel warn3 = new JLabel("you preview mode is in 'Original'.");
 		        warn1.setForeground(new Color(1f,0f,0f));
 		        warn2.setForeground(new Color(1f,0f,0f));
 		        warn3.setForeground(new Color(1f,0f,0f));
-		        panel.add(warn1, "0, 16, 6, 16, c, c");
-		        panel.add(warn2, "0, 17, 6, 17, c, c");
-		        panel.add(warn3, "0, 18, 6, 18, c, c");
+		        panel.add(warn1, "0," +(10+numberOfSections)+", 6," +(10+numberOfSections)+", c, c");
+		        panel.add(warn2, "0," +(11+numberOfSections)+", 6," +(11+numberOfSections)+", c, c");
+		        panel.add(warn3, "0," +(12+numberOfSections)+", 6," +(12+numberOfSections)+", c, c");
 		        this.getContentPane().add(panel);
 		        this.setVisible(true);
 		    }
 		};
 		
-		SectionDialog dia = new SectionDialog(jf, noteGraph, "Section editor", true, abcPart, track);
+		new SectionDialog(jf, noteGraph, "Section editor", true, abcPart, track);
 	}
 	
 }
