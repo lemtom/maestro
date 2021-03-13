@@ -40,7 +40,7 @@ public class SectionEditor {
 	        JTextField transpose0 = new JTextField("0");
 	        JTextField velo0 = new JTextField("0");
 	        JCheckBox silent0 = new JCheckBox();
-	        JCheckBox fadeout0 = new JCheckBox();
+	        JTextField fade0 = new JTextField("0");
 	        
 	        JCheckBox enable1 = new JCheckBox();
 	        JTextField barA1 = new JTextField("0");
@@ -48,7 +48,7 @@ public class SectionEditor {
 	        JTextField transpose1 = new JTextField("0");
 	        JTextField velo1 = new JTextField("0");
 	        JCheckBox silent1 = new JCheckBox();
-	        JCheckBox fadeout1 = new JCheckBox();
+	        JTextField fade1 = new JTextField("0");
 	        
 	        JCheckBox enable2 = new JCheckBox();
 	        JTextField barA2 = new JTextField("0");
@@ -56,7 +56,7 @@ public class SectionEditor {
 	        JTextField transpose2 = new JTextField("0");
 	        JTextField velo2 = new JTextField("0");
 	        JCheckBox silent2 = new JCheckBox();
-	        JCheckBox fadeout2 = new JCheckBox();
+	        JTextField fade2 = new JTextField("0");
 	        
 	        JCheckBox enable3 = new JCheckBox();
 	        JTextField barA3 = new JTextField("0");
@@ -64,7 +64,7 @@ public class SectionEditor {
 	        JTextField transpose3 = new JTextField("0");
 	        JTextField velo3 = new JTextField("0");
 	        JCheckBox silent3 = new JCheckBox();
-	        JCheckBox fadeout3 = new JCheckBox();
+	        JTextField fade3 = new JTextField("0");
 	        
 	        JCheckBox enable4 = new JCheckBox();
 	        JTextField barA4 = new JTextField("0");
@@ -72,7 +72,7 @@ public class SectionEditor {
 	        JTextField transpose4 = new JTextField("0");
 	        JTextField velo4 = new JTextField("0");
 	        JCheckBox silent4 = new JCheckBox();
-	        JCheckBox fadeout4 = new JCheckBox();
+	        JTextField fade4 = new JTextField("0");
 	        
 	        JCheckBox enable5 = new JCheckBox();
 	        JTextField barA5 = new JTextField("0");
@@ -80,7 +80,7 @@ public class SectionEditor {
 	        JTextField transpose5 = new JTextField("0");
 	        JTextField velo5 = new JTextField("0");
 	        JCheckBox silent5 = new JCheckBox();
-	        JCheckBox fadeout5 = new JCheckBox();
+	        JTextField fade5 = new JTextField("0");
 	        
 	        NoteGraph noteGraph = null;
 		    
@@ -108,7 +108,7 @@ public class SectionEditor {
 			        		transpose0.setText(""+ps.octaveStep);
 			        		velo0.setText(""+ps.volumeStep);
 			        		silent0.setSelected(ps.silence);
-			        		fadeout0.setSelected(ps.fadeout);
+			        		fade0.setText(""+ps.fade);
 			        	} else if (number == 1) {
 			        		enable1.setSelected(true);
 			        		barA1.setText(""+ps.startBar);
@@ -116,7 +116,7 @@ public class SectionEditor {
 			        		transpose1.setText(""+ps.octaveStep);
 			        		velo1.setText(""+ps.volumeStep);
 			        		silent1.setSelected(ps.silence);
-			        		fadeout1.setSelected(ps.fadeout);
+			        		fade1.setText(""+ps.fade);
 			        	} else if (number == 2) {
 			        		enable2.setSelected(true);
 			        		barA2.setText(""+ps.startBar);
@@ -124,7 +124,7 @@ public class SectionEditor {
 			        		transpose2.setText(""+ps.octaveStep);
 			        		velo2.setText(""+ps.volumeStep);
 			        		silent2.setSelected(ps.silence);
-			        		fadeout2.setSelected(ps.fadeout);
+			        		fade2.setText(""+ps.fade);
 			        	} else if (number == 3) {
 			        		enable3.setSelected(true);
 			        		barA3.setText(""+ps.startBar);
@@ -132,7 +132,7 @@ public class SectionEditor {
 			        		transpose3.setText(""+ps.octaveStep);
 			        		velo3.setText(""+ps.volumeStep);
 			        		silent3.setSelected(ps.silence);
-			        		fadeout3.setSelected(ps.fadeout);
+			        		fade3.setText(""+ps.fade);
 			        	} else if (number == 4) {
 			        		enable4.setSelected(true);
 			        		barA4.setText(""+ps.startBar);
@@ -140,7 +140,7 @@ public class SectionEditor {
 			        		transpose4.setText(""+ps.octaveStep);
 			        		velo4.setText(""+ps.volumeStep);
 			        		silent4.setSelected(ps.silence);
-			        		fadeout4.setSelected(ps.fadeout);
+			        		fade4.setText(""+ps.fade);
 			        	} else if (number == 5) {
 			        		enable5.setSelected(true);
 			        		barA5.setText(""+ps.startBar);
@@ -148,7 +148,7 @@ public class SectionEditor {
 			        		transpose5.setText(""+ps.octaveStep);
 			        		velo5.setText(""+ps.volumeStep);
 			        		silent5.setSelected(ps.silence);
-			        		fadeout5.setSelected(ps.fadeout);
+			        		fade5.setText(""+ps.fade);
 			        	} else {
 			        		System.err.println("Too many sections in treemap in section-editor, or line numbers was badly edited in .msx file.");
 			        	}
@@ -166,7 +166,7 @@ public class SectionEditor {
 		        panel.add(new JLabel("Octave"), "3, 2, c, c");
 		        panel.add(new JLabel("Volume"), "4, 2, c, c");
 		        panel.add(new JLabel("Silence"), "5, 2, c, c");
-		        panel.add(new JLabel("Fadeout"), "6, 2, c, c");
+		        panel.add(new JLabel("Fade %"), "6, 2, c, c");
 		        
 		        panel.add(enable0, "0,3,C,C");
 		        panel.add(barA0, "1,3,f,f");
@@ -174,11 +174,12 @@ public class SectionEditor {
 		        panel.add(transpose0, "3,3,f,f");
 		        panel.add(velo0, "4,3,f,f");
 		        panel.add(silent0, "5,3,c,f");
-		        panel.add(fadeout0, "6,3,c,f");
+		        panel.add(fade0, "6,3,f,f");
 		        barA0.setHorizontalAlignment(JTextField.CENTER);
 		        barB0.setHorizontalAlignment(JTextField.CENTER);
 		        transpose0.setHorizontalAlignment(JTextField.CENTER);
 		        velo0.setHorizontalAlignment(JTextField.CENTER);
+		        fade0.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable1, "0,4,C,C");
 		        panel.add(barA1, "1,4,f,f");
@@ -186,11 +187,12 @@ public class SectionEditor {
 		        panel.add(transpose1, "3,4,f,f");
 		        panel.add(velo1, "4,4,f,f");
 		        panel.add(silent1, "5,4,c,f");
-		        panel.add(fadeout1, "6,4,c,f");
+		        panel.add(fade1, "6,4,f,f");
 		        barA1.setHorizontalAlignment(JTextField.CENTER);
 		        barB1.setHorizontalAlignment(JTextField.CENTER);
 		        transpose1.setHorizontalAlignment(JTextField.CENTER);
 		        velo1.setHorizontalAlignment(JTextField.CENTER);
+		        fade1.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable2, "0,5,C,C");
 		        panel.add(barA2, "1,5,f,f");
@@ -198,11 +200,12 @@ public class SectionEditor {
 		        panel.add(transpose2, "3,5,f,f");
 		        panel.add(velo2, "4,5,f,f");
 		        panel.add(silent2, "5,5,c,f");
-		        panel.add(fadeout2, "6,5,c,f");
+		        panel.add(fade2, "6,5,f,f");
 		        barA2.setHorizontalAlignment(JTextField.CENTER);
 		        barB2.setHorizontalAlignment(JTextField.CENTER);
 		        transpose2.setHorizontalAlignment(JTextField.CENTER);
 		        velo2.setHorizontalAlignment(JTextField.CENTER);
+		        fade2.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable3, "0,6,C,C");
 		        panel.add(barA3, "1,6,f,f");
@@ -210,11 +213,12 @@ public class SectionEditor {
 		        panel.add(transpose3, "3,6,f,f");
 		        panel.add(velo3, "4,6,f,f");
 		        panel.add(silent3, "5,6,c,f");
-		        panel.add(fadeout3, "6,6,c,f");
+		        panel.add(fade3, "6,6,f,f");
 		        barA3.setHorizontalAlignment(JTextField.CENTER);
 		        barB3.setHorizontalAlignment(JTextField.CENTER);
 		        transpose3.setHorizontalAlignment(JTextField.CENTER);
 		        velo3.setHorizontalAlignment(JTextField.CENTER);
+		        fade3.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable4, "0,7,C,C");
 		        panel.add(barA4, "1,7,f,f");
@@ -222,11 +226,12 @@ public class SectionEditor {
 		        panel.add(transpose4, "3,7,f,f");
 		        panel.add(velo4, "4,7,f,f");
 		        panel.add(silent4, "5,7,c,f");
-		        panel.add(fadeout4, "6,7,c,f");
+		        panel.add(fade4, "6,7,f,f");
 		        barA4.setHorizontalAlignment(JTextField.CENTER);
 		        barB4.setHorizontalAlignment(JTextField.CENTER);
 		        transpose4.setHorizontalAlignment(JTextField.CENTER);
 		        velo4.setHorizontalAlignment(JTextField.CENTER);
+		        fade4.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        panel.add(enable5, "0,8,C,C");
 		        panel.add(barA5, "1,8,f,f");
@@ -234,11 +239,12 @@ public class SectionEditor {
 		        panel.add(transpose5, "3,8,f,f");
 		        panel.add(velo5, "4,8,f,f");
 		        panel.add(silent5, "5,8,c,f");
-		        panel.add(fadeout5, "6,8,c,f");
+		        panel.add(fade5, "6,8,f,f");
 		        barA5.setHorizontalAlignment(JTextField.CENTER);
 		        barB5.setHorizontalAlignment(JTextField.CENTER);
 		        transpose5.setHorizontalAlignment(JTextField.CENTER);
 		        velo5.setHorizontalAlignment(JTextField.CENTER);
+		        fade5.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        JButton okButton = new JButton("APPLY");
 		        //okButton.setPreferredSize(new Dimension(SECTIONBUTTON_WIDTH, SECTIONBUTTON_WIDTH));
@@ -257,7 +263,7 @@ public class SectionEditor {
 									ps.startBar = Integer.parseInt(barA0.getText());
 									ps.endBar = Integer.parseInt(barB0.getText());
 									ps.silence = silent0.isSelected();
-									ps.fadeout = fadeout0.isSelected();
+									ps.fade = Integer.parseInt(fade0.getText());
 									if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 										tm.put(ps.startBar, ps);
 										lastEnd = ps.endBar;
@@ -278,7 +284,7 @@ public class SectionEditor {
 								ps.startBar = Integer.parseInt(barA1.getText());
 								ps.endBar = Integer.parseInt(barB1.getText());
 								ps.silence = silent1.isSelected();
-								ps.fadeout = fadeout1.isSelected();
+								ps.fade = Integer.parseInt(fade1.getText());
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
@@ -299,7 +305,7 @@ public class SectionEditor {
 								ps.startBar = Integer.parseInt(barA2.getText());
 								ps.endBar = Integer.parseInt(barB2.getText());
 								ps.silence = silent2.isSelected();
-								ps.fadeout = fadeout2.isSelected();
+								ps.fade = Integer.parseInt(fade2.getText());
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
@@ -320,7 +326,7 @@ public class SectionEditor {
 								ps.startBar = Integer.parseInt(barA3.getText());
 								ps.endBar = Integer.parseInt(barB3.getText());
 								ps.silence = silent3.isSelected();
-								ps.fadeout = fadeout3.isSelected();
+								ps.fade = Integer.parseInt(fade3.getText());
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
@@ -341,7 +347,7 @@ public class SectionEditor {
 								ps.startBar = Integer.parseInt(barA4.getText());
 								ps.endBar = Integer.parseInt(barB4.getText());
 								ps.silence = silent4.isSelected();
-								ps.fadeout = fadeout4.isSelected();
+								ps.fade = Integer.parseInt(fade4.getText());
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;
@@ -362,7 +368,7 @@ public class SectionEditor {
 								ps.startBar = Integer.parseInt(barA5.getText());
 								ps.endBar = Integer.parseInt(barB5.getText());
 								ps.silence = silent5.isSelected();
-								ps.fadeout = fadeout5.isSelected();
+								ps.fade = Integer.parseInt(fade5.getText());
 								if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
 									tm.put(ps.startBar, ps);
 									lastEnd = ps.endBar;

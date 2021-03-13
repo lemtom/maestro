@@ -135,7 +135,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		        	SaveUtil.appendChildTextElement(sectionEle, "octaveStep", String.valueOf(ps.octaveStep));
 		        	SaveUtil.appendChildTextElement(sectionEle, "volumeStep", String.valueOf(ps.volumeStep));
 		        	SaveUtil.appendChildTextElement(sectionEle, "silence", String.valueOf(ps.silence));
-		        	SaveUtil.appendChildTextElement(sectionEle, "fadeout", String.valueOf(ps.fadeout));
+		        	SaveUtil.appendChildTextElement(sectionEle, "fade", String.valueOf(ps.fade));
 		        	SaveUtil.appendChildTextElement(sectionEle, "dialogLine", String.valueOf(ps.dialogLine));
 		        }
 	        }
@@ -227,7 +227,14 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					ps.volumeStep = SaveUtil.parseValue(sectionEle, "volumeStep", 0);
 					ps.octaveStep = SaveUtil.parseValue(sectionEle, "octaveStep", 0);
 					ps.silence = SaveUtil.parseValue(sectionEle, "silence", false);
-					ps.fadeout = SaveUtil.parseValue(sectionEle, "fadeout", false);
+					boolean fadeout = SaveUtil.parseValue(sectionEle, "fadeout", false);
+					int fade = SaveUtil.parseValue(sectionEle, "fade", 0);
+					if (fade != 0) {
+						ps.fade = fade;
+					} else {
+						// backwards compatibility
+						ps.fade = (fadeout?100:0);
+					}
 					ps.dialogLine = SaveUtil.parseValue(sectionEle, "dialogLine", -1);
 					if (ps.startBar > 0 && ps.endBar >= ps.startBar) {//  && (ps.volumeStep != 0 || ps.octaveStep != 0 || ps.silence || ps.fadeout)
 						if (tree == null) {
@@ -608,13 +615,15 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				if (entry != null) {
 					if (bar <= entry.getValue().endBar) {
 						delta = entry.getValue().volumeStep;
-						if (entry.getValue().fadeout) {
-							factor = map(ne.getStartTick(), entry.getValue().startBar*barLengthTicks-barLengthTicks, entry.getValue().endBar*barLengthTicks,100,0);
+						if (entry.getValue().fade > 0) {
+							factor = map(ne.getStartTick(), entry.getValue().startBar*barLengthTicks-barLengthTicks, entry.getValue().endBar*barLengthTicks,100, 100-entry.getValue().fade);
+						} else if (entry.getValue().fade < 0) {
+							factor = map(ne.getStartTick(), entry.getValue().startBar*barLengthTicks-barLengthTicks, entry.getValue().endBar*barLengthTicks,100+entry.getValue().fade,100);
 						}
 					}
 				}
 			}
-		}		
+		}
 		int[] retur = new int[2];
 		retur[0] = delta;
 		retur[1] = factor;
