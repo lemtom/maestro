@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -15,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.digero.maestro.abc.AbcPart;
 import com.digero.maestro.abc.PartSection;
@@ -82,9 +85,11 @@ public class SectionEditor {
 	        JCheckBox silent5 = new JCheckBox();
 	        JTextField fade5 = new JTextField("0");
 	        
+	        JButton showVolume = new JButton("Show");
+	        
 	        NoteGraph noteGraph = null;
 		    
-		    public SectionDialog(JFrame jf, NoteGraph noteGraph, String title, boolean modal, AbcPart abcPart, int track) {
+		    public SectionDialog(JFrame jf, final NoteGraph noteGraph, String title, boolean modal, AbcPart abcPart, int track) {
 		        super(jf, title, modal);
 		        this.abcPart = abcPart;
 		        this.track = track;
@@ -245,6 +250,19 @@ public class SectionEditor {
 		        transpose5.setHorizontalAlignment(JTextField.CENTER);
 		        velo5.setHorizontalAlignment(JTextField.CENTER);
 		        fade5.setHorizontalAlignment(JTextField.CENTER);
+		        
+		        showVolume.getModel().addChangeListener(new ChangeListener() {
+	                @Override
+	                public void stateChanged(ChangeEvent e) {
+	                    ButtonModel model = showVolume.getModel();
+	                    if (model.isArmed()) {
+	                    	noteGraph.setShowingNoteVelocity(true);
+	                    } else {
+	                    	noteGraph.setShowingNoteVelocity(false);
+	                    }
+	                }
+	            });
+		        panel.add(showVolume, "4,9,f,f");
 		        
 		        JButton okButton = new JButton("APPLY");
 		        //okButton.setPreferredSize(new Dimension(SECTIONBUTTON_WIDTH, SECTIONBUTTON_WIDTH));
