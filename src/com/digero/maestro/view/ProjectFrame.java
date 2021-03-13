@@ -180,6 +180,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private MainSequencerListener mainSequencerListener;
 	private AbcSequencerListener abcSequencerListener;
 	private boolean failedToLoadLotroInstruments = false;
+	private JButton zoom = new JButton("Zoom");
 
 	public ProjectFrame()
 	{
@@ -694,7 +695,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		playControlPanel.add(midiBarLabel, "8, 2, R, T");
 		playControlPanel.add(abcBarLabel, "8, 2, R, T");
 		
-		JButton zoom = new JButton("Zoom");
+		
 		zoom.addActionListener(new ActionListener() {
 			
 			@Override
@@ -1202,6 +1203,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			keySignatureField.setEnabled(midiLoaded);
 			timeSignatureField.setEnabled(midiLoaded);
 			tripletCheckBox.setEnabled(midiLoaded);
+			zoom.setEnabled(midiLoaded);
 
 			updateButtonsPending = false;
 		}
