@@ -165,6 +165,7 @@ public class SectionEditor {
 		        JPanel panel=new JPanel();
 		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
 		        panel.add(new JLabel(abcPart.getTitle()+": "+abcPart.getInstrument().toString()+" on track "+track), "0, 0, 6, 0, C, C");
+
 		        panel.add(new JLabel("Enable"), "0, 2, c, c");
 		        panel.add(new JLabel("From bar"), "1, 2, c, c");
 		        panel.add(new JLabel("To bar"), "2, 2, c, c");
@@ -172,6 +173,63 @@ public class SectionEditor {
 		        panel.add(new JLabel("Volume"), "4, 2, c, c");
 		        panel.add(new JLabel("Silence"), "5, 2, c, c");
 		        panel.add(new JLabel("Fade %"), "6, 2, c, c");
+		        
+		        // Tooltips
+		        String enable = "<html><b> Enable a specific section edit. </b><br> Pressing APPLY will disable a section if it is bad.</html>";
+		        String barA = "<html><b> The start bar (inclusive) where this section edit starts. </b><br> Must be above 0 and greater than the 'From bar' of previous enabled section.</html>";
+		        String barB = "<html><b> The end bar (inclusive) where this section edit end. </b><br> Must be equal or greater than the 'From bar'.</html>";
+		        String transpose = "<html><b> Transpose this section some octaves up or down. </b><br> Enter a positive or negative number. </html>";
+		        String velo = "<html><b> Offset the volume of this section. </b><br> Experiment to find the number that does what you want. <br> Normally a number from -250 to 250. </html>";
+		        String silent = "<html><b> Silence this section. </b></html>";
+		        String fade = "<html><b> Fade in/out the volume of this section. </b><br> 0 = no fading <br> 100 = fade out full <br> -100 = fade in full <br> 150 = fade out before section ends <br> Etc. etc.. </html>";
+		        
+		        fade0.setToolTipText(fade);
+		        silent0.setToolTipText(silent);
+		        velo0.setToolTipText(velo);
+		        transpose0.setToolTipText(transpose);
+		        barB0.setToolTipText(barB);
+		        barA0.setToolTipText(barA);
+		        enable0.setToolTipText(enable);
+		        
+		        fade1.setToolTipText(fade);
+		        silent1.setToolTipText(silent);
+		        velo1.setToolTipText(velo);
+		        transpose1.setToolTipText(transpose);
+		        barB1.setToolTipText(barB);
+		        barA1.setToolTipText(barA);
+		        enable1.setToolTipText(enable);
+		        
+		        fade2.setToolTipText(fade);
+		        silent2.setToolTipText(silent);
+		        velo2.setToolTipText(velo);
+		        transpose2.setToolTipText(transpose);
+		        barB2.setToolTipText(barB);
+		        barA2.setToolTipText(barA);
+		        enable2.setToolTipText(enable);
+		        
+		        fade3.setToolTipText(fade);
+		        silent3.setToolTipText(silent);
+		        velo3.setToolTipText(velo);
+		        transpose3.setToolTipText(transpose);
+		        barB3.setToolTipText(barB);
+		        barA3.setToolTipText(barA);
+		        enable3.setToolTipText(enable);
+		        
+		        fade4.setToolTipText(fade);
+		        silent4.setToolTipText(silent);
+		        velo4.setToolTipText(velo);
+		        transpose4.setToolTipText(transpose);
+		        barB4.setToolTipText(barB);
+		        barA4.setToolTipText(barA);
+		        enable4.setToolTipText(enable);
+		        
+		        fade5.setToolTipText(fade);
+		        silent5.setToolTipText(silent);
+		        velo5.setToolTipText(velo);
+		        transpose5.setToolTipText(transpose);
+		        barB5.setToolTipText(barB);
+		        barA5.setToolTipText(barA);
+		        enable5.setToolTipText(enable);
 		        
 		        panel.add(enable0, "0,3,C,C");
 		        panel.add(barA0, "1,3,f,f");
@@ -262,6 +320,7 @@ public class SectionEditor {
 	                    }
 	                }
 	            });
+		        showVolume.setToolTipText("<html><b> Press and hold to see the note volumes on the track. </b><br> Only edits after clicking APPLY will show. </html>");
 		        panel.add(showVolume, "4,9,f,f");
 		        
 		        JButton okButton = new JButton("APPLY");
