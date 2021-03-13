@@ -710,7 +710,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 				{
 					NoteEvent ne = noteEvents.get(i);
 
-					if (ne.getEndMicros() < clipPosStart || ne.getStartMicros() > clipPosEnd)
+					if (ne.getEndMicros() < clipPosStart || ne.getStartMicros() > clipPosEnd || !audibleNote(ne))
 						continue;
 
 					int[] sv = getSectionVelocity(ne);
