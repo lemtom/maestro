@@ -164,7 +164,7 @@ public class SectionEditor {
 		        this.setSize(425,350);
 		        JPanel panel=new JPanel();
 		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
-		        panel.add(new JLabel(abcPart.getTitle()+": "+abcPart.getInstrument().toString()+" on track "+track), "0, 0, 6, 0, C, C");
+		        panel.add(new JLabel("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>"), "0, 0, 6, 0, C, C");
 
 		        panel.add(new JLabel("Enable"), "0, 2, c, c");
 		        panel.add(new JLabel("From bar"), "1, 2, c, c");
