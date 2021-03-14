@@ -204,6 +204,7 @@ public class SectionEditor {
 					}
 					
 				});
+		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will also not be remembered. </html>");
 		        panel.add(okButton, "6,"+(3+numberOfSections)+",f,f");
 		        panel.add(new JLabel("Enabled sections must be chronological and no overlap."), "0,"+(5+numberOfSections)+", 6," +(5+numberOfSections)+", c, c");
 		        panel.add(new JLabel("Bar numbers are inclusive and use original meter."), "0, "+(6+numberOfSections)+", 6, "+(6+numberOfSections)+", c, c");
