@@ -22,8 +22,13 @@
 
 package com.digero.maestro.midi;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.Note;
+import com.digero.maestro.abc.AbcPart;
 
 public class NoteEvent implements Comparable<NoteEvent>
 {
@@ -39,6 +44,10 @@ public class NoteEvent implements Comparable<NoteEvent>
 
 	public NoteEvent tiesFrom = null;
 	public NoteEvent tiesTo = null;
+
+	public List<NoteEvent> origEvent;
+
+	private Map<AbcPart, Boolean> pruneMap = new HashMap<AbcPart, Boolean>();
 
 	public NoteEvent(Note note, int velocity, long startTick, long endTick, ITempoCache tempoCache)
 	{
@@ -195,5 +204,20 @@ public class NoteEvent implements Comparable<NoteEvent>
 	
 	public String printout() {
 		return "Note " + note.id + " dura " + getFullLengthTicks() + " |";
+	}
+
+	public boolean isPruned(AbcPart abcPart) {
+		if (abcPart == null) {
+			return false;
+		}
+		return pruneMap.get(abcPart) != null && pruneMap.get(abcPart) == true;
+	}
+
+	public void prune(AbcPart part) {
+		pruneMap.put(part, true);
+	}
+
+	public void resetPruned(AbcPart part) {
+		pruneMap.remove(part);
 	}
 }

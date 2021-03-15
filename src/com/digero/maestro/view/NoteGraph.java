@@ -503,12 +503,17 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 		return cachedColorByDynamics[dyn.ordinal()];
 	}
 
-	private Color getNoteColor(NoteEvent ne)
+	Color getNoteColor(NoteEvent ne)
+	{
+		return getNoteColorEx(ne, noteColor.get(), noteColorByDynamics);
+	}
+	
+	Color getNoteVColor(NoteEvent ne)
 	{
 		return getNoteColorEx(ne, noteColor.get(), noteColorByDynamics);
 	}
 
-	private Color getBadNoteColor(NoteEvent ne)
+	Color getBadNoteColor(NoteEvent ne)
 	{
 		return getNoteColorEx(ne, badNoteColor.get(), badNoteColorByDynamics);
 	}
@@ -763,7 +768,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 						}
 						else
 						{
-							g2.setColor(getNoteColor(ne));
+							g2.setColor(getNoteVColor(ne));
 							fillNoteVelocity(g2, ne, dynamicsRenderedInThisPass);
 						}
 					}

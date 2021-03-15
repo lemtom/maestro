@@ -1264,12 +1264,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			if (e.getProperty() == AbcPartProperty.TRACK_ENABLED)
 				updateButtons(false);
 
-			partsList.repaint();
+			
 
 			setAbcSongModified(true);
 
-			if (e.isAbcPreviewRelated() && abcSequencer.isRunning())
-				refreshPreviewSequence(false);
+			if (e.isAbcPreviewRelated())
+				refreshPreviewSequence(true);
+			
+			partsList.repaint();
 		}
 	};
 

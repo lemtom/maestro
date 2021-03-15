@@ -603,6 +603,9 @@ public class AbcExporter
 					// Skip notes that are outside of the play range.
 					if (ne.getEndTick() <= songStartTick || ne.getStartTick() >= songEndTick)
 						continue;
+					
+					// reset pruned flag
+					ne.resetPruned(part);
 
 					Note mappedNote = part.mapNote(t, ne.note.id, ne.getStartTick());
 					if (mappedNote != null)
@@ -613,7 +616,10 @@ public class AbcExporter
 						long endTick = Math.min(ne.getEndTick(), songEndTick);
 						int[] sva = part.getSectionVolumeAdjust(t, ne);
 						int velocity = (int)((ne.velocity + part.getTrackVolumeAdjust(t) + sva[0])*0.01f*(float)sva[1]);
-						events.add(new NoteEvent(mappedNote, velocity, startTick, endTick, qtm));
+						NoteEvent newNE = new NoteEvent(mappedNote, velocity, startTick, endTick, qtm);
+						newNE.origEvent = new ArrayList<NoteEvent>();
+						newNE.origEvent.add(ne);
+						events.add(newNE);
 					}
 				}
 			}
@@ -698,6 +704,12 @@ public class AbcExporter
 
 						// Remove the duplicate note
 						neIter.remove();
+						if (ne.origEvent != null) {
+							if (on.origEvent == null) {
+								on.origEvent = new ArrayList<NoteEvent>();
+							}
+							on.origEvent.addAll(ne.origEvent);
+						}
 						continue dupLoop;
 					}
 					else
@@ -740,7 +752,7 @@ public class AbcExporter
 				Chord nextChord = new Chord(ne);
 
 				List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
-				removeNotes(events, deadnotes);
+				removeNotes(events, deadnotes, part);
 				if (deadnotes.size() > 0) {
 					// One of the tiedTo notes that was pruned might be the events.get(i) note,
 					// so we go one step back and re-process events.get(i)
@@ -822,7 +834,9 @@ public class AbcExporter
 				curChord = nextChord;
 			}
 		}
-		curChord.prune(part.getInstrument().sustainable);// Last chord needs to be pruned as that hasn't happened yet.
+		// Last chord needs to be pruned as that hasn't happened yet.
+		List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
+		removeNotes(events, deadnotes, part);// we need to set the pruned flag for last chord too.
 
 		return chords;
 	}
@@ -965,7 +979,7 @@ public class AbcExporter
 		}
 	}
 	
-	private void removeNotes(List<NoteEvent> events, List<NoteEvent> notes)
+	private void removeNotes(List<NoteEvent> events, List<NoteEvent> notes, AbcPart part)
 	{
 		for(NoteEvent ne : notes) {
 
@@ -974,6 +988,10 @@ public class AbcExporter
 			{
 				ne.tiesFrom.tiesTo = null;
 				ne.tiesFrom = null;
+			} else if (ne.origEvent != null) {
+				for (NoteEvent neo : ne.origEvent) {
+					neo.prune(part);
+				}
 			}
 	
 			// Remove the remainder of the notes that this is tied to (if any)
