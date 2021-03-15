@@ -797,7 +797,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		
 		@Override Color getNoteColor(NoteEvent ne)
 		{
-			if (ne.isPruned(abcPart)) {
+			if (ne.isPruned(abcPart) && ProjectFrame.abcPreviewMode) {
 				return ColorTable.NOTE_PRUNED.get();
 			}
 			return super.getNoteColor(ne);
@@ -805,7 +805,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 		@Override Color getBadNoteColor(NoteEvent ne)
 		{
-			if (ne.isPruned(abcPart)) {
+			if (ne.isPruned(abcPart) && ProjectFrame.abcPreviewMode) {
 				return ColorTable.NOTE_PRUNED.get();
 			}
 			return super.getBadNoteColor(ne);

@@ -153,7 +153,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 	private PartPanel partPanel;
 
-	private boolean abcPreviewMode = false;
+	static boolean abcPreviewMode = false;
 	private JToggleButton abcModeRadioButton;
 	private JToggleButton midiModeRadioButton;
 	private JButton playButton;
@@ -606,6 +606,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			@Override public void actionPerformed(ActionEvent e)
 			{
 				updatePreviewMode(abcModeRadioButton.isSelected());
+				if (partPanel != null) {
+					partPanel.repaint();
+				}
 			}
 		};
 
@@ -1264,14 +1267,18 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			if (e.getProperty() == AbcPartProperty.TRACK_ENABLED)
 				updateButtons(false);
 
+			partsList.repaint();
 			
-
 			setAbcSongModified(true);
 
-			if (e.isAbcPreviewRelated())
-				refreshPreviewSequence(true);
+			if (e.isAbcPreviewRelated() && abcSequencer.isRunning())
+				refreshPreviewSequence(false);
+			else if (e.isAbcPreviewRelated() && abcPreviewMode)
+				refreshPreviewSequence(false);
 			
-			partsList.repaint();
+			if (e.isAbcPreviewRelated() && partPanel != null) {
+				partPanel.repaint();
+			}
 		}
 	};
 
