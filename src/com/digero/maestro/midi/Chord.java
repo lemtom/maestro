@@ -41,8 +41,7 @@ public class Chord implements AbcConstants
 	private boolean hasTooManyNotes = false;
 	private List<NoteEvent> notes = new ArrayList<NoteEvent>();
 	private int highest = 0;
-	private int lowest = 200; 
-	private boolean pruned = false;
+	private int lowest = 200;
 
 	public Chord(NoteEvent firstNote)
 	{
@@ -187,6 +186,13 @@ public class Chord implements AbcConstants
 				@Override
 				public int compare(NoteEvent n1, NoteEvent n2) {
 					
+					if (n1.note == Note.REST) {
+						return 1;
+					}
+					if (n2.note == Note.REST) {
+						return -1;
+					}
+					
 					List<Integer> removeFirst = new ArrayList<Integer>();
 					
 					removeFirst.add(highest-32);
@@ -279,7 +285,6 @@ public class Chord implements AbcConstants
 			}
 			notes = newNotes;
 			recalcEndTick();
-			pruned = true;
 		}
 		return deadNotes;
 	}
@@ -290,14 +295,11 @@ public class Chord implements AbcConstants
 			hasTooManyNotes = true;
 			return false;
 		}
-		if (pruned) {
-			return false;
-		}
 		notes.add(ne);
-		if (ne.note.id > highest) {
+		if (ne.note.id > highest && ne.note != Note.REST) {
 			highest = ne.note.id;
 		}
-		if (ne.note.id < lowest) {
+		if (ne.note.id < lowest && ne.note != Note.REST) {
 			lowest = ne.note.id;
 		}
 		if (ne.getEndTick() < endTick)

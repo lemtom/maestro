@@ -731,31 +731,21 @@ public class AbcExporter
 			NoteEvent ne = events.get(i);
 			if (curChord.getStartTick() == ne.getStartTick())
 			{
-				// This note starts at the same time as the rest of the notes in the chord
-				
-				if (addTies) {
-					curChord.addAlways(ne);
-				} else {
-					if (!curChord.add(ne))
-					{
-						// Couldn't add the note (too many notes in the chord)
-						removeNote(events, i);
-						i--;
-					}
-				}
+				// This note starts at the same time as the rest of the notes in the chord				
+				curChord.addAlways(ne);
 			}
 			else
 			{
 				// Create a new chord
 				Chord nextChord = new Chord(ne);
 
-				if (addTies) {
-					List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
-					removeNotes(events, deadnotes);
-					if (deadnotes.size() > 0) {
-						i--;
-						continue;
-					}
+				List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
+				removeNotes(events, deadnotes);
+				if (deadnotes.size() > 0) {
+					// One of the tiedTo notes that was pruned might be the events.get(i) note,
+					// so we go one step back and re-process events.get(i)
+					i--;
+					continue;
 				}
 				
 				if (addTies)
@@ -805,21 +795,14 @@ public class AbcExporter
 					// the current chord is finished, so we may need to add a rest inside the chord to
 					// shorten it, or a rest after the chord to add a pause.
 
-					if (curChord.getEndTick() > nextChord.getStartTick())
-					{
-						// Make sure there's room to add the rest
-						while (curChord.size() >= Chord.MAX_CHORD_NOTES)
-						{
-							removeNote(events, curChord.remove(curChord.size() - 1));
-						}
-					}
-
+					
 					// Check the chord length again, since removing a note might have changed its length
 					if (curChord.getEndTick() > nextChord.getStartTick())
 					{
 						// If the chord is too long, add a short rest in the chord to shorten it
-						curChord.add(new NoteEvent(Note.REST, Dynamics.DEFAULT.midiVol, curChord.getStartTick(),
+						curChord.addAlways(new NoteEvent(Note.REST, Dynamics.DEFAULT.midiVol, curChord.getStartTick(),
 								nextChord.getStartTick(), qtm));
+						// No pruning if a rest is added, as this is for preview and 6 notes plus a rest should be allowed.
 					}
 				}
 
@@ -839,9 +822,7 @@ public class AbcExporter
 				curChord = nextChord;
 			}
 		}
-		if (addTies) {
-			curChord.prune(part.getInstrument().sustainable);
-		}
+		curChord.prune(part.getInstrument().sustainable);// Last chord needs to be pruned as that hasn't happened yet.
 
 		return chords;
 	}
