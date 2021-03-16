@@ -38,6 +38,7 @@ public class AbcExporter
 	private KeySignature keySignature;
 
 	private boolean skipSilenceAtStart;
+	private boolean showPruned;
 	private long exportStartTick;
 	private long exportEndTick;
 
@@ -86,6 +87,16 @@ public class AbcExporter
 	public void setSkipSilenceAtStart(boolean skipSilenceAtStart)
 	{
 		this.skipSilenceAtStart = skipSilenceAtStart;
+	}
+	
+	public boolean isShowPruned()
+	{
+		return showPruned;
+	}
+
+	public void setShowPruned(boolean showPruned)
+	{
+		this.showPruned = showPruned;
 	}
 
 	public AbcMetadataSource getMetadataSource()
@@ -988,7 +999,7 @@ public class AbcExporter
 			{
 				ne.tiesFrom.tiesTo = null;
 				ne.tiesFrom = null;
-			} else if (ne.origEvent != null) {
+			} else if (ne.origEvent != null && showPruned) {
 				for (NoteEvent neo : ne.origEvent) {
 					neo.prune(part);
 				}

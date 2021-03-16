@@ -967,6 +967,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		if (abcSong != null)
 			abcSong.setSkipSilenceAtStart(saveSettings.skipSilenceAtStart);
+		
+		if (abcSong != null)
+			abcSong.setShowPruned(saveSettings.showPruned);
 	}
 
 	public void onVolumeChanged()
@@ -1387,7 +1390,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					saveSettings.saveToPrefs();
 				}
 				break;
-
+				
 			case EXPORT_FILE:
 				// Don't care
 				break;
@@ -1585,6 +1588,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			}
 
 			abcSong.setSkipSilenceAtStart(saveSettings.skipSilenceAtStart);
+			abcSong.setShowPruned(saveSettings.showPruned);
 
 			setAbcSongModified(false);
 			updateTitle();
@@ -1737,6 +1741,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		try
 		{
 			abcSong.setSkipSilenceAtStart(saveSettings.skipSilenceAtStart);
+			abcSong.setShowPruned(saveSettings.showPruned);
 			AbcExporter exporter = abcSong.getAbcExporter();
 			SequenceInfo previewSequenceInfo = SequenceInfo.fromAbcParts(exporter, !failedToLoadLotroInstruments);
 

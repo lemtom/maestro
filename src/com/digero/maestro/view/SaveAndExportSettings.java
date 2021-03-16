@@ -7,6 +7,7 @@ public class SaveAndExportSettings
 	public boolean promptSaveNewSong = true;
 	public boolean showExportFileChooser = false;
 	public boolean skipSilenceAtStart = true;
+	public boolean showPruned = false;
 	private final Preferences prefs;
 
 	public SaveAndExportSettings(Preferences prefs)
@@ -15,6 +16,7 @@ public class SaveAndExportSettings
 		promptSaveNewSong = prefs.getBoolean("promptSaveNewSong", promptSaveNewSong);
 		showExportFileChooser = prefs.getBoolean("showExportFileChooser", showExportFileChooser);
 		skipSilenceAtStart = prefs.getBoolean("skipSilenceAtStart", skipSilenceAtStart);
+		showPruned = prefs.getBoolean("showPruned", showPruned);
 	}
 
 	public SaveAndExportSettings(SaveAndExportSettings that)
@@ -28,6 +30,7 @@ public class SaveAndExportSettings
 		promptSaveNewSong = that.promptSaveNewSong;
 		showExportFileChooser = that.showExportFileChooser;
 		skipSilenceAtStart = that.skipSilenceAtStart;
+		showPruned = that.showPruned;
 	}
 
 	public void saveToPrefs()
@@ -35,6 +38,7 @@ public class SaveAndExportSettings
 		prefs.putBoolean("promptSaveNewSong", promptSaveNewSong);
 		prefs.putBoolean("showExportFileChooser", showExportFileChooser);
 		prefs.putBoolean("skipSilenceAtStart", skipSilenceAtStart);
+		prefs.putBoolean("showPruned", showPruned);
 	}
 
 	public SaveAndExportSettings getCopy()

@@ -411,6 +411,21 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				saveSettings.skipSilenceAtStart = skipSilenceAtStartCheckBox.isSelected();
 			}
 		});
+		
+		final JCheckBox showPrunedCheckBox = new JCheckBox("Show discarded notes in yellow");
+		showPrunedCheckBox.setToolTipText("<html>" //
+				+ "Notes that is going to be discarded due to lotro's limit<br>" //
+				+ "of 6 simultanious notes will be show as yellow<br>" //
+				+ "for the selected instrument." //
+				+ "</html>");
+		showPrunedCheckBox.setSelected(saveSettings.showPruned);
+		showPrunedCheckBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				saveSettings.showPruned = showPrunedCheckBox.isSelected();
+			}
+		});
 
 		TableLayout layout = new TableLayout();
 		layout.insertColumn(0, FILL);
@@ -432,6 +447,9 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 
 		layout.insertRow(++row, PREFERRED);
 		panel.add(skipSilenceAtStartCheckBox, "0, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(showPrunedCheckBox, "0, " + row);
 
 		return panel;
 	}

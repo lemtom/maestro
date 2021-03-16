@@ -56,6 +56,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private TimeSignature timeSignature = TimeSignature.FOUR_FOUR;
 	private boolean tripletTiming = false;
 	private boolean skipSilenceAtStart = true;
+	private boolean showPruned = false;
 
 	private final boolean fromAbcFile;
 	private final boolean fromXmlFile;
@@ -499,6 +500,20 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			fireChangeEvent(AbcSongProperty.SKIP_SILENCE_AT_START);
 		}
 	}
+	
+	public void setShowPruned(boolean showPruned)
+	{
+		if (this.showPruned != showPruned)
+		{
+			this.showPruned = showPruned;
+			//fireChangeEvent(AbcSongProperty.SHOW_PRUNED);
+		}
+	}
+	
+	public boolean isShowPruned()
+	{
+		return showPruned;
+	}
 
 	public SequenceInfo getSequenceInfo()
 	{
@@ -634,6 +649,9 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 			if (abcExporter.isSkipSilenceAtStart() != skipSilenceAtStart)
 				abcExporter.setSkipSilenceAtStart(skipSilenceAtStart);
+			
+			if (abcExporter.isShowPruned() != showPruned)
+				abcExporter.setShowPruned(showPruned);
 		}
 
 		return abcExporter;
