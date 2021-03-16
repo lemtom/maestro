@@ -880,4 +880,9 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			return super.getEvents();
 		}
 	}
+
+	public void setVerticalSize(int vert) {
+		((TableLayout)this.getLayout()).setRow(0, vert);
+		this.getLayout().layoutContainer(this);
+	}
 }

@@ -401,6 +401,7 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 	}
 
 	public void zoom() {
+		// Notice that when instruemtn track selection is changes clearTrackListPanel() will be called and view will be unzoomed.
 		int horiz = 1920*3;
 		try {
 			int width = Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -415,9 +416,13 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 			if (child instanceof TrackPanel)
 			{
 				if (!zoomed && child.getHeight() == 49) {
-					child.setPreferredSize(new Dimension(horiz, 49));
+					((TrackPanel)child).setVerticalSize(60);
+					child.setPreferredSize(new Dimension(horiz, 61));
+					child.validate();
 				} else {
+					((TrackPanel)child).setVerticalSize(48);
 					child.setPreferredSize(null);
+					child.validate();
 				}
 				child.invalidate();
 			}
