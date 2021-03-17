@@ -29,7 +29,6 @@ import java.util.List;
 
 import com.digero.common.abc.AbcConstants;
 import com.digero.common.abc.Dynamics;
-import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.Note;
 
@@ -178,7 +177,7 @@ public class Chord implements AbcConstants
 			// Tied?      Keep these, unless non-sustained instr. and durationis over 1.2s  tiesFrom
 			// Velocity?  Keep loudest!                    velocity
 			// Pitch?     Keep highest, Keep lowest        note.id
-			// Duration?  All things equal, keep lonbgest  getLengthTicks()
+			// Duration?  All things equal, keep longest   getLengthTicks()
 			List<NoteEvent> newNotes = new ArrayList<NoteEvent>();
 			
 			Comparator<NoteEvent> keepMe = new Comparator<NoteEvent>() {

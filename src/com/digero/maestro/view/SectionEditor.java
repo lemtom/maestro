@@ -219,9 +219,9 @@ public class SectionEditor {
 		        panel.add(new JLabel("No decimal numbers allowed, only whole numbers."), "0, "+(7+numberOfSections)+", 6," +(7+numberOfSections)+", c, c");
 		        panel.add(new JLabel("Bar numbers must be positive and greater than zero."), "0, "+(8+numberOfSections)+", 6," +(8+numberOfSections)+", c, c");
 		        panel.add(new JLabel("Clicking APPLY will also disable faulty sections."), "0, "+(9+numberOfSections)+", 6," +(9+numberOfSections)+", c, c");
-		        JLabel warn1 = new JLabel("Warning: If you have 'Remove initial silence' enabled,");
-		        JLabel warn2 = new JLabel("then the bar counter in lower right might not match up unless");
-		        JLabel warn3 = new JLabel("your preview mode is in 'Original'.");
+		        JLabel warn1 = new JLabel("Warning: If 'Remove initial silence' is enabled or the");
+		        JLabel warn2 = new JLabel("meter is modified, then the bar counter in lower-right might");
+		        JLabel warn3 = new JLabel("not match up, unless your preview mode is in 'Original'.");
 		        warn1.setForeground(new Color(1f,0f,0f));
 		        warn2.setForeground(new Color(1f,0f,0f));
 		        warn3.setForeground(new Color(1f,0f,0f));

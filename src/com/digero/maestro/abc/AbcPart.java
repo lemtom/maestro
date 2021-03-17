@@ -1,6 +1,5 @@
 package com.digero.maestro.abc;
 
-import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -29,7 +28,6 @@ import com.digero.common.util.ListenerList;
 import com.digero.common.util.Pair;
 import com.digero.common.util.ParseException;
 import com.digero.common.util.Version;
-import com.digero.common.view.ColorTable;
 import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
 import com.digero.maestro.abc.AbcSongEvent.AbcSongProperty;
 import com.digero.maestro.midi.NoteEvent;
