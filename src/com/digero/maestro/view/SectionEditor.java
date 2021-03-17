@@ -163,6 +163,7 @@ public class SectionEditor {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						TreeMap<Integer, PartSection> tm = new TreeMap<Integer, PartSection>();
+						
 						int lastEnd = 0;
 						for (int k = 0;k<numberOfSections;k++) {
 							if (SectionDialog.this.sectionInputs.get(k).enable.isSelected()) {
@@ -174,7 +175,13 @@ public class SectionEditor {
 										ps.endBar = Integer.parseInt(sectionInputs.get(k).barB.getText());
 										ps.silence = sectionInputs.get(k).silent.isSelected();
 										ps.fade = Integer.parseInt(sectionInputs.get(k).fade.getText());
-										if (ps.startBar > lastEnd && ps.startBar <= ps.endBar && ps.startBar > 0) {
+										boolean soFarSoGood = true;
+										for (PartSection psC : tm.values()) {
+											if (!(ps.startBar > psC.endBar || ps.endBar < psC.startBar)) {
+												soFarSoGood = false;
+											}
+										}
+										if (ps.startBar > 0 && ps.startBar <= ps.endBar && soFarSoGood) {
 											tm.put(ps.startBar, ps);
 											lastEnd = ps.endBar;
 											ps.dialogLine = k;
@@ -186,6 +193,7 @@ public class SectionEditor {
 								}
 							}
 						}
+						
 						if (lastEnd == 0) {
 							SectionDialog.this.abcPart.sections.set(SectionDialog.this.track, null);
 							SectionDialog.this.abcPart.sectionsModified.set(SectionDialog.this.track, null);
@@ -204,16 +212,16 @@ public class SectionEditor {
 					}
 					
 				});
-		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will also not be remembered. </html>");
+		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
 		        panel.add(okButton, "6,"+(3+numberOfSections)+",f,f");
-		        panel.add(new JLabel("Enabled sections must be chronological and no overlap."), "0,"+(5+numberOfSections)+", 6," +(5+numberOfSections)+", c, c");
+		        panel.add(new JLabel("Enabled sections must have no overlap."), "0,"+(5+numberOfSections)+", 6," +(5+numberOfSections)+", c, c");
 		        panel.add(new JLabel("Bar numbers are inclusive and use original meter."), "0, "+(6+numberOfSections)+", 6, "+(6+numberOfSections)+", c, c");
 		        panel.add(new JLabel("No decimal numbers allowed, only whole numbers."), "0, "+(7+numberOfSections)+", 6," +(7+numberOfSections)+", c, c");
 		        panel.add(new JLabel("Bar numbers must be positive and greater than zero."), "0, "+(8+numberOfSections)+", 6," +(8+numberOfSections)+", c, c");
 		        panel.add(new JLabel("Clicking APPLY will also disable faulty sections."), "0, "+(9+numberOfSections)+", 6," +(9+numberOfSections)+", c, c");
 		        JLabel warn1 = new JLabel("Warning: If you have 'Remove initial silence' enabled,");
-		        JLabel warn2 = new JLabel("then the bar counter in lower right likely wont match up unless");
-		        JLabel warn3 = new JLabel("you preview mode is in 'Original'.");
+		        JLabel warn2 = new JLabel("then the bar counter in lower right might not match up unless");
+		        JLabel warn3 = new JLabel("your preview mode is in 'Original'.");
 		        warn1.setForeground(new Color(1f,0f,0f));
 		        warn2.setForeground(new Color(1f,0f,0f));
 		        warn3.setForeground(new Color(1f,0f,0f));
