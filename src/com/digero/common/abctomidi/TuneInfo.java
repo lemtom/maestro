@@ -83,7 +83,7 @@ class TuneInfo
 		if (this.noteDivisor > 0.0) {
 			return (60.0/this.primaryTempoBPM) * this.meterDenominator * this.noteDivisor;
 		} else {
-			return (60.0/this.primaryTempoBPM) * this.meterDenominator * ((this.meterNumerator/(double)this.meterDenominator)<0.75?1.0/16:1.0/8);
+			return (60.0/this.primaryTempoBPM) * this.meterDenominator * ((this.meterNumerator/(double)this.meterDenominator)<0.75?1d/16:1d/8);
 		}
 	}
 

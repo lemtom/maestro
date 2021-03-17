@@ -561,6 +561,19 @@ public class AbcToMidi
 						else
 							denominator = Integer.parseInt(denom.substring(1));
 
+						String abcNoteL = "";
+						if (m.group(NOTE_LEN_NUMER)!= null) {
+							abcNoteL = m.group(NOTE_LEN_NUMER); 
+						}
+						if (m.group(NOTE_LEN_DENOM)!= null) {
+							abcNoteL += m.group(NOTE_LEN_DENOM); 
+						}
+						String abcNoteAcc = "";
+						if (m.group(NOTE_ACCIDENTAL) !=null) {
+							abcNoteAcc = m.group(NOTE_ACCIDENTAL); 
+						}
+						
+						
 						numerator_abc = numerator;
 						denominator_abc = denominator;
 						
@@ -656,12 +669,12 @@ public class AbcToMidi
 							
 							if (enableLotroErrors && lengthSeconds < AbcConstants.SHORTEST_NOTE_SECONDS)
 							{
-								throw new LotroParseException("Rest's duration is too short ("+lengthSeconds+"s)("+noteLetter+" "+numerator_abc+"/"+denominator_abc+")", fileName, lineNumber,
+								throw new LotroParseException("Rest's duration is too short ("+String.format("%.3f",lengthSeconds)+"s)("+noteLetter+" "+abcNoteL+")", fileName, lineNumber,
 										m.start());
 							}
 							else if (enableLotroErrors && lengthSeconds > AbcConstants.LONGEST_NOTE_SECONDS)
 							{
-								throw new LotroParseException("Rest's duration is too long", fileName, lineNumber,
+								throw new LotroParseException("Rest's duration is too long ("+String.format("%.3f",lengthSeconds)+"s)("+noteLetter+" "+abcNoteL+")", fileName, lineNumber,
 										m.start());
 							}
 
@@ -792,6 +805,18 @@ public class AbcToMidi
 
 							if (m.group(NOTE_TIE) != null)
 							{
+								double lengthSeconds = info.getWholeNoteTime()*(numerator_abc/(double)denominator_abc);
+								
+								if (enableLotroErrors && lengthSeconds < AbcConstants.SHORTEST_NOTE_SECONDS)
+								{
+									throw new LotroParseException("Note's duration is too short ("+String.format("%.3f",lengthSeconds)+"s)("+abcNoteAcc+noteLetter+octaveStr+abcNoteL+m.group(NOTE_TIE)+")", fileName, lineNumber,
+											m.start());
+								}
+								else if (enableLotroErrors && lengthSeconds > AbcConstants.LONGEST_NOTE_SECONDS)
+								{
+									throw new LotroParseException("Note's duration is too long ("+String.format("%.3f",lengthSeconds)+"s)("+abcNoteAcc+noteLetter+octaveStr+abcNoteL+m.group(NOTE_TIE)+")", fileName, lineNumber,
+											m.start());
+								}
 								int lineAndColumn = (lineNumber << 16) | m.start();
 								tiedNotes.put(noteId, lineAndColumn);
 							}
@@ -803,12 +828,12 @@ public class AbcToMidi
 								
 								if (enableLotroErrors && lengthSeconds < AbcConstants.SHORTEST_NOTE_SECONDS)
 								{
-									throw new LotroParseException("Note's duration is too short ("+lengthSeconds+"s)("+octaveStr+noteLetter+" "+numerator_abc+"/"+denominator_abc+")", fileName, lineNumber,
+									throw new LotroParseException("Note's duration is too short ("+String.format("%.3f",lengthSeconds)+"s)("+abcNoteAcc+noteLetter+octaveStr+abcNoteL+")", fileName, lineNumber,
 											m.start());
 								}
 								else if (enableLotroErrors && lengthSeconds > AbcConstants.LONGEST_NOTE_SECONDS)
 								{
-									throw new LotroParseException("Note's duration is too long", fileName, lineNumber,
+									throw new LotroParseException("Note's duration is too long ("+String.format("%.3f",lengthSeconds)+"s)("+abcNoteAcc+noteLetter+octaveStr+abcNoteL+")", fileName, lineNumber,
 											m.start());
 								}
 
