@@ -1,8 +1,11 @@
 package com.digero.maestro.view;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -25,6 +28,8 @@ import info.clearthought.layout.TableLayout;
 import info.clearthought.layout.TableLayoutConstants;
 
 public class SectionEditor {
+	
+	protected static Point lastLocation = new Point(0,0);
 
 	public static void show(JFrame jf, NoteGraph noteGraph, AbcPart abcPart, int track) {
 		@SuppressWarnings("serial")
@@ -47,6 +52,14 @@ public class SectionEditor {
 		        this.abcPart = abcPart;
 		        this.track = track;
 		        //this.noteGraph = noteGraph;
+		        
+		        SectionDialog.this.addWindowListener(new WindowAdapter() {
+
+		            @Override
+		            public void windowClosing(WindowEvent we) {
+		            	SectionEditor.lastLocation = SectionDialog.this.getLocation();
+		            }
+		        });
 		        
 		        this.setSize(425,250+21*numberOfSections);
 		        JPanel panel=new JPanel();
@@ -210,7 +223,6 @@ public class SectionEditor {
 						SectionDialog.this.abcPart.sectionEdited(SectionDialog.this.track);
 						//SectionDialog.this.noteGraph.repaint();
 					}
-					
 				});
 		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
 		        panel.add(okButton, "6,"+(3+numberOfSections)+",f,f");
@@ -229,6 +241,7 @@ public class SectionEditor {
 		        panel.add(warn2, "0," +(11+numberOfSections)+", 6," +(11+numberOfSections)+", c, c");
 		        panel.add(warn3, "0," +(12+numberOfSections)+", 6," +(12+numberOfSections)+", c, c");
 		        this.getContentPane().add(panel);
+		        this.setLocation(SectionEditor.lastLocation);
 		        this.setVisible(true);
 		    }
 		};
