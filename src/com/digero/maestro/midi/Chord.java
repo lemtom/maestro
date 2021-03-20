@@ -274,7 +274,7 @@ public class Chord implements AbcConstants
 			//System.err.print("Prune\n");
 			
 			for (int i = notes.size()-1; i >= 0; i--) {
-				if (newNotes.size() < 6) {
+				if (newNotes.size() < MAX_CHORD_NOTES) {
 					newNotes.add(notes.get(i));
 					//System.err.print(" keep  " + notes.get(i).printout()+"\n");
 				} else {

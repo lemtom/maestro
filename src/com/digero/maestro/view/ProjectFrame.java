@@ -4,6 +4,7 @@ import info.clearthought.layout.TableLayout;
 import info.clearthought.layout.TableLayoutConstants;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -150,6 +151,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JList<AbcPart> partsList;
 	private JButton newPartButton;
 	private JButton deletePartButton;
+	private JButton delayButton;
 
 	private PartPanel partPanel;
 
@@ -510,6 +512,18 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					abcSong.deletePart(partsList.getSelectedValue());
 			}
 		});
+		
+		delayButton = new JButton("Delay Part");
+		delayButton.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				if (partsList.getSelectedValue() != null) {
+					DelayDialog.show(ProjectFrame.this, partsList.getSelectedValue());
+				}
+			}
+		});
+		delayButton.setToolTipText("Open a small dialog to edit delay on part.");
 
 		TableLayout songInfoLayout = new TableLayout(//
 				new double[] { PREFERRED, FILL },//
@@ -534,11 +548,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		JPanel partsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, HGAP, VGAP));
 		partsButtonPanel.add(newPartButton);
 		partsButtonPanel.add(deletePartButton);
-
+		
 		JPanel partsListPanel = new JPanel(new BorderLayout(HGAP, VGAP));
 		partsListPanel.setBorder(BorderFactory.createTitledBorder("Song Parts"));
 		partsListPanel.add(partsButtonPanel, BorderLayout.NORTH);
 		partsListPanel.add(partsListScrollPane, BorderLayout.CENTER);
+		partsListPanel.add(delayButton, BorderLayout.SOUTH);
 
 		TableLayout settingsLayout = new TableLayout(//
 				new double[] { PREFERRED, PREFERRED, FILL },//
@@ -1193,6 +1208,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 			newPartButton.setEnabled(abcSong != null);
 			deletePartButton.setEnabled(partsList.getSelectedIndex() != -1);
+			delayButton.setEnabled(partsList.getSelectedIndex() != -1);
+			updateDelayButton();
 			exportButton.setEnabled(hasAbcNotes);
 			exportMenuItem.setEnabled(hasAbcNotes);
 			exportAsMenuItem.setEnabled(hasAbcNotes);
@@ -1214,6 +1231,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			updateButtonsPending = false;
 		}
 	};
+	
+	public void updateDelayButton () {
+		if (partsList.getSelectedIndex() != -1 && partPanel != null && partPanel.getAbcPart() != null && partPanel.getAbcPart().delay != 0) {
+			delayButton.setForeground(new Color(0.2f, 0.8f, 0.2f));//green
+		} else {
+			delayButton.setForeground(new Color(0.0f, 0.0f, 0.0f));
+		}
+	}
 
 	private void updateButtons(boolean immediate)
 	{

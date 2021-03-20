@@ -320,7 +320,7 @@ public class AbcExporter
 		return trackNumber;
 	}
 
-	public void exportToAbc(OutputStream os) throws AbcConversionException
+	public void exportToAbc(OutputStream os, boolean delayEnabled) throws AbcConversionException
 	{
 		Pair<Long, Long> startEnd = getSongStartEndTick(true /* lengthenToBar */, false /* accountForSustain */);
 		exportStartTick = startEnd.first;
@@ -346,11 +346,11 @@ public class AbcExporter
 
 		for (AbcPart part : parts)
 		{
-			exportPartToAbc(part, exportStartTick, exportEndTick, out);
+			exportPartToAbc(part, exportStartTick, exportEndTick, out, delayEnabled);
 		}
 	}
 
-	private void exportPartToAbc(AbcPart part, long songStartTick, long songEndTick, PrintStream out)
+	private void exportPartToAbc(AbcPart part, long songStartTick, long songEndTick, PrintStream out, boolean delayEnabled)
 			throws AbcConversionException
 	{
 		List<Chord> chords = combineAndQuantize(part, true, songStartTick, songEndTick);
@@ -430,6 +430,20 @@ public class AbcExporter
 			initDyn = c.calcDynamics();
 			if (initDyn != null)
 				break;
+		}
+		
+		if (delayEnabled) {
+			double oneNote = 60/(double)qtm.getPrimaryExportTempoBPM()*qtm.getMeter().denominator/((qtm.getMeter().numerator/ (double) qtm.getMeter().denominator)<0.75?16d:8d);
+			int fractionFactor = (int)Math.ceil(Math.max(1d,0.06d/oneNote));
+			if (part.delay == 0) {
+				out.println("z"+fractionFactor+" | ");
+			} else {
+				int numer = 10000*fractionFactor;
+				int denom = 10000;
+				numer += (int)(numer*part.delay/(fractionFactor*oneNote*1000));
+				out.println("z"+numer+"/"+denom+" | ");
+				//System.err.println("M: " + qtm.getMeter()+" Q: " + qtm.getPrimaryExportTempoBPM()+ " L: " + ((qtm.getMeter().numerator/ (double) qtm.getMeter().denominator)<0.75?"1/16":"1/8")+"\n oneNote is "+oneNote+" delay is "+part.delay+"ms : "+"z"+numer+"/"+denom);
+			}
 		}
 
 		for (Chord c : chords)

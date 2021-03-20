@@ -45,7 +45,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public static final String MSX_FILE_DESCRIPTION_PLURAL = MaestroMain.APP_NAME + " Songs";
 	public static final String MSX_FILE_EXTENSION_NO_DOT = "msx";
 	public static final String MSX_FILE_EXTENSION = "." + MSX_FILE_EXTENSION_NO_DOT;
-	public static final Version SONG_FILE_VERSION = new Version(1, 0, 51);
+	public static final Version SONG_FILE_VERSION = new Version(1, 0, 56);
 
 	private String title = "";
 	private String composer = "";
@@ -324,9 +324,15 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 	public void exportAbc(File exportFile) throws FileNotFoundException, IOException, AbcConversionException
 	{
+		boolean delayEnabled = false;
+		for (AbcPart part : parts) {
+			if (part.delay != 0) {
+				delayEnabled = true;
+			}
+		}
 		try (FileOutputStream out = new FileOutputStream(exportFile))
 		{
-			getAbcExporter().exportToAbc(out);
+			getAbcExporter().exportToAbc(out, delayEnabled);
 		}
 	}
 

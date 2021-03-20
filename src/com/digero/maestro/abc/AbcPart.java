@@ -57,6 +57,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	
 	public ArrayList<TreeMap<Integer, PartSection>> sections;
 	public ArrayList<boolean[]> sectionsModified;
+	public int delay = 0;//ms
 
 	public AbcPart(AbcSong abcSong)
 	{
@@ -106,6 +107,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		ele.setAttribute("id", String.valueOf(partNumber));
 		SaveUtil.appendChildTextElement(ele, "title", String.valueOf(title));
 		SaveUtil.appendChildTextElement(ele, "instrument", String.valueOf(instrument));
+		if (delay != 0) {		
+			SaveUtil.appendChildTextElement(ele, "delay", String.valueOf(delay));
+		}
 		for (int t = 0; t < getTrackCount(); t++)
 		{
 			if (!isTrackEnabled(t))
@@ -201,6 +205,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			partNumber = SaveUtil.parseValue(ele, "@id", partNumber);
 			title = SaveUtil.parseValue(ele, "title", title);
 			instrument = SaveUtil.parseValue(ele, "instrument", instrument);
+			delay = SaveUtil.parseValue(ele, "delay", 0);
 			for (Element trackEle : XmlUtil.selectElements(ele, "track"))
 			{
 				
