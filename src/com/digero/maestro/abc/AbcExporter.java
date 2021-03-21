@@ -444,8 +444,6 @@ public class AbcExporter
 				out.println("z"+numer+"/"+denom+" | ");
 				//System.err.println("M: " + qtm.getMeter()+" Q: " + qtm.getPrimaryExportTempoBPM()+ " L: " + ((qtm.getMeter().numerator/ (double) qtm.getMeter().denominator)<0.75?"1/16":"1/8")+"\n oneNote is "+oneNote+" delay is "+part.delay+"ms : "+"z"+numer+"/"+denom);
 			}
-		} else {
-			System.err.println("Delay was not exported due to too low tempo.");
 		}
 
 		for (Chord c : chords)
