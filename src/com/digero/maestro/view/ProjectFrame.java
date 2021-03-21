@@ -486,6 +486,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				partPanel.setAbcPart(abcPart);
 				if (abcPart != null) {
 					updateButtons(false);
+				} else {
+					updateDelayButton();
 				}
 			}
 		});
@@ -1208,7 +1210,6 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 			newPartButton.setEnabled(abcSong != null);
 			deletePartButton.setEnabled(partsList.getSelectedIndex() != -1);
-			delayButton.setEnabled(partsList.getSelectedIndex() != -1);
 			updateDelayButton();
 			exportButton.setEnabled(hasAbcNotes);
 			exportMenuItem.setEnabled(hasAbcNotes);
@@ -1235,9 +1236,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	public void updateDelayButton () {
 		if (partsList.getSelectedIndex() != -1 && partPanel != null && partPanel.getAbcPart() != null && partPanel.getAbcPart().delay != 0) {
 			delayButton.setForeground(new Color(0.2f, 0.8f, 0.2f));//green
-		} else {
+		} else if (partsList.getSelectedIndex() != -1) {
 			delayButton.setForeground(new Color(0.0f, 0.0f, 0.0f));
+		} else {
+			// This is needed since when starting to set foreground color manually,
+			// it will no longer appear greyed out when disabled automatically.
+			delayButton.setForeground(new Color(0.6f, 0.6f, 0.6f));
 		}
+		delayButton.setEnabled(partsList.getSelectedIndex() != -1);
 	}
 
 	private void updateButtons(boolean immediate)
