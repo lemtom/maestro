@@ -432,7 +432,7 @@ public class AbcExporter
 				break;
 		}
 		
-		if (delayEnabled) {
+		if (delayEnabled && qtm.getPrimaryExportTempoBPM() >= 50) {
 			double oneNote = 60/(double)qtm.getPrimaryExportTempoBPM()*qtm.getMeter().denominator/((qtm.getMeter().numerator/ (double) qtm.getMeter().denominator)<0.75?16d:8d);
 			int fractionFactor = (int)Math.ceil(Math.max(1d,0.06d/oneNote));
 			if (part.delay == 0) {
@@ -444,6 +444,8 @@ public class AbcExporter
 				out.println("z"+numer+"/"+denom+" | ");
 				//System.err.println("M: " + qtm.getMeter()+" Q: " + qtm.getPrimaryExportTempoBPM()+ " L: " + ((qtm.getMeter().numerator/ (double) qtm.getMeter().denominator)<0.75?"1/16":"1/8")+"\n oneNote is "+oneNote+" delay is "+part.delay+"ms : "+"z"+numer+"/"+denom);
 			}
+		} else {
+			System.err.println("Delay was not exported due to too low tempo.");
 		}
 
 		for (Chord c : chords)

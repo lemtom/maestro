@@ -26,7 +26,7 @@ public class DelayDialog {
 		class DelayDialogWindow extends JDialog {
 			
 			private final double[] LAYOUT_COLS = new double[] { 0.1, 0.4, 0.4, 0.1 };
-			private double[] LAYOUT_ROWS = new double[] { 0.30, 0.20, 0.20,0.30};
+			private double[] LAYOUT_ROWS = new double[] { 0.30, 0.20, 0.20, 0.15, 0.15};
 			
 		    public DelayDialogWindow(final ProjectFrame jf, final AbcPart abcPart) {
 		        super(jf, "Delay Part Editor", true);
@@ -40,7 +40,7 @@ public class DelayDialog {
 		            }
 		        });
 		        
-		        this.setSize(250,150);
+		        this.setSize(250,170);
 		        JPanel panel=new JPanel();
 		        
 		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
@@ -69,6 +69,7 @@ public class DelayDialog {
 		        panel.add(new JLabel("Seconds"), "2, 1, C, C");
 		        panel.add(okButton, "1, 2, f, f");
 		        panel.add(new JLabel("Put a delay from 0s to 1.00s on a part."), "0, 3, 3, 3, C, C");
+		        panel.add(new JLabel("Have no effect if tempo lower than 50."), "0, 4, 3, 4, C, C");
 		        delayField.setToolTipText("Delay. This wont be heard in Maestro preview, but will be saved in the .abc file.");
 		        
 		        this.getContentPane().add(panel);
