@@ -32,6 +32,7 @@ import com.digero.common.util.Version;
 import com.digero.maestro.MaestroMain;
 import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
 import com.digero.maestro.abc.AbcSongEvent.AbcSongProperty;
+import com.digero.maestro.midi.NoteEvent;
 import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.midi.TrackInfo;
 import com.digero.maestro.util.FileResolver;
@@ -112,6 +113,15 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				part.discard();
 		}
 		parts.clear();
+		
+		if (sequenceInfo != null) {
+			// Make life easier for Garbage Collector
+			for (TrackInfo ti : sequenceInfo.getTrackList()) {
+				for (NoteEvent ne : ti.getEvents()) {
+					ne.resetAllPruned();
+				}
+			}
+		}
 	}
 
 	private void initFromMidi(File file) throws IOException, InvalidMidiDataException, ParseException

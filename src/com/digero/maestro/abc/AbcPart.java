@@ -98,6 +98,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				drumNoteMap[i] = null;
 			}
 		}
+		sections = null;
+		sectionsModified = null;
+		delay = 0;
 	}
 
 	public void saveToXml(Element ele)

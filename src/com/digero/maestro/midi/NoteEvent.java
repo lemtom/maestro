@@ -47,7 +47,7 @@ public class NoteEvent implements Comparable<NoteEvent>
 
 	public List<NoteEvent> origEvent;
 
-	private Map<AbcPart, Boolean> pruneMap = new HashMap<AbcPart, Boolean>();
+	private Map<AbcPart, Boolean> pruneMap = null;
 
 	public NoteEvent(Note note, int velocity, long startTick, long endTick, ITempoCache tempoCache)
 	{
@@ -207,17 +207,27 @@ public class NoteEvent implements Comparable<NoteEvent>
 	}
 
 	public boolean isPruned(AbcPart abcPart) {
-		if (abcPart == null) {
+		if (abcPart == null || pruneMap == null) {
 			return false;
 		}
 		return pruneMap.get(abcPart) != null && pruneMap.get(abcPart) == true;
 	}
 
 	public void prune(AbcPart part) {
+		if (pruneMap == null) {
+			pruneMap = new HashMap<AbcPart, Boolean>();
+		}
 		pruneMap.put(part, true);
 	}
 
 	public void resetPruned(AbcPart part) {
+		if (pruneMap == null) {
+			return;
+		}
 		pruneMap.remove(part);
+	}
+	
+	public void resetAllPruned() {
+		pruneMap = null;
 	}
 }
