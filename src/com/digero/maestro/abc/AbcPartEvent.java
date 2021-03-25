@@ -16,7 +16,8 @@ public class AbcPartEvent extends EventObject
 		DRUM_ENABLED, //
 		DRUM_MAPPING, //
 		VOLUME_ADJUST,//
-		TRACK_SECTION_EDIT; //
+		TRACK_SECTION_EDIT,//
+		DELAY_EDIT(false); //
 
 		private final boolean renderRelated;
 

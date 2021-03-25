@@ -57,6 +57,7 @@ public class DelayDialog {
 							float delay = Float.parseFloat(delayField.getText());
 							if (delay >= 0.000f && delay <= 1.00f) {
 								abcPart.delay = (int)(delay*1000);
+								abcPart.delayEdited();
 							}
 						} catch (NumberFormatException nfe) {
 							

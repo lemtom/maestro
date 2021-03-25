@@ -891,4 +891,8 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	public void sectionEdited(int track) {
 		fireChangeEvent(AbcPartProperty.TRACK_SECTION_EDIT, track);
 	}
+	
+	public void delayEdited() {
+		fireChangeEvent(AbcPartProperty.DELAY_EDIT);
+	}
 }
