@@ -222,6 +222,7 @@ public class SectionEditor {
 						}
 						SectionDialog.this.abcPart.sectionEdited(SectionDialog.this.track);
 						//SectionDialog.this.noteGraph.repaint();
+						//System.err.println(Thread.currentThread().getName());
 					}
 				});
 		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
@@ -243,6 +244,7 @@ public class SectionEditor {
 		        this.getContentPane().add(panel);
 		        this.setLocation(SectionEditor.lastLocation);
 		        this.setVisible(true);
+		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }
 		};
 		

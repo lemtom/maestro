@@ -35,30 +35,32 @@ public class GenerateSoundFontInfo
 			case BASIC_DRUM:
 				return 1;
 
-			case LUTE_OF_AGES:
-			case BASIC_HARP:
-			case MISTY_MOUNTAIN_HARP:
-			case TRAVELLERS_TRUSTY_FIDDLE:
-			case BRUSQUE_BASSOON:
+			case LUTE_OF_AGES://short notes, differ alot
+			case BASIC_LUTE://short notes, differ alot
+			case BASIC_HARP://short notes
+			case MISTY_MOUNTAIN_HARP://short notes
+			case TRAVELLERS_TRUSTY_FIDDLE://short notes, differ alot
 				return 1;
 
-			case BASIC_LUTE:
-			case BASIC_THEORBO:
-			case BASIC_FIDDLE:
+			case BRUSQUE_BASSOON://short notes
 			case BARDIC_FIDDLE:
-			case LONELY_MOUNTAIN_FIDDLE:
-			case SPRIGHTLY_FIDDLE:
-			case BASIC_FLUTE:
-			case BASIC_HORN:
-			case BASIC_BASSOON:
-			case LONELY_MOUNTAIN_BASSOON:
+			case BASIC_FLUTE:// differ medium
+			case LONELY_MOUNTAIN_FIDDLE:// differ medium
+			case BASIC_THEORBO://short notes
 				return 2;
 
+			case BASIC_FIDDLE:
+			case SPRIGHTLY_FIDDLE://short notes
 			case BASIC_BAGPIPE:
+			case LONELY_MOUNTAIN_BASSOON:// does not differ alot
 				return 4;
+			
+			case BASIC_HORN:// does not differ alot
+			case BASIC_BASSOON:
+				return 6;
 
-			case BASIC_CLARINET:
-			case BASIC_PIBGORN:
+			case BASIC_CLARINET://long notes but differ alot plus bad notes
+			case BASIC_PIBGORN://long notes but differ alot plus bad notes
 				return 1;
 				
 			case STUDENT_FIDDLE:
