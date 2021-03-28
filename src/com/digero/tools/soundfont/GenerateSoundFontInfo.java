@@ -35,22 +35,27 @@ public class GenerateSoundFontInfo
 			case BASIC_DRUM:
 				return 1;
 
-			case LUTE_OF_AGES://short notes, differ alot
-			case BASIC_LUTE://short notes, differ alot
+			// A larger return mean smaller .sf2 file footprint
+			// A larger return mean more CPU usage
+			// A smaller return means more accurate preview of different note timbres
+			// It is a balancing act..
+				
+			case BRUSQUE_BASSOON://short notes
+			case BASIC_LUTE://short notes, differ semi-alot
 			case BASIC_HARP://short notes
 			case MISTY_MOUNTAIN_HARP://short notes
+			case LUTE_OF_AGES://short notes, differ alot
 			case TRAVELLERS_TRUSTY_FIDDLE://short notes, differ alot
+			case BASIC_THEORBO://short notes
 				return 1;
 
-			case BRUSQUE_BASSOON://short notes
 			case BARDIC_FIDDLE:
 			case BASIC_FLUTE:// differ medium
 			case LONELY_MOUNTAIN_FIDDLE:// differ medium
-			case BASIC_THEORBO://short notes
+			case SPRIGHTLY_FIDDLE://short notes
 				return 2;
 
 			case BASIC_FIDDLE:
-			case SPRIGHTLY_FIDDLE://short notes
 			case BASIC_BAGPIPE:
 			case LONELY_MOUNTAIN_BASSOON:// does not differ alot
 				return 4;
