@@ -599,7 +599,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 					.getSongStartEndTick(false /* lengthenToBar */, true /* accountForSustain */);
 			QuantizedTimingInfo qtm = exporter.getTimingInfo();
 
-			return qtm.tickToMicros(startEndTick.second) - qtm.tickToMicros(startEndTick.first);
+			return (long)((qtm.tickToMicros(startEndTick.second) - qtm.tickToMicros(startEndTick.first))/(double)timingInfo.getExportTempoFactor());
 		}
 		catch (AbcConversionException e)
 		{
