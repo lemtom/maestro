@@ -580,6 +580,9 @@ public class AbcExporter
 				}
 				else
 				{
+					if (numerator == 0) {
+						System.err.println("Zero length Error: ticks="+evt.getLengthTicks() + " micros="+evt.getLengthMicros()+ " note="+noteAbc);
+					}
 					if (numerator != 1)
 						bar.append(numerator);
 					if (denominator != 1)
@@ -887,11 +890,13 @@ public class AbcExporter
 			long maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks();
 
 			// Make a hard break for notes that are longer than LotRO can play
-			// Bagpipe notes up to B2 can sustain indefinitey; don't break them
+			// Bagpipe notes up to B2 can sustain indefinitely; don't break them
 			if (ne.getEndTick() > maxNoteEndTick
 					&& ne.note != Note.REST
 					&& !(part.getInstrument() == LotroInstrument.BASIC_BAGPIPE && ne.note.id <= AbcConstants.BAGPIPE_LAST_DRONE_NOTE_ID))
 			{
+				maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L;//a little hack in case the notes are larger than 8 seconds, but less larger than 0.06s.
+				maxNoteEndTick = qtm.quantize(maxNoteEndTick);
 				// Align with a bar boundary if it extends across 1 or more full bars.
 				long endBarTick = qtm.tickToBarStartTick(maxNoteEndTick);
 				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick)
@@ -926,6 +931,9 @@ public class AbcExporter
 
 				ne.setEndTick(maxNoteEndTick);
 			} else if (ne.getEndTick() > maxNoteEndTick	&& ne.note == Note.REST) {
+				// This rest is larger than 8 seconds
+				maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L;//a little hack in case the notes are larger than 8 seconds, but less larger than 0.06s.
+				maxNoteEndTick = qtm.quantize(maxNoteEndTick);
 				// Align with a bar boundary if it extends across 1 or more full bars.
 				long endBarTick = qtm.tickToBarStartTick(maxNoteEndTick);
 				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick)
