@@ -48,8 +48,13 @@ public class Chord implements AbcConstants
 		startTick = firstNote.getStartTick();
 		endTick = firstNote.getEndTick();
 		notes.add(firstNote);
-		highest = firstNote.note.id;
-		lowest = firstNote.note.id;
+		if (firstNote.origPitch != 0) {
+			highest = firstNote.origPitch;
+			lowest = firstNote.origPitch;
+		} else {
+			highest = firstNote.note.id;
+			lowest = firstNote.note.id;
+		}
 	}
 
 	public long getStartTick()
@@ -228,19 +233,21 @@ public class Chord implements AbcConstants
 						}
 						return -1;
 					}
-					// return the note if its the highest in the chord
-					if (highest == n1.note.id && n1.note.id != n2.note.id) {
-						return 1;
-					}
-					if (highest == n2.note.id && n1.note.id != n2.note.id) {
-						return -1;
-					}
-					// return the note if its the lowest in the chord
-					if (lowest == n1.note.id && n1.note.id != n2.note.id) {
-						return 1;
-					}					
-					if (lowest == n2.note.id && n1.note.id != n2.note.id) {
-						return -1;
+					if (n1.note.id != n2.note.id) {
+						// return the note if its the highest in the chord
+						if ((n1.origPitch == 0 && highest == n1.note.id)||(n1.origPitch != 0 && highest == n1.origPitch)) {
+							return 1;
+						}
+						if ((n2.origPitch == 0 && highest == n2.note.id)||(n2.origPitch != 0 && highest == n2.origPitch)) {
+							return -1;
+						}
+						// return the note if its the lowest in the chord
+						if ((n1.origPitch == 0 && lowest == n1.note.id)||(n1.origPitch != 0 && lowest == n1.origPitch)) {
+							return 1;
+						}
+						if ((n2.origPitch == 0 && lowest == n2.note.id)||(n2.origPitch != 0 && lowest == n2.origPitch)) {
+							return -1;
+						}
 					}
 					if (n1.velocity != n2.velocity) {
 						// The notes differ in volume, return the loudest
@@ -295,11 +302,20 @@ public class Chord implements AbcConstants
 			return false;
 		}
 		notes.add(ne);
-		if (ne.note.id > highest && ne.note != Note.REST) {
-			highest = ne.note.id;
-		}
-		if (ne.note.id < lowest && ne.note != Note.REST) {
-			lowest = ne.note.id;
+		if (ne.origPitch != 0) {
+			if (ne.origPitch > highest && ne.note != Note.REST) {
+				highest = ne.origPitch;
+			}
+			if (ne.origPitch < lowest && ne.note != Note.REST) {
+				lowest = ne.origPitch;
+			}
+		} else {
+			if (ne.note.id > highest && ne.note != Note.REST) {
+				highest = ne.note.id;
+			}
+			if (ne.note.id < lowest && ne.note != Note.REST) {
+				lowest = ne.note.id;
+			}
 		}
 		if (ne.getEndTick() < endTick)
 		{

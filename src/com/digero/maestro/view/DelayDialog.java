@@ -15,7 +15,6 @@ import javax.swing.JTextField;
 import com.digero.maestro.abc.AbcPart;
 
 import info.clearthought.layout.TableLayout;
-import info.clearthought.layout.TableLayoutConstants;
 
 public class DelayDialog {
 	

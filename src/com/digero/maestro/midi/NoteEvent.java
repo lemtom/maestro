@@ -49,6 +49,8 @@ public class NoteEvent implements Comparable<NoteEvent>
 
 	private Map<AbcPart, Boolean> pruneMap = null;
 
+	public int origPitch = 0;
+
 	public NoteEvent(Note note, int velocity, long startTick, long endTick, ITempoCache tempoCache)
 	{
 		this.note = note;
@@ -154,6 +156,7 @@ public class NoteEvent implements Comparable<NoteEvent>
 
 		NoteEvent next = new NoteEvent(note, velocity, splitPointTick, endTick, tempoCache);
 		setEndTick(splitPointTick);
+		next.origPitch = origPitch;
 
 		if (note != Note.REST)
 		{

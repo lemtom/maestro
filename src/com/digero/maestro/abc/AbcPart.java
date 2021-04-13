@@ -387,6 +387,12 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			return Note.fromId(noteId);
 		}
 	}
+	
+	public int mapNoteFullOctaves(int track, int noteId, long tickStart)
+	{
+		noteId += getTranspose(track, tickStart);
+		return noteId;
+	}
 
 	public long firstNoteStartTick()
 	{

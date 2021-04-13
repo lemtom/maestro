@@ -303,8 +303,11 @@ public class AbcExporter
 							+ (int) (extraSeconds * TimingInfo.ONE_SECOND_MICROS * qtm.getExportTempoFactor()));
 				}
 
-				if (endTick != ne.getEndTick())
+				if (endTick != ne.getEndTick()) {
+					int oPitch = ne.origPitch;
 					ne = new NoteEvent(ne.note, ne.velocity, ne.getStartTick(), endTick, qtm);
+					ne.origPitch = oPitch;
+				}
 
 				track.add(MidiFactory.createNoteOnEventEx(ne.note.id + noteDelta, channel,
 						dynamics.getVol(useLotroInstruments), ne.getStartTick()));
@@ -642,6 +645,12 @@ public class AbcExporter
 						int[] sva = part.getSectionVolumeAdjust(t, ne);
 						int velocity = (int)((ne.velocity + part.getTrackVolumeAdjust(t) + sva[0])*0.01f*(float)sva[1]);
 						NoteEvent newNE = new NoteEvent(mappedNote, velocity, startTick, endTick, qtm);
+						if (!part.isDrumPart()) {
+							int origId = part.mapNoteFullOctaves(t, ne.note.id, ne.getStartTick());
+							if (mappedNote.id != origId) {
+								newNE.origPitch = origId;
+							}
+						}
 						if (!addTies) {
 							// Only associate if doing preview
 							newNE.origEvent = new ArrayList<NoteEvent>();
@@ -896,6 +905,7 @@ public class AbcExporter
 				if (ne.note == Note.REST || part.getInstrument().isSustainable(ne.note.id))
 				{
 					NoteEvent next = new NoteEvent(ne.note, ne.velocity, maxNoteEndTick, ne.getEndTick(), qtm);
+					next.origPitch = ne.origPitch;
 					int ins = Collections.binarySearch(events, next);
 					if (ins < 0)
 						ins = -ins - 1;
