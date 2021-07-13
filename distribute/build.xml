@@ -32,6 +32,15 @@
 		<copy file="abcfile.ico" todir="${build}" />
 		<copy file="midifile.ico" todir="${build}" />
 		<copy file="msxfile.ico" todir="${build}" />
+		<copy todir="${bin}/com/digero/maestro">
+			<fileset dir="${src}/com/digero/maestro" includes="*.txt"/>
+		</copy>
+		<copy todir="${bin}/com/digero/abcplayer">
+			<fileset dir="${src}/com/digero/abcplayer" includes="*.txt"/>
+		</copy>
+		<copy todir="${bin}/com/digero/common/icons">
+			<fileset dir="${src}/com/digero/common/icons" includes="*.png"/>
+		</copy>
 	</target>
 
 	<target name="CommonJar" depends="PreBuild">
@@ -91,7 +100,7 @@
 		</uptodate>
 	</target>
 
-	<target name="GenerateSoundFontInfo" depends="GenerateSoundFontInfo.CheckUpToDate" unless="GenerateSoundFontInfo.uptodate">
+	<target name="GenerateSoundFontInfo" depends="GenerateSoundFontInfo.CheckUpToDate" ><!--unless="GenerateSoundFontInfo.uptodate"-->
 		<java classname="com.digero.tools.soundfont.GenerateSoundFontInfo" classpath="${bin}" fork="yes" failonerror="yes">
 			<arg value="${basedir}/${audio}/LotroInstruments" />
 			<arg value="${basedir}/${audio}/LotroInstruments/LotroInstruments.txt" />

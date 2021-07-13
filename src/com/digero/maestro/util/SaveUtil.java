@@ -2,7 +2,7 @@ package com.digero.maestro.util;
 
 import java.io.File;
 
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Element;
