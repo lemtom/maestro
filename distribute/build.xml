@@ -69,28 +69,54 @@
 		<uptodate property="MaestroExe.uptodate" targetfile="${build}/${basename.Maestro}.exe">
 			<srcfiles dir="${basedir}" includes="${tools}/WinRun4J.exe,${tools}/rcedit.exe,${basename.Maestro}.rcedit.ini,${basename.Maestro}.ini,${basename.Maestro}.ico" />
 		</uptodate>
+		<uptodate property="MaestroExe64.uptodate" targetfile="${build}/${basename.Maestro}64.exe">
+			<srcfiles dir="${basedir}" includes="${tools}/WinRun4J64.exe,${tools}/rcedit64.exe,${basename.Maestro}.rcedit64.ini,${basename.Maestro}64.ini,${basename.Maestro}.ico" />
+		</uptodate>
 		<uptodate property="AbcPlayerExe.uptodate" targetfile="${build}/${basename.AbcPlayer}.exe">
 			<srcfiles dir="${basedir}" includes="${tools}/WinRun4J.exe,${tools}/rcedit.exe,${basename.AbcPlayer}.rcedit.ini,${basename.AbcPlayer}.ini,${basename.AbcPlayer}.ico" />
+		</uptodate>
+		<uptodate property="AbcPlayerExe64.uptodate" targetfile="${build}/${basename.AbcPlayer}64.exe">
+			<srcfiles dir="${basedir}" includes="${tools}/WinRun4J64.exe,${tools}/rcedit64.exe,${basename.AbcPlayer}.rcedit64.ini,${basename.AbcPlayer}64.ini,${basename.AbcPlayer}.ico" />
 		</uptodate>
 	</target>
 
 	<target name="MaestroExe" depends="MaestroJar,Exe.CheckUpToDate" unless="MaestroExe.uptodate">
 		<copy file="${tools}/WinRun4J.exe" tofile="${build}/${basename.Maestro}.exe" overwrite="true" />
-		<echo>Running rcedit.exe</echo>
+		<echo>Running rcedit.exe for Maestro</echo>
 		<exec executable="${tools}/rcedit.exe" failonerror="true">
 			<arg value="/W" />
 			<arg value="${build}/${basename.Maestro}.exe" />
 			<arg value="${basename.Maestro}.rcedit.ini" />
 		</exec>
 	</target>
+	
+	<target name="MaestroExe64" depends="MaestroJar,Exe.CheckUpToDate" unless="MaestroExe64.uptodate">
+		<copy file="${tools}/WinRun4J64.exe" tofile="${build}/${basename.Maestro}64.exe" overwrite="true" />
+		<echo>Running rcedit64.exe for Maestro</echo>
+		<exec executable="${tools}/rcedit64.exe" failonerror="true">
+			<arg value="/W" />
+			<arg value="${build}/${basename.Maestro}64.exe" />
+			<arg value="${basename.Maestro}.rcedit64.ini" />
+		</exec>
+	</target>
 
 	<target name="AbcPlayerExe" depends="AbcPlayerJar,Exe.CheckUpToDate" unless="AbcPlayerExe.uptodate">
 		<copy file="${tools}/WinRun4J.exe" tofile="${build}/${basename.AbcPlayer}.exe" overwrite="true" />
-		<echo>Running rcedit.exe</echo>
+		<echo>Running rcedit.exe for Player</echo>
 		<exec executable="${tools}/rcedit.exe" failonerror="true">
 			<arg value="/W" />
 			<arg value="${build}/${basename.AbcPlayer}.exe" />
 			<arg value="AbcPlayer.rcedit.ini" />
+		</exec>
+	</target>
+
+	<target name="AbcPlayerExe64" depends="AbcPlayerJar,Exe.CheckUpToDate" unless="AbcPlayerExe64.uptodate">
+		<copy file="${tools}/WinRun4J64.exe" tofile="${build}/${basename.AbcPlayer}64.exe" overwrite="true" />
+		<echo>Running rcedit64.exe for Player</echo>
+		<exec executable="${tools}/rcedit64.exe" failonerror="true">
+			<arg value="/W" />
+			<arg value="${build}/${basename.AbcPlayer}64.exe" />
+			<arg value="AbcPlayer.rcedit64.ini" />
 		</exec>
 	</target>
 	
@@ -123,7 +149,7 @@
 		</exec>
 	</target>
 	
-	<target name="Executables" depends="MaestroExe,AbcPlayerExe,LotroInstruments" />
+	<target name="Executables" depends="MaestroExe,MaestroExe64,AbcPlayerExe,AbcPlayerExe64,LotroInstruments" />
 
 	<target name="Installer" depends="Executables">
 		<mkdir dir="${output}" />
@@ -151,8 +177,10 @@
 		<mkdir dir="${output}" />
 		<zip destfile="${output}/${basename.Maestro}_v${version.Maestro}.zip" basedir="${build}">
 			<include name="${basename.Maestro}.exe" />
+			<include name="${basename.Maestro}64.exe" />
 			<include name="${basename.Maestro}.jar" />
 			<include name="${basename.AbcPlayer}.exe" />
+			<include name="${basename.AbcPlayer}64.exe" />
 			<include name="${basename.AbcPlayer}.jar" />
 			<include name="${basename.Common}.jar" />
 			<include name="TableLayout.jar" />
