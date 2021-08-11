@@ -22,7 +22,7 @@ public interface AbcConstants
 	// Modifications to the ABC note lengths to sound more like the instruments in the game
 	public static final double NON_SUSTAINED_NOTE_HOLD_SECONDS = 1.1;
 	public static final double SUSTAINED_NOTE_HOLD_SECONDS = 0.0;
-	public static final double NOTE_RELEASE_SECONDS = 0.2;
+	public static final double NOTE_RELEASE_SECONDS = 0.5;// Sadly this is linear 0.5s dB release, not linear 0.2s power release like in lotro.
 
 	// MIDI Preview controller values
 	public static final int MIDI_REVERB = 0;
