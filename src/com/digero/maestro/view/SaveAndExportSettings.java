@@ -8,6 +8,7 @@ public class SaveAndExportSettings
 	public boolean showExportFileChooser = false;
 	public boolean skipSilenceAtStart = true;
 	public boolean showPruned = false;
+	public int stereoPan = 100;
 	private final Preferences prefs;
 
 	public SaveAndExportSettings(Preferences prefs)
@@ -17,6 +18,7 @@ public class SaveAndExportSettings
 		showExportFileChooser = prefs.getBoolean("showExportFileChooser", showExportFileChooser);
 		skipSilenceAtStart = prefs.getBoolean("skipSilenceAtStart", skipSilenceAtStart);
 		showPruned = prefs.getBoolean("showPruned", showPruned);
+		stereoPan = prefs.getInt("stereoPan", stereoPan);
 	}
 
 	public SaveAndExportSettings(SaveAndExportSettings that)
@@ -31,6 +33,7 @@ public class SaveAndExportSettings
 		showExportFileChooser = that.showExportFileChooser;
 		skipSilenceAtStart = that.skipSilenceAtStart;
 		showPruned = that.showPruned;
+		stereoPan = that.stereoPan;
 	}
 
 	public void saveToPrefs()
@@ -39,6 +42,7 @@ public class SaveAndExportSettings
 		prefs.putBoolean("showExportFileChooser", showExportFileChooser);
 		prefs.putBoolean("skipSilenceAtStart", skipSilenceAtStart);
 		prefs.putBoolean("showPruned", showPruned);
+		prefs.putInt("stereoPan", stereoPan);
 	}
 
 	public SaveAndExportSettings getCopy()

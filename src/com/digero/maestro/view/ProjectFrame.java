@@ -92,6 +92,7 @@ import com.digero.common.view.BarNumberLabel;
 import com.digero.common.view.ColorTable;
 import com.digero.common.view.NativeVolumeBar;
 import com.digero.common.view.SongPositionLabel;
+import com.digero.common.view.StereoBar;
 import com.digero.maestro.MaestroMain;
 import com.digero.maestro.abc.AbcConversionException;
 import com.digero.maestro.abc.AbcExporter;
@@ -161,6 +162,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JButton playButton;
 	private JButton stopButton;
 	private NativeVolumeBar volumeBar;
+	private StereoBar stereoBar;
 	private SongPositionLabel midiPositionLabel;
 	private SongPositionLabel abcPositionLabel;
 	private BarNumberLabel midiBarLabel;
@@ -617,6 +619,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				new double[] { PREFERRED, PREFERRED }));
 		volumePanel.add(new JLabel("Volume"), "0, 0, c, c");
 		volumePanel.add(volumeBar, "0, 1, f, c");
+		
+		//stereoBar = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 100);
+		stereoBar = new StereoBar(new PanManager());
+		JPanel stereoPanel = new JPanel(new TableLayout(//
+				new double[] { PREFERRED },//
+				new double[] { PREFERRED, PREFERRED }));
+		stereoPanel.add(new JLabel("Stereo"), "0, 0, c, c");
+		stereoPanel.add(stereoBar, "0, 1, f, c");
 
 		ActionListener modeButtonListener = new ActionListener()
 		{
@@ -705,11 +715,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		abcBarLabel.setVisible(!midiBarLabel.isVisible());
 
 		JPanel playControlPanel = new JPanel(new TableLayout(//
-				new double[] { 4, 0.50, 4, PREFERRED, 4, 0.50, 4, PREFERRED, PREFERRED, 4 },//
+				new double[] { 4, 0.50, 4, PREFERRED, 4, 0.25, 0.25, PREFERRED, PREFERRED, 4 },//
 				new double[] { PREFERRED, 4, PREFERRED }));
 		playControlPanel.add(playButtonPanel, "3, 0, 3, 2, C, C");
 		playControlPanel.add(modeButtonPanel, "1, 0, 1, 2, C, F");
 		playControlPanel.add(volumePanel, "5, 0, 5, 2, C, C");
+		playControlPanel.add(stereoPanel, "6, 0, 6, 2, C, C");
 		playControlPanel.add(midiPositionLabel, "8, 0, R, B");
 		playControlPanel.add(abcPositionLabel, "8, 0, R, B");
 		playControlPanel.add(midiBarLabel, "8, 2, R, T");
@@ -1026,6 +1037,31 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					return abcVolumeTransceiver.getVolume();
 				return NativeVolumeBar.MAX_VOLUME;
 			}
+		}
+	}
+	
+	private class PanManager implements StereoBar.Callback
+	{
+		@Override public void setPan(int pan)
+		{
+			if (pan != saveSettings.stereoPan) {
+				saveSettings.stereoPan = pan;
+				SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
+
+				boolean running = curSequencer.isRunning();
+				if (abcPreviewMode && running)
+				{
+					//curSequencer.setRunning(false);
+					refreshPreviewSequence(true);
+					//curSequencer.setRunning(true);
+				}
+				saveSettings.saveToPrefs();
+			}
+		}
+
+		@Override public int getPan()
+		{
+			return saveSettings.stereoPan;
 		}
 	}
 
@@ -1774,6 +1810,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			abcSong.setSkipSilenceAtStart(saveSettings.skipSilenceAtStart);
 			abcSong.setShowPruned(saveSettings.showPruned);
 			AbcExporter exporter = abcSong.getAbcExporter();
+			exporter.stereoPan = saveSettings.stereoPan;
 			SequenceInfo previewSequenceInfo = SequenceInfo.fromAbcParts(exporter, !failedToLoadLotroInstruments);
 
 			long tick = sequencer.getTickPosition();

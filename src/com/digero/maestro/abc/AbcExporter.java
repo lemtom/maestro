@@ -41,6 +41,8 @@ public class AbcExporter
 	private boolean showPruned;
 	private long exportStartTick;
 	private long exportEndTick;
+	
+	public int stereoPan = 100;// zero is mono, 100 is very wide.
 
 	public AbcExporter(List<AbcPart> parts, QuantizedTimingInfo timingInfo, KeySignature keySignature,
 			AbcMetadataSource metadata) throws AbcConversionException
@@ -160,12 +162,11 @@ public class AbcExporter
 			track0.add(MidiFactory.createTrackNameEvent(metadata.getSongTitle()));
 			addMidiTempoEvents(track0);
 
-			//PanGenerator panner = new PanGenerator();
+			PanGenerator panner = new PanGenerator();
 			List<ExportTrackInfo> infoList = new ArrayList<ExportTrackInfo>();
 			for (AbcPart part : parts)
 			{
-				//int pan = (parts.size() > 1) ? panner.get(part.getInstrument(), part.getTitle()) : PanGenerator.CENTER;
-				int pan = PanGenerator.CENTER;
+				int pan = (parts.size() > 1) ? panner.get(part.getInstrument(), part.getTitle(), stereoPan) : PanGenerator.CENTER;
 				infoList.add(exportPartToPreview(part, sequence, exportStartTick, exportEndTick, pan,
 						useLotroInstruments));
 			}

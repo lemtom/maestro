@@ -140,7 +140,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		AbcToMidi.Params params = new AbcToMidi.Params(file);
 		params.abcInfo = abcInfo;
 		params.useLotroInstruments = false;
-		params.stereo = false;
+		//params.stereo = false;
 		sequenceInfo = SequenceInfo.fromAbc(params);
 		exportFile = file;
 
@@ -224,7 +224,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 						AbcToMidi.Params params = new AbcToMidi.Params(sourceFile);
 						params.abcInfo = abcInfo;
 						params.useLotroInstruments = false;
-						params.stereo = false;
+						//params.stereo = false;
 						sequenceInfo = SequenceInfo.fromAbc(params);
 
 						tripletTiming = abcInfo.hasTriplets();

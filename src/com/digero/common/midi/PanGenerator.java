@@ -39,6 +39,27 @@ public class PanGenerator
 
 		return pan;
 	}
+	
+	public int get(LotroInstrument instrument, String partTitle, int panModifier)
+	{
+		int pan = get(instrument);
+		
+		if (panModifier != 100) {
+			pan = pan - CENTER;
+			pan = (int) (pan * (float) panModifier * 0.01f);
+			pan = pan + CENTER;
+		}
+
+		String titleLower = partTitle.toLowerCase();
+		if (leftRegex.matcher(titleLower).find())
+			pan = CENTER - Math.abs(pan - CENTER);
+		else if (rightRegex.matcher(titleLower).find())
+			pan = CENTER + Math.abs(pan - CENTER);
+		else if (centerRegex.matcher(titleLower).find())
+			pan = CENTER;
+
+		return pan;
+	}
 
 	public int get(LotroInstrument instrument)
 	{
