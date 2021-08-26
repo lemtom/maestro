@@ -32,7 +32,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	private final boolean tripletTiming;
 
 	public QuantizedTimingInfo(SequenceInfo source, float exportTempoFactor, TimeSignature meter,
-			boolean useTripletTiming) throws AbcConversionException
+			boolean useTripletTiming, int abcSongBPM) throws AbcConversionException
 	{
 		double exportPrimaryTempoMPQ = TimingInfo.roundTempoMPQ(source.getPrimaryTempoMPQ() / exportTempoFactor);
 		this.primaryTempoMPQ = (int) Math.round(exportPrimaryTempoMPQ * exportTempoFactor);
@@ -44,7 +44,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		final int resolution = source.getDataCache().getTickResolution();
 
 		TimingInfo defaultTiming = new TimingInfo(source.getPrimaryTempoMPQ(), resolution, exportTempoFactor, meter,
-				useTripletTiming);
+				useTripletTiming, abcSongBPM);
 		timingInfoByTick.put(0L, new TimingInfoEvent(0, 0, 0, defaultTiming));
 
 		Collection<TimingInfoEvent> reversedEvents = timingInfoByTick.descendingMap().values();
@@ -59,7 +59,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 			long micros = 0;
 			double barNumber = 0;
 			TimingInfo info = new TimingInfo(sourceEvent.tempoMPQ, resolution, exportTempoFactor, meter,
-					useTripletTiming);
+					useTripletTiming, abcSongBPM);
 
 			// Iterate over the existing events in reverse order
 			Iterator<TimingInfoEvent> reverseIterator = reversedEvents.iterator();

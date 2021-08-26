@@ -12,7 +12,7 @@ public interface AbcConstants
 	public static final int ONE_MINUTE_MICROS = 60 * ONE_SECOND_MICROS;
 	public static final int SHORTEST_NOTE_MICROS = ONE_MINUTE_MICROS / 1000;// Some times LOTRO will play this short a note, sometimes not..
 	public static final int LONGEST_NOTE_MICROS = 8 * ONE_SECOND_MICROS;
-	public static final double SHORTEST_NOTE_SECONDS = 0.06;// Some times LOTRO will play this short a note, sometimes not..
+	public static final double SHORTEST_NOTE_SECONDS = 0.06;// LOTRO will accept this short note duration except at 30, 60, 90 and 120 bpm.
 	public static final double LONGEST_NOTE_SECONDS = 8.0;//This limits goes for rests also
 	public static final int LONGEST_NOTE_MICROS_WORST_CASE = (2 * SHORTEST_NOTE_MICROS - 1)
 			* (LONGEST_NOTE_MICROS / (2 * SHORTEST_NOTE_MICROS - 1));

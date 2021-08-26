@@ -147,7 +147,7 @@ public class TrackInfo implements MidiConstants
 						{
 							ne.setEndTick(tick);
 							long bendTick = tick;
-							if (ne.getLengthMicros() < TimingInfo.SHORTEST_NOTE_MICROS)
+							if (ne.getLengthMicros() < TimingInfo.getShortestNoteMicros(125))
 							{
 								// If the note is too short, just skip it. The new (bent) note will 
 								// replace it, so start the bent note at the same time this one started.

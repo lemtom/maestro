@@ -640,7 +640,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				|| timingInfo.getMeter() != getTimeSignature() //
 				|| timingInfo.isTripletTiming() != isTripletTiming())
 		{
-			timingInfo = new QuantizedTimingInfo(sequenceInfo, getTempoFactor(), getTimeSignature(), isTripletTiming());
+			timingInfo = new QuantizedTimingInfo(sequenceInfo, getTempoFactor(), getTimeSignature(), isTripletTiming(), getTempoBPM());
 		}
 
 		return timingInfo;

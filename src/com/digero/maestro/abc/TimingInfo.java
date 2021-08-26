@@ -7,9 +7,9 @@ public class TimingInfo
 {
 	public static final long ONE_SECOND_MICROS = 1000000;
 	public static final long ONE_MINUTE_MICROS = 60 * ONE_SECOND_MICROS;
-	public static final long SHORTEST_NOTE_MICROS = 60001;
+	//public static final long SHORTEST_NOTE_MICROS = 60001;
 	public static final long LONGEST_NOTE_MICROS = ONE_MINUTE_MICROS / 10;
-	public static final int MAX_TEMPO_BPM = (int) (ONE_MINUTE_MICROS / SHORTEST_NOTE_MICROS);
+	public static final int MAX_TEMPO_BPM = (int) (ONE_MINUTE_MICROS / getShortestNoteMicros(125));
 	public static final int MIN_TEMPO_BPM = (int) ((ONE_MINUTE_MICROS + LONGEST_NOTE_MICROS / 2) / LONGEST_NOTE_MICROS); // Round up
 
 	private final int tempoMPQ;
@@ -23,7 +23,7 @@ public class TimingInfo
 	private final long minNoteLengthTicks;
 	private final long maxNoteLengthTicks;
 
-	TimingInfo(int tempoMPQ, int resolutionPPQ, float exportTempoFactor, TimeSignature meter, boolean useTripletTiming)
+	TimingInfo(int tempoMPQ, int resolutionPPQ, float exportTempoFactor, TimeSignature meter, boolean useTripletTiming, int abcSongBPM)
 			throws AbcConversionException
 	{
 		// Compute the export tempo and round it to a whole-number BPM
@@ -37,7 +37,7 @@ public class TimingInfo
 		this.exportTempoFactor = exportTempoFactor;
 		this.meter = meter;
 
-		final long SHORTEST_NOTE_TICKS = (long) Math.ceil((SHORTEST_NOTE_MICROS * resolutionPPQ) / exportTempoMPQ);
+		final long SHORTEST_NOTE_TICKS = (long) Math.ceil((getShortestNoteMicros(abcSongBPM) * resolutionPPQ) / exportTempoMPQ);
 		final long LONGEST_NOTE_TICKS = (long) Math.floor((LONGEST_NOTE_MICROS * resolutionPPQ) / exportTempoMPQ);
 
 		final int exportTempoBPM = (int) Math.round(MidiUtils.convertTempo(exportTempoMPQ));
@@ -87,6 +87,13 @@ public class TimingInfo
 			this.minNoteDivisor = minNoteDivisor;
 			this.maxNoteLengthTicks = minNoteTicks * (LONGEST_NOTE_TICKS / minNoteTicks);
 		}
+	}
+	
+	public static long getShortestNoteMicros(int bpm) {
+		if (bpm == 30 || bpm == 60 || bpm == 90 || bpm == 120) {
+			return 60001L;
+		}
+		return 60000L;
 	}
 
 	/**
