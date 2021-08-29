@@ -896,7 +896,7 @@ public class AbcExporter
 					&& ne.note != Note.REST
 					&& !(part.getInstrument() == LotroInstrument.BASIC_BAGPIPE && ne.note.id <= AbcConstants.BAGPIPE_LAST_DRONE_NOTE_ID))
 			{
-				maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L;//a little hack in case the notes are larger than 8 seconds, but less larger than 0.06s.
+				maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L;//a little hack in case the notes are larger than 6 seconds, but less larger than 0.06s.
 				maxNoteEndTick = qtm.quantize(maxNoteEndTick);
 				// Align with a bar boundary if it extends across 1 or more full bars.
 				long endBarTick = qtm.tickToBarStartTick(maxNoteEndTick);
@@ -931,28 +931,6 @@ public class AbcExporter
 				}
 
 				ne.setEndTick(maxNoteEndTick);
-			} else if (ne.getEndTick() > maxNoteEndTick	&& ne.note == Note.REST) {
-				// This rest is larger than 8 seconds
-				maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L;//a little hack in case the notes are larger than 8 seconds, but less larger than 0.06s.
-				maxNoteEndTick = qtm.quantize(maxNoteEndTick);
-				// Align with a bar boundary if it extends across 1 or more full bars.
-				long endBarTick = qtm.tickToBarStartTick(maxNoteEndTick);
-				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick)
-				{
-					maxNoteEndTick = endBarTick;
-					assert ne.getEndTick() > maxNoteEndTick;
-				}
-
-				// Since the note is a rest, add another one after 
-				// this ends to keep it going...
-				NoteEvent next = new NoteEvent(ne.note, ne.velocity, maxNoteEndTick, ne.getEndTick(), qtm);
-				int ins = Collections.binarySearch(events, next);
-				if (ins < 0)
-					ins = -ins - 1;
-				assert (ins > i);
-				events.add(ins, next);
-
-				ne.setEndTick(maxNoteEndTick);
 			}
 
 			if (addTies)
@@ -964,6 +942,11 @@ public class AbcExporter
 				final QuantizedTimingInfo.TimingInfoEvent nextTempoEvent = qtm.getNextTimingEvent(ne.getStartTick());
 				if (nextTempoEvent != null && nextTempoEvent.tick < targetEndTick)
 					targetEndTick = nextTempoEvent.tick;
+				
+				// If remaining bar is larger than 6s, then split rests earlier (and yes, have seen this happen -aifel)
+				if (ne.note == Note.REST && targetEndTick > ne.getStartTick() + tm.getMaxNoteLengthTicks()) {
+					targetEndTick = qtm.quantize(ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L);
+				}
 
 				/* Make sure that quarter notes start on quarter-note boundaries within the bar, and
 				 * that eighth notes start on eight-note boundaries, and so on. Add a tie at the
