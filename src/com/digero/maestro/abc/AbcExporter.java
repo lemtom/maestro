@@ -437,7 +437,10 @@ public class AbcExporter
 		}
 		
 		if (delayEnabled && qtm.getPrimaryExportTempoBPM() >= 50) {
+			// oneNote is duration in secs of z1
 			double oneNote = 60/(double)qtm.getPrimaryExportTempoBPM()*qtm.getMeter().denominator/((qtm.getMeter().numerator/ (double) qtm.getMeter().denominator)<0.75?16d:8d);
+			// fractionFactor is number of z that the whole song is being start delayed with.
+			//   it is always 1 or above. Above if oneNote is smaller than 60ms.
 			int fractionFactor = (int)Math.ceil(Math.max(1d,0.06d/oneNote));
 			if (part.delay == 0) {
 				out.println("z"+fractionFactor+" | ");
@@ -896,14 +899,16 @@ public class AbcExporter
 					&& ne.note != Note.REST
 					&& !(part.getInstrument() == LotroInstrument.BASIC_BAGPIPE && ne.note.id <= AbcConstants.BAGPIPE_LAST_DRONE_NOTE_ID))
 			{
-				maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L;//a little hack in case the notes are larger than 6 seconds, but less larger than 0.06s.
-				maxNoteEndTick = qtm.quantize(maxNoteEndTick);
+				
 				// Align with a bar boundary if it extends across 1 or more full bars.
 				long endBarTick = qtm.tickToBarStartTick(maxNoteEndTick);
-				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick)
+				if (qtm.tickToBarEndTick(ne.getStartTick()) <= endBarTick)
 				{
 					maxNoteEndTick = endBarTick;
 					assert ne.getEndTick() > maxNoteEndTick;
+				} else {
+					maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L;//a little hack in case the notes are larger than 5 seconds, but less larger than 0.06s.
+					maxNoteEndTick = qtm.quantize(maxNoteEndTick);
 				}
 
 				// If the note is a rest or sustainable, add another one after 
