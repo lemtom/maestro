@@ -8,7 +8,7 @@ import javax.sound.midi.MetaMessage;
  */
 public class TimeSignature implements MidiConstants
 {
-	public static final int MAX_DENOMINATOR = 32;
+	public static final int MAX_DENOMINATOR = 8;
 	public static final TimeSignature FOUR_FOUR = new TimeSignature(4, 4);
 
 	public final int numerator;
