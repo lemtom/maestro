@@ -97,7 +97,7 @@ public class VolumeTransceiver implements Transceiver, MidiConstants
 				try
 				{
 					int c = m.getChannel();
-					channelVolume[c] = m.getData2();
+					//channelVolume[c] = m.getData2(); commented out to not self multiply and keep reducing volume when searching
 					m.setMessage(m.getCommand(), c, CHANNEL_VOLUME_CONTROLLER_COARSE, getActualVolume(c));
 				}
 				catch (InvalidMidiDataException e)
