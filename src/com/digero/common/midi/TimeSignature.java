@@ -27,7 +27,7 @@ public class TimeSignature implements MidiConstants
 	public TimeSignature(int numerator, int denominator)
 	{
 		verifyData(numerator, denominator);
-
+		
 		this.numerator = numerator;
 		this.denominator = denominator;
 		this.metronome = 24;
@@ -84,10 +84,17 @@ public class TimeSignature implements MidiConstants
 				throw new IllegalArgumentException("The string: \"" + str
 						+ "\" is not a valid time signature (expected format: 4/4)");
 			}
-			this.numerator = Integer.parseInt(parts[0]);
-			this.denominator = Integer.parseInt(parts[1]);
+			if (Integer.parseInt(parts[1]) > MAX_DENOMINATOR) {
+				this.numerator = 4;
+				this.denominator = 4;
+			} else {
+				this.numerator = Integer.parseInt(parts[0]);
+				this.denominator = Integer.parseInt(parts[1]);
+			}
 		}
+		
 		verifyData(this.numerator, this.denominator);
+		
 		this.metronome = 24;
 		this.thirtySecondNotes = 8;
 	}
@@ -114,6 +121,15 @@ public class TimeSignature implements MidiConstants
 		{
 			throw new IllegalArgumentException("The numerator of the time signature must be less than 256");
 		}
+	}
+	
+	private static boolean verifyDenom(int numerator, int denominator)
+	{
+		if (((numerator / (double) denominator < 0.75) ? 16 : 8) * 4 / denominator < 4) {
+			// This will produce a divide by zero in TimingInfo if allowed, so return false.
+			return false;
+		}
+		return true;
 	}
 
 	public MetaMessage toMidiMessage()
