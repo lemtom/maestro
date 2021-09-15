@@ -335,7 +335,9 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		{
 			@Override public void actionPerformed(ActionEvent e)
 			{
-				saveDrumMapping();
+				if(!abcPart.isFXPart()) {
+					saveDrumMapping();
+				}
 			}
 		});
 
@@ -348,7 +350,9 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		{
 			@Override public void actionPerformed(ActionEvent e)
 			{
-				loadDrumMapping();
+				if(!abcPart.isFXPart()) {
+					loadDrumMapping();
+				}
 			}
 		});
 

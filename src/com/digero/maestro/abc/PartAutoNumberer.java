@@ -50,6 +50,7 @@ public class PartAutoNumberer
 			init(prefs, LotroInstrument.BASIC_FIDDLE, 9 * x10);
 			init(prefs, LotroInstrument.BARDIC_FIDDLE, LotroInstrument.BASIC_FIDDLE);
 			init(prefs, LotroInstrument.STUDENT_FIDDLE, LotroInstrument.BASIC_FIDDLE);
+			init(prefs, LotroInstrument.STUDENT_FX_FIDDLE, LotroInstrument.STUDENT_FIDDLE);
 			init(prefs, LotroInstrument.LONELY_MOUNTAIN_FIDDLE, LotroInstrument.BASIC_FIDDLE);
 			init(prefs, LotroInstrument.SPRIGHTLY_FIDDLE, LotroInstrument.BASIC_FIDDLE);
 			init(prefs, LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE, LotroInstrument.BASIC_FIDDLE);
@@ -75,6 +76,7 @@ public class PartAutoNumberer
 				case LONELY_MOUNTAIN_FIDDLE:   return "Lonely Mountain Fiddle";
 				case SPRIGHTLY_FIDDLE:         return "Sprightly Fiddle";
 				case STUDENT_FIDDLE:           return "Student's Fiddle";
+				case STUDENT_FX_FIDDLE:        return "Student's FX Fiddle";
 				case TRAVELLERS_TRUSTY_FIDDLE: return "Traveller's Trusty Fiddle";
 				case BASIC_THEORBO:            return "Theorbo";
 				case BASIC_FLUTE:              return "Flute";

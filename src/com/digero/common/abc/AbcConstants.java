@@ -23,6 +23,7 @@ public interface AbcConstants
 	public static final double NON_SUSTAINED_NOTE_HOLD_SECONDS = 1.1;
 	public static final double SUSTAINED_NOTE_HOLD_SECONDS = 0.06;//A little hold to get the release to sound more like lotros linear. Lowered to 0.06s from 0.1s in 2.5.0
 	public static final double NOTE_RELEASE_SECONDS = 0.5;// Sadly this is linear 0.5s dB release, not linear 0.2s power release like in lotro.
+	public static final double STUDENT_FX_MIN_SECONDS = 1.5;
 
 	// MIDI Preview controller values
 	public static final int MIDI_REVERB = 0;//Changed to 0 from 3 in 2.5.0

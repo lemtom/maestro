@@ -146,6 +146,9 @@ public class GenerateSoundFontInfo
 
 				presets.add(new PresetInfo(flubs, basicFiddleSubrange));
 			}
+			else if (li == LotroInstrument.STUDENT_FX_FIDDLE)
+			{
+			}
 			else
 			{
 				StandardInstrumentInfo info = new StandardInstrumentInfo(li, getNotesPerSample(li), samples);

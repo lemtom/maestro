@@ -32,6 +32,7 @@ import com.digero.common.view.ColorTable;
 import com.digero.maestro.abc.AbcPart;
 import com.digero.maestro.abc.AbcPartEvent;
 import com.digero.maestro.abc.LotroDrumInfo;
+import com.digero.maestro.abc.LotroStudentFXInfo;
 import com.digero.maestro.midi.NoteEvent;
 import com.digero.maestro.midi.TrackInfo;
 
@@ -60,6 +61,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 	private JPanel gutter;
 	private JCheckBox checkBox;
 	private JComboBox<LotroDrumInfo> drumComboBox;
+	private JComboBox<LotroStudentFXInfo> drumComboBoxFX;
 	private DrumNoteGraph noteGraph;
 	private TrackVolumeBar trackVolumeBar;
 	private ActionListener trackVolumeBarListener;
@@ -109,6 +111,17 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 		instr = Util.ellipsis(instr, TITLE_WIDTH, checkBox.getFont());
 		checkBox.setText(instr);
 
+		drumComboBoxFX = new JComboBox<LotroStudentFXInfo>(LotroStudentFXInfo.ALL_FX.toArray(new LotroStudentFXInfo[0]));
+		drumComboBoxFX.setSelectedItem(getSelectedFX());
+		drumComboBoxFX.setMaximumRowCount(20);
+		drumComboBoxFX.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				LotroStudentFXInfo selected = (LotroStudentFXInfo) drumComboBoxFX.getSelectedItem();
+				abcPart.getFXMap(trackInfo.getTrackNumber()).set(drumId, selected.note.id);
+			}
+		});
 		drumComboBox = new JComboBox<LotroDrumInfo>(LotroDrumInfo.ALL_DRUMS.toArray(new LotroDrumInfo[0]));
 		drumComboBox.setSelectedItem(getSelectedDrum());
 		drumComboBox.setMaximumRowCount(20);
@@ -206,6 +219,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 		add(gutter, "0, 0");
 		add(checkBox, "1, 0");
 		add(drumComboBox, "2, 0, f, c");
+		add(drumComboBoxFX, "2, 0, f, c");
 		add(noteGraph, "3, 0");
 
 		updateState();
@@ -230,7 +244,11 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 			{
 				checkBox.setEnabled(abcPart.isTrackEnabled(trackInfo.getTrackNumber()));
 				checkBox.setSelected(abcPart.isDrumEnabled(trackInfo.getTrackNumber(), drumId));
-				drumComboBox.setSelectedItem(getSelectedDrum());
+				if (abcPart.isFXPart()) {
+					drumComboBoxFX.setSelectedItem(getSelectedFX());
+				} else {
+					drumComboBox.setSelectedItem(getSelectedDrum());
+				}
 				updateState();
 			}
 		}
@@ -300,6 +318,8 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 		checkBox.setEnabled(trackEnabled);
 		drumComboBox.setEnabled(trackEnabled);
 		drumComboBox.setVisible(abcPart.getInstrument() == LotroInstrument.BASIC_DRUM);
+		drumComboBoxFX.setEnabled(trackEnabled);
+		drumComboBoxFX.setVisible(abcPart.getInstrument() == LotroInstrument.STUDENT_FX_FIDDLE);
 
 		if (!noteActive)
 		{
@@ -344,6 +364,11 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 	private LotroDrumInfo getSelectedDrum()
 	{
 		return LotroDrumInfo.getById(abcPart.getDrumMap(trackInfo.getTrackNumber()).get(drumId));
+	}
+	
+	private LotroStudentFXInfo getSelectedFX()
+	{
+		return LotroStudentFXInfo.getById(abcPart.getFXMap(trackInfo.getTrackNumber()).get(drumId));
 	}
 
 	private class DrumNoteGraph extends NoteGraph

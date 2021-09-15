@@ -68,6 +68,13 @@ public class LotroInstrumentTest
 		test(LotroInstrument.STUDENT_FIDDLE, "Student's Fiddle");
 		test(LotroInstrument.STUDENT_FIDDLE, "Students Fiddle");
 		test(LotroInstrument.STUDENT_FIDDLE, "StudentFiddle");
+		
+		test(LotroInstrument.STUDENT_FX_FIDDLE, "StudentFXFiddle");
+		test(LotroInstrument.STUDENT_FX_FIDDLE, "StudentFX");
+		test(LotroInstrument.STUDENT_FX_FIDDLE, "Student FX");
+		test(LotroInstrument.STUDENT_FX_FIDDLE, "StudentsFX");
+		test(LotroInstrument.STUDENT_FX_FIDDLE, "Student'sFX");
+		test(LotroInstrument.STUDENT_FX_FIDDLE, "StudentFX");
 
 		test(LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE, "Traveler's Trusty Fiddle 2");
 		test(LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE, "Travellers Trusty Fiddle 3");

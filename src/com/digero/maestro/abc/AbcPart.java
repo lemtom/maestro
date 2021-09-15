@@ -46,8 +46,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	private boolean[] trackEnabled;
 	private int[] trackVolumeAdjust;
 	private DrumNoteMap[] drumNoteMap;
+	private StudentFXNoteMap[] fxNoteMap;
 	private BitSet[] drumsEnabled;
 	private BitSet[] cowbellsEnabled;
+	private BitSet[] fxEnabled;
 
 	private final AbcSong abcSong;
 	private int enabledTrackCount = 0;
@@ -71,6 +73,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		this.trackEnabled = new boolean[t];
 		this.trackVolumeAdjust = new int[t];
 		this.drumNoteMap = new DrumNoteMap[t];
+		this.fxNoteMap = new StudentFXNoteMap[t];
 		this.sections = new ArrayList<TreeMap<Integer, PartSection>>();
 		for (int i = 0; i < t; i++) {
 			this.sections.add(null);
@@ -96,6 +99,14 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			{
 				drumNoteMap[i].removeChangeListener(drumMapChangeListener);
 				drumNoteMap[i] = null;
+			}
+		}
+		for (int i = 0; i < fxNoteMap.length; i++)
+		{
+			if (fxNoteMap[i] != null)
+			{
+				fxNoteMap[i].removeChangeListener(drumMapChangeListener);
+				fxNoteMap[i] = null;
 			}
 		}
 		sections = null;
@@ -147,7 +158,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			
 			if (instrument.isPercussion)
 			{
-				BitSet[] enabledSetByTrack = isCowbellPart() ? cowbellsEnabled : drumsEnabled;
+				BitSet[] enabledSetByTrack = isCowbellPart() ? cowbellsEnabled : isFXPart()?fxEnabled:drumsEnabled;
 				BitSet enabledSet = (enabledSetByTrack == null) ? null : enabledSetByTrack[t];
 				if (enabledSet != null)
 				{
@@ -165,6 +176,22 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 							drumsEnabledEle.appendChild(drumEle);
 							drumEle.setAttribute("id", String.valueOf(i));
 							drumEle.setAttribute("isEnabled", String.valueOf(true));
+						}
+					}
+					else if (isFXPart())
+					{
+						drumsEnabledEle.setAttribute("defaultEnabled", String.valueOf(true));
+
+						// Only store the drums that are disabled
+						for (int i = enabledSet.nextClearBit(0); i >= 0; i = enabledSet.nextClearBit(i + 1))
+						{
+							if (i >= MidiConstants.NOTE_COUNT)
+								break;
+
+							Element drumEle = ele.getOwnerDocument().createElement("note");
+							drumsEnabledEle.appendChild(drumEle);
+							drumEle.setAttribute("id", String.valueOf(i));
+							drumEle.setAttribute("isEnabled", String.valueOf(false));
 						}
 					}
 					else
@@ -187,8 +214,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 
 				if (!isCowbellPart())
 				{
-					if (drumNoteMap[t] != null)
-						drumNoteMap[t].saveToXml((Element) trackEle.appendChild(doc.createElement("drumMap")));
+					if (!isFXPart() && drumNoteMap[t] != null)
+						drumNoteMap[t].saveToXml((Element) trackEle.appendChild(doc.createElement(drumNoteMap[t].getXmlName())));
+					if (isFXPart() && fxNoteMap[t] != null)
+						fxNoteMap[t].saveToXml((Element) trackEle.appendChild(doc.createElement(fxNoteMap[t].getXmlName())));
 				}
 			}
 		}
@@ -283,6 +312,12 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 								cowbellsEnabled = new BitSet[getTrackCount()];
 							enabledSet = cowbellsEnabled;
 						}
+						else if (isFXPart())
+						{
+							if (fxEnabled == null)
+								fxEnabled = new BitSet[getTrackCount()];
+							enabledSet = fxEnabled;
+						}
 						else
 						{
 							if (drumsEnabled == null)
@@ -303,8 +338,13 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					}
 
 					Element drumMapEle = XmlUtil.selectSingleElement(trackEle, "drumMap");
-					if (drumMapEle != null)
+					if (drumMapEle != null) {
 						drumNoteMap[t] = DrumNoteMap.loadFromXml(drumMapEle, fileVersion);
+					}
+					drumMapEle = XmlUtil.selectSingleElement(trackEle, "fxMap");
+					if (drumMapEle != null) {
+						fxNoteMap[t] = StudentFXNoteMap.loadFromXml(drumMapEle, fileVersion);
+					}
 				}
 			}
 		}
@@ -369,6 +409,8 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				dstNote = Note.G2.id; // "Tom High 1"
 			else if (instrument == LotroInstrument.MOOR_COWBELL)
 				dstNote = Note.A2.id; // "Tom High 2"
+			else if (instrument == LotroInstrument.STUDENT_FX_FIDDLE)
+				dstNote = getFXMap(track).get(noteId);
 			else
 				dstNote = getDrumMap(track).get(noteId);
 
@@ -790,6 +832,11 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	{
 		return instrument == LotroInstrument.BASIC_COWBELL || instrument == LotroInstrument.MOOR_COWBELL;
 	}
+	
+	public boolean isFXPart()
+	{
+		return instrument == LotroInstrument.STUDENT_FX_FIDDLE;
+	}
 
 	public boolean isDrumTrack(int track)
 	{
@@ -814,6 +861,25 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 		return drumNoteMap[track];
 	}
+	
+	public StudentFXNoteMap getFXMap(int track)
+	{
+		if (fxNoteMap[track] == null)
+		{
+			// For non-drum tracks, just use a straight pass-through
+			//if (!abcSong.getSequenceInfo().getTrackInfo(track).isDrumTrack())
+			//{
+				fxNoteMap[track] = new PassThroughFXNoteMap();
+			//}
+			//else
+			//{
+			//	drumNoteMap[track] = new StudentFXNoteMap();
+				//drumNoteMap[track].load(drumPrefs);
+			//}
+			fxNoteMap[track].addChangeListener(drumMapChangeListener);
+		}
+		return fxNoteMap[track];
+	}
 
 	private final ChangeListener drumMapChangeListener = new ChangeListener()
 	{
@@ -826,7 +892,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				// Don't write pass-through drum maps to the prefs node 
 				// these are used for non-drum tracks and their mapping 
 				// isn't desirable to save.
-				if (!(map instanceof PassThroughDrumNoteMap))
+				if (!(map instanceof PassThroughDrumNoteMap) && !(map instanceof StudentFXNoteMap))
 					map.save(drumPrefs);
 
 				fireChangeEvent(AbcPartProperty.DRUM_MAPPING);
@@ -844,12 +910,15 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		if (isCowbellPart())
 			return true;
 
+		if (isFXPart())
+			return getFXMap(track).get(drumId) != LotroStudentFXInfo.DISABLED.note.id;
+		
 		return getDrumMap(track).get(drumId) != LotroDrumInfo.DISABLED.note.id;
 	}
 
 	public boolean isDrumEnabled(int track, int drumId)
 	{
-		BitSet[] enabledSet = isCowbellPart() ? cowbellsEnabled : drumsEnabled;
+		BitSet[] enabledSet = isCowbellPart() ? cowbellsEnabled : isFXPart()?fxEnabled:drumsEnabled;
 
 		if (enabledSet == null || enabledSet[track] == null)
 		{
@@ -870,6 +939,12 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				if (cowbellsEnabled == null)
 					cowbellsEnabled = new BitSet[getTrackCount()];
 				enabledSet = cowbellsEnabled;
+			}
+			else if (isFXPart())
+			{
+				if (fxEnabled == null)
+					fxEnabled = new BitSet[getTrackCount()];
+				enabledSet = fxEnabled;
 			}
 			else
 			{

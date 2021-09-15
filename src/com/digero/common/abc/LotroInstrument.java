@@ -58,7 +58,8 @@ public enum LotroInstrument
 
 	BASIC_COWBELL            ( "Basic Cowbell",             false, MidiInstrument.WOODBLOCK,            0,       true,     0.0f, "Cowbell"),
 	MOOR_COWBELL             ( "Moor Cowbell",              false, MidiInstrument.STEEL_DRUMS,          0,       true,     0.0f, "More Cowbell"),
-	BASIC_DRUM               ( "Basic Drum",                false, MidiInstrument.SYNTH_DRUM,           0,       true,     0.0f, "Drums?");
+	BASIC_DRUM               ( "Basic Drum",                false, MidiInstrument.SYNTH_DRUM,           0,       true,     0.0f, "Drums?"),
+	STUDENT_FX_FIDDLE        ( "Student's FX Fiddle",       false, MidiInstrument.GUITAR_FRET_NOISE,    0,       true,     0.0f, "Student'?s? ?FX ?Fiddle", "Student'?s? ?FX");
 // @formatter:on
 
 	private static final LotroInstrument[] values = values();
@@ -82,7 +83,11 @@ public enum LotroInstrument
 			boolean isPercussion, float dBVolumeAdjust, String... nicknameRegexes)
 	{
 		this.lowestPlayable = Note.MIN_PLAYABLE;
-		this.highestPlayable = Note.MAX_PLAYABLE;
+		if (friendlyName != "Student's FX Fiddle") {
+			this.highestPlayable = Note.MAX_PLAYABLE;
+		} else {
+			this.highestPlayable = Note.D2;
+		}
 		this.friendlyName = friendlyName;
 		this.sustainable = sustainable;
 		this.midi = midiInstrument;
