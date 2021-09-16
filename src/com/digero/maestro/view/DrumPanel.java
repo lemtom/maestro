@@ -65,6 +65,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 	private DrumNoteGraph noteGraph;
 	private TrackVolumeBar trackVolumeBar;
 	private ActionListener trackVolumeBarListener;
+	private boolean showVolume = false;
 
 	public DrumPanel(TrackInfo info, NoteFilterSequencerWrapper sequencer, AbcPart part, int drumNoteId,
 			SequencerWrapper abcSequencer_, TrackVolumeBar trackVolumeBar_)
@@ -262,6 +263,11 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 				updateState();
 		}
 	};
+	
+	public void updateVolume(boolean vol) {
+		showVolume = vol;
+		updateState();
+	}
 
 	private void updateState()
 	{
@@ -281,7 +287,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 			noteActive = seq.isTrackActive(trackNumber) && seq.isNoteActive(drumId);
 		}
 
-		boolean isDraggingVolumeBar = (trackVolumeBar != null) && trackVolumeBar.isDragging();
+		boolean isDraggingVolumeBar = ((trackVolumeBar != null) && trackVolumeBar.isDragging()) || showVolume;
 		noteGraph.setShowingNoteVelocity(isDraggingVolumeBar);
 
 		if (isDraggingVolumeBar)
@@ -413,6 +419,25 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 		@Override protected boolean isNoteVisible(NoteEvent ne)
 		{
 			return ne.note.id == drumId;
+		}
+		
+		@Override protected boolean audibleNote(NoteEvent ne)
+		{
+			return abcPart.getAudible(trackInfo.getTrackNumber(), ne.getStartTick());
+		}
+		
+		@Override protected boolean[] getSectionsModified() {
+			return abcPart.sectionsModified.get(trackInfo.getTrackNumber());
+		}
+		
+		@Override protected int[] getSectionVelocity(NoteEvent note)
+		{
+			return abcPart.getSectionVolumeAdjust(trackInfo.getTrackNumber(), note);
+			/*
+			int[] empty = new int[2];
+			empty[0] = 0;
+			empty[1] = 100;
+			return empty;*/
 		}
 	}
 }

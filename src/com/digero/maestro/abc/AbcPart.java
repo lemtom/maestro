@@ -148,7 +148,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		        	Element sectionEle = (Element) trackEle.appendChild(doc.createElement("section"));
 		        	SaveUtil.appendChildTextElement(sectionEle, "startBar", String.valueOf(ps.startBar));
 		        	SaveUtil.appendChildTextElement(sectionEle, "endBar", String.valueOf(ps.endBar));
-		        	SaveUtil.appendChildTextElement(sectionEle, "octaveStep", String.valueOf(ps.octaveStep));
+		        	if (!instrument.isPercussion) {
+		        		SaveUtil.appendChildTextElement(sectionEle, "octaveStep", String.valueOf(ps.octaveStep));
+		        	}
 		        	SaveUtil.appendChildTextElement(sectionEle, "volumeStep", String.valueOf(ps.volumeStep));
 		        	SaveUtil.appendChildTextElement(sectionEle, "silence", String.valueOf(ps.silence));
 		        	SaveUtil.appendChildTextElement(sectionEle, "fade", String.valueOf(ps.fade));
@@ -399,6 +401,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	 */
 	public Note mapNote(int track, int noteId, long tickStart)
 	{
+		if (!getAudible(track, tickStart)) {
+			return null;
+		}
 		if (isDrumPart())
 		{
 			if (!isTrackEnabled(track) || !isDrumEnabled(track, noteId))
@@ -418,9 +423,6 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 		else
 		{
-			if (!getAudible(track, tickStart)) {
-				return null;
-			}
 			noteId += getTranspose(track, tickStart);
 			while (noteId < instrument.lowestPlayable.id)
 				noteId += 12;

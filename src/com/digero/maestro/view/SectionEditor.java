@@ -31,7 +31,7 @@ public class SectionEditor {
 	
 	protected static Point lastLocation = new Point(0,0);
 
-	public static void show(JFrame jf, NoteGraph noteGraph, AbcPart abcPart, int track) {
+	public static void show(JFrame jf, NoteGraph noteGraph, AbcPart abcPart, int track, final boolean percussion, final ArrayList<DrumPanel> dPanels) {
 		@SuppressWarnings("serial")
 		class SectionDialog extends JDialog {
 			
@@ -93,7 +93,9 @@ public class SectionEditor {
 		        panel.add(new JLabel("Fade %"), "6, 2, c, c");
 		        
 		        for (int j = 0;j<numberOfSections;j++) {
-		        	sectionInputs.add(new SectionEditorLine());
+		        	SectionEditorLine l = new SectionEditorLine();
+		        	l.transpose.setEnabled(!percussion);
+		        	sectionInputs.add(l);
 		        }
 		        
 		        TreeMap<Integer, PartSection> tree = abcPart.sections.get(track);
@@ -162,8 +164,18 @@ public class SectionEditor {
 	                    ButtonModel model = showVolume.getModel();
 	                    if (model.isArmed()) {
 	                    	noteGraph.setShowingNoteVelocity(true);
+	                    	if (dPanels != null) {
+	                    		for (DrumPanel drum : dPanels) {
+	                    			drum.updateVolume(true);
+	                    		}
+	                    	}
 	                    } else {
 	                    	noteGraph.setShowingNoteVelocity(false);
+	                    	if (dPanels != null) {
+	                    		for (DrumPanel drum : dPanels) {
+	                    			drum.updateVolume(false);
+	                    		}
+	                    	}
 	                    }
 	                }
 	            });

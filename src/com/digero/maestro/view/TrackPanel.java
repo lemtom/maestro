@@ -20,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -99,6 +100,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	private TrackVolumeBar trackVolumeBar;
 	private JPanel drumSavePanel;
 	private TrackNoteGraph noteGraph;
+	private ArrayList<DrumPanel> dPanels;
 
 	private Listener<AbcPartEvent> abcListener;
 	private Listener<SequencerEvent> seqListener;
@@ -225,21 +227,23 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				}
 			});
 			
-			sectionButton = new JButton();
-			sectionButton.setPreferredSize(new Dimension(SECTIONBUTTON_WIDTH, SECTIONBUTTON_WIDTH));
-			sectionButton.setMargin( new Insets(5, 5, 5, 5) );
-			sectionButton.setText("s");
-			sectionButton.setToolTipText("<html><b> Edit sections of this track </b><br> Use the bar counter in lower right corner to find your sections. </html>");
-			sectionButton.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int track = trackInfo.getTrackNumber();
-					SectionEditor.show((JFrame)sectionButton.getTopLevelAncestor(), noteGraph, abcPart, track);// super hack! :(
-				}
-				
-			});
+			
 		}
+		
+		sectionButton = new JButton();
+		sectionButton.setPreferredSize(new Dimension(SECTIONBUTTON_WIDTH, SECTIONBUTTON_WIDTH));
+		sectionButton.setMargin( new Insets(5, 5, 5, 5) );
+		sectionButton.setText("s");
+		sectionButton.setToolTipText("<html><b> Edit sections of this track </b><br> Use the bar counter in lower right corner to find your sections. </html>");
+		sectionButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int track = trackInfo.getTrackNumber();
+				SectionEditor.show((JFrame)sectionButton.getTopLevelAncestor(), noteGraph, abcPart, track, abcPart.getInstrument().isPercussion, dPanels);// super hack! :(
+			}
+			
+		});
 
 		trackVolumeBar = new TrackVolumeBar(trackInfo.getMinVelocity(), trackInfo.getMaxVelocity());
 		trackVolumeBar.setToolTipText("Adjust this track's volume");
@@ -582,7 +586,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		if (transposeSpinner != null)
 			transposeSpinner.setVisible(trackEnabled && !abcPart.isDrumPart());
 		if (sectionButton != null)
-			sectionButton.setVisible(trackEnabled && !abcPart.isDrumPart());
+			sectionButton.setVisible(trackEnabled);
 
 		TableLayout layout = (TableLayout) getLayout();
 		TableLayoutConstraints newCheckBoxLayout = trackEnabled ? checkBoxLayout_ControlsVisible
@@ -629,6 +633,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 					remove(i);
 				}
 			}
+			dPanels = null;
 			if (drumSavePanel != null)
 				remove(drumSavePanel);
 
@@ -645,6 +650,9 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 					if (row <= layout.getNumRow())
 						layout.insertRow(row, PREFERRED);
 					add(panel, "0, " + row + ", " + NOTE_COLUMN + ", " + row);
+					if (dPanels == null)
+						dPanels = new ArrayList<DrumPanel>();
+					dPanels.add(panel);
 				}
 			}
 
@@ -753,7 +761,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				((IDiscardable) child).discard();
 			}
 		}
-
+		dPanels = null;
 		abcPart.removeAbcListener(abcListener);
 		seq.removeChangeListener(seqListener);
 		if (abcSequencer != null)
@@ -825,11 +833,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		
 		@Override protected boolean audibleNote(NoteEvent ne)
 		{
-			if (!trackInfo.isDrumTrack())
-			{
-				return abcPart.getAudible(trackInfo.getTrackNumber(), ne.getStartTick());
-			}
-			return true;
+			return abcPart.getAudible(trackInfo.getTrackNumber(), ne.getStartTick());
 		}
 		
 		@Override protected boolean[] getSectionsModified() {
@@ -838,14 +842,12 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		
 		@Override protected int[] getSectionVelocity(NoteEvent note)
 		{
-			if (!trackInfo.isDrumTrack())
-			{
-				return abcPart.getSectionVolumeAdjust(trackInfo.getTrackNumber(), note);
-			}
+			return abcPart.getSectionVolumeAdjust(trackInfo.getTrackNumber(), note);
+			/*
 			int[] empty = new int[2];
 			empty[0] = 0;
 			empty[1] = 100;
-			return empty;
+			return empty;*/
 		}
 
 		@Override protected boolean isNotePlayable(int noteId)
