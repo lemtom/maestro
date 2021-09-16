@@ -70,7 +70,7 @@ public class DelayDialog {
 		        panel.add(okButton, "1, 2, f, f");
 		        panel.add(new JLabel("Put a delay from 0s to 1.00s on a part."), "0, 3, 3, 3, C, C");
 		        panel.add(new JLabel("Have no effect if tempo lower than 50."), "0, 4, 3, 4, C, C");
-		        delayField.setToolTipText("Delay. This wont be heard in Maestro preview, but will be saved in the .abc file.");
+		        delayField.setToolTipText("Seconds of delay");
 		        
 		        this.getContentPane().add(panel);
 		        this.setLocation(DelayDialog.lastLocation);

@@ -650,9 +650,10 @@ public class AbcExporter
 						long startTick = Math.max(ne.getStartTick(), songStartTick);
 						long endTick = Math.min(ne.getEndTick(), songEndTick);
 						if (part.isFXPart()) {
-							long endTickMin = qtm.microsToTick(qtm.tickToMicros(startTick) + (int) (AbcConstants.STUDENT_FX_MIN_SECONDS * TimingInfo.ONE_SECOND_MICROS * qtm.getExportTempoFactor()));
+							long endTickMin = qtm.microsToTick(qtm.tickToMicros(startTick) + (long) (AbcConstants.STUDENT_FX_MIN_SECONDS * TimingInfo.ONE_SECOND_MICROS * qtm.getExportTempoFactor()));
 							endTick = Math.max(endTick, endTickMin);
 						}
+						
 						int[] sva = part.getSectionVolumeAdjust(t, ne);
 						int velocity = (int)((ne.velocity + part.getTrackVolumeAdjust(t) + sva[0])*0.01f*(float)sva[1]);
 						NoteEvent newNE = new NoteEvent(mappedNote, velocity, startTick, endTick, qtm);
@@ -694,6 +695,12 @@ public class AbcExporter
 					neIter.remove();
 				else
 					ne.setLengthTicks(qtm.getTimingInfo(ne.getStartTick()).getMinNoteLengthTicks());
+			}
+			if (!addTies && qtm.getPrimaryExportTempoBPM() >= 50 && part.delay != 0) {
+				// Make delay on instrument be audible in preview
+				long delayMicros = (long)(part.delay * 1000 * qtm.getExportTempoFactor());
+				ne.setEndTick(qtm.microsToTick(qtm.tickToMicros(ne.getEndTick())+delayMicros));
+				ne.setStartTick(qtm.microsToTick(qtm.tickToMicros(ne.getStartTick())+delayMicros));
 			}
 		}
 
