@@ -58,6 +58,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	private Preferences drumPrefs = Preferences.userNodeForPackage(AbcPart.class).node("drums");
 	
 	public ArrayList<TreeMap<Integer, PartSection>> sections;
+	public ArrayList<PartSection> nonSection;
 	public ArrayList<boolean[]> sectionsModified;
 	public int delay = 0;//ms
 
@@ -77,6 +78,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		this.sections = new ArrayList<TreeMap<Integer, PartSection>>();
 		for (int i = 0; i < t; i++) {
 			this.sections.add(null);
+		}
+		this.nonSection = new ArrayList<PartSection>();
+		for (int i = 0; i < t; i++) {
+			this.nonSection.add(null);
 		}
 		this.sectionsModified = new ArrayList<boolean[]>();
 		for (int j = 0; j < t; j++) {
@@ -162,6 +167,18 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			        	if (ps.doubling[3]) SaveUtil.appendChildTextElement(sectionEle, "double2OctUp", String.valueOf(ps.doubling[3]));
 		        	}
 		        }
+	        }
+	        
+	        if (nonSection.get(t) != null) {
+	        	PartSection ps = nonSection.get(t);
+	        	Element sectionEle = (Element) trackEle.appendChild(doc.createElement("nonSection"));
+	        	SaveUtil.appendChildTextElement(sectionEle, "silence", String.valueOf(ps.silence));
+	        	if (!instrument.isPercussion) {
+		        	if (ps.doubling[0]) SaveUtil.appendChildTextElement(sectionEle, "double2OctDown", String.valueOf(ps.doubling[0]));
+		        	if (ps.doubling[1]) SaveUtil.appendChildTextElement(sectionEle, "double1OctDown", String.valueOf(ps.doubling[1]));
+		        	if (ps.doubling[2]) SaveUtil.appendChildTextElement(sectionEle, "double1OctUp", String.valueOf(ps.doubling[2]));
+		        	if (ps.doubling[3]) SaveUtil.appendChildTextElement(sectionEle, "double2OctUp", String.valueOf(ps.doubling[3]));
+	        	}
 	        }
 			
 			if (instrument.isPercussion)
@@ -302,6 +319,17 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					}
 					
 					sectionsModified.set(t, booleanArray);
+				}
+				
+				Element nonSectionEle = XmlUtil.selectSingleElement(trackEle, "nonSection");
+				if (nonSectionEle != null) {
+					PartSection ps = new PartSection();
+					ps.silence = SaveUtil.parseValue(nonSectionEle, "silence", false);
+					ps.doubling[0] = SaveUtil.parseValue(nonSectionEle, "double2OctDown", false);
+					ps.doubling[1] = SaveUtil.parseValue(nonSectionEle, "double1OctDown", false);
+					ps.doubling[2] = SaveUtil.parseValue(nonSectionEle, "double1OctUp", false);
+					ps.doubling[3] = SaveUtil.parseValue(nonSectionEle, "double2OctUp", false);
+					nonSection.set(t, ps);
 				}
 
 				// Now set the track info
@@ -658,6 +686,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		Boolean[] secDoubling = {false, false, false, false};
 		SequenceInfo se = getSequenceInfo();
 		TreeMap<Integer, PartSection> tree = sections.get(track);
+		boolean isSection = false;
 		if (se != null && tree != null) {
 			SequenceDataCache data = se.getDataCache();
 			long barLengthTicks = data.getBarLengthTicks();
@@ -678,11 +707,15 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				Entry<Integer, PartSection> entry = tree.floorEntry(bar);
 				if (entry != null) {
 					if (bar <= entry.getValue().endBar) {
+						isSection = true;
 						secDoubling = entry.getValue().doubling;
 					}
 				}
 			}
-		}		
+		}
+		if (se != null && !isSection && nonSection.get(track) != null) {
+			secDoubling = nonSection.get(track).doubling;
+		}
 		
 		return secDoubling;
 	}
@@ -744,6 +777,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	public boolean getAudible(int track, long tickStart) {
 		SequenceInfo se = getSequenceInfo();
 		TreeMap<Integer, PartSection> tree = sections.get(track);
+		boolean isSection = false;
 		if (se != null && tree != null) {
 			SequenceDataCache data = se.getDataCache();
 			long barLengthTicks = data.getBarLengthTicks();
@@ -764,10 +798,14 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				Entry<Integer, PartSection> entry = tree.floorEntry(bar);
 				if (entry != null) {
 					if (bar <= entry.getValue().endBar) {
+						isSection = true;
 						return !entry.getValue().silence;
 					}
 				}
 			}
+		}
+		if (se != null && !isSection && nonSection.get(track) != null) {
+			return !nonSection.get(track).silence;
 		}
 		
 		return true;
