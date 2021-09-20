@@ -11,4 +11,8 @@ class SectionEditorLine {
     JTextField velo = new JTextField("0");
     JCheckBox silent = new JCheckBox();
     JTextField fade = new JTextField("0");
+    JCheckBox doubling0 = new JCheckBox();
+    JCheckBox doubling1 = new JCheckBox();
+    JCheckBox doubling2 = new JCheckBox();
+    JCheckBox doubling3 = new JCheckBox();
 }

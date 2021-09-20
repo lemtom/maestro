@@ -206,6 +206,13 @@ public class Chord implements AbcConstants
 					removeFirst.add(lowest+24);
 					removeFirst.add(lowest+12);					
 					
+					if (n1.doubledNote && !n2.doubledNote) {
+						return -1;
+					}
+					if (n2.doubledNote && !n1.doubledNote) {
+						return 1;
+					}
+					
 					// Keep tied notes, there can max be 6 of them anyway
 					if (n1.tiesFrom != null) {
 						if (!sustained) {

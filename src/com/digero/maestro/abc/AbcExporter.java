@@ -643,6 +643,7 @@ public class AbcExporter
 					ne.resetPruned(part);
 
 					Note mappedNote = part.mapNote(t, ne.note.id, ne.getStartTick());
+					Boolean[] doubling = part.getSectionDoubling(ne.getStartTick(), t);
 					if (mappedNote != null)
 					{
 						assert mappedNote.id >= part.getInstrument().lowestPlayable.id : mappedNote;
@@ -669,6 +670,31 @@ public class AbcExporter
 							newNE.origEvent.add(ne);
 						}
 						events.add(newNE);
+						
+						if (doubling[0]) {//todo: check for not exceeding highest note
+							Note mappedNote2 = part.mapNote(t, ne.note.id-24, ne.getStartTick());
+							NoteEvent newNE2 = new NoteEvent(mappedNote2, velocity, startTick, endTick, qtm);
+							newNE2.doubledNote = true;// prune these first
+							events.add(newNE2);
+						}
+						if (doubling[1]) {
+							Note mappedNote2 = part.mapNote(t, ne.note.id-12, ne.getStartTick());
+							NoteEvent newNE2 = new NoteEvent(mappedNote2, velocity, startTick, endTick, qtm);
+							newNE2.doubledNote = true;
+							events.add(newNE2);
+						}
+						if (doubling[2]) {
+							Note mappedNote2 = part.mapNote(t, ne.note.id+12, ne.getStartTick());
+							NoteEvent newNE2 = new NoteEvent(mappedNote2, velocity, startTick, endTick, qtm);
+							newNE2.doubledNote = true;
+							events.add(newNE2);
+						}
+						if (doubling[3]) {
+							Note mappedNote2 = part.mapNote(t, ne.note.id+24, ne.getStartTick());
+							NoteEvent newNE2 = new NoteEvent(mappedNote2, velocity, startTick, endTick, qtm);
+							newNE2.doubledNote = true;
+							events.add(newNE2);
+						}
 					}
 				}
 			}

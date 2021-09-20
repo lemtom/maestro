@@ -35,11 +35,11 @@ public class SectionEditor {
 		@SuppressWarnings("serial")
 		class SectionDialog extends JDialog {
 			
-			private final double[] LAYOUT_COLS = new double[] { 0.10,0.15,0.15,0.15,0.15,0.12,0.18 };
+			private final double[] LAYOUT_COLS = new double[] { 0.068,0.102,0.102,0.102,0.102,0.0816,0.1224,0.08,0.08,0.08,0.08 };
 			private double[] LAYOUT_ROWS;
 			private AbcPart abcPart;
 			private int track;
-			private int numberOfSections = 6;
+			private int numberOfSections = 10;
 			
 			private List<SectionEditorLine> sectionInputs = new ArrayList<SectionEditorLine>(numberOfSections);
 			     
@@ -61,7 +61,7 @@ public class SectionEditor {
 		            }
 		        });
 		        
-		        this.setSize(425,250+21*numberOfSections);
+		        this.setSize(625,250+21*numberOfSections);
 		        JPanel panel=new JPanel();
 		        
 		        LAYOUT_ROWS = new double[3+numberOfSections+10]; 
@@ -91,10 +91,18 @@ public class SectionEditor {
 		        panel.add(new JLabel("Volume"), "4, 2, c, c");
 		        panel.add(new JLabel("Silence"), "5, 2, c, c");
 		        panel.add(new JLabel("Fade %"), "6, 2, c, c");
+		        panel.add(new JLabel("2 oct.dw"), "7, 2, c, c");
+		        panel.add(new JLabel("1 oct.dw"), "8, 2, c, c");
+		        panel.add(new JLabel("1 oct.up"), "9, 2, c, c");
+		        panel.add(new JLabel("2 oct.up"), "10, 2, c, c");
 		        
 		        for (int j = 0;j<numberOfSections;j++) {
 		        	SectionEditorLine l = new SectionEditorLine();
 		        	l.transpose.setEnabled(!percussion);
+		        	l.doubling0.setEnabled(!percussion);
+		        	l.doubling1.setEnabled(!percussion);
+		        	l.doubling2.setEnabled(!percussion);
+		        	l.doubling3.setEnabled(!percussion);
 		        	sectionInputs.add(l);
 		        }
 		        
@@ -120,6 +128,10 @@ public class SectionEditor {
 			        		sectionInputs.get(number).velo.setText(""+ps.volumeStep);
 			        		sectionInputs.get(number).silent.setSelected(ps.silence);
 			        		sectionInputs.get(number).fade.setText(""+ps.fade);
+			        		sectionInputs.get(number).doubling0.setSelected(ps.doubling[0]);
+			        		sectionInputs.get(number).doubling1.setSelected(ps.doubling[1]);
+			        		sectionInputs.get(number).doubling2.setSelected(ps.doubling[2]);
+			        		sectionInputs.get(number).doubling3.setSelected(ps.doubling[3]);
 			        	}
 			        	number ++;
 			        }
@@ -133,6 +145,10 @@ public class SectionEditor {
 		        String velo = "<html><b> Offset the volume of this section. </b><br> Experiment to find the number that does what you want. <br> Normally a number from -250 to 250. </html>";
 		        String silent = "<html><b> Silence this section. </b></html>";
 		        String fade = "<html><b> Fade in/out the volume of this section. </b><br> 0 = no fading <br> 100 = fade out full <br> -100 = fade in full <br> 150 = fade out before section ends <br> Etc. etc.. </html>";
+		        String d0 = "<html><b> Double all notes in this section 2 octaves below.</b></html>";
+		        String d1 = "<html><b> Double all notes in this section 1 octave below.</b></html>";
+		        String d2 = "<html><b> Double all notes in this section 1 octave above.</b></html>";
+		        String d3 = "<html><b> Double all notes in this section 2 octaves above.</b></html>";
 		        
 		        for (int i = 0;i<numberOfSections;i++) {
 		        	sectionInputs.get(i).fade.setToolTipText(fade);
@@ -142,6 +158,10 @@ public class SectionEditor {
 		        	sectionInputs.get(i).barB.setToolTipText(barB);
 		        	sectionInputs.get(i).barA.setToolTipText(barA);
 		        	sectionInputs.get(i).enable.setToolTipText(enable);
+		        	sectionInputs.get(i).doubling0.setToolTipText(d0);
+		        	sectionInputs.get(i).doubling1.setToolTipText(d1);
+		        	sectionInputs.get(i).doubling2.setToolTipText(d2);
+		        	sectionInputs.get(i).doubling3.setToolTipText(d3);
 		        	
 		        	sectionInputs.get(i).barA.setHorizontalAlignment(JTextField.CENTER);
 		        	sectionInputs.get(i).barB.setHorizontalAlignment(JTextField.CENTER);
@@ -156,6 +176,10 @@ public class SectionEditor {
 			        panel.add(sectionInputs.get(i).velo, "4,"+(3+i)+",f,f");
 			        panel.add(sectionInputs.get(i).silent, "5,"+(3+i)+",c,f");
 			        panel.add(sectionInputs.get(i).fade, "6,"+(3+i)+",f,f");
+			        panel.add(sectionInputs.get(i).doubling0, "7,"+(3+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling1, "8,"+(3+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling2, "9,"+(3+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling3, "10,"+(3+i)+",c,f");
 		        }
 		        
 		        showVolume.getModel().addChangeListener(new ChangeListener() {
@@ -200,6 +224,10 @@ public class SectionEditor {
 										ps.endBar = Integer.parseInt(sectionInputs.get(k).barB.getText());
 										ps.silence = sectionInputs.get(k).silent.isSelected();
 										ps.fade = Integer.parseInt(sectionInputs.get(k).fade.getText());
+										ps.doubling[0] = sectionInputs.get(k).doubling0.isSelected();
+										ps.doubling[1] = sectionInputs.get(k).doubling1.isSelected();
+										ps.doubling[2] = sectionInputs.get(k).doubling2.isSelected();
+										ps.doubling[3] = sectionInputs.get(k).doubling3.isSelected();
 										boolean soFarSoGood = true;
 										for (PartSection psC : tm.values()) {
 											if (!(ps.startBar > psC.endBar || ps.endBar < psC.startBar)) {

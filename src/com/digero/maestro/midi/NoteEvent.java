@@ -50,6 +50,7 @@ public class NoteEvent implements Comparable<NoteEvent>
 	private Map<AbcPart, Boolean> pruneMap = null;
 
 	public int origPitch = 0;
+	public boolean doubledNote = false;
 
 	public NoteEvent(Note note, int velocity, long startTick, long endTick, ITempoCache tempoCache)
 	{

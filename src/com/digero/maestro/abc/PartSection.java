@@ -6,6 +6,7 @@ public class PartSection {
 	public int fade = 0;
 	public boolean silence = false;
 	public int dialogLine = -1;
+    public Boolean[] doubling = {false,false,false,false};
 	
 	// inclusive:
 	public int startBar = 0;

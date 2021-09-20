@@ -155,6 +155,12 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		        	SaveUtil.appendChildTextElement(sectionEle, "silence", String.valueOf(ps.silence));
 		        	SaveUtil.appendChildTextElement(sectionEle, "fade", String.valueOf(ps.fade));
 		        	SaveUtil.appendChildTextElement(sectionEle, "dialogLine", String.valueOf(ps.dialogLine));
+		        	if (!instrument.isPercussion) {
+			        	if (ps.doubling[0]) SaveUtil.appendChildTextElement(sectionEle, "double2OctDown", String.valueOf(ps.doubling[0]));
+			        	if (ps.doubling[1]) SaveUtil.appendChildTextElement(sectionEle, "double1OctDown", String.valueOf(ps.doubling[1]));
+			        	if (ps.doubling[2]) SaveUtil.appendChildTextElement(sectionEle, "double1OctUp", String.valueOf(ps.doubling[2]));
+			        	if (ps.doubling[3]) SaveUtil.appendChildTextElement(sectionEle, "double2OctUp", String.valueOf(ps.doubling[3]));
+		        	}
 		        }
 	        }
 			
@@ -264,6 +270,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					ps.volumeStep = SaveUtil.parseValue(sectionEle, "volumeStep", 0);
 					ps.octaveStep = SaveUtil.parseValue(sectionEle, "octaveStep", 0);
 					ps.silence = SaveUtil.parseValue(sectionEle, "silence", false);
+					ps.doubling[0] = SaveUtil.parseValue(sectionEle, "double2OctDown", false);
+					ps.doubling[1] = SaveUtil.parseValue(sectionEle, "double1OctDown", false);
+					ps.doubling[2] = SaveUtil.parseValue(sectionEle, "double1OctUp", false);
+					ps.doubling[3] = SaveUtil.parseValue(sectionEle, "double2OctUp", false);
 					boolean fadeout = SaveUtil.parseValue(sectionEle, "fadeout", false);
 					int fade = SaveUtil.parseValue(sectionEle, "fade", 0);
 					if (fade != 0) {
@@ -642,6 +652,39 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}		
 		
 		return secTrans;
+	}
+	
+	public Boolean[] getSectionDoubling(long tickStart, int track) {
+		Boolean[] secDoubling = {false, false, false, false};
+		SequenceInfo se = getSequenceInfo();
+		TreeMap<Integer, PartSection> tree = sections.get(track);
+		if (se != null && tree != null) {
+			SequenceDataCache data = se.getDataCache();
+			long barLengthTicks = data.getBarLengthTicks();
+
+			long startTick = barLengthTicks;
+			long endTick = data.getSongLengthTicks();
+
+			int bar = -1;
+			int curBar = 1;
+			for (long barTick = startTick; barTick <= endTick+barLengthTicks; barTick += barLengthTicks) {
+				if (tickStart < barTick) {
+					bar = curBar;
+					break;
+				}
+				curBar += 1;
+			}
+			if (bar != -1) {
+				Entry<Integer, PartSection> entry = tree.floorEntry(bar);
+				if (entry != null) {
+					if (bar <= entry.getValue().endBar) {
+						secDoubling = entry.getValue().doubling;
+					}
+				}
+			}
+		}		
+		
+		return secDoubling;
 	}
 	
 	public int[] getSectionVolumeAdjust(int track, NoteEvent ne) {
