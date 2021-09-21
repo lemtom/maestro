@@ -44,7 +44,7 @@ public class SectionEditor {
 			private List<SectionEditorLine> sectionInputs = new ArrayList<SectionEditorLine>(numberOfSections);
 			private SectionEditorLine nonSectionInput = new SectionEditorLine();
 			     
-	        JButton showVolume = new JButton("Show");
+	        JButton showVolume = new JButton("Show volume");
 	        
 	        //NoteGraph noteGraph = null;
 		    
@@ -93,12 +93,20 @@ public class SectionEditor {
 		        panel.add(new JLabel("Volume"), "4, 2, c, c");
 		        panel.add(new JLabel("Silence"), "5, 2, c, c");
 		        panel.add(new JLabel("Fade %"), "6, 2, c, c");
-		        panel.add(new JLabel("Doubling"), "8, 1, 9, 1, c, c");
+		        JTextField octDouble = new JTextField("Octave doubling");
+		        octDouble.setEditable(false);
+		        octDouble.setHorizontalAlignment(JTextField.CENTER);
+		        panel.add(octDouble, "7, 1, 10, 1, f, f");
+		        //panel.add(new JLabel("Octave doubling"), "8, 1, 9, 1, c, c");
 		        panel.add(new JLabel("2 down"), "7, 2, c, c");
 		        panel.add(new JLabel("1 down"), "8, 2, c, c");
 		        panel.add(new JLabel("1 up"), "9, 2, c, c");
 		        panel.add(new JLabel("2 up"), "10, 2, c, c");
-		        panel.add(new JLabel("Rest of the track"), "0, "+(3+numberOfSections)+", 4, "+(3+numberOfSections)+", c, c");
+		        JTextField nonSection = new JTextField("Rest of the track");
+		        nonSection.setEditable(false);
+		        nonSection.setHorizontalAlignment(JTextField.CENTER);
+		        panel.add(nonSection, "1, "+(3+numberOfSections)+", 2, "+(3+numberOfSections)+", f, f");
+		        //panel.add(new JLabel("Rest of the track"), "1, "+(3+numberOfSections)+", 2, "+(3+numberOfSections)+", c, c");
 		        
 		        for (int j = 0;j<numberOfSections;j++) {
 		        	SectionEditorLine l = new SectionEditorLine();
@@ -230,7 +238,7 @@ public class SectionEditor {
 	                }
 	            });
 		        showVolume.setToolTipText("<html><b> Press and hold to see the note volumes on the track. </b><br> Only edits after clicking APPLY will show. </html>");
-		        panel.add(showVolume, "4,"+(4+numberOfSections)+",f,f");
+		        panel.add(showVolume, "4,"+(4+numberOfSections)+",5,"+(4+numberOfSections)+",f,f");
 		        
 		        JButton okButton = new JButton("APPLY");
 		        okButton.addActionListener(new ActionListener() {
@@ -308,7 +316,7 @@ public class SectionEditor {
 		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
 		        panel.add(okButton, "9,"+(4+numberOfSections)+", 10, "+(4+numberOfSections)+",f,f");
 		        panel.add(new JLabel("Enabled sections must have no overlap."), "0,"+(6+numberOfSections)+", 6," +(6+numberOfSections)+", c, c");
-		        panel.add(new JLabel("Bar numbers are inclusive and use original meter."), "0, "+(7+numberOfSections)+", 6, "+(7+numberOfSections)+", c, c");
+		        panel.add(new JLabel("Bar numbers are inclusive and use original MIDI bars."), "0, "+(7+numberOfSections)+", 6, "+(7+numberOfSections)+", c, c");
 		        panel.add(new JLabel("No decimal numbers allowed, only whole numbers."), "0, "+(8+numberOfSections)+", 6," +(8+numberOfSections)+", c, c");
 		        panel.add(new JLabel("Bar numbers must be positive and greater than zero."), "0, "+(9+numberOfSections)+", 6," +(9+numberOfSections)+", c, c");
 		        panel.add(new JLabel("Clicking APPLY will also disable faulty sections."), "0, "+(10+numberOfSections)+", 6," +(10+numberOfSections)+", c, c");
