@@ -10,7 +10,7 @@ public class TimingInfo
 	//public static final long SHORTEST_NOTE_MICROS = 60001;
 	public static final long LONGEST_NOTE_MICROS = ONE_MINUTE_MICROS / 12;// reduced to 5s from 6s due to some samples are shorter than 6s.
 	public static final int MAX_TEMPO_BPM = (int) (ONE_MINUTE_MICROS / getShortestNoteMicros(125));
-	public static final int MIN_TEMPO_BPM = (int) ((ONE_MINUTE_MICROS + LONGEST_NOTE_MICROS / 2) / LONGEST_NOTE_MICROS); // Round up
+	public static final int MIN_TEMPO_BPM = (int) ((ONE_MINUTE_MICROS + (ONE_MINUTE_MICROS /10) / 2) / (ONE_MINUTE_MICROS /10)); // Round up
 
 	private final int tempoMPQ;
 	private final int resolutionPPQ;
