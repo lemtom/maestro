@@ -270,7 +270,7 @@ public class SectionEditor {
 										}
 										if (ps.startBar > 0 && ps.startBar <= ps.endBar && soFarSoGood) {
 											tm.put(ps.startBar, ps);
-											lastEnd = ps.endBar;
+											if (ps.endBar > lastEnd) lastEnd = ps.endBar;
 											ps.dialogLine = k;
 										} else {
 											SectionDialog.this.sectionInputs.get(k).enable.setSelected(false);
