@@ -141,6 +141,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JFormattedTextField keySignatureField;
 	private JFormattedTextField timeSignatureField;
 	private JCheckBox tripletCheckBox;
+	private JCheckBox mixCheckBox;
 	private JButton exportButton;
 	private JLabel exportSuccessfulLabel;
 	private Timer exportLabelHideTimer;
@@ -427,8 +428,6 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		});
 
 		tripletCheckBox = new JCheckBox("Triplets/swing rhythm");
-		//tripletCheckBox.setToolTipText("<html>Tweak the timing to allow for triplets or a swing rhythm.<br><br>"
-		//		+ "As this is done automatically now, the checkbox is disabled</html>");
 		tripletCheckBox.setToolTipText("<html>Tweak the timing to allow for triplets or a swing rhythm.<br><br>"
 				+ "This can cause short/fast notes to incorrectly be detected as triplets.<br>"
 				+ "Leave it unchecked unless the song has triplets or a swing rhythm.</html>");
@@ -438,6 +437,25 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			{
 				if (abcSong != null)
 					abcSong.setTripletTiming(tripletCheckBox.isSelected());
+
+				if (abcSequencer.isRunning())
+					refreshPreviewSequence(false);
+			}
+		});
+		
+		mixCheckBox = new JCheckBox("Mix Timings");
+		mixCheckBox.setToolTipText("<html>Allow Maestro to guess which phrases<br>"
+				+ "that differs from the default triplet/swing setting.<br><br>"
+				+ "Its is done per part, so some phrases in a parts might export swing rythm<br>"
+				+ "while other parts at same time export even notes.<br>"
+				+ "Leave it unchecked unless the song has a healthy mix of<br>"
+				+ "even notes vs. triplet/swing notes.</html>");
+		mixCheckBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				if (abcSong != null)
+					abcSong.setMixTiming(mixCheckBox.isSelected());
 
 				if (abcSequencer.isRunning())
 					refreshPreviewSequence(false);
@@ -596,6 +614,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			row++;
 			settingsLayout.insertRow(row, PREFERRED);
 			settingsPanel.add(tripletCheckBox, "0, " + row + ", 2, " + row + ", L, C");
+			
+			row++;
+			settingsLayout.insertRow(row, PREFERRED);
+			settingsPanel.add(mixCheckBox, "0, " + row + ", 2, " + row + ", L, C");
 
 			row++;
 			settingsLayout.insertRow(row, PREFERRED);
@@ -1263,6 +1285,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			keySignatureField.setEnabled(midiLoaded);
 			timeSignatureField.setEnabled(midiLoaded);
 			tripletCheckBox.setEnabled(midiLoaded);
+			mixCheckBox.setEnabled(midiLoaded);
 			zoom.setEnabled(midiLoaded);
 
 			updateButtonsPending = false;
@@ -1409,6 +1432,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			case TRIPLET_TIMING:
 				if (tripletCheckBox.isSelected() != abcSong.isTripletTiming())
 					tripletCheckBox.setSelected(abcSong.isTripletTiming());
+				break;
+			case MIX_TIMING:
+				if (mixCheckBox.isSelected() != abcSong.isMixTiming())
+					mixCheckBox.setSelected(abcSong.isMixTiming());
 				break;
 
 			case PART_ADDED:
@@ -1562,6 +1589,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		keySignatureField.setValue(KeySignature.C_MAJOR);
 		timeSignatureField.setValue(TimeSignature.FOUR_FOUR);
 		tripletCheckBox.setSelected(false);
+		mixCheckBox.setSelected(false);
 
 		midiBarLabel.setBarNumberCache(null);
 		abcBarLabel.setBarNumberCache(null);
@@ -1616,6 +1644,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			keySignatureField.setValue(abcSong.getKeySignature());
 			timeSignatureField.setValue(abcSong.getTimeSignature());
 			tripletCheckBox.setSelected(abcSong.isTripletTiming());
+			mixCheckBox.setSelected(abcSong.isMixTiming());
 
 			SequenceInfo sequenceInfo = abcSong.getSequenceInfo();
 			sequencer.setSequence(sequenceInfo.getSequence());

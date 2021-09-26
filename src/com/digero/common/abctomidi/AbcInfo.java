@@ -38,6 +38,7 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 	private NavigableSet<AbcRegion> regions;
 	private int primaryTempoBPM = 120;
 	private boolean hasTriplets = false;
+	private boolean hasMixTimings = false;
 
 	private String songTitle = null;
 	private String songComposer = null;
@@ -56,6 +57,7 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 		songComposer = null;
 		songTranscriber = null;
 		hasTriplets = false;
+		hasMixTimings = false;
 		timeSignature = TimeSignature.FOUR_FOUR;
 		keySignature = KeySignature.C_MAJOR;
 	}
@@ -132,6 +134,11 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 	public boolean hasTriplets()
 	{
 		return hasTriplets;
+	}
+	
+	public boolean hasMixTimings()
+	{
+		return hasMixTimings;
 	}
 
 	public int getPartNumber(int trackIndex)
@@ -331,6 +338,11 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 	void setHasTriplets(boolean hasTriplets)
 	{
 		this.hasTriplets = hasTriplets;
+	}
+	
+	void setHasMixTimings(boolean hasMixTimings)
+	{
+		this.hasMixTimings = hasMixTimings;
 	}
 
 	void setTimeSignature(TimeSignature timeSignature)

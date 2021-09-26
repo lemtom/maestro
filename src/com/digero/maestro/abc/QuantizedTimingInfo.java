@@ -1,6 +1,8 @@
 package com.digero.maestro.abc;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -12,6 +14,7 @@ import com.digero.common.midi.IBarNumberCache;
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.TimeSignature;
 import com.digero.common.util.Util;
+import com.digero.maestro.midi.NoteEvent;
 import com.digero.maestro.midi.SequenceDataCache;
 import com.digero.maestro.midi.SequenceInfo;
 import com.sun.media.sound.MidiUtils;
@@ -20,6 +23,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 {
 	// Tick => TimingInfoEvent
 	private final NavigableMap<Long, TimingInfoEvent> timingInfoByTick = new TreeMap<Long, TimingInfoEvent>();
+	private final HashMap<AbcPart, NavigableMap<Long, TimingInfoEvent>> oddTimingInfoByTick = new HashMap<AbcPart, NavigableMap<Long, TimingInfoEvent>>();
 
 	private NavigableSet<Long> barStartTicks = null;
 	private Long[] barStartTickByBar = null;
@@ -30,9 +34,10 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	private final float exportTempoFactor;
 	private final TimeSignature meter;
 	private final boolean tripletTiming;
+	private final boolean oddsAndEnds;
 
 	public QuantizedTimingInfo(SequenceInfo source, float exportTempoFactor, TimeSignature meter,
-			boolean useTripletTiming, int abcSongBPM) throws AbcConversionException
+			boolean useTripletTiming, int abcSongBPM, AbcSong song, boolean oddsAndEnds) throws AbcConversionException
 	{
 		double exportPrimaryTempoMPQ = TimingInfo.roundTempoMPQ(source.getPrimaryTempoMPQ() / exportTempoFactor);
 		this.primaryTempoMPQ = (int) Math.round(exportPrimaryTempoMPQ * exportTempoFactor);
@@ -45,7 +50,9 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 
 		TimingInfo defaultTiming = new TimingInfo(source.getPrimaryTempoMPQ(), resolution, exportTempoFactor, meter,
 				useTripletTiming, abcSongBPM);
-		timingInfoByTick.put(0L, new TimingInfoEvent(0, 0, 0, defaultTiming));
+		TimingInfo defaultOddTiming = new TimingInfo(source.getPrimaryTempoMPQ(), resolution, exportTempoFactor, meter,
+				!useTripletTiming, abcSongBPM);
+		timingInfoByTick.put(0L, new TimingInfoEvent(0, 0, 0, defaultTiming, defaultOddTiming));
 
 		Collection<TimingInfoEvent> reversedEvents = timingInfoByTick.descendingMap().values();
 
@@ -60,6 +67,8 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 			double barNumber = 0;
 			TimingInfo info = new TimingInfo(sourceEvent.tempoMPQ, resolution, exportTempoFactor, meter,
 					useTripletTiming, abcSongBPM);
+			TimingInfo infoOdd = new TimingInfo(sourceEvent.tempoMPQ, resolution, exportTempoFactor, meter,
+					!useTripletTiming, abcSongBPM);
 
 			// Iterate over the existing events in reverse order
 			Iterator<TimingInfoEvent> reverseIterator = reversedEvents.iterator();
@@ -103,10 +112,149 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				break;
 			}
 
-			TimingInfoEvent event = new TimingInfoEvent(tick, micros, barNumber, info);
+			TimingInfoEvent event = new TimingInfoEvent(tick, micros, barNumber, info, infoOdd);
 
 			timingInfoByTick.put(tick, event);
 		}
+		int parts = song.getParts().size();
+		this.oddsAndEnds = oddsAndEnds;
+		if (!oddsAndEnds) return;
+		// even means timing is to laid out like the tripletcheckbox selected grid.
+		// odd means timing is to laid out the opposite of tripletcheckbox selected grid.
+		//System.err.println("  Odds And Ends:");
+		int tracks = song.getSequenceInfo().getTrackCount();
+		TimingInfoEvent[] timings = (TimingInfoEvent[]) timingInfoByTick.values().toArray(new TimingInfoEvent[0]);
+		//int totalSwing = 0;
+		//int totalEven = 0;
+		for (int part = 0; part < parts; part++) {
+			// calculate for all parts
+			ArrayList<Long[]> oddTicks = new ArrayList<Long[]>();
+			AbcPart abcPart = song.getParts().get(part);
+			//System.err.println("Part="+abcPart.getTitle());
+			TreeMap<Long, TimingInfoEvent> partMap = new TreeMap<Long, TimingInfoEvent>();
+			oddTimingInfoByTick.put(abcPart, partMap);
+			for (int j = 0; j < timings.length; j++ ) {
+				// calculate for all tempochanges
+				TimingInfoEvent tempoChange = timings[j];
+				partMap.put(tempoChange.tick, tempoChange);
+				ArrayList<NoteEvent> eventList = new ArrayList<NoteEvent>();  
+				for (int t = 0; t < tracks; t++) {
+					if(abcPart.isTrackEnabled(t)) {
+						eventList.addAll(abcPart.getTrackEvents(t));
+					}
+				}
+				//Now calculate duration of sixGrid sections. They will always end and start on quantized grid for both odd and even timing
+				//I call it sixGrid due to durations of 3 and 2 will always coincide each 6th duration.
+				long sixTicks = 0;
+				boolean evenShortest = tempoChange.info.getMinNoteLengthTicks() < tempoChange.infoOdd.getMinNoteLengthTicks();
+				if (evenShortest) {
+					sixTicks = tempoChange.info.getMinNoteLengthTicks();
+					while(sixTicks % tempoChange.infoOdd.getMinNoteLengthTicks() != 0) {
+						sixTicks += tempoChange.info.getMinNoteLengthTicks();
+					}
+				} else {
+					sixTicks = tempoChange.infoOdd.getMinNoteLengthTicks();
+					while(sixTicks % tempoChange.info.getMinNoteLengthTicks() != 0) {
+						sixTicks += tempoChange.infoOdd.getMinNoteLengthTicks();
+					}
+				}
+				// Max possible number of sixGrid before song ending +1
+				int maxSixths = (int) ((this.songLengthTicks-tempoChange.tick+sixTicks)/sixTicks);
+				//System.out.println("maxSixths="+maxSixths);
+				ArrayList<Integer> sixGridsOdds = new ArrayList<Integer>(maxSixths);
+				for (int k = 0; k < maxSixths; k++) {
+					sixGridsOdds.add(null);
+				}
+				int highest = -1;
+				for (NoteEvent ne : eventList) {
+					if (ne.getStartTick() > tempoChange.tick && ((j+1 == timings.length) || ne.getStartTick() < timings[j+1].tick - sixTicks)) {
+						// The note starts after current tempo change and either is last change or note starts at least one sixGrid length from next tempo change
+						long q = tempoChange.tick + Util.roundGrid(ne.getStartTick() - tempoChange.tick, tempoChange.info.getMinNoteLengthTicks());
+						long qOdd = tempoChange.tick + Util.roundGrid(ne.getStartTick() - tempoChange.tick, tempoChange.infoOdd.getMinNoteLengthTicks());
+						int odd = (int)(Math.abs(ne.getStartTick() - q) - Math.abs(ne.getStartTick() - qOdd));
+						//System.err.println("odd="+odd);
+						// determine which sixGrid we are in
+						int sixGrid = (int) ((ne.getStartTick()-tempoChange.tick)/sixTicks);
+						
+						if (sixGrid >= maxSixths) continue;
+						if (sixGrid > highest) highest = sixGrid;
+						// Add a point to this sixGrid odd vs. default list.
+						int oddScore = odd*2;
+						if (sixGridsOdds.get(sixGrid) != null) {
+							sixGridsOdds.set(sixGrid, sixGridsOdds.get(sixGrid)+oddScore);
+						} else {
+							sixGridsOdds.set(sixGrid, oddScore);
+						}
+					}
+					if (ne.getEndTick() > tempoChange.tick && ((j+1 == timings.length) || ne.getEndTick() < timings[j+1].tick - sixTicks)) {
+						// The note starts after current tempo change and either is last change or note starts at least one sixGrid length from next tempo change
+						long q = tempoChange.tick + Util.roundGrid(ne.getEndTick() - tempoChange.tick, tempoChange.info.getMinNoteLengthTicks());
+						long qOdd = tempoChange.tick + Util.roundGrid(ne.getEndTick() - tempoChange.tick, tempoChange.infoOdd.getMinNoteLengthTicks());
+						int odd = (int)(Math.abs(ne.getEndTick() - q) - Math.abs(ne.getEndTick() - qOdd));
+						//System.err.println("odd="+odd);
+						// determine which sixGrid we are in
+						int sixGrid = (int) ((ne.getEndTick()-tempoChange.tick)/sixTicks);
+						
+						if (sixGrid >= maxSixths) continue;
+						if (sixGrid > highest) highest = sixGrid;
+						// Add a point to this sixGrid odd vs. default list.
+						int oddScore = odd*1;
+						if (sixGridsOdds.get(sixGrid) != null) {
+							sixGridsOdds.set(sixGrid, sixGridsOdds.get(sixGrid)+oddScore);
+						} else {
+							sixGridsOdds.set(sixGrid, oddScore);
+						}
+					}
+				}
+				ArrayList<Boolean> sixGridsOddsFinal = new ArrayList<Boolean>();
+				boolean prevOdd = false;
+				//System.err.println("Highest SixGrid Number ("+tempoChange.info.getExportTempoBPM()+"bpm)="+highest);
+				for (int i = 0; i <= highest; i++) {
+					if (sixGridsOdds.get(i) != null && sixGridsOdds.get(i) > 0
+/*							&& (
+							(i != 0 && sixGridsOdds.get(i-1) != null && sixGridsOdds.get(i-1) > 0)
+							|| (i+1 < sixGridsOdds.size() && sixGridsOdds.get(i+1) != null && sixGridsOdds.get(i+1) > 0)
+							|| ((i == 0 || sixGridsOdds.get(i-1) == null) && (i+1 >= sixGridsOdds.size() || sixGridsOdds.get(i+1) == null))
+							)*/ // commented out because not sure that scheme made sense
+							) {
+						// surrounded by at least 1 sixGrids that prefer odd timing or no notes in neighboring sixGrids 
+						sixGridsOddsFinal.add(i, true);
+						//if (useTripletTiming) totalEven += 1;
+						//if (!useTripletTiming) totalSwing += 1;
+						if (!prevOdd) {
+							long tck = sixTicks*i;
+							long micros = tempoChange.micros + MidiUtils.ticks2microsec(tck, tempoChange.info.getTempoMPQ(), resolution);
+							tck += tempoChange.tick;
+							TimingInfoEvent newTempoChange = new TimingInfoEvent(tck, micros, tempoChange.barNumber, tempoChange.infoOdd, null);
+							partMap.remove(tck);
+							partMap.put(tck, newTempoChange);
+							//System.err.println(i+" odd");
+						} else {
+							//System.err.println(i+" odd..");
+						}
+						prevOdd = true;
+					} else {
+						sixGridsOddsFinal.add(i, false);// no odd timing for this sixGrid
+						//if (!useTripletTiming && sixGridsOdds.get(i) != null) totalEven += 1;
+						//if (useTripletTiming && sixGridsOdds.get(i) != null) totalSwing += 1;
+						if (prevOdd) {
+							long tck = sixTicks*i;
+							long micros = tempoChange.micros + MidiUtils.ticks2microsec(tck, tempoChange.info.getTempoMPQ(), resolution);
+							tck += tempoChange.tick;
+							TimingInfoEvent newTempoChange = new TimingInfoEvent(tck, micros, tempoChange.barNumber, tempoChange.info, null);
+							partMap.putIfAbsent(tck, newTempoChange);
+							//System.err.println(i+" even");
+						} else {
+							//System.err.println(i+" even..");
+						}
+						prevOdd = false;
+					}
+				}
+			}
+		}
+		//if (totalEven+totalSwing > 0) {
+		//	System.err.println("Mix Timing: "+(int)(100*totalSwing/(float)(totalEven+totalSwing))+"% of abc song is swing/triplet timing.");
+		//}
 	}
 
 	public int getPrimaryTempoMPQ()
@@ -143,15 +291,20 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	{
 		return tripletTiming;
 	}
-
-	public TimingInfo getTimingInfo(long tick)
+	
+	public boolean isMixTiming()
 	{
-		return getTimingEventForTick(tick).info;
+		return oddsAndEnds;
 	}
 
-	public long quantize(long tick)
+	public TimingInfo getTimingInfo(long tick, AbcPart part)
 	{
-		TimingInfoEvent e = getTimingEventForTick(tick);
+		return getTimingEventForTick(tick, part).info;
+	}
+
+	public long quantize(long tick, AbcPart part)
+	{
+		TimingInfoEvent e = getTimingEventForTick(tick, part);
 		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinNoteLengthTicks());
 	}
 
@@ -257,6 +410,13 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		barStartTickByBar = barStartTicks.toArray(new Long[0]);
 	}
 
+	TimingInfoEvent getTimingEventForTick(long tick, AbcPart part)
+	{
+		if (oddsAndEnds)
+			return oddTimingInfoByTick.get(part).floorEntry(tick).getValue();
+		return timingInfoByTick.floorEntry(tick).getValue();
+	}
+	
 	TimingInfoEvent getTimingEventForTick(long tick)
 	{
 		return timingInfoByTick.floorEntry(tick).getValue();
@@ -275,10 +435,15 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		return retVal;
 	}
 
-	TimingInfoEvent getNextTimingEvent(long tick)
+	TimingInfoEvent getNextTimingEvent(long tick, AbcPart part)
 	{
-		Map.Entry<Long, TimingInfoEvent> entry = timingInfoByTick.higherEntry(tick);
-		return (entry == null) ? null : entry.getValue();
+		if (oddsAndEnds) {
+			Map.Entry<Long, TimingInfoEvent> entry = oddTimingInfoByTick.get(part).higherEntry(tick);
+			return (entry == null) ? null : entry.getValue();
+		} else {
+			Map.Entry<Long, TimingInfoEvent> entry = timingInfoByTick.higherEntry(tick);
+			return (entry == null) ? null : entry.getValue();
+		}
 	}
 
 	NavigableMap<Long, TimingInfoEvent> getTimingInfoByTick()
@@ -293,13 +458,15 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		public final double barNumber; // May start in the middle of a bar
 
 		public final TimingInfo info;
+		public final TimingInfo infoOdd;
 
-		public TimingInfoEvent(long tick, long micros, double barNumber, TimingInfo info)
+		public TimingInfoEvent(long tick, long micros, double barNumber, TimingInfo info, TimingInfo infoOdd)
 		{
 			this.tick = tick;
 			this.micros = micros;
 			this.barNumber = barNumber;
 			this.info = info;
+			this.infoOdd = infoOdd;
 		}
 	}
 }

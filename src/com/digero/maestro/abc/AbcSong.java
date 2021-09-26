@@ -46,7 +46,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public static final String MSX_FILE_DESCRIPTION_PLURAL = MaestroMain.APP_NAME + " Songs";
 	public static final String MSX_FILE_EXTENSION_NO_DOT = "msx";
 	public static final String MSX_FILE_EXTENSION = "." + MSX_FILE_EXTENSION_NO_DOT;
-	public static final Version SONG_FILE_VERSION = new Version(1, 0, 69);
+	public static final Version SONG_FILE_VERSION = new Version(1, 0, 70);
 
 	private String title = "";
 	private String composer = "";
@@ -56,6 +56,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private KeySignature keySignature = KeySignature.C_MAJOR;
 	private TimeSignature timeSignature = TimeSignature.FOUR_FOUR;
 	private boolean tripletTiming = false;
+	private boolean mixTiming = false;
 	private boolean skipSilenceAtStart = true;
 	private boolean showPruned = false;
 
@@ -73,6 +74,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private final ListModelWrapper<AbcPart> parts = new ListModelWrapper<AbcPart>(new DefaultListModel<AbcPart>());
 
 	private final ListenerList<AbcSongEvent> listeners = new ListenerList<AbcSongEvent>();
+	boolean mixDirty = true;
 
 	public AbcSong(File file, PartAutoNumberer partAutoNumberer, PartNameTemplate partNameTemplate,
 			FileResolver fileResolver) throws IOException, InvalidMidiDataException, ParseException, SAXException
@@ -184,6 +186,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		}
 
 		tripletTiming = abcInfo.hasTriplets();
+		mixTiming = abcInfo.hasMixTimings();
 		transcriber = abcInfo.getTranscriber();
 	}
 
@@ -228,6 +231,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 						sequenceInfo = SequenceInfo.fromAbc(params);
 
 						tripletTiming = abcInfo.hasTriplets();
+						mixTiming = abcInfo.hasMixTimings();
 						transcriber = abcInfo.getTranscriber();
 					}
 					else
@@ -267,6 +271,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				keySignature = SaveUtil.parseValue(songEle, "exportSettings/@keySignature", keySignature);
 			timeSignature = SaveUtil.parseValue(songEle, "exportSettings/@timeSignature", timeSignature);
 			tripletTiming = SaveUtil.parseValue(songEle, "exportSettings/@tripletTiming", tripletTiming);
+			mixTiming = SaveUtil.parseValue(songEle, "exportSettings/@mixTiming", mixTiming);
 
 			for (Element ele : XmlUtil.selectElements(songEle, "part"))
 			{
@@ -319,6 +324,9 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 			if (tripletTiming)
 				exportSettingsEle.setAttribute("tripletTiming", String.valueOf(tripletTiming));
+			
+			if (mixTiming)
+				exportSettingsEle.setAttribute("mixTiming", String.valueOf(mixTiming));
 
 			if (exportSettingsEle.getAttributes().getLength() > 0 || exportSettingsEle.getChildNodes().getLength() > 0)
 				songEle.appendChild(exportSettingsEle);
@@ -356,7 +364,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		if (idx < 0)
 			idx = (-idx - 1);
 		parts.add(idx, newPart);
-
+		
+		mixDirty = true;
 		fireChangeEvent(AbcSongProperty.PART_ADDED, newPart);
 		return newPart;
 	}
@@ -365,7 +374,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	{
 		if (part == null || !parts.contains(part))
 			return;
-
+		mixDirty = true;
 		fireChangeEvent(AbcSongProperty.BEFORE_PART_REMOVED, part);
 		parts.remove(part);
 		partAutoNumberer.onPartDeleted(part);
@@ -492,6 +501,20 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public boolean isTripletTiming()
 	{
 		return tripletTiming;
+	}
+	
+	public boolean isMixTiming()
+	{
+		return mixTiming;
+	}
+	
+	public void setMixTiming(boolean mixTiming)
+	{
+		if (this.mixTiming != mixTiming)
+		{
+			this.mixTiming = mixTiming;
+			fireChangeEvent(AbcSongProperty.MIX_TIMING);
+		}
 	}
 
 	public void setTripletTiming(boolean tripletTiming)
@@ -638,9 +661,12 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		if (timingInfo == null //
 				|| timingInfo.getExportTempoFactor() != getTempoFactor() //
 				|| timingInfo.getMeter() != getTimeSignature() //
-				|| timingInfo.isTripletTiming() != isTripletTiming())
+				|| timingInfo.isTripletTiming() != isTripletTiming() //
+				|| timingInfo.isMixTiming() != isMixTiming() //
+				|| mixDirty)
 		{
-			timingInfo = new QuantizedTimingInfo(sequenceInfo, getTempoFactor(), getTimeSignature(), isTripletTiming(), getTempoBPM());
+			mixDirty = false;
+			timingInfo = new QuantizedTimingInfo(sequenceInfo, getTempoFactor(), getTimeSignature(), isTripletTiming(), getTempoBPM(), this, isMixTiming());
 		}
 
 		return timingInfo;

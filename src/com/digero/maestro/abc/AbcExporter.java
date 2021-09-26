@@ -491,7 +491,7 @@ public class AbcExporter
 			}
 
 			// Is this the start of a new tempo?
-			TimingInfo tm = qtm.getTimingInfo(c.getStartTick());
+			TimingInfo tm = qtm.getTimingInfo(c.getStartTick(), part);
 			if (curExportTempoBPM != tm.getExportTempoBPM())
 			{
 				curExportTempoBPM = tm.getExportTempoBPM();
@@ -711,8 +711,8 @@ public class AbcExporter
 		{
 			NoteEvent ne = neIter.next();
 
-			ne.setStartTick(qtm.quantize(ne.getStartTick()));
-			ne.setEndTick(qtm.quantize(ne.getEndTick()));
+			ne.setStartTick(qtm.quantize(ne.getStartTick(), part));
+			ne.setEndTick(qtm.quantize(ne.getEndTick(), part));
 
 			// Make sure the note didn't get quantized to zero length
 			if (ne.getLengthTicks() == 0)
@@ -720,7 +720,7 @@ public class AbcExporter
 				if (ne.note == Note.REST)
 					neIter.remove();
 				else
-					ne.setLengthTicks(qtm.getTimingInfo(ne.getStartTick()).getMinNoteLengthTicks());
+					ne.setLengthTicks(qtm.getTimingInfo(ne.getStartTick(), part).getMinNoteLengthTicks());
 			}
 			if (!addTies && qtm.getPrimaryExportTempoBPM() >= 50 && part.delay != 0) {
 				// Make delay on instrument be audible in preview
@@ -731,7 +731,7 @@ public class AbcExporter
 		}
 
 		// Add initial rest if necessary
-		long quantizedStartTick = qtm.quantize(songStartTick);
+		long quantizedStartTick = qtm.quantize(songStartTick, part);
 		if (events.get(0).getStartTick() > quantizedStartTick)
 		{
 			events.add(0, new NoteEvent(Note.REST, Dynamics.DEFAULT.midiVol, quantizedStartTick, events.get(0)
@@ -741,7 +741,7 @@ public class AbcExporter
 		// Add a rest at the end if necessary
 		if (songEndTick < Long.MAX_VALUE)
 		{
-			long quantizedEndTick = qtm.quantize(songEndTick);
+			long quantizedEndTick = qtm.quantize(songEndTick, part);
 			NoteEvent lastEvent = events.get(events.size() - 1);
 			if (lastEvent.getEndTick() < quantizedEndTick)
 			{
@@ -927,8 +927,8 @@ public class AbcExporter
 		for (int i = 0; i < events.size(); i++)
 		{
 			NoteEvent ne = events.get(i);
-			TimingInfo tm = qtm.getTimingInfo(ne.getStartTick());
-			long maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks();
+			TimingInfo tm = qtm.getTimingInfo(ne.getStartTick(), part);
+			long maxNoteEndTick = qtm.quantize(ne.getStartTick() + tm.getMaxNoteLengthTicks(), part);
 
 			// Make a hard break for notes that are longer than LotRO can play
 			// Bagpipe notes up to B2 can sustain indefinitely; don't break them
@@ -938,14 +938,14 @@ public class AbcExporter
 			{
 				
 				// Align with a bar boundary if it extends across 1 or more full bars.
-				long endBarTick = qtm.tickToBarStartTick(maxNoteEndTick);
+				long endBarTick = qtm.quantize(qtm.tickToBarStartTick(maxNoteEndTick), part);
 				if (qtm.tickToBarEndTick(ne.getStartTick()) <= endBarTick)
 				{
 					maxNoteEndTick = endBarTick;
 					assert ne.getEndTick() > maxNoteEndTick;
 				} else {
 					maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L;//a little hack in case the notes are larger than 5 seconds, but less larger than 0.06s.
-					maxNoteEndTick = qtm.quantize(maxNoteEndTick);
+					maxNoteEndTick = qtm.quantize(maxNoteEndTick, part);
 				}
 
 				// If the note is a rest or sustainable, add another one after 
@@ -964,7 +964,7 @@ public class AbcExporter
 					 * note rather than creating a hard break. We don't want the last piece of a
 					 * long sustained note to be a short blast. LOTRO won't complain about a note
 					 * being too long if it's part of a tie. */
-					TimingInfo tmNext = qtm.getTimingInfo(next.getStartTick());
+					TimingInfo tmNext = qtm.getTimingInfo(next.getStartTick(), part);
 					if (next.getLengthTicks() < tmNext.getBarLengthTicks() && ne.note != Note.REST)
 					{
 						next.tiesFrom = ne;
@@ -978,16 +978,16 @@ public class AbcExporter
 			if (addTies)
 			{
 				// Tie notes across bar boundaries
-				long targetEndTick = Math.min(ne.getEndTick(), qtm.tickToBarEndTick(ne.getStartTick()));
+				long targetEndTick = Math.min(ne.getEndTick(), qtm.quantize(qtm.tickToBarEndTick(ne.getStartTick()),part));
 
 				// Tie notes across tempo boundaries
-				final QuantizedTimingInfo.TimingInfoEvent nextTempoEvent = qtm.getNextTimingEvent(ne.getStartTick());
+				final QuantizedTimingInfo.TimingInfoEvent nextTempoEvent = qtm.getNextTimingEvent(ne.getStartTick(), part);
 				if (nextTempoEvent != null && nextTempoEvent.tick < targetEndTick)
 					targetEndTick = nextTempoEvent.tick;
 				
 				// If remaining bar is larger than 6s, then split rests earlier (and yes, have seen this happen -aifel)
 				if (ne.note == Note.REST && targetEndTick > ne.getStartTick() + tm.getMaxNoteLengthTicks()) {
-					targetEndTick = qtm.quantize(ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L);
+					targetEndTick = qtm.quantize(ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L, part);
 				}
 
 				/* Make sure that quarter notes start on quarter-note boundaries within the bar, and

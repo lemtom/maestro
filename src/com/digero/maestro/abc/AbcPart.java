@@ -822,6 +822,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		{
 			trackEnabled[track] = enabled;
 			enabledTrackCount += enabled ? 1 : -1;
+			abcSong.mixDirty = true;
 			fireChangeEvent(AbcPartProperty.TRACK_ENABLED, track);
 		}
 	}
