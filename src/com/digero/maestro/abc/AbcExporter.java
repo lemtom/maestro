@@ -435,7 +435,7 @@ public class AbcExporter
 			if (initDyn != null)
 				break;
 		}
-		
+
 		if (delayEnabled && qtm.getPrimaryExportTempoBPM() >= 50) {
 			// oneNote is duration in secs of z1
 			double oneNote = 60/(double)qtm.getPrimaryExportTempoBPM()*qtm.getMeter().denominator/((qtm.getMeter().numerator/ (double) qtm.getMeter().denominator)<0.75?16d:8d);
@@ -915,6 +915,7 @@ public class AbcExporter
 				curChord = nextChord;
 			}
 		}
+
 		// Last chord needs to be pruned as that hasn't happened yet.
 		List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
 		removeNotes(events, deadnotes, part);// we need to set the pruned flag for last chord too.
@@ -952,6 +953,7 @@ public class AbcExporter
 				// this ends to keep it going...
 				if (ne.note == Note.REST || part.getInstrument().isSustainable(ne.note.id))
 				{
+					assert(ne.getEndTick()-maxNoteEndTick >= tm.getMinNoteLengthTicks());
 					NoteEvent next = new NoteEvent(ne.note, ne.velocity, maxNoteEndTick, ne.getEndTick(), qtm);
 					next.origPitch = ne.origPitch;
 					int ins = Collections.binarySearch(events, next);
@@ -979,11 +981,23 @@ public class AbcExporter
 			{
 				// Tie notes across bar boundaries
 				long targetEndTick = Math.min(ne.getEndTick(), qtm.quantize(qtm.tickToBarEndTick(ne.getStartTick()),part));
+				if (targetEndTick <= ne.getStartTick() || targetEndTick-ne.getStartTick() < tm.getMinNoteLengthTicks()) {
+					// Mix Timings can cause code to come here.
+					if (ne.getEndTick()>ne.getStartTick()+tm.getMinNoteLengthTicks()) {
+						targetEndTick = ne.getStartTick()+tm.getMinNoteLengthTicks();
+						assert(ne.getEndTick()-targetEndTick >= qtm.getTimingInfo(ne.getEndTick(), part).getMinNoteLengthTicks());
+					} else {
+						targetEndTick = ne.getEndTick();
+					}
+				}
 
 				// Tie notes across tempo boundaries
 				final QuantizedTimingInfo.TimingInfoEvent nextTempoEvent = qtm.getNextTimingEvent(ne.getStartTick(), part);
-				if (nextTempoEvent != null && nextTempoEvent.tick < targetEndTick)
+				if (nextTempoEvent != null && nextTempoEvent.tick < targetEndTick) {
 					targetEndTick = nextTempoEvent.tick;
+					assert(targetEndTick-ne.getStartTick() >= tm.getMinNoteLengthTicks());
+					assert(ne.getEndTick()-targetEndTick >= nextTempoEvent.info.getMinNoteLengthTicks());
+				}
 				
 				// If remaining bar is larger than 6s, then split rests earlier (and yes, have seen this happen -aifel)
 				if (ne.note == Note.REST && targetEndTick > ne.getStartTick() + tm.getMaxNoteLengthTicks()) {
@@ -993,7 +1007,7 @@ public class AbcExporter
 				/* Make sure that quarter notes start on quarter-note boundaries within the bar, and
 				 * that eighth notes start on eight-note boundaries, and so on. Add a tie at the
 				 * boundary if they start past the boundary. */
-				{
+				if (!qtm.isMixTiming()) {// This is only to prettify output, we omit this from Mix Timing since bars follow default timing, and notes might be in odd timing.
 					long barStartTick = qtm.tickToBarStartTick(ne.getStartTick());
 					long gridTicks = tm.getMinNoteLengthTicks();
 					long wholeNoteTicks = tm.getBarLengthTicks() * tm.getMeter().denominator / tm.getMeter().numerator;
@@ -1021,6 +1035,8 @@ public class AbcExporter
 
 				if (ne.getEndTick() > targetEndTick)
 				{
+					assert(ne.getEndTick()-targetEndTick >= qtm.getTimingInfo(targetEndTick, part).getMinNoteLengthTicks());
+					assert(targetEndTick-ne.getStartTick() >= tm.getMinNoteLengthTicks());
 					NoteEvent next = ne.splitWithTieAtTick(targetEndTick);
 					int ins = Collections.binarySearch(events, next);
 					if (ins < 0)
@@ -1029,6 +1045,7 @@ public class AbcExporter
 					events.add(ins, next);
 				}
 			}
+			assert((part.delay > 0 && !addTies) || ne.getLengthTicks() >= tm.getMinNoteLengthTicks());
 		}
 	}
 
