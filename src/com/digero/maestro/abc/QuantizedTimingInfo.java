@@ -149,14 +149,18 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				boolean evenShortest = tempoChange.info.getMinNoteLengthTicks() < tempoChange.infoOdd.getMinNoteLengthTicks();
 				if (evenShortest) {
 					sixTicks = tempoChange.info.getMinNoteLengthTicks();
+					//System.err.println("Enter "+tempoChange.info.getExportTempoBPM()+"bpm: even "+tempoChange.info.getMinNoteLengthTicks()+" with odd "+tempoChange.infoOdd.getMinNoteLengthTicks());
 					while(sixTicks % tempoChange.infoOdd.getMinNoteLengthTicks() != 0) {
 						sixTicks += tempoChange.info.getMinNoteLengthTicks();
 					}
+					//System.err.println("EXIT");
 				} else {
 					sixTicks = tempoChange.infoOdd.getMinNoteLengthTicks();
+					//System.err.println("Enter "+tempoChange.info.getExportTempoBPM()+"bpm: odd "+tempoChange.infoOdd.getMinNoteLengthTicks()+" with even "+tempoChange.info.getMinNoteLengthTicks());
 					while(sixTicks % tempoChange.info.getMinNoteLengthTicks() != 0) {
 						sixTicks += tempoChange.infoOdd.getMinNoteLengthTicks();
 					}
+					//System.err.println("EXIT");
 				}
 				// Max possible number of sixGrid before song ending +1
 				int maxSixths = (int) ((this.songLengthTicks-tempoChange.tick+sixTicks)/sixTicks);
@@ -206,7 +210,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 						}
 					}
 				}
-				ArrayList<Boolean> sixGridsOddsFinal = new ArrayList<Boolean>();
+				//ArrayList<Boolean> sixGridsOddsFinal = new ArrayList<Boolean>();
 				boolean prevOdd = false;
 				//System.err.println("Highest SixGrid Number ("+tempoChange.info.getExportTempoBPM()+"bpm)="+highest);
 				for (int i = 0; i <= highest; i++) {
@@ -218,7 +222,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 							)*/ // commented out because not sure that scheme made sense
 							) {
 						// surrounded by at least 1 sixGrids that prefer odd timing or no notes in neighboring sixGrids 
-						sixGridsOddsFinal.add(i, true);
+						//sixGridsOddsFinal.add(i, true);
 						//if (useTripletTiming) totalEven += 1;
 						//if (!useTripletTiming) totalSwing += 1;
 						if (!prevOdd) {
@@ -234,7 +238,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 						}
 						prevOdd = true;
 					} else {
-						sixGridsOddsFinal.add(i, false);// no odd timing for this sixGrid
+						//sixGridsOddsFinal.add(i, false);// no odd timing for this sixGrid
 						//if (!useTripletTiming && sixGridsOdds.get(i) != null) totalEven += 1;
 						//if (useTripletTiming && sixGridsOdds.get(i) != null) totalSwing += 1;
 						if (prevOdd) {
@@ -250,11 +254,21 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 						prevOdd = false;
 					}
 				}
+				if (prevOdd) {
+					int i = highest+1;
+					// Make sure tempo section ends with a default tempoevent.
+					long tck = sixTicks*i;
+					long micros = tempoChange.micros + MidiUtils.ticks2microsec(tck, tempoChange.info.getTempoMPQ(), resolution);
+					tck += tempoChange.tick;
+					TimingInfoEvent newTempoChange = new TimingInfoEvent(tck, micros, tempoChange.barNumber, tempoChange.info, null);
+					partMap.put(tck, newTempoChange);
+				}
 			}
 		}
 		//if (totalEven+totalSwing > 0) {
 		//	System.err.println("Mix Timing: "+(int)(100*totalSwing/(float)(totalEven+totalSwing))+"% of abc song is swing/triplet timing.");
 		//}
+		//System.err.println("Exit QTM");
 	}
 
 	public int getPrimaryTempoMPQ()
