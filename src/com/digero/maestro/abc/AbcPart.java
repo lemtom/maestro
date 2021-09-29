@@ -380,10 +380,14 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					Element drumMapEle = XmlUtil.selectSingleElement(trackEle, "drumMap");
 					if (drumMapEle != null) {
 						drumNoteMap[t] = DrumNoteMap.loadFromXml(drumMapEle, fileVersion);
+						if (drumNoteMap[t] != null)
+							drumNoteMap[t].addChangeListener(drumMapChangeListener);
 					}
 					drumMapEle = XmlUtil.selectSingleElement(trackEle, "fxMap");
 					if (drumMapEle != null) {
 						fxNoteMap[t] = StudentFXNoteMap.loadFromXml(drumMapEle, fileVersion);
+						if (fxNoteMap[t] != null)
+							fxNoteMap[t].addChangeListener(drumMapChangeListener);
 					}
 				}
 			}

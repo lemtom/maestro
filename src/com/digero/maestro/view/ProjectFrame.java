@@ -444,9 +444,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		});
 		
 		mixCheckBox = new JCheckBox("Mix Timings");
-		mixCheckBox.setToolTipText("<html>Allow Maestro to detect which phrases<br>"
+		mixCheckBox.setToolTipText("<html>Allow Maestro to detect which notes<br>"
 				+ "that differs from the above triplet/swing setting.<br><br>"
-				+ "Its is done per part, so some phrases in a parts might export swing rythm<br>"
+				+ "It is done per part, so some notes in a parts might export as swing/tuplets<br>"
 				+ "while other parts at same time export even notes.</html>");
 		mixCheckBox.addActionListener(new ActionListener()
 		{
