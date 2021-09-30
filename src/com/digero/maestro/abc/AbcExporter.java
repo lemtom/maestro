@@ -940,10 +940,10 @@ public class AbcExporter
 			{
 				
 				// Align with a bar boundary if it extends across 1 or more full bars.
-				long endBarTick = qtm.quantize(qtm.tickToBarStartTick(maxNoteEndTick), part);
-				if (qtm.tickToBarEndTick(ne.getStartTick()) <= endBarTick)
+				long endBarTick = qtm.tickToBarStartTick(maxNoteEndTick);
+				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick)
 				{
-					maxNoteEndTick = endBarTick;
+					maxNoteEndTick = qtm.quantize(endBarTick, part);
 					assert ne.getEndTick() > maxNoteEndTick;
 				}
 
