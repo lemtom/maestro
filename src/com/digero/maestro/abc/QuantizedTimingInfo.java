@@ -10,6 +10,7 @@ import java.util.NavigableSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.IBarNumberCache;
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.TimeSignature;
@@ -134,6 +135,10 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 			for (int j = 0; j < timings.length; j++ ) {
 				// calculate for all tempochanges
 				TimingInfoEvent tempoChange = timings[j];
+				TimingInfoEvent nextTempoChange = null;
+				if (j+1 < timings.length) {
+					nextTempoChange = timings[j+1];
+				}
 				partMap.put(tempoChange.tick, tempoChange);
 				ArrayList<NoteEvent> eventList = new ArrayList<NoteEvent>();  
 				for (int t = 0; t < tracks; t++) {
@@ -170,8 +175,8 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				}
 				int highest = -1;
 				for (NoteEvent ne : eventList) {
-					if (ne.getStartTick() > tempoChange.tick && ((j+1 == timings.length) || ne.getStartTick() < timings[j+1].tick - sixTicks)) {
-						// The note starts after current tempo change and either is last change or note starts at least one sixGrid length from next tempo change
+					if (ne.getStartTick() > tempoChange.tick && (nextTempoChange == null || ne.getStartTick() < nextTempoChange.tick)) {
+						// The note starts after current tempo change and either is last tempochange or note starts before next tempo change
 						long q = tempoChange.tick + Util.roundGrid(ne.getStartTick() - tempoChange.tick, tempoChange.info.getMinNoteLengthTicks());
 						long qOdd = tempoChange.tick + Util.roundGrid(ne.getStartTick() - tempoChange.tick, tempoChange.infoOdd.getMinNoteLengthTicks());
 						int odd = (int)(Math.abs(ne.getStartTick() - q) - Math.abs(ne.getStartTick() - qOdd));
@@ -188,8 +193,9 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 							sixGridsOdds.set(sixGrid, oddScore);
 						}
 					}
-					if (ne.getEndTick() > tempoChange.tick && ((j+1 == timings.length) || ne.getEndTick() < timings[j+1].tick - sixTicks)) {
-						// The note starts after current tempo change and either is last change or note starts at least one sixGrid length from next tempo change
+					if (!abcPart.getInstrument().equals(LotroInstrument.BASIC_DRUM) && ne.getEndTick() > tempoChange.tick && (nextTempoChange == null || ne.getEndTick() < nextTempoChange.tick)) {
+						// Do not evaluate note endings for drum
+						// The note ends after current tempo change and either is last tempochange or note ends before next tempo change
 						long q = tempoChange.tick + Util.roundGrid(ne.getEndTick() - tempoChange.tick, tempoChange.info.getMinNoteLengthTicks());
 						long qOdd = tempoChange.tick + Util.roundGrid(ne.getEndTick() - tempoChange.tick, tempoChange.infoOdd.getMinNoteLengthTicks());
 						int odd = (int)(Math.abs(ne.getEndTick() - q) - Math.abs(ne.getEndTick() - qOdd));
@@ -209,13 +215,13 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				}
 				boolean prevOdd = false;
 				for (int i = 0; i <= highest; i++) {
-					if (sixGridsOdds.get(i) != null && sixGridsOdds.get(i) > 0) {
+					long tck = sixTicks*i;
+					long micros = tempoChange.micros + MidiUtils.ticks2microsec(tck, tempoChange.info.getTempoMPQ(), resolution);
+					tck += tempoChange.tick;
+					if (sixGridsOdds.get(i) != null && sixGridsOdds.get(i) > 0 && (nextTempoChange == null || tck <= nextTempoChange.tick-sixTicks)) {
 						//if (useTripletTiming) totalEven += 1;
 						//if (!useTripletTiming) totalSwing += 1;
 						if (!prevOdd) {
-							long tck = sixTicks*i;
-							long micros = tempoChange.micros + MidiUtils.ticks2microsec(tck, tempoChange.info.getTempoMPQ(), resolution);
-							tck += tempoChange.tick;
 							TimingInfoEvent newTempoChange = new TimingInfoEvent(tck, micros, tempoChange.barNumber, tempoChange.infoOdd, null);
 							partMap.remove(tck);
 							partMap.put(tck, newTempoChange);
@@ -224,10 +230,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 					} else {
 						//if (!useTripletTiming && sixGridsOdds.get(i) != null) totalEven += 1;
 						//if (useTripletTiming && sixGridsOdds.get(i) != null) totalSwing += 1;
-						if (prevOdd) {
-							long tck = sixTicks*i;
-							long micros = tempoChange.micros + MidiUtils.ticks2microsec(tck, tempoChange.info.getTempoMPQ(), resolution);
-							tck += tempoChange.tick;
+						if (prevOdd) {							
 							TimingInfoEvent newTempoChange = new TimingInfoEvent(tck, micros, tempoChange.barNumber, tempoChange.info, null);
 							partMap.putIfAbsent(tck, newTempoChange);
 						}
@@ -240,8 +243,10 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 					long tck = sixTicks*i;
 					long micros = tempoChange.micros + MidiUtils.ticks2microsec(tck, tempoChange.info.getTempoMPQ(), resolution);
 					tck += tempoChange.tick;
-					TimingInfoEvent newTempoChange = new TimingInfoEvent(tck, micros, tempoChange.barNumber, tempoChange.info, null);
-					partMap.put(tck, newTempoChange);
+					if (nextTempoChange == null || tck < nextTempoChange.tick) {
+						TimingInfoEvent newTempoChange = new TimingInfoEvent(tck, micros, tempoChange.barNumber, tempoChange.info, null);
+						partMap.put(tck, newTempoChange);
+					}
 				}
 			}
 		}
