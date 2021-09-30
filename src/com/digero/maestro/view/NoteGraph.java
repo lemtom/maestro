@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import com.digero.common.abc.Dynamics;
+import com.digero.common.midi.Note;
 import com.digero.common.midi.SequencerEvent;
 import com.digero.common.midi.SequencerEvent.SequencerProperty;
 import com.digero.common.midi.SequencerWrapper;
@@ -472,6 +473,10 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 
 	private BitSet notesOn = null;
 	private BitSet notesBad = null;
+	private BitSet notesBad0 = null;
+	private BitSet notesBad1 = null;
+	private BitSet notesBad2 = null;
+	private BitSet notesBad3 = null;
 
 	private static float[] hsb;
 
@@ -625,6 +630,14 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 			notesOn.clear();
 		if (notesBad != null)
 			notesBad.clear();
+		if (notesBad0 != null)
+			notesBad0.clear();
+		if (notesBad1 != null)
+			notesBad1.clear();
+		if (notesBad2 != null)
+			notesBad2.clear();
+		if (notesBad3 != null)
+			notesBad3.clear();
 
 		if (!isShowingNoteVelocity())
 		{
@@ -642,6 +655,8 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 
 				if (isNoteVisible(ne) && audibleNote(ne))
 				{
+					
+					
 					int noteId = transposeNote(ne.note.id, ne.getStartTick());
 
 					if (showNotesOn && songPos >= ne.getStartMicros() && minSongPos <= ne.getEndMicros()
@@ -662,6 +677,58 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 						g2.setColor(getNoteColor(ne));
 						fillNote(g2, ne, noteId, minLength, height);
 					}
+					for (int k = 0; k < 4; k++) {
+						if (!getSectionDoubling(ne.getStartTick())[k]) {
+							continue;
+						}
+						int addition = 12;
+						if (k == 0) {
+							addition = -24;
+						} else if (k == 1) {
+							addition = -12;
+						} else if (k == 3) {
+							addition = 24;
+						}
+						
+						int noteIdDouble = transposeNote(ne.note.id+addition, ne.getStartTick());
+						
+						if (showNotesOn && songPos >= ne.getStartMicros() && minSongPos <= ne.getEndMicros()
+								&& sequencer.isNoteActive(ne.note.id))
+						{
+							//
+						}
+						else if (!isNotePlayable(noteIdDouble))
+						{
+							BitSet notesBadDouble;
+							
+							if (k == 0) {
+								if (notesBad0 == null)
+									notesBad0 = new BitSet(noteEvents.size());
+								notesBadDouble = notesBad0;
+							} else if (k == 1) {
+								if (notesBad1 == null)
+									notesBad1 = new BitSet(noteEvents.size());
+								notesBadDouble = notesBad1;
+							} else if (k == 2) {
+								if (notesBad2 == null)
+									notesBad2 = new BitSet(noteEvents.size());
+								notesBadDouble = notesBad2;
+							} else {
+								if (notesBad3 == null)
+									notesBad3 = new BitSet(noteEvents.size());
+								notesBadDouble = notesBad3;
+							}					
+							
+							notesBadDouble.set(i);
+						}
+						else
+						{
+							NoteEvent nd = new NoteEvent(Note.fromId(noteIdDouble),ne.velocity,ne.getStartTick(),ne.getEndTick(),ne.getTempoCache());
+							
+							g2.setColor(getNoteColor(nd));
+							fillNote(g2, nd, noteIdDouble, minLength, height);
+						}
+					}
 				}
 			}
 
@@ -673,6 +740,46 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 					g2.setColor(getBadNoteColor(ne));
 					int noteId = transposeNote(ne.note.id, ne.getStartTick());
 					fillNote(g2, ne, noteId, minLength, height);
+				}
+			}
+			if (notesBad0 != null) {
+				for (int i = notesBad0.nextSetBit(0); i >= 0; i = notesBad0.nextSetBit(i + 1))
+				{
+					NoteEvent ne = noteEvents.get(i);
+					NoteEvent nd = new NoteEvent(Note.fromId(ne.note.id-24), ne.velocity, ne.getStartTick(), ne.getEndTick(), ne.getTempoCache());
+					g2.setColor(getBadNoteColor(nd));
+					int noteId = transposeNote(nd.note.id, nd.getStartTick());
+					fillNote(g2, nd, noteId, minLength, height);
+				}
+			}
+			if (notesBad1 != null) {
+				for (int i = notesBad1.nextSetBit(0); i >= 0; i = notesBad1.nextSetBit(i + 1))
+				{
+					NoteEvent ne = noteEvents.get(i);
+					NoteEvent nd = new NoteEvent(Note.fromId(ne.note.id-12), ne.velocity, ne.getStartTick(), ne.getEndTick(), ne.getTempoCache());
+					g2.setColor(getBadNoteColor(nd));
+					int noteId = transposeNote(nd.note.id, nd.getStartTick());
+					fillNote(g2, nd, noteId, minLength, height);
+				}
+			}
+			if (notesBad2 != null) {
+				for (int i = notesBad2.nextSetBit(0); i >= 0; i = notesBad2.nextSetBit(i + 1))
+				{
+					NoteEvent ne = noteEvents.get(i);
+					NoteEvent nd = new NoteEvent(Note.fromId(ne.note.id+12), ne.velocity, ne.getStartTick(), ne.getEndTick(), ne.getTempoCache());
+					g2.setColor(getBadNoteColor(nd));
+					int noteId = transposeNote(nd.note.id, nd.getStartTick());
+					fillNote(g2, nd, noteId, minLength, height);
+				}
+			}
+			if (notesBad3 != null) {
+				for (int i = notesBad3.nextSetBit(0); i >= 0; i = notesBad3.nextSetBit(i + 1))
+				{
+					NoteEvent ne = noteEvents.get(i);
+					NoteEvent nd = new NoteEvent(Note.fromId(ne.note.id+24), ne.velocity, ne.getStartTick(), ne.getEndTick(), ne.getTempoCache());
+					g2.setColor(getBadNoteColor(nd));
+					int noteId = transposeNote(nd.note.id, nd.getStartTick());
+					fillNote(g2, nd, noteId, minLength, height);
 				}
 			}
 
@@ -690,6 +797,25 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 
 					fillNote(g2, noteEvents.get(i), noteId, minLength, height, noteOnOutlineWidthX, noteOnExtraHeightY
 							+ noteOnOutlineWidthY);
+					
+					for (int k = 0; k < 4; k++) {
+						if (!getSectionDoubling(ne.getStartTick())[k]) {
+							continue;
+						}
+						int addition = 12;
+						if (k == 0) {
+							addition = -24;
+						} else if (k == 1) {
+							addition = -12;
+						} else if (k == 3) {
+							addition = 24;
+						}
+						
+						int noteIdDouble = transposeNote(ne.note.id+addition, ne.getStartTick());
+						
+						fillNote(g2, ne, noteIdDouble, minLength, height, noteOnOutlineWidthX, noteOnExtraHeightY
+								+ noteOnOutlineWidthY);
+					}
 				}
 
 				g2.setColor(noteOnColor.get());
@@ -699,6 +825,24 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 					int noteId = transposeNote(ne.note.id, ne.getStartTick());
 
 					fillNote(g2, noteEvents.get(i), noteId, minLength, height, 0, noteOnExtraHeightY);
+					
+					for (int k = 0; k < 4; k++) {
+						if (!getSectionDoubling(ne.getStartTick())[k]) {
+							continue;
+						}
+						int addition = 12;
+						if (k == 0) {
+							addition = -24;
+						} else if (k == 1) {
+							addition = -12;
+						} else if (k == 3) {
+							addition = 24;
+						}
+						
+						int noteIdDouble = transposeNote(ne.note.id+addition, ne.getStartTick());
+						
+						fillNote(g2, ne, noteIdDouble, minLength, height, 0, noteOnExtraHeightY);
+					}
 				}
 			}
 		}
@@ -859,6 +1003,15 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 		int[] empty = new int[2];
 		empty[0] = 0;
 		empty[1] = 100;
+		return empty;
+	}
+
+	protected Boolean[] getSectionDoubling(long tick) {
+		Boolean[] empty = new Boolean[4];
+		empty[0] = false;
+		empty[1] = false;
+		empty[2] = false;
+		empty[3] = false;
 		return empty;
 	}
 }

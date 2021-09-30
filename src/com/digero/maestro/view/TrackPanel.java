@@ -849,6 +849,11 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			empty[1] = 100;
 			return empty;*/
 		}
+		
+		@Override protected Boolean[] getSectionDoubling(long tick)
+		{
+			return abcPart.getSectionDoubling(tick, trackInfo.getTrackNumber());
+		}
 
 		@Override protected boolean isNotePlayable(int noteId)
 		{
