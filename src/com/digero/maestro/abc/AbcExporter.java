@@ -979,16 +979,13 @@ public class AbcExporter
 			{
 				// Tie notes across bar boundaries
 				long targetEndTick = Math.min(ne.getEndTick(), qtm.quantize(qtm.tickToBarEndTick(ne.getStartTick()),part));
-				if (targetEndTick <= ne.getStartTick() || targetEndTick-ne.getStartTick() < tm.getMinNoteLengthTicks()) {
+				if (targetEndTick < ne.getStartTick() + tm.getMinNoteLengthTicks()) {
 					// Mix Timings can cause code to come here.
-					if (ne.getEndTick()>ne.getStartTick()+tm.getMinNoteLengthTicks()) {
-						targetEndTick = ne.getStartTick()+tm.getMinNoteLengthTicks();
-						assert(ne.getEndTick()-targetEndTick >= qtm.getTimingInfo(ne.getEndTick(), part).getMinNoteLengthTicks());
-					} else {
-						targetEndTick = ne.getEndTick();
-					}
+					targetEndTick = ne.getStartTick()+tm.getMinNoteLengthTicks();
 				}
-
+				assert (targetEndTick <= ne.getEndTick());
+				assert (targetEndTick >= ne.getStartTick()+tm.getMinNoteLengthTicks());
+				
 				// Tie notes across tempo boundaries
 				final QuantizedTimingInfo.TimingInfoEvent nextTempoEvent = qtm.getNextTimingEvent(ne.getStartTick(), part);
 				if (nextTempoEvent != null && nextTempoEvent.tick < targetEndTick) {
