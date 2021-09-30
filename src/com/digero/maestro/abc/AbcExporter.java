@@ -929,7 +929,8 @@ public class AbcExporter
 		{
 			NoteEvent ne = events.get(i);
 			TimingInfo tm = qtm.getTimingInfo(ne.getStartTick(), part);
-			long maxNoteEndTick = qtm.quantize(ne.getStartTick() + tm.getMaxNoteLengthTicks(), part);
+			
+			long maxNoteEndTick = qtm.quantize(qtm.microsToTick(ne.getStartMicros() + (long)(TimingInfo.LONGEST_NOTE_MICROS*qtm.getExportTempoFactor())), part);
 
 			// Make a hard break for notes that are longer than LotRO can play
 			// Bagpipe notes up to B2 can sustain indefinitely; don't break them
@@ -944,9 +945,6 @@ public class AbcExporter
 				{
 					maxNoteEndTick = endBarTick;
 					assert ne.getEndTick() > maxNoteEndTick;
-				} else {
-					maxNoteEndTick = ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L;//a little hack in case the notes are larger than 5 seconds, but less larger than 0.06s.
-					maxNoteEndTick = qtm.quantize(maxNoteEndTick, part);
 				}
 
 				// If the note is a rest or sustainable, add another one after 
@@ -999,9 +997,10 @@ public class AbcExporter
 					assert(ne.getEndTick()-targetEndTick >= nextTempoEvent.info.getMinNoteLengthTicks());
 				}
 				
-				// If remaining bar is larger than 6s, then split rests earlier (and yes, have seen this happen -aifel)
-				if (ne.note == Note.REST && targetEndTick > ne.getStartTick() + tm.getMaxNoteLengthTicks()) {
-					targetEndTick = qtm.quantize(ne.getStartTick() + tm.getMaxNoteLengthTicks()/2L, part);
+				// If remaining bar is larger than 5s, then split rests earlier (and yes, have seen this happen for 8s+ -aifel)
+				if (ne.note == Note.REST && targetEndTick > qtm.microsToTick(qtm.tickToMicros(ne.getStartTick()) + (long)(TimingInfo.LONGEST_NOTE_MICROS*qtm.getExportTempoFactor()))) {
+					// Rest longer than 5s, split it at 4s:
+					targetEndTick = qtm.quantize(qtm.microsToTick(qtm.tickToMicros(ne.getStartTick()) + (long)(0.5f*AbcConstants.LONGEST_NOTE_MICROS*qtm.getExportTempoFactor())), part);
 				}
 
 				/* Make sure that quarter notes start on quarter-note boundaries within the bar, and
