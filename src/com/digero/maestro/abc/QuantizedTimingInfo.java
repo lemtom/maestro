@@ -125,8 +125,8 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		//System.err.println("  Odds And Ends:");
 		int tracks = song.getSequenceInfo().getTrackCount();
 		TimingInfoEvent[] timings = (TimingInfoEvent[]) timingInfoByTick.values().toArray(new TimingInfoEvent[0]);
-		//int totalSwing = 0;
-		//int totalEven = 0;
+		//long totalSwing = 0;
+		//long totalEven = 0;
 		for (int part = 0; part < parts; part++) {
 			// calculate for all parts
 			AbcPart abcPart = song.getParts().get(part);
@@ -218,9 +218,10 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 					long tck = sixTicks*i;
 					long micros = tempoChange.micros + MidiUtils.ticks2microsec(tck, tempoChange.info.getTempoMPQ(), resolution);
 					tck += tempoChange.tick;
+					assert (nextTempoChange == null || tck < nextTempoChange.tick);
 					if (sixGridsOdds.get(i) != null && sixGridsOdds.get(i) > 0 && (nextTempoChange == null || tck <= nextTempoChange.tick-sixTicks)) {
-						//if (useTripletTiming) totalEven += 1;
-						//if (!useTripletTiming) totalSwing += 1;
+						//if (useTripletTiming) totalEven += MidiUtils.ticks2microsec(sixTicks, tempoChange.info.getTempoMPQ(), tempoChange.info.getResolutionPPQ());
+						//else if (!useTripletTiming) totalSwing += MidiUtils.ticks2microsec(sixTicks, tempoChange.info.getTempoMPQ(), tempoChange.info.getResolutionPPQ());
 						if (!prevOdd) {
 							TimingInfoEvent newTempoChange = new TimingInfoEvent(tck, micros, tempoChange.barNumber, tempoChange.infoOdd, null);
 							partMap.remove(tck);
@@ -228,9 +229,9 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 						}
 						prevOdd = true;
 					} else {
-						//if (!useTripletTiming && sixGridsOdds.get(i) != null) totalEven += 1;
-						//if (useTripletTiming && sixGridsOdds.get(i) != null) totalSwing += 1;
-						if (prevOdd) {							
+						//if (!useTripletTiming && sixGridsOdds.get(i) != null && sixGridsOdds.get(i) != 0) totalEven += MidiUtils.ticks2microsec(sixTicks, tempoChange.info.getTempoMPQ(), tempoChange.info.getResolutionPPQ());
+						//else if (useTripletTiming && sixGridsOdds.get(i) != null && sixGridsOdds.get(i) != 0) totalSwing += MidiUtils.ticks2microsec(sixTicks, tempoChange.info.getTempoMPQ(), tempoChange.info.getResolutionPPQ());
+						if (prevOdd) {
 							TimingInfoEvent newTempoChange = new TimingInfoEvent(tck, micros, tempoChange.barNumber, tempoChange.info, null);
 							partMap.putIfAbsent(tck, newTempoChange);
 						}
