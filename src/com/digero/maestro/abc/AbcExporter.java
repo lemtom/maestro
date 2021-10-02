@@ -643,7 +643,7 @@ public class AbcExporter
 					ne.resetPruned(part);
 
 					Note mappedNote = part.mapNote(t, ne.note.id, ne.getStartTick());
-					Boolean[] doubling = part.getSectionDoubling(ne.getStartTick(), t);
+					
 					if (mappedNote != null)
 					{
 						assert mappedNote.id >= part.getInstrument().lowestPlayable.id : mappedNote;
@@ -671,25 +671,27 @@ public class AbcExporter
 						}
 						events.add(newNE);
 						
-						if (doubling[0]) {//todo: check for not exceeding highest note
+						Boolean[] doubling = part.getSectionDoubling(ne.getStartTick(), t);
+						
+						if (doubling[0] && ne.note.id-24 > Note.MIN.id) {
 							Note mappedNote2 = part.mapNote(t, ne.note.id-24, ne.getStartTick());
 							NoteEvent newNE2 = new NoteEvent(mappedNote2, velocity, startTick, endTick, qtm);
 							newNE2.doubledNote = true;// prune these first
 							events.add(newNE2);
 						}
-						if (doubling[1]) {
+						if (doubling[1] && ne.note.id-12 > Note.MIN.id) {
 							Note mappedNote2 = part.mapNote(t, ne.note.id-12, ne.getStartTick());
 							NoteEvent newNE2 = new NoteEvent(mappedNote2, velocity, startTick, endTick, qtm);
 							newNE2.doubledNote = true;
 							events.add(newNE2);
 						}
-						if (doubling[2]) {
+						if (doubling[2] && ne.note.id+12 < Note.MAX.id) {
 							Note mappedNote2 = part.mapNote(t, ne.note.id+12, ne.getStartTick());
 							NoteEvent newNE2 = new NoteEvent(mappedNote2, velocity, startTick, endTick, qtm);
 							newNE2.doubledNote = true;
 							events.add(newNE2);
 						}
-						if (doubling[3]) {
+						if (doubling[3] && ne.note.id+24 < Note.MAX.id) {
 							Note mappedNote2 = part.mapNote(t, ne.note.id+24, ne.getStartTick());
 							NoteEvent newNE2 = new NoteEvent(mappedNote2, velocity, startTick, endTick, qtm);
 							newNE2.doubledNote = true;
