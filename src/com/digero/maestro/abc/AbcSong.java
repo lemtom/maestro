@@ -56,7 +56,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private KeySignature keySignature = KeySignature.C_MAJOR;
 	private TimeSignature timeSignature = TimeSignature.FOUR_FOUR;
 	private boolean tripletTiming = false;
-	private boolean mixTiming = false;
+	private boolean mixTiming = true;
 	private boolean skipSilenceAtStart = true;
 	private boolean showPruned = false;
 
@@ -325,8 +325,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			if (tripletTiming)
 				exportSettingsEle.setAttribute("tripletTiming", String.valueOf(tripletTiming));
 			
-			if (mixTiming)
-				exportSettingsEle.setAttribute("mixTiming", String.valueOf(mixTiming));
+			exportSettingsEle.setAttribute("mixTiming", String.valueOf(mixTiming));
 
 			if (exportSettingsEle.getAttributes().getLength() > 0 || exportSettingsEle.getChildNodes().getLength() > 0)
 				songEle.appendChild(exportSettingsEle);

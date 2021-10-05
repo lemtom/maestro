@@ -16,8 +16,10 @@ public enum AbcField
 	PART_NAME, //
 	//
 	TEMPO("Q:"), //
+	SWING_RHYTHM,//
+	MIX_TIMINGS, //
 	;
-
+	
 	private static class MetaData
 	{
 		private static Map<String, Integer> longestByPrefix = new HashMap<String, Integer>();

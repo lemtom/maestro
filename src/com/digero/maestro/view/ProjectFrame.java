@@ -1587,7 +1587,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		keySignatureField.setValue(KeySignature.C_MAJOR);
 		timeSignatureField.setValue(TimeSignature.FOUR_FOUR);
 		tripletCheckBox.setSelected(false);
-		mixCheckBox.setSelected(false);
+		mixCheckBox.setSelected(true);
 
 		midiBarLabel.setBarNumberCache(null);
 		abcBarLabel.setBarNumberCache(null);

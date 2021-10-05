@@ -345,6 +345,8 @@ public class AbcExporter
 				out.println(AbcField.SONG_TRANSCRIBER + metadata.getTranscriber().trim());
 			}
 			out.println(AbcField.ABC_CREATOR + MaestroMain.APP_NAME + " v" + MaestroMain.APP_VERSION);
+			out.println(AbcField.SWING_RHYTHM + Boolean.toString(qtm.isTripletTiming()));
+			out.println(AbcField.MIX_TIMINGS + Boolean.toString(qtm.isMixTiming()));
 			out.println(AbcField.ABC_VERSION + "2.1");
 		}
 
