@@ -46,7 +46,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public static final String MSX_FILE_DESCRIPTION_PLURAL = MaestroMain.APP_NAME + " Songs";
 	public static final String MSX_FILE_EXTENSION_NO_DOT = "msx";
 	public static final String MSX_FILE_EXTENSION = "." + MSX_FILE_EXTENSION_NO_DOT;
-	public static final Version SONG_FILE_VERSION = new Version(1, 0, 70);
+	public static final Version SONG_FILE_VERSION = new Version(1, 0, 72);
 
 	private String title = "";
 	private String composer = "";
@@ -271,7 +271,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				keySignature = SaveUtil.parseValue(songEle, "exportSettings/@keySignature", keySignature);
 			timeSignature = SaveUtil.parseValue(songEle, "exportSettings/@timeSignature", timeSignature);
 			tripletTiming = SaveUtil.parseValue(songEle, "exportSettings/@tripletTiming", tripletTiming);
-			mixTiming = SaveUtil.parseValue(songEle, "exportSettings/@mixTiming", mixTiming);
+			mixTiming = SaveUtil.parseValue(songEle, "exportSettings/@mixTiming", false);// default false as old projects did not have that available. This means for old project with source abc that was exported with mix timings, the project will decide and it will be false.
 
 			for (Element ele : XmlUtil.selectElements(songEle, "part"))
 			{
