@@ -58,6 +58,7 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 		songComposer = null;
 		songTranscriber = null;
 		hasTriplets = false;
+		hasTripletsSet = false;
 		hasMixTimings = true;
 		timeSignature = TimeSignature.FOUR_FOUR;
 		keySignature = KeySignature.C_MAJOR;
