@@ -955,7 +955,7 @@ public class AbcExporter
 				// this ends to keep it going...
 				if (ne.note == Note.REST || part.getInstrument().isSustainable(ne.note.id))
 				{
-					assert(ne.getEndTick()-maxNoteEndTick >= tm.getMinNoteLengthTicks());
+					assert(ne.getEndTick()-maxNoteEndTick >= qtm.getTimingInfo(maxNoteEndTick, part).getMinNoteLengthTicks());
 					NoteEvent next = new NoteEvent(ne.note, ne.velocity, maxNoteEndTick, ne.getEndTick(), qtm);
 					next.origPitch = ne.origPitch;
 					int ins = Collections.binarySearch(events, next);
