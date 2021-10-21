@@ -270,8 +270,14 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 
 				if (t < 0 || t >= getTrackCount())
 				{
-					throw SaveUtil.invalidValueException(trackEle, "Could not find track number " + t
-							+ " in original MIDI file");
+					String optionalName = SaveUtil.parseValue(trackEle, "@name", "");
+					
+					if (optionalName.length() > 0) {
+						optionalName = " (" + optionalName + ")";
+					}
+					
+					throw SaveUtil.invalidTrackException(trackEle, "Could not find track number " + t
+							+ optionalName + " in original MIDI file");
 				}
 				
 				TreeMap<Integer, PartSection> tree = sections.get(t);

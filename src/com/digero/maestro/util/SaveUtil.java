@@ -7,6 +7,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.KeySignature;
@@ -193,9 +194,17 @@ public class SaveUtil
 
 		return new File(node.getTextContent());
 	}
+	
+	public static ParseException invalidTrackException(Node node, String message)
+	{
+		File f = XmlUtil.getDocumentFile(node.getOwnerDocument());
+		String fileName = (f == null) ? null : f.getName();
+		return new ParseException(message, fileName, XmlUtil.getLineNumber(node));
+	}
 
 	public static ParseException invalidValueException(Node node, String message)
 	{
+		SaveUtil.clean(node);
 		String msg = "Invalid value \"" + node.getTextContent() + "\" for " + node.getNodeName();
 		if (message != null && message.length() > 0)
 			msg += ": " + message;
@@ -203,6 +212,30 @@ public class SaveUtil
 		File f = XmlUtil.getDocumentFile(node.getOwnerDocument());
 		String fileName = (f == null) ? null : f.getName();
 		return new ParseException(msg, fileName, XmlUtil.getLineNumber(node));
+	}
+	
+	private static void clean(Node node)
+	{
+	  NodeList childNodes = node.getChildNodes();
+
+	  for (int n = childNodes.getLength() - 1; n >= 0; n--)
+	  {
+	     Node child = childNodes.item(n);
+	     short nodeType = child.getNodeType();
+
+	     if (nodeType == Node.ELEMENT_NODE)
+	        clean(child);
+	     else if (nodeType == Node.TEXT_NODE)
+	     {
+	        String trimmedNodeVal = child.getNodeValue().trim();
+	        if (trimmedNodeVal.length() == 0)
+	           node.removeChild(child);
+	        else
+	           child.setNodeValue(trimmedNodeVal);
+	     }
+	     else if (nodeType == Node.COMMENT_NODE)
+	        node.removeChild(child);
+	  }
 	}
 
 	public static ParseException missingValueException(Node node, String xpath)
