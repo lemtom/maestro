@@ -427,6 +427,9 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 		}
 		
 		@Override protected boolean[] getSectionsModified() {
+			if (!abcPart.isTrackEnabled(trackInfo.getTrackNumber())) {
+				return null;
+			}
 			return abcPart.sectionsModified.get(trackInfo.getTrackNumber());
 		}
 		

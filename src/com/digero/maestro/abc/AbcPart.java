@@ -76,15 +76,11 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		this.drumNoteMap = new DrumNoteMap[t];
 		this.fxNoteMap = new StudentFXNoteMap[t];
 		this.sections = new ArrayList<TreeMap<Integer, PartSection>>();
+		this.nonSection = new ArrayList<PartSection>();
+		this.sectionsModified = new ArrayList<boolean[]>();
 		for (int i = 0; i < t; i++) {
 			this.sections.add(null);
-		}
-		this.nonSection = new ArrayList<PartSection>();
-		for (int i = 0; i < t; i++) {
 			this.nonSection.add(null);
-		}
-		this.sectionsModified = new ArrayList<boolean[]>();
-		for (int j = 0; j < t; j++) {
 			this.sectionsModified.add(null);
 		}
 	}
@@ -655,6 +651,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	
 	public int getSectionTranspose(long tickStart, int track) {
 		int secTrans = 0;
+		if (!isTrackEnabled(track)) return secTrans;
 		SequenceInfo se = getSequenceInfo();
 		TreeMap<Integer, PartSection> tree = sections.get(track);
 		if (se != null && tree != null) {
@@ -688,6 +685,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	
 	public Boolean[] getSectionDoubling(long tickStart, int track) {
 		Boolean[] secDoubling = {false, false, false, false};
+		if (!isTrackEnabled(track)) return secDoubling;
 		SequenceInfo se = getSequenceInfo();
 		TreeMap<Integer, PartSection> tree = sections.get(track);
 		boolean isSection = false;
@@ -779,6 +777,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	}
 	
 	public boolean getAudible(int track, long tickStart) {
+		if (!isTrackEnabled(track)) return true;
 		SequenceInfo se = getSequenceInfo();
 		TreeMap<Integer, PartSection> tree = sections.get(track);
 		boolean isSection = false;
