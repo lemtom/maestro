@@ -143,7 +143,15 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				ArrayList<NoteEvent> eventList = new ArrayList<NoteEvent>();  
 				for (int t = 0; t < tracks; t++) {
 					if(abcPart.isTrackEnabled(t)) {
-						eventList.addAll(abcPart.getTrackEvents(t));
+						if (abcPart.sectionsModified.get(t) == null && abcPart.nonSection.get(t) == null) {
+							eventList.addAll(abcPart.getTrackEvents(t));
+						} else {
+							for(NoteEvent note : abcPart.getTrackEvents(t)) {
+								if (abcPart.getAudible(t, note.getStartTick())) {
+									eventList.add(note);
+								}
+							}
+						}
 					}
 				}
 				//Now calculate duration of sixGrid sections. They will always end and start on quantized grid for both odd and even timing
