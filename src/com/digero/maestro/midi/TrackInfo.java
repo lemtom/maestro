@@ -61,12 +61,14 @@ public class TrackInfo implements MidiConstants
 		{
 			MidiEvent evt = track.get(j);
 			MidiMessage msg = evt.getMessage();
-
+			
 			if (msg instanceof ShortMessage)
 			{
 				ShortMessage m = (ShortMessage) msg;
 				int cmd = m.getCommand();
 				int c = m.getChannel();
+				
+				
 
 				if (noteEvents.isEmpty())
 					isDrumTrack = (c == DRUM_CHANNEL);
@@ -83,13 +85,35 @@ public class TrackInfo implements MidiConstants
 					int velocity = m.getData2() * sequenceCache.getVolume(c, tick) / DEFAULT_CHANNEL_VOLUME;
 					if (velocity > 127)
 						velocity = 127;
-
+					
+					/*if (trackNumber == 2) {
+						System.err.println();
+						System.err.println("Tick: "+evt.getTick());
+						System.err.println(cmd==ShortMessage.NOTE_ON?"NOTE ON":(cmd==ShortMessage.NOTE_OFF?"NOTE OFF":cmd));
+						System.err.println("Channel: "+c);
+						System.err.println("Velocity: "+velocity);
+						System.err.println("Pitch: "+noteId);
+					}*/
+					
 					if (cmd == ShortMessage.NOTE_ON && velocity > 0)
 					{
 						Note note = Note.fromId(noteId);
 						if (note == null)
 						{
 							continue; // Note was probably bent out of range. Not great, but not a reason to fail.
+						}
+
+						// If this NOTE ON was preceded by a similar NOTE ON without a NOTE OFF, lets turn it off
+						Iterator<NoteEvent> iter = notesOn[c].iterator();
+						while (iter.hasNext())
+						{
+							NoteEvent ne = iter.next();
+							if (ne.note.id == noteId)
+							{
+								iter.remove();
+								ne.setEndTick(tick);
+								break;
+							}
 						}
 
 						NoteEvent ne = new NoteEvent(note, velocity, tick, tick, sequenceCache);
