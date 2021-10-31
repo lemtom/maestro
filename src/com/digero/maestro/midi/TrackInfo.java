@@ -95,25 +95,26 @@ public class TrackInfo implements MidiConstants
 						System.err.println("Pitch: "+noteId);
 					}*/
 					
+					// If this Note ON was preceded by a similar Note ON without a Note OFF, lets turn it off
+					// If its a Note OFF or Note ON with zero velocity, lets do same.
+					Iterator<NoteEvent> iter = notesOn[c].iterator();
+					while (iter.hasNext())
+					{
+						NoteEvent ne = iter.next();
+						if (ne.note.id == noteId)
+						{
+							iter.remove();
+							ne.setEndTick(tick);
+							break;
+						}
+					}
+					
 					if (cmd == ShortMessage.NOTE_ON && velocity > 0)
 					{
 						Note note = Note.fromId(noteId);
 						if (note == null)
 						{
 							continue; // Note was probably bent out of range. Not great, but not a reason to fail.
-						}
-
-						// If this NOTE ON was preceded by a similar NOTE ON without a NOTE OFF, lets turn it off
-						Iterator<NoteEvent> iter = notesOn[c].iterator();
-						while (iter.hasNext())
-						{
-							NoteEvent ne = iter.next();
-							if (ne.note.id == noteId)
-							{
-								iter.remove();
-								ne.setEndTick(tick);
-								break;
-							}
 						}
 
 						NoteEvent ne = new NoteEvent(note, velocity, tick, tick, sequenceCache);
@@ -143,20 +144,6 @@ public class TrackInfo implements MidiConstants
 						noteEvents.add(ne);
 						notesInUse.add(ne.note.id);
 						notesOn[c].add(ne);
-					}
-					else
-					{
-						Iterator<NoteEvent> iter = notesOn[c].iterator();
-						while (iter.hasNext())
-						{
-							NoteEvent ne = iter.next();
-							if (ne.note.id == noteId)
-							{
-								iter.remove();
-								ne.setEndTick(tick);
-								break;
-							}
-						}
 					}
 				}
 				else if (cmd == ShortMessage.PITCH_BEND && !isDrumTrack)
