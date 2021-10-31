@@ -5,7 +5,7 @@ import com.digero.common.util.Util;
 
 public enum Dynamics
 {
-	pppp(4, 57), //
+	pppp(4, 61), //
 	ppp(16, 61), //
 	pp(32, 75), //
 	p(48, 87), //
