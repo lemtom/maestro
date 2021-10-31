@@ -53,6 +53,7 @@ public class GenerateSoundFontInfo
 			case BASIC_FLUTE:// differ medium
 			case LONELY_MOUNTAIN_FIDDLE:// differ medium
 			case SPRIGHTLY_FIDDLE://short notes
+			case BASIC_HORN:// The notes in high octave differs a bit
 				return 2;
 
 			case BASIC_FIDDLE:
@@ -60,7 +61,7 @@ public class GenerateSoundFontInfo
 			case LONELY_MOUNTAIN_BASSOON:// does not differ alot
 				return 4;
 			
-			case BASIC_HORN:// does not differ alot
+			
 			case BASIC_BASSOON:
 				return 6;
 
