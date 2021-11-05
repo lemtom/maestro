@@ -53,7 +53,7 @@ public class DelayDialog {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						try {
-							float delay = Float.parseFloat(delayField.getText());
+							float delay = Float.parseFloat(delayField.getText().replace(',', '.'));
 							if (delay >= 0.000f && delay <= 1.00f) {
 								abcPart.delay = (int)(delay*1000);
 								abcPart.delayEdited();
