@@ -426,6 +426,23 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				saveSettings.showPruned = showPrunedCheckBox.isSelected();
 			}
 		});
+		
+		final JCheckBox showMaxPolyphonyCheckBox = new JCheckBox("Show polyphony");
+		showMaxPolyphonyCheckBox.setToolTipText("<html>Show number of simultanious notes<br>"
+				+ "that is playing above the Zoom button.<br>"
+				+ "Use as rough (as it for tech reasons typically overestimates)<br>"
+				+ "guide to estimate how much of lotro max<br>"
+				+ "polyphony the song will consume.<br>"
+				+ "Stopped notes that are in release phase also counts.<br>"
+				+ "Enabling this might impact preview playback performance.</html>");
+		showMaxPolyphonyCheckBox.setSelected(saveSettings.showMaxPolyphony);
+		showMaxPolyphonyCheckBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				saveSettings.showMaxPolyphony = showMaxPolyphonyCheckBox.isSelected();
+			}
+		});
 
 		TableLayout layout = new TableLayout();
 		layout.insertColumn(0, FILL);
@@ -450,6 +467,9 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		
 		layout.insertRow(++row, PREFERRED);
 		panel.add(showPrunedCheckBox, "0, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(showMaxPolyphonyCheckBox, "0, " + row);
 
 		return panel;
 	}

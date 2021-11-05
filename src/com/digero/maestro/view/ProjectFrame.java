@@ -186,6 +186,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private AbcSequencerListener abcSequencerListener;
 	private boolean failedToLoadLotroInstruments = false;
 	private JButton zoom = new JButton("Zoom");
+	private JLabel noteCount = new JLabel();
+	private int maxNoteCount = 0;
 
 	public ProjectFrame()
 	{
@@ -755,6 +757,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			}
 		});
 		playControlPanel.add(zoom, "7, 2, C, C");
+		
+		noteCount.setToolTipText("<html>Number of simultanious notes<br>"
+				+ "that is playing.<br>"
+				+ "Use as rough (as it for tech reasons typically overestimates)<br>"
+				+ "guide to estimate how much of lotro max<br>"
+				+ "polyphony the song will consume.<br>"
+				+ "Stopped notes that are in release phase also counts.</html>");
+		playControlPanel.add(noteCount, "7, 0, C, C");
 
 		JPanel abcPartsAndSettings = new JPanel(new BorderLayout(HGAP, VGAP));
 		abcPartsAndSettings.add(songInfoPanel, BorderLayout.NORTH);
@@ -1018,6 +1028,11 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		
 		if (abcSong != null)
 			abcSong.setShowPruned(saveSettings.showPruned);
+		
+		noteCount.setVisible(saveSettings.showMaxPolyphony);
+		if (!saveSettings.showMaxPolyphony) {
+			maxNoteCount = 0;
+		}
 	}
 
 	public void onVolumeChanged()
@@ -1122,12 +1137,29 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			}
 		}
 	}
+	
+	private void updateNoteCount () {
+		noteCount.setVisible(saveSettings.showMaxPolyphony);
+		if (!saveSettings.showMaxPolyphony) {
+			return;
+		}
+		//maxNoteCount = Math.max(LotroSequencerWrapper.getNoteCount(), maxNoteCount);
+		maxNoteCount = LotroSequencerWrapper.getNoteCount();
+		if (maxNoteCount < 10) {
+			noteCount.setText("Notes:  "+maxNoteCount+"  ");
+		} else if (maxNoteCount < 64) {
+			noteCount.setText("Notes: "+maxNoteCount+"  ");
+		} else {
+			noteCount.setText("Notes: 64+ ");
+		}
+	}
 
 	private class AbcSequencerListener implements Listener<SequencerEvent>
 	{
 		@Override public void onEvent(SequencerEvent evt)
 		{
 			updateButtons(false);
+			updateNoteCount();
 			if (evt.getProperty() == SequencerProperty.IS_RUNNING)
 			{
 				if (abcSequencer.isRunning())
@@ -1519,6 +1551,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		{
 			this.abcSongModified = abcSongModified;
 			updateTitle();
+		}
+		if (abcSongModified) {
+			maxNoteCount = 0;
 		}
 	}
 

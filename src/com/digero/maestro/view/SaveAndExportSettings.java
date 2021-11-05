@@ -10,6 +10,7 @@ public class SaveAndExportSettings
 	public boolean showPruned = false;
 	public int stereoPan = 100;
 	private final Preferences prefs;
+	public boolean showMaxPolyphony = false;
 
 	public SaveAndExportSettings(Preferences prefs)
 	{
@@ -19,6 +20,7 @@ public class SaveAndExportSettings
 		skipSilenceAtStart = prefs.getBoolean("skipSilenceAtStart", skipSilenceAtStart);
 		showPruned = prefs.getBoolean("showPruned", showPruned);
 		stereoPan = prefs.getInt("stereoPan", stereoPan);
+		showMaxPolyphony = prefs.getBoolean("showMaxPolyphony", showMaxPolyphony);
 	}
 
 	public SaveAndExportSettings(SaveAndExportSettings that)
@@ -34,6 +36,7 @@ public class SaveAndExportSettings
 		skipSilenceAtStart = that.skipSilenceAtStart;
 		showPruned = that.showPruned;
 		stereoPan = that.stereoPan;
+		showMaxPolyphony = that.showMaxPolyphony;
 	}
 
 	public void saveToPrefs()
@@ -43,6 +46,7 @@ public class SaveAndExportSettings
 		prefs.putBoolean("skipSilenceAtStart", skipSilenceAtStart);
 		prefs.putBoolean("showPruned", showPruned);
 		prefs.putInt("stereoPan", stereoPan);
+		prefs.putBoolean("showMaxPolyphony", showMaxPolyphony);
 	}
 
 	public SaveAndExportSettings getCopy()
