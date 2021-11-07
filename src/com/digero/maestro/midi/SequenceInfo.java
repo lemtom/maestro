@@ -20,6 +20,7 @@ import javax.sound.midi.Track;
 import com.digero.common.abctomidi.AbcInfo;
 import com.digero.common.abctomidi.AbcToMidi;
 import com.digero.common.midi.MidiConstants;
+import com.digero.common.midi.ExtensionMidiInstrument;
 import com.digero.common.midi.KeySignature;
 import com.digero.common.midi.MidiFactory;
 import com.digero.common.midi.TimeSignature;
@@ -43,7 +44,9 @@ public class SequenceInfo implements MidiConstants
 	private String composer;
 	public static String standard = "GM";
 	private static boolean[] rolandDrumChannels = new boolean[16];
+	private static int gm2DrumsOnChannel11 = 0;
 	private static ArrayList<TreeMap<Long, Boolean>> yamahaDrumChannels = new ArrayList<TreeMap<Long, Boolean>>();
+	private static ArrayList<TreeMap<Long, Boolean>> bankAndPatchChanges = new ArrayList<TreeMap<Long, Boolean>>();
 	private int primaryTempoMPQ;
 	private final List<TrackInfo> trackInfoList;
 
@@ -91,13 +94,13 @@ public class SequenceInfo implements MidiConstants
 			throw new InvalidMidiDataException("The MIDI file doesn't have any tracks");
 		}
 
-		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumChannels);
+		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumChannels, gm2DrumsOnChannel11 == 2);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
 		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(tracks.length);
 		for (int i = 0; i < tracks.length; i++)
 		{
-			trackInfoList.add(new TrackInfo(this, tracks[i], i, sequenceCache, sequenceCache.isXGDrumsTrack(i), sequenceCache.isGSDrumsTrack(i), wasType0, sequenceCache.isDrumsTrack(i)));
+			trackInfoList.add(new TrackInfo(this, tracks[i], i, sequenceCache, sequenceCache.isXGDrumsTrack(i), sequenceCache.isGSDrumsTrack(i), wasType0, sequenceCache.isDrumsTrack(i), sequenceCache.isGM2DrumsTrack(i)));
 		}
 
 		composer = "";
@@ -128,7 +131,7 @@ public class SequenceInfo implements MidiConstants
 		Pair<List<ExportTrackInfo>, Sequence> result = abcExporter.exportToPreview(useLotroInstruments);
 
 		sequence = result.second;
-		sequenceCache = new SequenceDataCache(sequence, standard, null, null);
+		sequenceCache = new SequenceDataCache(sequence, standard, null, null, false);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
 		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(result.first.size());
@@ -361,6 +364,8 @@ public class SequenceInfo implements MidiConstants
 						String trackName = ((rolandDrumChannels[chan] == true && standard == "GS") || (chan == 9 && standard != "GS")) ? (GS?"GS Drums":"Drums") : ("Track " + trackNumber);
 						if (standard == "XG" && yamahaDrumChannels != null && yamahaDrumChannels.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumChannels.get(chan).floorEntry(evt.getTick()).getValue() == true) {
 							trackName = "XG Drums";
+						} else if (standard == "GM2" && chan == 10 && gm2DrumsOnChannel11 == 2) {
+							trackName = "GM2 Drums";
 						}
 						trackNumber++;
 						tracks[chan].add(MidiFactory.createTrackNameEvent(trackName));
@@ -400,6 +405,7 @@ public class SequenceInfo implements MidiConstants
 		for (int i = 0; i<16; i++) {
 			yamahaDrumChannels.add(new TreeMap<Long, Boolean>());
 		}
+		gm2DrumsOnChannel11 = 0;
 		
 		Track[] tracks = seq.getTracks();
 		Integer[] yamahaBankAndPatchChanges = new Integer[16];
@@ -425,12 +431,15 @@ public class SequenceInfo implements MidiConstants
 				    
 				    if (27 == sb.length() && sb.substring(0, 5).equals("F0 43") && sb.substring(12, 26).equals("00 00 7E 00 F7")) {
 				    	standard = "XG";
+				    	ExtensionMidiInstrument.getInstance();
 				    	//System.err.println("Yamaha XG Reset, track "+i);
 				    } else if (33 == sb.length() && sb.substring(0, 5).equals("F0 41") && sb.substring(9, 26).equals("42 12 40 00 7F 00") && sb.substring(30, 32).equals("F7")) {
 				    	standard = "GS";
+				    	ExtensionMidiInstrument.getInstance();
 				    	//System.err.println("Roland GS Reset, track "+i);
 				    } else if (sb.length() == 18 && sb.toString().startsWith("F0 7E") && sb.toString().endsWith("09 03 F7 ") && standard != "GS" && standard != "XG") {
 				    	standard = "GM2";
+				    	ExtensionMidiInstrument.getInstance();
 				    	//System.err.println("MIDI GM2 Reset, track "+i);
 				    } else if (17 <= sb.length() && sb.substring(0, 5).equals("F0 41") && sb.substring(9, 17).equals("42 12 40")) {
 				    	if (message.length == 11 && message[7] == 21) {
@@ -468,6 +477,9 @@ public class SequenceInfo implements MidiConstants
 							yamahaDrumChannels.get(ch).put(evt.getTick(), false);
 							//System.err.println(" channel "+(ch+1)+" changed voice in track "+i);
 						}
+						if (ch == 10 && gm2DrumsOnChannel11 == 1) {
+							gm2DrumsOnChannel11 = 2;
+						}
 					}
 					else if (cmd == ShortMessage.CONTROL_CHANGE)
 					{
@@ -477,6 +489,9 @@ public class SequenceInfo implements MidiConstants
 									yamahaBankAndPatchChanges[ch] = 1;
 								} else {
 									yamahaBankAndPatchChanges[ch] = 0;
+									if (ch == 10 && m.getData2() == 78) {
+										gm2DrumsOnChannel11 = 1;
+									}
 								}
 								//System.err.println("Bank select MSB "+m.getData2());
 								break;
@@ -511,6 +526,7 @@ public class SequenceInfo implements MidiConstants
 			
 			int GS = 0;
 			int XG = 0;
+			int GM2 = 0;
 			int drums = 0;
 			int notes = 0;
 			
@@ -535,6 +551,10 @@ public class SequenceInfo implements MidiConstants
 						{
 							XG = 1;
 						}
+						else if (standard == "GM2" && gm2DrumsOnChannel11 == 2 && m.getChannel() == 10)
+						{
+							GM2 = 1;
+						}
 						else
 						{
 							notes = 1;
@@ -542,19 +562,21 @@ public class SequenceInfo implements MidiConstants
 					}
 				}
 			}
-			if (GS + XG + notes + drums > 1) {
+			if (GS + XG + GM2 + notes + drums > 1) {
 				Track drumTrack = null;
 				Track brandDrumTrack = null;
 				if (drums == 1 && notes == 1) {
 					drumTrack = song.createTrack();
 					drumTrack.add(MidiFactory.createTrackNameEvent("Drums"));
 				}
-				if (XG == 1 || GS == 1) {
+				if (XG == 1 || GS == 1 || GM2 == 1) {
 					brandDrumTrack = song.createTrack();
 					if (XG == 1) {
 						brandDrumTrack.add(MidiFactory.createTrackNameEvent("XG Drums"));
-					} else {
+					} else if (GS == 1) {
 						brandDrumTrack.add(MidiFactory.createTrackNameEvent("GS Drums"));
+					} else if (GM2 == 1) {
+						brandDrumTrack.add(MidiFactory.createTrackNameEvent("GM2 Drums"));
 					}
 				}
 				// Mixed track: copy only the events on the drum channel
@@ -573,8 +595,11 @@ public class SequenceInfo implements MidiConstants
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
-						} else if (brandDrumTrack != null && GS == 1 && rolandDrumChannels[smsg.getChannel()] && smsg.getChannel() != DRUM_CHANNEL)
-						{
+						} else if (brandDrumTrack != null && GS == 1 && rolandDrumChannels[smsg.getChannel()] && smsg.getChannel() != DRUM_CHANNEL)	{
+							brandDrumTrack.add(evt);
+							if (track.remove(evt))
+								j--;
+						} else if (brandDrumTrack != null && GM2 == 1 && smsg.getChannel() == 10)	{
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;

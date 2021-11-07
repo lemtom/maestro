@@ -1,0 +1,11 @@
+0
+	0	Standard Drum Kit
+	8	Room Drum Kit
+	16	Power Drum Kit
+	24	Electronic Drum Kit
+	25	TR-808 Drum Kit
+	32	Jazz Drum Kit
+	40	Brush Drum Kit
+	48	Orchestra Kit
+	56	SFX Kit
+	127	CM-64/CM-32L Kit

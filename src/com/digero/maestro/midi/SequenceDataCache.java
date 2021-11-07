@@ -15,6 +15,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
+import com.digero.common.midi.ExtensionMidiInstrument;
 import com.digero.common.midi.IBarNumberCache;
 import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.ITempoCache;
@@ -39,12 +40,17 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private MapByChannel volume = new MapByChannel(DEFAULT_CHANNEL_VOLUME);
 	private MapByChannel pitchBendCoarse = new MapByChannel(DEFAULT_PITCH_BEND_RANGE_SEMITONES);
 	private MapByChannel pitchBendFine = new MapByChannel(DEFAULT_PITCH_BEND_RANGE_CENTS);
+	private MapByChannel mapMSB = new MapByChannel(0);
+	private MapByChannel mapLSB = new MapByChannel(0);
+	private MapByChannel mapPatch = new MapByChannel(0);
 	private int[] brandDrumBanks;
+	private String standard = "GM";
 
-	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumChannels)
+	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumChannels, boolean gm2DrumsOn11)
 	{
 		Map<Integer, Long> tempoLengths = new HashMap<Integer, Long>();
 		
+		this.standard = standard;
 		brandDrumBanks = new int[song.getTracks().length];
 		
 		tempo.put(0L, TempoEvent.DEFAULT_TEMPO);
@@ -81,11 +87,14 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					
 					if (cmd == ShortMessage.NOTE_ON) {
 						if (rolandDrumChannels != null && rolandDrumChannels[ch] == true && ch != 9 && standard == "GS") {
-							brandDrumBanks[iTrack] = 2;// 1 = XG drums, 2 = GS Drums, 3 = normal drums
+							brandDrumBanks[iTrack] = 2;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
 						} else if (brandDrumBanks[iTrack] != 1 && standard == "XG" && yamahaDrumChannels != null && yamahaDrumChannels.get(ch).floorEntry(tick) != null && yamahaDrumChannels.get(ch).floorEntry(tick).getValue() == true) {
-							brandDrumBanks[iTrack] = 1;// 1 = XG drums, 2 = GS Drums, 3 = normal drums
+							brandDrumBanks[iTrack] = 1;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
 						} else if (ch == 9 && (rolandDrumChannels == null || rolandDrumChannels[ch] == true)) {
-							brandDrumBanks[iTrack] = 3;// 1 = XG drums, 2 = GS Drums, 3 = normal drums
+							brandDrumBanks[iTrack] = 3;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
+						} else if (ch == 10 && gm2DrumsOn11) {
+							brandDrumBanks[iTrack] = 4;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
+							System.err.println("GM2 drums on 11");
 						}
 					} else if (cmd == ShortMessage.PROGRAM_CHANGE)
 					{
@@ -94,6 +103,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 						{
 							instruments.put(ch, tick, m.getData1());
 						}
+						mapPatch.put(ch, tick, m.getData1());
 					}
 					else if (cmd == ShortMessage.CONTROL_CHANGE)
 					{
@@ -115,6 +125,14 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 						case DATA_ENTRY_FINE:
 							if (rpn[ch] == REGISTERED_PARAM_PITCH_BEND_RANGE)
 								pitchBendFine.put(ch, tick, m.getData2());
+							break;
+						case BANK_SELECT_MSB:
+							mapMSB.put(ch, tick, m.getData2());
+							//System.err.println("Bank select MSB "+m.getData2());
+							break;
+						case BANK_SELECT_LSB:
+							mapLSB.put(ch, tick, m.getData2());
+							//System.err.println("Bank select LSB "+m.getData2());
 							break;
 						}
 					}
@@ -176,10 +194,38 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		if (track >= brandDrumBanks.length) return false;
 		return brandDrumBanks[track] == 3;
 	}
+	
+	public boolean isGM2DrumsTrack (int track) {
+		if (track >= brandDrumBanks.length) return false;
+		return brandDrumBanks[track] == 4;
+	}
 
 	public int getInstrument(int channel, long tick)
 	{
 		return instruments.get(channel, tick);
+	}
+	
+	public String getInstrumentExt(int channel, long tick, boolean drumKit)
+	{
+		int type = 0;
+		if (standard == "XG") {
+			type = ExtensionMidiInstrument.XG;
+		} else if (standard == "GS" && !drumKit) {
+			type = ExtensionMidiInstrument.GS;
+		} else if (standard == "GS" && drumKit) {
+			type = ExtensionMidiInstrument.GSK;
+		} else if (standard == "GM2") {
+			type = ExtensionMidiInstrument.GM2;
+		} else {
+			type = ExtensionMidiInstrument.GM;
+		}
+		long patchTick = mapPatch.getEntryTick(channel, tick);
+		if (patchTick == -1) {
+			return null;
+		}
+		
+		String value = ExtensionMidiInstrument.getInstance().fromId(type, (byte)mapMSB.get(channel, patchTick), (byte)mapLSB.get(channel, patchTick), (byte)mapPatch.get(channel, tick),drumKit);
+		return value;
 	}
 
 	public int getVolume(int channel, long tick)
@@ -355,6 +401,18 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 				return defaultValue;
 
 			return entry.getValue();
+		}
+		
+		public long getEntryTick(int channel, long tick)
+		{
+			if (map[channel] == null)
+				return -1;
+
+			Entry<Long, Integer> entry = map[channel].floorEntry(tick);
+			if (entry == null) // No changes before this tick
+				return -1;
+
+			return entry.getKey();
 		}
 	}
 }

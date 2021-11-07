@@ -34,16 +34,18 @@ public class TrackInfo implements MidiConstants
 	private TimeSignature timeSignature = null;
 	private KeySignature keySignature = null;
 	private Set<Integer> instruments;
+	private Set<String> instrumentExtensions;
 	private List<NoteEvent> noteEvents;
 	private SortedSet<Integer> notesInUse;
 	private boolean isDrumTrack;
 	private boolean isXGDrumTrack;
 	private boolean isGSDrumTrack;
+	private boolean isGM2DrumTrack;
 	private final int minVelocity;
 	private final int maxVelocity;
 	
 	@SuppressWarnings("unchecked")//
-	TrackInfo(SequenceInfo parent, Track track, int trackNumber, SequenceDataCache sequenceCache, boolean isXGDrumTrack, boolean isGSDrumTrack, boolean wasType0, boolean isDrumsTrack)
+	TrackInfo(SequenceInfo parent, Track track, int trackNumber, SequenceDataCache sequenceCache, boolean isXGDrumTrack, boolean isGSDrumTrack, boolean wasType0, boolean isDrumsTrack, boolean isGM2DrumTrack)
 			throws InvalidMidiDataException
 	{
 		this.sequenceInfo = parent;
@@ -51,17 +53,22 @@ public class TrackInfo implements MidiConstants
 		
 		this.isXGDrumTrack = isXGDrumTrack;
 		this.isGSDrumTrack = isGSDrumTrack;
+		this.isGM2DrumTrack = isGM2DrumTrack;
 		
-		if (isXGDrumTrack || isGSDrumTrack || isDrumsTrack) {
+		if (isXGDrumTrack || isGSDrumTrack || isDrumsTrack || isGM2DrumTrack) {
 			isDrumTrack = true;
 			if (isXGDrumTrack && wasType0) {
 				name = "XG Drums";
 			} else if (isGSDrumTrack && wasType0) {
 				name = "GS Drums";
+			} else if (isGM2DrumTrack && wasType0) {
+				name = "GM2 Drums";
 			}
 		}
 		
+		
 		instruments = new HashSet<Integer>();
+		instrumentExtensions = new HashSet<String>();
 		noteEvents = new ArrayList<NoteEvent>();
 		notesInUse = new TreeSet<Integer>();
 		List<NoteEvent>[] notesOn = new List[16];
@@ -156,6 +163,21 @@ public class TrackInfo implements MidiConstants
 						if (!isDrumTrack)
 						{
 							instruments.add(sequenceCache.getInstrument(c, tick));
+							instrumentExtensions.add(sequenceCache.getInstrumentExt(c, tick, isDrumTrack));
+						} else if (isXGDrumTrack || isGSDrumTrack || isGM2DrumTrack) {
+							String ins = sequenceCache.getInstrumentExt(c, tick, isDrumTrack);
+							if (ins != null) {
+								instrumentExtensions.add(ins);
+							} else {
+								instrumentExtensions.add(isXGDrumTrack?"XG Drum Kit":(isGM2DrumTrack?"GM2 Drum Kit":"GS Drum Kit"));
+							}
+						} else {
+							String ins = sequenceCache.getInstrumentExt(c, tick, isDrumTrack);
+							if (ins != null) {
+								instrumentExtensions.add(ins);
+							} else {
+								instrumentExtensions.add("Standard Drum Kit");
+							}
 						}
 						noteEvents.add(ne);
 						notesInUse.add(ne.note.id);
@@ -373,11 +395,25 @@ public class TrackInfo implements MidiConstants
 	public String getInstrumentNames()
 	{
 		if (isDrumTrack) {
-			if (isXGDrumTrack) return "XG Drums";
-			if (isGSDrumTrack) return "GS Drums";
-			return "Drums";
-		}
+						
+			String names = "";
+			boolean first = true;
+			
+			for (String i : instrumentExtensions)
+			{
+				if (i == null) break;
+				if (!first)
+					names += ", ";
+				else
+					first = false;
 
+				names += i;
+			}
+			if (first || names.isEmpty()) return isXGDrumTrack?"XG Drum Kit":(isGM2DrumTrack?"GM2 Drum Kit":(isGSDrumTrack?"GS Drum Kit":"Standard Drum Kit"));			
+			
+			return names;
+		}
+		
 		if (instruments.size() == 0)
 		{
 			if (hasEvents())
@@ -388,14 +424,28 @@ public class TrackInfo implements MidiConstants
 
 		String names = "";
 		boolean first = true;
-		for (int i : instruments)
+		
+		for (String i : instrumentExtensions)
 		{
+			if (i == null) break;
 			if (!first)
 				names += ", ";
 			else
 				first = false;
 
-			names += MidiInstrument.fromId(i).name;
+			names += i;
+		}
+		if (names.isEmpty()) {
+			first = true;		
+			for (int i : instruments)
+			{
+				if (!first)
+					names += ", ";
+				else
+					first = false;
+	
+				names += MidiInstrument.fromId(i).name;
+			}
 		}
 
 		return names;
