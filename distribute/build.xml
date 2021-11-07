@@ -35,6 +35,9 @@
 		<copy todir="${bin}/com/digero/maestro">
 			<fileset dir="${src}/com/digero/maestro" includes="*.txt"/>
 		</copy>
+		<copy todir="${bin}/com/digero/common/midi">
+			<fileset dir="${src}/com/digero/common/midi" includes="*.txt"/>
+		</copy>
 		<copy todir="${bin}/com/digero/abcplayer">
 			<fileset dir="${src}/com/digero/abcplayer" includes="*.txt"/>
 		</copy>
