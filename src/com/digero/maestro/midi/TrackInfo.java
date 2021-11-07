@@ -37,16 +37,30 @@ public class TrackInfo implements MidiConstants
 	private List<NoteEvent> noteEvents;
 	private SortedSet<Integer> notesInUse;
 	private boolean isDrumTrack;
+	private boolean isXGDrumTrack;
+	private boolean isGSDrumTrack;
 	private final int minVelocity;
 	private final int maxVelocity;
-
+	
 	@SuppressWarnings("unchecked")//
-	TrackInfo(SequenceInfo parent, Track track, int trackNumber, SequenceDataCache sequenceCache)
+	TrackInfo(SequenceInfo parent, Track track, int trackNumber, SequenceDataCache sequenceCache, boolean isXGDrumTrack, boolean isGSDrumTrack, boolean wasType0, boolean isDrumsTrack)
 			throws InvalidMidiDataException
 	{
 		this.sequenceInfo = parent;
 		this.trackNumber = trackNumber;
-
+		
+		this.isXGDrumTrack = isXGDrumTrack;
+		this.isGSDrumTrack = isGSDrumTrack;
+		
+		if (isXGDrumTrack || isGSDrumTrack || isDrumsTrack) {
+			isDrumTrack = true;
+			if (isXGDrumTrack && wasType0) {
+				name = "XG Drums";
+			} else if (isGSDrumTrack && wasType0) {
+				name = "GS Drums";
+			}
+		}
+		
 		instruments = new HashSet<Integer>();
 		noteEvents = new ArrayList<NoteEvent>();
 		notesInUse = new TreeSet<Integer>();
@@ -55,7 +69,8 @@ public class TrackInfo implements MidiConstants
 
 		int minVelocity = Integer.MAX_VALUE;
 		int maxVelocity = Integer.MIN_VALUE;
-
+		
+		
 		int[] pitchBend = new int[16];
 		for (int j = 0, sz = track.size(); j < sz; j++)
 		{
@@ -69,12 +84,13 @@ public class TrackInfo implements MidiConstants
 				int c = m.getChannel();
 				
 				
-
-				if (noteEvents.isEmpty())
+				/*if (isXGDrumTrack || isGSDrumTrack) {
+					//
+				} else if (noteEvents.isEmpty() && cmd == ShortMessage.NOTE_ON)
 					isDrumTrack = (c == DRUM_CHANNEL);
-				else if (isDrumTrack != (c == DRUM_CHANNEL))
-					System.err.println("Track contains both notes and drums");
-
+				else if (isDrumTrack != (c == DRUM_CHANNEL) && cmd == ShortMessage.NOTE_ON)
+					System.err.println("Track "+trackNumber+" contains both notes and drums.."+(name!=null?name:""));
+				*/
 				if (notesOn[c] == null)
 					notesOn[c] = new ArrayList<NoteEvent>();
 
@@ -356,8 +372,11 @@ public class TrackInfo implements MidiConstants
 
 	public String getInstrumentNames()
 	{
-		if (isDrumTrack)
+		if (isDrumTrack) {
+			if (isXGDrumTrack) return "XG Drums";
+			if (isGSDrumTrack) return "GS Drums";
 			return "Drums";
+		}
 
 		if (instruments.size() == 0)
 		{

@@ -18,6 +18,8 @@ public interface MidiConstants
 	public static final int REGISTERED_PARAMETER_NUMBER_LSB = 0x64;
 	public static final int DATA_ENTRY_COARSE = 0x06;
 	public static final int DATA_ENTRY_FINE = 0x26;
+	public static final int BANK_SELECT_MSB = 0x00;//cc data 1
+	public static final int BANK_SELECT_LSB = 0x20;//cc data 1
 	public static final int REGISTERED_PARAM_PITCH_BEND_RANGE = 0x0000;
 	public static final int REGISTERED_PARAM_NONE = 0x3FFF;
 

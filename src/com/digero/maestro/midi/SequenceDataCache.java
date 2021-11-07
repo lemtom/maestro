@@ -1,5 +1,6 @@
 package com.digero.maestro.midi;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,11 +39,14 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private MapByChannel volume = new MapByChannel(DEFAULT_CHANNEL_VOLUME);
 	private MapByChannel pitchBendCoarse = new MapByChannel(DEFAULT_PITCH_BEND_RANGE_SEMITONES);
 	private MapByChannel pitchBendFine = new MapByChannel(DEFAULT_PITCH_BEND_RANGE_CENTS);
+	private int[] brandDrumBanks;
 
-	public SequenceDataCache(Sequence song)
+	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumChannels)
 	{
 		Map<Integer, Long> tempoLengths = new HashMap<Integer, Long>();
-
+		
+		brandDrumBanks = new int[song.getTracks().length];
+		
 		tempo.put(0L, TempoEvent.DEFAULT_TEMPO);
 		int minTempoMPQ = Integer.MAX_VALUE;
 		int maxTempoMPQ = Integer.MIN_VALUE;
@@ -60,7 +64,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		for (int iTrack = 0; iTrack < tracks.length; iTrack++)
 		{
 			Track track = tracks[iTrack];
-
+			
 			for (int j = 0, sz = track.size(); j < sz; j++)
 			{
 				MidiEvent evt = track.get(j);
@@ -74,10 +78,19 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					ShortMessage m = (ShortMessage) msg;
 					int cmd = m.getCommand();
 					int ch = m.getChannel();
-
-					if (cmd == ShortMessage.PROGRAM_CHANGE)
+					
+					if (cmd == ShortMessage.NOTE_ON) {
+						if (rolandDrumChannels != null && rolandDrumChannels[ch] == true && ch != 9 && standard == "GS") {
+							brandDrumBanks[iTrack] = 2;// 1 = XG drums, 2 = GS Drums, 3 = normal drums
+						} else if (brandDrumBanks[iTrack] != 1 && standard == "XG" && yamahaDrumChannels != null && yamahaDrumChannels.get(ch).floorEntry(tick) != null && yamahaDrumChannels.get(ch).floorEntry(tick).getValue() == true) {
+							brandDrumBanks[iTrack] = 1;// 1 = XG drums, 2 = GS Drums, 3 = normal drums
+						} else if (ch == 9 && (rolandDrumChannels == null || rolandDrumChannels[ch] == true)) {
+							brandDrumBanks[iTrack] = 3;// 1 = XG drums, 2 = GS Drums, 3 = normal drums
+						}
+					} else if (cmd == ShortMessage.PROGRAM_CHANGE)
 					{
-						if (ch != DRUM_CHANNEL)
+						if (((ch != DRUM_CHANNEL && rolandDrumChannels == null) || (rolandDrumChannels != null && rolandDrumChannels[ch] != true))
+								&& (standard != "XG" || yamahaDrumChannels == null || yamahaDrumChannels.get(ch).floorEntry(tick) == null || yamahaDrumChannels.get(ch).floorEntry(tick).getValue() != true))
 						{
 							instruments.put(ch, tick, m.getData1());
 						}
@@ -147,6 +160,21 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		this.timeSignature = (timeSignature == null) ? TimeSignature.FOUR_FOUR : timeSignature;
 
 		songLengthTicks = lastTick;
+	}
+	
+	public boolean isXGDrumsTrack (int track) {
+		if (track >= brandDrumBanks.length) return false;
+		return brandDrumBanks[track] == 1;
+	}
+	
+	public boolean isGSDrumsTrack (int track) {
+		if (track >= brandDrumBanks.length) return false;
+		return brandDrumBanks[track] == 2;
+	}
+	
+	public boolean isDrumsTrack (int track) {
+		if (track >= brandDrumBanks.length) return false;
+		return brandDrumBanks[track] == 3;
 	}
 
 	public int getInstrument(int channel, long tick)

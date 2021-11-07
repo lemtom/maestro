@@ -1317,6 +1317,11 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			tripletCheckBox.setEnabled(midiLoaded);
 			mixCheckBox.setEnabled(midiLoaded);
 			zoom.setEnabled(midiLoaded);
+			if (midiLoaded) {
+				midiModeRadioButton.setText("Original ("+SequenceInfo.standard+")");
+			} else {
+				midiModeRadioButton.setText("Original");
+			}
 
 			updateButtonsPending = false;
 		}
