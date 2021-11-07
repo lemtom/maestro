@@ -489,7 +489,7 @@ public class SequenceInfo implements MidiConstants
 									yamahaBankAndPatchChanges[ch] = 1;
 								} else {
 									yamahaBankAndPatchChanges[ch] = 0;
-									if (ch == 10 && m.getData2() == 78) {
+									if (ch == 10 && m.getData2() == 120) {
 										gm2DrumsOnChannel11 = 1;
 									}
 								}
