@@ -43,10 +43,10 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private MapByChannel mapMSB = new MapByChannel(0);
 	private MapByChannel mapLSB = new MapByChannel(0);
 	private MapByChannel mapPatch = new MapByChannel(0);
-	private int[] brandDrumBanks;
+	private int[] brandDrumBanks;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
 	private String standard = "GM";
 
-	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumChannels, boolean gm2DrumsOn11)
+	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean gm2DrumsOn11, boolean[] yamahaDrumChannels)
 	{
 		Map<Integer, Long> tempoLengths = new HashMap<Integer, Long>();
 		
@@ -87,19 +87,24 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					
 					if (cmd == ShortMessage.NOTE_ON) {
 						if (rolandDrumChannels != null && rolandDrumChannels[ch] == true && ch != 9 && standard == "GS") {
-							brandDrumBanks[iTrack] = 2;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
-						} else if (brandDrumBanks[iTrack] != 1 && standard == "XG" && yamahaDrumChannels != null && yamahaDrumChannels.get(ch).floorEntry(tick) != null && yamahaDrumChannels.get(ch).floorEntry(tick).getValue() == true) {
-							brandDrumBanks[iTrack] = 1;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
-						} else if (ch == 9 && (rolandDrumChannels == null || rolandDrumChannels[ch] == true)) {
-							brandDrumBanks[iTrack] = 3;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
+							brandDrumBanks[iTrack] = 2;// GS Drums
+						} else if (brandDrumBanks[iTrack] != 1 && standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(ch).floorEntry(tick) != null && yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == true) {
+							brandDrumBanks[iTrack] = 1;// XG drums
+						} else if (ch == 9 && (rolandDrumChannels == null || standard != "GS" || rolandDrumChannels[ch] == true) && (yamahaDrumChannels == null || standard != "XG" || yamahaDrumChannels[ch] == true)) {
+							brandDrumBanks[iTrack] = 3;// Normal drums on channel #10
 						} else if (ch == 10 && gm2DrumsOn11) {
-							brandDrumBanks[iTrack] = 4;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
-							System.err.println("GM2 drums on 11");
+							brandDrumBanks[iTrack] = 4;// GM2 drums
+							//System.err.println("GM2 drums on 11");
+						} else if (yamahaDrumChannels != null && yamahaDrumChannels[ch] == true && ch != 9 && standard == "XG") {
+							brandDrumBanks[iTrack] = 1;// XG drums
 						}
 					} else if (cmd == ShortMessage.PROGRAM_CHANGE)
 					{
-						if (((ch != DRUM_CHANNEL && rolandDrumChannels == null) || (rolandDrumChannels != null && rolandDrumChannels[ch] != true))
-								&& (standard != "XG" || yamahaDrumChannels == null || yamahaDrumChannels.get(ch).floorEntry(tick) == null || yamahaDrumChannels.get(ch).floorEntry(tick).getValue() != true))
+						if ((
+								(ch != DRUM_CHANNEL && rolandDrumChannels == null && yamahaDrumChannels == null)
+								|| ((rolandDrumChannels == null || standard != "GS" || rolandDrumChannels[ch] == false) && (yamahaDrumChannels == null || standard != "XG" || yamahaDrumChannels[ch] == false))
+								)
+								&& (standard != "XG" || yamahaDrumSwitches == null || yamahaDrumSwitches.get(ch).floorEntry(tick) == null || yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == false))
 						{
 							instruments.put(ch, tick, m.getData1());
 						}
@@ -128,11 +133,11 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 							break;
 						case BANK_SELECT_MSB:
 							mapMSB.put(ch, tick, m.getData2());
-							//System.err.println("Bank select MSB "+m.getData2());
+							//if(ch==9) System.err.println("Bank select MSB "+m.getData2()+"  "+tick);
 							break;
 						case BANK_SELECT_LSB:
 							mapLSB.put(ch, tick, m.getData2());
-							//System.err.println("Bank select LSB "+m.getData2());
+							//if(ch==9) System.err.println("Bank select LSB "+m.getData2()+"  "+tick);
 							break;
 						}
 					}

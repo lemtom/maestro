@@ -43,10 +43,10 @@ public class SequenceInfo implements MidiConstants
 	private String title;
 	private String composer;
 	public static String standard = "GM";
-	private static boolean[] rolandDrumChannels = new boolean[16];
 	private static int gm2DrumsOnChannel11 = 0;
-	private static ArrayList<TreeMap<Long, Boolean>> yamahaDrumChannels = new ArrayList<TreeMap<Long, Boolean>>();
-	private static ArrayList<TreeMap<Long, Boolean>> bankAndPatchChanges = new ArrayList<TreeMap<Long, Boolean>>();
+	private static boolean[] rolandDrumChannels = new boolean[16];
+	private static boolean[] yamahaDrumChannels = new boolean[16];
+	private static ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();
 	private int primaryTempoMPQ;
 	private final List<TrackInfo> trackInfoList;
 
@@ -94,7 +94,7 @@ public class SequenceInfo implements MidiConstants
 			throw new InvalidMidiDataException("The MIDI file doesn't have any tracks");
 		}
 
-		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumChannels, gm2DrumsOnChannel11 == 2);
+		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumSwitches, gm2DrumsOnChannel11 == 2, yamahaDrumChannels);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
 		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(tracks.length);
@@ -131,7 +131,7 @@ public class SequenceInfo implements MidiConstants
 		Pair<List<ExportTrackInfo>, Sequence> result = abcExporter.exportToPreview(useLotroInstruments);
 
 		sequence = result.second;
-		sequenceCache = new SequenceDataCache(sequence, standard, null, null, false);
+		sequenceCache = new SequenceDataCache(sequence, standard, null, null, false, null);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
 		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(result.first.size());
@@ -360,12 +360,19 @@ public class SequenceInfo implements MidiConstants
 					if (tracks[chan] == null)
 					{
 						tracks[chan] = song.createTrack();
-						boolean GS = chan != 9 && standard == "GS";
-						String trackName = ((rolandDrumChannels[chan] == true && standard == "GS") || (chan == 9 && standard != "GS")) ? (GS?"GS Drums":"Drums") : ("Track " + trackNumber);
-						if (standard == "XG" && yamahaDrumChannels != null && yamahaDrumChannels.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumChannels.get(chan).floorEntry(evt.getTick()).getValue() == true) {
+						
+						String trackName = "Track " + trackNumber;
+						
+						if (standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
+							trackName = "XG Drums";
+						} else if (standard == "XG" && yamahaDrumChannels[chan] == true && chan != 9) {
 							trackName = "XG Drums";
 						} else if (standard == "GM2" && chan == 10 && gm2DrumsOnChannel11 == 2) {
 							trackName = "GM2 Drums";
+						} else if (standard == "GS" && chan != 9 && rolandDrumChannels[chan] == true) {
+							trackName = "GS Drums";
+						} else if (chan == 9 && (rolandDrumChannels[chan] || standard != "GS") && (yamahaDrumChannels[chan] || standard != "XG")) {
+							trackName = "Drums";
 						}
 						trackNumber++;
 						tracks[chan].add(MidiFactory.createTrackNameEvent(trackName));
@@ -394,6 +401,9 @@ public class SequenceInfo implements MidiConstants
 		//        sm: checksum
 		//        dv: device ID
 		
+		// sysex XG switch channel to/from drums:
+		// //F0,43,dv,md,08,ch,07,xx,F7 (dv = device ID, md = model id, ch = channel, xx = drum mode)
+		
 		standard = "GM";
 		
 		for (int i = 0; i<16; i++) {
@@ -401,9 +411,14 @@ public class SequenceInfo implements MidiConstants
 		}		
 		rolandDrumChannels[9] = true;
 		
-		yamahaDrumChannels = new ArrayList<TreeMap<Long, Boolean>>();
 		for (int i = 0; i<16; i++) {
-			yamahaDrumChannels.add(new TreeMap<Long, Boolean>());
+			yamahaDrumChannels[i] = false;
+		}		
+		yamahaDrumChannels[9] = true;
+		
+		yamahaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();
+		for (int i = 0; i<16; i++) {
+			yamahaDrumSwitches.add(new TreeMap<Long, Boolean>());
 		}
 		gm2DrumsOnChannel11 = 0;
 		
@@ -461,6 +476,27 @@ public class SequenceInfo implements MidiConstants
 				    			rolandDrumChannels[channel] = toDrums;
 				    		}
 				    	}
+				    } else if (message.length == 9 && message[0] == 0xF0 && message[1] == 0x43 && message[4] == 0x08 && message[6] == 0x07 && message[8] == 0xF7) {
+				    	String type = "Normal";
+				    	if (message[5] < 16) {
+					    	if (message[7]==1) {
+					    		type = "Normal";
+					    		yamahaDrumChannels[message[5]] = false;
+					    	} else if (message[7]==1) {
+					    		type = "Drums";
+					    		yamahaDrumChannels[message[5]] = true;
+					    	} else if (message[7]==2) {
+					    		type = "Drums Setup 1";
+					    		yamahaDrumChannels[message[5]] = true;
+					    	} else if (message[7]==3) {
+					    		type = "Drums Setup 2";
+					    		yamahaDrumChannels[message[5]] = true;
+					    	} else {
+					    		type = "Invalid setup";
+					    		yamahaDrumChannels[message[5]] = true;
+					    	}
+				    	}
+				    	//System.err.println("Yamaha XG setting channel #"+message[5]+" to "+type);
 				    }
 				} else if (msg instanceof ShortMessage) {
 					ShortMessage m = (ShortMessage) msg;
@@ -471,10 +507,10 @@ public class SequenceInfo implements MidiConstants
 					{
 						if (yamahaBankAndPatchChanges[ch] > 0) {
 							yamahaBankAndPatchChanges[ch] = 2;
-							yamahaDrumChannels.get(ch).put(evt.getTick(), true);
+							yamahaDrumSwitches.get(ch).put(evt.getTick(), true);
 							//System.err.println(" XG drums in channel "+(ch+1));
 						} else if (yamahaBankAndPatchChanges[ch] == 0) {
-							yamahaDrumChannels.get(ch).put(evt.getTick(), false);
+							yamahaDrumSwitches.get(ch).put(evt.getTick(), false);
 							//System.err.println(" channel "+(ch+1)+" changed voice in track "+i);
 						}
 						if (ch == 10 && gm2DrumsOnChannel11 == 1) {
@@ -539,7 +575,7 @@ public class SequenceInfo implements MidiConstants
 					ShortMessage m = (ShortMessage) msg;
 					if (m.getCommand() == ShortMessage.NOTE_ON)
 					{
-						if (m.getChannel() == DRUM_CHANNEL && rolandDrumChannels[DRUM_CHANNEL] == true)
+						if (m.getChannel() == DRUM_CHANNEL && rolandDrumChannels[DRUM_CHANNEL] == true && yamahaDrumChannels[DRUM_CHANNEL] == true)
 						{
 							drums = 1;
 						}
@@ -547,7 +583,11 @@ public class SequenceInfo implements MidiConstants
 						{
 							GS = 1;
 						}
-						else if (standard == "XG" && yamahaDrumChannels != null && yamahaDrumChannels.get(m.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumChannels.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
+						else if (standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
+						{
+							XG = 1;
+						}
+						else if (standard == "XG" && yamahaDrumChannels[m.getChannel()] == true)
 						{
 							XG = 1;
 						}
@@ -586,12 +626,16 @@ public class SequenceInfo implements MidiConstants
 					MidiMessage msg = evt.getMessage();
 					if (msg instanceof ShortMessage) {
 						ShortMessage smsg = (ShortMessage) msg;
-						if (drumTrack != null && rolandDrumChannels[smsg.getChannel()] && smsg.getChannel() == DRUM_CHANNEL)
+						if (drumTrack != null && rolandDrumChannels[smsg.getChannel()] && yamahaDrumChannels[smsg.getChannel()] && smsg.getChannel() == DRUM_CHANNEL)
 						{
 							drumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
-						} else if (brandDrumTrack != null && XG == 1 && yamahaDrumChannels != null && yamahaDrumChannels.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumChannels.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
+						} else if (brandDrumTrack != null && XG == 1 && yamahaDrumSwitches != null && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
+							brandDrumTrack.add(evt);
+							if (track.remove(evt))
+								j--;
+						} else if (brandDrumTrack != null && XG == 1 && yamahaDrumChannels[smsg.getChannel()] && smsg.getChannel() != DRUM_CHANNEL) {
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
