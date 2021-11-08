@@ -425,6 +425,8 @@ public class SequenceInfo implements MidiConstants
 		Track[] tracks = seq.getTracks();
 		Integer[] yamahaBankAndPatchChanges = new Integer[16];
 		
+		//System.err.println("\nDetermineStandard:");
+		
 		for (int i = 0; i < tracks.length; i++)
 		{
 			Track track = tracks[i];
@@ -439,56 +441,68 @@ public class SequenceInfo implements MidiConstants
 					SysexMessage sysex = (SysexMessage) msg;
 					byte message[] = sysex.getMessage();
 
+					/*
 					StringBuilder sb = new StringBuilder();
 				    for (byte b : message) {
 				        sb.append(String.format("%02X ", b));
-				    }
-				    
-				    if (27 == sb.length() && sb.substring(0, 5).equals("F0 43") && sb.substring(12, 26).equals("00 00 7E 00 F7")) {
+				    }				    				    
+				    System.err.println("SYSEX on track "+i+": "+sb.toString());
+				    */
+					
+					// the "& 0xFF" is to convert to unsigned int from signed byte. 				    
+				    if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
+				    						&& (message[4] & 0xFF) == 0x00 && (message[5] & 0xFF) == 0x00 && (message[6] & 0xFF) == 0x7E
+				    						&& (message[7] & 0xFF) == 0x00 && (message[8] & 0xFF) == 0xF7) {
 				    	standard = "XG";
 				    	ExtensionMidiInstrument.getInstance();
 				    	//System.err.println("Yamaha XG Reset, track "+i);
-				    } else if (33 == sb.length() && sb.substring(0, 5).equals("F0 41") && sb.substring(9, 26).equals("42 12 40 00 7F 00") && sb.substring(30, 32).equals("F7")) {
+				    } else if (message.length == 11 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x41 && (message[3] & 0xFF) == 0x42
+				    								&& (message[4] & 0xFF) == 0x12
+				    								&& (message[5] & 0xFF) == 0x40 && (message[6] & 0xFF) == 0x00 && (message[7] & 0xFF) == 0x7F
+				    								&& (message[8] & 0xFF) == 0x00 && (message[10] & 0xFF) == 0xF7) {
 				    	standard = "GS";
 				    	ExtensionMidiInstrument.getInstance();
-				    	//System.err.println("Roland GS Reset, track "+i);
-				    } else if (sb.length() == 18 && sb.toString().startsWith("F0 7E") && sb.toString().endsWith("09 03 F7 ") && standard != "GS" && standard != "XG") {
+				    	System.err.println("Roland GS Reset, track "+i);
+				    } else if (message.length == 6 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x7E && (message[3] & 0xFF) == 0x09
+				    							   && (message[4] & 0xFF) == 0x03 && (message[5] & 0xFF) == 0xF7
+				    							   && standard != "GS" && standard != "XG") {
 				    	standard = "GM2";
 				    	ExtensionMidiInstrument.getInstance();
 				    	//System.err.println("MIDI GM2 Reset, track "+i);
-				    } else if (17 <= sb.length() && sb.substring(0, 5).equals("F0 41") && sb.substring(9, 17).equals("42 12 40")) {
-				    	if (message.length == 11 && message[7] == 21) {
-				    		boolean toDrums = message[8] == 1 || message[8] == 2;
-				    		int channel = -1;
-				    		if (message[6] == 16) {
-				    			channel = 9;
-				    		} else if (message[6] > 25 && message[6] < 32) {
-				    			channel = message[6]-16;
-				    		} else if (message[6] > 16 && message[6] < 26) {
-				    			channel = message[6]-17;
-				    		}
-				    		if (channel != -1) {
-				    			if (toDrums) {
-				    				//System.err.println("Roland GS sets channel "+(channel+1)+" to drums.");
-				    			} else {
-				    				//System.err.println("Roland GS unsets channel "+(channel+1)+" to drums.");
-				    			}
-				    			rolandDrumChannels[channel] = toDrums;
-				    		}
-				    	}
-				    } else if (message.length == 9 && message[0] == 0xF0 && message[1] == 0x43 && message[4] == 0x08 && message[6] == 0x07 && message[8] == 0xF7) {
+				    } else if (message.length == 11 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x41 && (message[3] & 0xFF) == 0x42
+				    								&& (message[4] & 0xFF) == 0x12 && (message[5] & 0xFF) == 0x40 && (message[7] & 0xFF) == 0x15
+				    								&& (message[10] & 0xFF) == 0xF7) {
+			    		boolean toDrums = message[8] == 1 || message[8] == 2;
+			    		int channel = -1;
+			    		if (message[6] == 16) {
+			    			channel = 9;
+			    		} else if (message[6] > 25 && message[6] < 32) {
+			    			channel = message[6]-16;
+			    		} else if (message[6] > 16 && message[6] < 26) {
+			    			channel = message[6]-17;
+			    		}
+			    		if (channel != -1 && channel < 16) {
+			    			if (toDrums) {
+			    				//System.err.println("Roland GS sets channel "+(channel+1)+" to drums.");
+			    			} else {
+			    				//System.err.println("Roland GS unsets channel "+(channel+1)+" to drums.");
+			    			}
+			    			rolandDrumChannels[channel] = toDrums;
+			    		}
+				    } else if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43 && (message[4] & 0xFF) == 0x08
+				    							   && (message[6] & 0xFF) == 0x07 && (message[8] & 0xFF) == 0xF7) {
 				    	String type = "Normal";
 				    	if (message[5] < 16) {
-					    	if (message[7]==1) {
+					    	if (message[7] == 1) {
 					    		type = "Normal";
 					    		yamahaDrumChannels[message[5]] = false;
-					    	} else if (message[7]==1) {
+					    	} else if (message[7] == 1) {
 					    		type = "Drums";
 					    		yamahaDrumChannels[message[5]] = true;
-					    	} else if (message[7]==2) {
+					    	} else if (message[7] == 2) {
 					    		type = "Drums Setup 1";
 					    		yamahaDrumChannels[message[5]] = true;
-					    	} else if (message[7]==3) {
+					    	} else if (message[7] == 3) {
 					    		type = "Drums Setup 2";
 					    		yamahaDrumChannels[message[5]] = true;
 					    	} else {
