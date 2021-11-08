@@ -41,9 +41,10 @@ public class ExtensionMidiInstrument {
 	public String fromId(int extension, byte MSB, byte LSB, byte patch, boolean drumKit) {
 		if (!drumKit && (extension < 1 || extension > 4 || (MSB == 0 && LSB == 0))) {
 			return MidiInstrument.fromId(patch).name;
-		} else if (MSB == 0 && LSB == 0 && drumKit) {
-			// TODO: Verify this it is correct to ignore patch change on bank 0,0 if drumkit.
-			return null;
+		} else if (MSB == 0 && LSB == 0 && drumKit && extension == XG) {
+			//System.out.println("Asking for ("+MSB+", "+LSB+", "+patch+")  Drum channel: "+drumKit);
+			// TODO: Verify this it is correct handling of patch change on bank 0,0 if drumkit.
+			MSB = 127;
 		}
 		String instrName = null;
 		
