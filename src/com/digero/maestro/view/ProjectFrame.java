@@ -188,6 +188,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JButton zoom = new JButton("Zoom");
 	private JLabel noteCount = new JLabel();
 	private int maxNoteCount = 0;
+	private static Color BRIGHT_RED = new Color(255, 0, 0);
+	private static Color BLACK = new Color(0, 0, 0);
 
 	public ProjectFrame()
 	{
@@ -1146,10 +1148,13 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		//maxNoteCount = Math.max(LotroSequencerWrapper.getNoteCount(), maxNoteCount);
 		maxNoteCount = LotroSequencerWrapper.getNoteCount();
 		if (maxNoteCount < 10) {
+			noteCount.setForeground(BLACK);
 			noteCount.setText("Notes:  "+maxNoteCount+"  ");
 		} else if (maxNoteCount < 64) {
+			noteCount.setForeground(BLACK);
 			noteCount.setText("Notes: "+maxNoteCount+"  ");
 		} else {
+			noteCount.setForeground(BRIGHT_RED);
 			noteCount.setText("Notes: 64+ ");
 		}
 	}
