@@ -231,7 +231,7 @@ public class TrackInfo implements MidiConstants
 					try
 					{
 						byte[] data = m.getData();
-						String tmp = new String(data, 0, data.length, "US-ASCII").trim();
+						String tmp = new String(data, 0, data.length, "US-ASCII").trim();//"UTF-8"
 						if (tmp.length() > 0 && !tmp.equalsIgnoreCase("untitled")
 								&& !tmp.equalsIgnoreCase("WinJammer Demo"))
 							name = tmp;

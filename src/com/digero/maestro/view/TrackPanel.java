@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
@@ -145,6 +146,29 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				updateTitleText();
 			}
 		});
+		/*Font[] fonts;
+		Font ms = null;
+	    fonts = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+	    for (int i = 0; i < fonts.length; i++) {
+	      if (fonts[i].getFontName().contains("JhengHei")) {
+	    	  ms = fonts[i];
+	    	  break;
+	      }
+	    }
+		
+		if (ms != null) {
+			Map attributes = ms.getAttributes();
+			attributes.replace(java.awt.font.TextAttribute.SIZE, 12);
+			ms = ms.deriveFont(attributes);
+			if (ms != null) {
+				System.out.println(ms.getFontName());
+				checkBox.setFont(ms);
+			} else {
+				System.out.println("No such font");
+			}
+		} else {
+			System.out.println("No such font");
+		}*/
 
 		noteGraph = new TrackNoteGraph(seq, trackInfo);
 		noteGraph.addMouseListener(new MouseAdapter()
@@ -440,6 +464,8 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	{
 		final int ELLIPSIS_OFFSET = 28;
 
+		
+		
 		String title = trackInfo.getTrackNumber() + ". " + trackInfo.getName();
 		String instr = trackInfo.getInstrumentNames();
 				
@@ -448,10 +474,11 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		int titleWidth = TITLE_WIDTH;
 		if (!trackVolumeBar.isVisible())
 			titleWidth += CONTROL_WIDTH;
-
+		
 		title = Util.ellipsis(title, titleWidth - ELLIPSIS_OFFSET, checkBox.getFont().deriveFont(Font.BOLD));
 		instr = Util.ellipsis(instr, titleWidth - ELLIPSIS_OFFSET, checkBox.getFont());
 		checkBox.setText("<html><b>" + title + "</b><br>" + instr + "</html>");
+		
 	}
 
 	@Override public void setBackground(Color bg)
