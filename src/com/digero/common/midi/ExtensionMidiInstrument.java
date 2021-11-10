@@ -43,7 +43,7 @@ public class ExtensionMidiInstrument {
 			return MidiInstrument.fromId(patch).name;
 		} else if (MSB == 0 && LSB == 0 && drumKit && extension == XG) {
 			//System.out.println("Asking for ("+MSB+", "+LSB+", "+patch+")  Drum channel: "+drumKit);
-			// TODO: Verify this it is correct handling of patch change on bank 0,0 if drumkit.
+			// Bank 127 is implicit the default on drum channels in XG.
 			MSB = 127;
 		}
 		String instrName = null;
@@ -82,12 +82,17 @@ public class ExtensionMidiInstrument {
 				}
 				if (line.startsWith("\t")) {
 					String[] splits = line.split(regex);
-					//String lsb = line.substring(1, idx);
-					/*int l = 0;
-					for (String a: splits) {
-						System.err.println(l+": "+a);
-						l++;
-					}*/
+					if (splits.length != 3) {
+						// Something is wrong in the tab formatting of one of the files
+						System.err.println("\nWrong number of tabs in "+fileName+":");
+						int l = 0;
+						for (String a: splits) {
+							System.err.println(l+": "+a);
+							l++;
+						}
+						line = theFileReader.readLine();
+						continue;
+					} 
 					String lookupString = splits[1].trim();
 					lookupByte = Integer.parseInt(lookupString.trim());
 					if (theByteIsLSB) {
