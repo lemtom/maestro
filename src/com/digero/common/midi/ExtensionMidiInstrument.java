@@ -55,9 +55,9 @@ public class ExtensionMidiInstrument {
 		} else if (MSB == 0 && extension == GM2) {
 			// Bank 121 is implicit the default on melodic channels in GM2. But names on LSB==0 will enter the first IF statement.
 			MSB = 121;
-		} else if (extension == GS) {
-			// LSB is used to switch between different synth voices in GS. Since only have 1 synth file, just pipe all into LSB 0.
-			// Drums not not enter here as they are GSK.
+		} else if (extension == GS || extension == GSK) {
+			// LSB is used to switch between different synth voice set in GS. Since only have 1 synth file, just pipe all into LSB 0.
+			// LSB 1 = SC-55, 2 = SC-88, 3 = SC-88Pro, 4 = SC-8850
 			LSB = 0;
 		}
 		if (MSB == 127 && extension == XG) {
