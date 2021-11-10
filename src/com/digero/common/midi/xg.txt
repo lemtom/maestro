@@ -764,7 +764,7 @@
 	0	Oboe
 	64	Heinz
 	65	Heinz Unison
-	66	Oboe Expression
+	66	Oboe Expressive
 69
 	0	English Horn
 70

@@ -38,14 +38,29 @@ public class ExtensionMidiInstrument {
 		return instance;
 	}
 	
-	public String fromId(int extension, byte MSB, byte LSB, byte patch, boolean drumKit) {
+	public String fromId(int extension, byte MSB, byte LSB, byte patch, boolean drumKit, boolean rhythmChannel) {
 		if (!drumKit && (extension < 1 || extension > 4 || (MSB == 0 && LSB == 0))) {
 			return MidiInstrument.fromId(patch).name;
-		} else if (MSB == 0 && LSB == 0 && drumKit && extension == XG) {
+		} else if (MSB == 0 && rhythmChannel && extension == XG) {
 			//System.out.println("Asking for ("+MSB+", "+LSB+", "+patch+")  Drum channel: "+drumKit);
+			//
 			// Bank 127 is implicit the default on drum channels in XG.
 			MSB = 127;
+		} else if (MSB == 0 && rhythmChannel && extension == GM2) {
+			// Bank 120 is implicit the default on drum channels in GM2.
+			MSB = 120;
+		} else if (MSB == 121 && LSB == 0 && extension == GM2) {
+			// LSB 0 on MSB 121 is same as GM midi standard.
+			return MidiInstrument.fromId(patch).name;
+		} else if (MSB == 0 && extension == GM2) {
+			// Bank 121 is implicit the default on melodic channels in GM2. But names on LSB==0 will enter the first IF statement.
+			MSB = 121;
+		} else if (extension == GS) {
+			// LSB is used to switch between different synth voices in GS. Since only have 1 synth file, just pipe all into LSB 0.
+			// Drums not not enter here as they are GSK.
+			LSB = 0;
 		}
+		
 		String instrName = null;
 		
 		if (extension == XG) {

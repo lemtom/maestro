@@ -57,6 +57,8 @@ public class TrackInfo implements MidiConstants
 		
 		if (isXGDrumTrack || isGSDrumTrack || isDrumsTrack || isGM2DrumTrack) {
 			isDrumTrack = true;
+			
+			// No need? Separated drum tracks already have their name. Type 0 channel tracks can keep their 'Track x', or? 
 			if (isXGDrumTrack && wasType0) {
 				name = "XG Drums";
 			} else if (isGSDrumTrack && wasType0) {

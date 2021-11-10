@@ -49,6 +49,7 @@ public class SequenceInfo implements MidiConstants
 	private static boolean[] rolandDrumChannels = new boolean[16];//Which of the channels GS designates as drums
 	private static boolean[] yamahaDrumChannels = new boolean[16];//Which of the channels XG designates as drums
 	private static ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();//Which channel/tick XG switches to drums outside of designated drum channels
+	private static ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();//Which channel/tick GM2 switches to drums outside of designated drum channels
 	private int primaryTempoMPQ;
 	private final List<TrackInfo> trackInfoList;
 
@@ -96,7 +97,7 @@ public class SequenceInfo implements MidiConstants
 			throw new InvalidMidiDataException("The MIDI file doesn't have any tracks");
 		}
 
-		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumSwitches, standard == "GM2" && gm2DrumsOnChannel11 == 2, yamahaDrumChannels);
+		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumSwitches, standard == "GM2" && gm2DrumsOnChannel11 == 2, yamahaDrumChannels, mmaDrumSwitches);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
 		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(tracks.length);
@@ -133,7 +134,7 @@ public class SequenceInfo implements MidiConstants
 		Pair<List<ExportTrackInfo>, Sequence> result = abcExporter.exportToPreview(useLotroInstruments);
 
 		sequence = result.second;
-		sequenceCache = new SequenceDataCache(sequence, standard, null, null, false, null);
+		sequenceCache = new SequenceDataCache(sequence, standard, null, null, false, null, null);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
 		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(result.first.size());
@@ -365,9 +366,13 @@ public class SequenceInfo implements MidiConstants
 						
 						String trackName = "Track " + trackNumber;
 						
-						if (standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
-							trackName = "XG Drums";
-						} else if (standard == "XG" && yamahaDrumChannels[chan] == true && chan != DRUM_CHANNEL) {
+						// No reason to call it drum channel now. Drum that are switched to in middle of melodic channels is separated out anyway. If not, then so what..
+						//if (standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
+						//	trackName = "XG Drums";
+						//} else if (standard == "GM2" && mmaDrumSwitches != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
+						//	trackName = "GM2 Drums";
+						//} else 
+						if (standard == "XG" && yamahaDrumChannels[chan] == true && chan != DRUM_CHANNEL) {
 							trackName = "XG Drums";
 						} else if (standard == "GM2" && chan == DRUM_CHANNEL+1 && gm2DrumsOnChannel11 == 2) {
 							trackName = "GM2 Drums";
@@ -422,10 +427,15 @@ public class SequenceInfo implements MidiConstants
 		for (int i = 0; i<16; i++) {
 			yamahaDrumSwitches.add(new TreeMap<Long, Boolean>());
 		}
+		mmaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();
+		for (int i = 0; i<16; i++) {
+			mmaDrumSwitches.add(new TreeMap<Long, Boolean>());
+		}
 		gm2DrumsOnChannel11 = 0;
 		
 		Track[] tracks = seq.getTracks();
 		Integer[] yamahaBankAndPatchChanges = new Integer[16];
+		Integer[] mmaBankAndPatchChanges = new Integer[16];
 		long lastResetTick = -1;
 		
 		//System.err.println("\nDetermineStandard:");
@@ -435,6 +445,7 @@ public class SequenceInfo implements MidiConstants
 			Track track = tracks[i];
 			for (int k = 0; k<16; k++) {
 				yamahaBankAndPatchChanges[k] = 0;
+				mmaBankAndPatchChanges[k] = 0;
 			}
 			for (int j = 0; j < track.size(); j++)
 			{
@@ -547,6 +558,14 @@ public class SequenceInfo implements MidiConstants
 							yamahaDrumSwitches.get(ch).put(evt.getTick(), false);
 							//System.err.println(" channel "+(ch+1)+" changed voice in track "+i);
 						}
+						if (mmaBankAndPatchChanges[ch] > 0) {
+							mmaBankAndPatchChanges[ch] = 2;
+							mmaDrumSwitches.get(ch).put(evt.getTick(), true);
+							//System.err.println(" XG drums in channel "+(ch+1));
+						} else if (mmaBankAndPatchChanges[ch] == 0) {
+							mmaDrumSwitches.get(ch).put(evt.getTick(), false);
+							//System.err.println(" channel "+(ch+1)+" changed voice in track "+i);
+						}
 						if (ch == 10 && gm2DrumsOnChannel11 == 1) {
 							gm2DrumsOnChannel11 = 2;
 						}
@@ -562,6 +581,11 @@ public class SequenceInfo implements MidiConstants
 									if (ch == DRUM_CHANNEL+1 && m.getData2() == 120) {
 										gm2DrumsOnChannel11 = 1;
 									}
+								}
+								if (m.getData2() == 120) {
+									mmaBankAndPatchChanges[ch] = 1;
+								} else {
+									mmaBankAndPatchChanges[ch] = 0;
 								}
 								//System.err.println("Bank select MSB "+m.getData2());
 								break;
@@ -621,6 +645,10 @@ public class SequenceInfo implements MidiConstants
 						{
 							XG = 1;
 						}
+						else if (standard == "GM2" && mmaDrumSwitches != null && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
+						{
+							GM2 = 1;
+						}
 						else if (standard == "XG" && yamahaDrumChannels[m.getChannel()] == true)
 						{
 							XG = 1;
@@ -666,6 +694,10 @@ public class SequenceInfo implements MidiConstants
 							if (track.remove(evt))
 								j--;
 						} else if (brandDrumTrack != null && XG == 1 && yamahaDrumSwitches != null && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
+							brandDrumTrack.add(evt);
+							if (track.remove(evt))
+								j--;
+						} else if (brandDrumTrack != null && GM2 == 1 && mmaDrumSwitches != null && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;

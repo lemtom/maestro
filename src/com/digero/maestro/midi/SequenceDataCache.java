@@ -45,12 +45,19 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private MapByChannel mapPatch = new MapByChannel(0);
 	private int[] brandDrumBanks;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
 	private String standard = "GM";
+	private boolean[] rolandDrumChannels = null;
+	private boolean gm2DrumsOn11 = false;
+	private boolean[] yamahaDrumChannels = null;
 
-	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean gm2DrumsOn11, boolean[] yamahaDrumChannels)
+	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean gm2DrumsOn11, boolean[] yamahaDrumChannels, ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches)
 	{
 		Map<Integer, Long> tempoLengths = new HashMap<Integer, Long>();
 		
 		this.standard = standard;
+		this.rolandDrumChannels = rolandDrumChannels;
+		this.yamahaDrumChannels = yamahaDrumChannels;
+		this.gm2DrumsOn11 = gm2DrumsOn11;
+		
 		brandDrumBanks = new int[song.getTracks().length];
 		
 		tempo.put(0L, TempoEvent.DEFAULT_TEMPO);
@@ -90,6 +97,8 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 							brandDrumBanks[iTrack] = 2;// GS Drums
 						} else if (brandDrumBanks[iTrack] != 1 && standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(ch).floorEntry(tick) != null && yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == true) {
 							brandDrumBanks[iTrack] = 1;// XG drums
+						} else if (brandDrumBanks[iTrack] != 4 && standard == "GM2" && mmaDrumSwitches != null && mmaDrumSwitches.get(ch).floorEntry(tick) != null && mmaDrumSwitches.get(ch).floorEntry(tick).getValue() == true) {
+							brandDrumBanks[iTrack] = 4;// GM2 drums
 						} else if (ch == DRUM_CHANNEL && (rolandDrumChannels == null || standard != "GS" || rolandDrumChannels[ch] == true) && (yamahaDrumChannels == null || standard != "XG" || yamahaDrumChannels[ch] == true)) {
 							brandDrumBanks[iTrack] = 3;// Normal drums on channel #10
 						} else if (ch == DRUM_CHANNEL+1 && gm2DrumsOn11) {
@@ -104,7 +113,8 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 								(ch != DRUM_CHANNEL && rolandDrumChannels == null && yamahaDrumChannels == null)
 								|| ((rolandDrumChannels == null || standard != "GS" || rolandDrumChannels[ch] == false) && (yamahaDrumChannels == null || standard != "XG" || yamahaDrumChannels[ch] == false))
 								)
-								&& (standard != "XG" || yamahaDrumSwitches == null || yamahaDrumSwitches.get(ch).floorEntry(tick) == null || yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == false))
+								&& (standard != "XG" || yamahaDrumSwitches == null || yamahaDrumSwitches.get(ch).floorEntry(tick) == null || yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == false)
+								&& (standard != "GM2" || mmaDrumSwitches == null || mmaDrumSwitches.get(ch).floorEntry(tick) == null || mmaDrumSwitches.get(ch).floorEntry(tick).getValue() == false))
 						{
 							instruments.put(ch, tick, m.getData1());
 						}
@@ -213,23 +223,28 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	public String getInstrumentExt(int channel, long tick, boolean drumKit)
 	{
 		int type = 0;
+		boolean rhythmChannel = false;
 		if (standard == "XG") {
 			type = ExtensionMidiInstrument.XG;
+			rhythmChannel = yamahaDrumChannels[channel];
 		} else if (standard == "GS" && !drumKit) {
 			type = ExtensionMidiInstrument.GS;
 		} else if (standard == "GS" && drumKit) {
 			type = ExtensionMidiInstrument.GSK;
+			rhythmChannel = rolandDrumChannels[channel];
 		} else if (standard == "GM2") {
 			type = ExtensionMidiInstrument.GM2;
+			rhythmChannel = channel == DRUM_CHANNEL+1 && gm2DrumsOn11?true:channel == DRUM_CHANNEL;
 		} else {
 			type = ExtensionMidiInstrument.GM;
+			rhythmChannel = channel == DRUM_CHANNEL;
 		}
 		long patchTick = mapPatch.getEntryTick(channel, tick);
 		if (patchTick == -1) {
 			return null;
 		}
 		
-		String value = ExtensionMidiInstrument.getInstance().fromId(type, (byte)mapMSB.get(channel, patchTick), (byte)mapLSB.get(channel, patchTick), (byte)mapPatch.get(channel, tick),drumKit);
+		String value = ExtensionMidiInstrument.getInstance().fromId(type, (byte)mapMSB.get(channel, patchTick), (byte)mapLSB.get(channel, patchTick), (byte)mapPatch.get(channel, tick),drumKit, rhythmChannel);
 		return value;
 	}
 
