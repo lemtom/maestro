@@ -60,6 +60,11 @@ public class ExtensionMidiInstrument {
 			// Drums not not enter here as they are GSK.
 			LSB = 0;
 		}
+		if (MSB == 127 && extension == XG) {
+			// As per XG specs, LSB is ignored if MSB is 0x7F.
+			
+			LSB = 0;
+		}
 		
 		String instrName = null;
 		

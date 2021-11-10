@@ -86,7 +86,7 @@ public class SequenceInfo implements MidiConstants
 		
 		// Since the drum track separation is only applicable to type 1 midi sequences, 
 		// do it before we convert this sequence to type 1, to avoid doing unnecessary work
-		// Aifel: changed order so that XG drums in middle of a track from a type 0 gets seperated out
+		// Aifel: changed order so that XG drums in middle of a track from a type 0 gets separated out
 		boolean wasType0 = convertToType1(sequence);
 		separateDrumTracks(sequence);
 		fixupTrackLength(sequence);
