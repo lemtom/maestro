@@ -28,12 +28,12 @@
 	0	Electric Piano 1
 	8	Synth Soft Electric Piano
 	9	Chorus Electric Piano
-	10	Silent Rhodes
+	10	Silent Rhodes Piano
 	16	FM + SA Electric Piano
 	17	Distortion Electric Piano
 	24	Wurly
-	25	Hard Rhodes
-	26	Mellow Rhodes
+	25	Hard Rhodes Piano
+	26	Mellow Rhodes Piano
 5
 	0	Electric Piano 2
 	1	Electric Piano 3
@@ -49,7 +49,7 @@
 	2	Harpsichord 3
 	8	Coupled Harpsichord
 	16	Harpsichord Wide
-	24	Harpsichord o
+	24	Harpsichord Overdriven
 	32	Synth Harpsichord
 7
 	0	Clavinet
@@ -59,7 +59,7 @@
 	8	Comp Clavinet
 	16	Resonant Clavinet
 	17	Phase Clavinet
-	24	Clavinet o
+	24	Clavinet Overdriven
 	32	Analog Clavinet
 	33	JP8 Clavinet 1
 	35	JP8 Clavinet 2
@@ -116,7 +116,7 @@
 	6	Full Organ 5
 	7	Full Organ 6
 	8	Tremolo Organ
-	9	Organ o
+	9	Organ Overdriven
 	10	Full Organ 7
 	11	Full Organ 8
 	12	Full Organ 9
@@ -133,7 +133,7 @@
 	30	JX-8P Organ
 	31	FM Organ
 	32	70's Electric Organ
-	33	Even Bar
+	33	Even Bar Organ
 	40	Organ Bass
 	48	5th Organ
 17
@@ -189,7 +189,7 @@
 24
 	0	Nylon String Guitar
 	8	Ukulele
-	16	Nylon String Guitar o
+	16	Nylon String Guitar Overdriven
 	24	Velo Harmonics
 	32	Nylon String Guitar 2
 	40	Lequint Guitar
@@ -209,27 +209,27 @@
 	8	Pedal Steel Guitar
 27
 	0	Clean Guitar
-	1	Clean Half
-	2	Open Hard 1
-	3	Open Hard 2
-	4	JC Clean Guitar
+	1	Clean Half Guitar
+	2	Open Hard Guitar 1
+	3	Open Hard Guitar 2
+	4	Stratocaster Clean Guitar
 	5	Attack Clean Guitar
 	8	Chorus Guitar
-	9	JC Chorus Guitar
-	16	TC Front Pick
-	17	TC Rear Pick
-	18	TC Clean ff
-	19	TC Clean 2:
-	20	LP Rear Pick
-	21	LP Rear 2
-	22	LP Rear Atack
+	9	Stratocaster Chorus Guitar
+	16	Telecaster Front Pick
+	17	Telecaster Rear Pick
+	18	Telecaster Clean ff
+	19	Telecaster Clean 2:
+	20	Les Paul Rear Pick
+	21	Les Paul Rear 2
+	22	Les Paul Rear Attack
 	23	Mid Tone Guitar
 	24	Chung Ruan
 	25	Chung Ruan 2
 28
 	0	Muted Guitar
 	1	Muted Distortion Guitar
-	2	TC Muted Guitar
+	2	Telecaster Muted Guitar
 	8	Funk Pop Guitar
 	16	Funk Guitar 2
 	24	Jazz Man
@@ -237,20 +237,20 @@
 	0	Overdrive Guitar
 	1	Overdrive Guitar 2
 	2	Overdrive Guitar 3
-	3	More Drive
+	3	More Drive Guitar
 	4	Guitar Pinch
-	5	Attack Drive
-	8	LP Overdrive Guitar
-	9	LP Overdrive Guitar:
-	10	LP Half Drive
-	11	LP Half Drive 2
-	12	LP Chorus
+	5	Attack Drive Guitar
+	8	Les Paul Overdrive Guitar
+	9	Les Paul Overdrive Guitar:
+	10	Les Paul Half Drive
+	11	Les Paul Half Drive 2
+	12	Les Paul Chorus
 30
 	0	Distortion Guitar
-	1	Distortion Guitar 2:
+	1	Distortion Guitar 2
 	2	Dazed Guitar
 	3	Distortion Guitar:
-	4	Distortion Fast:
+	4	Distortion Fast Guitar
 	5	Attack Dist
 	8	Feedback Guitar
 	9	Feedback Guitar 2
@@ -630,9 +630,9 @@
 	32	Orch Brass
 	33	Orch Brass 2
 	35	Synth  Fat Pop Brass
-	36	Synth  Orch Brass
-	37	Synth  Orch Brass 2
-	38	Synth  Orch Brass 3
+	36	Synth  Orchestra Brass
+	37	Synth  Orchestra Brass 2
+	38	Synth  Orchestra Brass 3
 62
 	0	Synth Brass1
 	1	JUNO Brass
@@ -665,10 +665,10 @@
 
 64
 	0	Soprano Sax
-	8	Soprano Exp.
+	8	Soprano Sax Expressive
 65
 	0	Alto Sax
-	8	Alto Sax Exp.
+	8	Alto Sax Expressive
 	9	Grow Sax
 	16	Alto Sax + Trumpet
 	17	Sax Section
@@ -676,14 +676,14 @@
 	0	Tenor Sax
 	1	Tenor Sax:
 	8	Breathy Tenor Sax:
-	9	Synth  Tenor Sax
+	9	Synth Tenor Sax
 67
 	0	Baritone Sax
 	1	Baritone Sax:
 	8	Baritone & Tenor Sax
 68
 	0	Oboe
-	8	Oboe Exp.
+	8	Oboe Expressive
 	16	Multi Reed
 69
 	0	English Horn
@@ -704,7 +704,7 @@
 73
 	0	Flute
 	1	Flute 2:
-	2	Flute Exp.
+	2	Flute Expressive
 	3	Flute Travelso
 	8	Flute + Violin
 	9	Pipe & Reed
