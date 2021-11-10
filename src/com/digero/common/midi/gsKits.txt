@@ -19,16 +19,16 @@
 	32	Jazz Drum Kit
 	33	Jazz Drum Kit L/R
 	40	Brush Drum Kit
-	41	Brush 2 Drum Kit
-	42	Brush 2 Drum Kit L/R
+	41	Brush Drum Kit 2
+	42	Brush Drum Kit 2 L/R
 	48	Orchestra Kit
 	49	Ethnic Drum Kit
 	50	Kick & Snare
 	51	Kick & Snare 2
 	52	Asia Drum Kit
 	53	Cymbal & Claps
-	54	Gamelan 1 Kit
-	55	Gamelan 2 Kit
+	54	Gamelan Kit 1
+	55	Gamelan Kit 2
 	56	SFX Kit
 	57	Rhythm FX
 	58	Rhythm FX 2
