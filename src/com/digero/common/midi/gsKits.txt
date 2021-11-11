@@ -35,5 +35,5 @@
 	59	Rhythm FX 3
 	60	SFX Kit 2
 	61	Voice Kit
-	62	Cym & Claps 2
+	62	Cymbal & Claps 2
 	127	CM-64/CM-32L Kit
