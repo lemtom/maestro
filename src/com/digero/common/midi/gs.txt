@@ -154,10 +154,10 @@
 18
 	0	Organ 3
 	8	Rotary Organ 1
-	16	Rotary Organ S
+	16	Rotary Organ Slow
 	17	Rock Organ 1
 	18	Rock Organ 2
-	24	Rotary Organ F
+	24	Rotary Organ Fast
 19
 	0	Church Organ 1
 	8	Church Organ 2
@@ -612,29 +612,29 @@
 	24	French Horn Rip
 61
 	0	Brass 1
-	1	Brass ff
+	1	Brass Fortissimo
 	2	Bones Section
-	3	Synth Brass ff
+	3	Synth Brass Fortissimo
 	4	Quad Brass1
 	5	Quad Brass2
 	8	Brass 2
 	9	Brass 3
-	10	Brass sfz
-	12	Brass sfz 2
+	10	Brass Sforzando
+	12	Brass Sforzando 2
 	14	Fat Pop Brass
 	16	Brass Fall
 	17	Trumpet Fall
 	24	Octave Brass
 	25	Brass + Reed
 	26	Fat + Reed
-	32	Orch Brass
-	33	Orch Brass 2
-	35	Synth  Fat Pop Brass
-	36	Synth  Orchestra Brass
-	37	Synth  Orchestra Brass 2
-	38	Synth  Orchestra Brass 3
+	32	Orchestra Brass
+	33	Orchestra Brass 2
+	35	Section Fat Pop Brass
+	36	Section Orchestra Brass
+	37	Section Orchestra Brass 2
+	38	Section Orchestra Brass 3
 62
-	0	Synth Brass1
+	0	Synth Brass 1
 	1	JUNO Brass
 	2	Stack Brass
 	3	SH-5 Brass
@@ -642,7 +642,7 @@
 	5	Jump Brass
 	8	Pro Brass
 	9	P5 Brass
-	10	Orch Synth Brass
+	10	Orchestra Synth Brass
 	16	Octave Synth Brass
 	17	Hybrid Brass
 	18	Octave Synth Brass 2
@@ -843,9 +843,9 @@
 	20	Dirty Sync
 	21	Dual Sync Lead
 	22	LA Brass Ld
-	24	JUNO Sub Osc
-	25	2600 Sub Osc
-	26	JP8000 Fd Osc
+	24	JUNO Sub Oscillator
+	25	2600 Sub Oscillator
+	26	JP8000 Fd Oscillator
 85
 	0	Solo Vox
 	1	Solo Vox 2
@@ -1091,7 +1091,7 @@
 	16	New Century
 	17	7th Atmosphere
 	18	Galaxy Way
-	19	Rising OSC.
+	19	Rising Oscillator
 
 104
 	0	Sitar
@@ -1273,10 +1273,10 @@
 	22	Acoustic Bass Mute Noise
 	23	Acoustic Bass Touch Noise
 	24	Acoustic Bass Atack Noise
-	25	TC Up Noise
-	26	TC Down Mt. Noise
-	27	TC Up Mt. Noise
-	28	TC Down Noise
+	25	Telecaster Up Noise
+	26	Telecaster Down Muted Noise
+	27	Telecaster Up Muted Noise
+	28	Telecaster Down Noise
 	29	Distortion Guitar Up Noise
 	30	Distortion Guitar Down Noise 1
 	31	Distortion Guitar Down Noise 2
