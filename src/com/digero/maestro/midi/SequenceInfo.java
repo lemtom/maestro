@@ -530,17 +530,8 @@ public class SequenceInfo implements MidiConstants
 					    	} else if (message[7] == 1) {
 					    		type = "Drums";
 					    		yamahaDrumChannels[message[5]] = true;
-					    	} else if (message[7] == 2) {
-					    		type = "Drums Setup 1";
-					    		yamahaDrumChannels[message[5]] = true;
-					    	} else if (message[7] == 3) {
-					    		type = "Drums Setup 2";
-					    		yamahaDrumChannels[message[5]] = true;
-					    	} else if (message[7] == 4) {
-					    		type = "Drums Setup 3";
-					    		yamahaDrumChannels[message[5]] = true;
-					    	} else if (message[7] == 5) {
-					    		type = "Drums Setup 4";
+					    	} else if (message[7] > 1 && message[7] <= 5) {
+					    		type = "Drums Setup "+(message[7]-1);
 					    		yamahaDrumChannels[message[5]] = true;
 					    	} else {
 					    		type = "Invalid setup: "+message[7];
