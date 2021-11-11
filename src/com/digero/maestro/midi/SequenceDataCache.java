@@ -227,10 +227,8 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		if (standard == "XG") {
 			type = ExtensionMidiInstrument.XG;
 			rhythmChannel = yamahaDrumChannels[channel];
-		} else if (standard == "GS" && !drumKit) {
+		} else if (standard == "GS") {
 			type = ExtensionMidiInstrument.GS;
-		} else if (standard == "GS" && drumKit) {
-			type = ExtensionMidiInstrument.GSK;
 			rhythmChannel = rolandDrumChannels[channel];
 		} else if (standard == "GM2") {
 			type = ExtensionMidiInstrument.GM2;

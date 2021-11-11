@@ -10,13 +10,11 @@ import java.util.HashMap;
 public class ExtensionMidiInstrument {
 	public static int GM  = 0;//MMA
 	public static int GS  = 1;//Roland
-	public static int GSK = 4;//Roland kits
 	public static int XG  = 2;//Yamaha
 	public static int GM2 = 3;//MMA
 	private static ExtensionMidiInstrument instance = null;
 	private static HashMap<String,String> mapxg = new HashMap<String,String>();
 	private static HashMap<String,String> mapgs = new HashMap<String,String>();
-	private static HashMap<String,String> mapgsk = new HashMap<String,String>();
 	private static HashMap<String,String> mapgm2 = new HashMap<String,String>();
 	
 	public static ExtensionMidiInstrument getInstance() {
@@ -28,7 +26,7 @@ public class ExtensionMidiInstrument {
 		
 		parse(XG, (byte) 0, "xg.txt", true, false);
 		parse(GS, (byte) 0, "gs.txt", true, true);
-		parse(GSK, (byte) 0, "gsKits.txt", false, false);
+		parse(GS, (byte) 120, "gsKits.txt", false, false);
 		parse(GM2, (byte) 121, "gm2.txt", true, false);
 		parse(GM2, (byte) 120, "gm2-120.txt", false, false);
 		parse(XG, (byte) 127,"xg127.txt", false, false);
@@ -41,7 +39,7 @@ public class ExtensionMidiInstrument {
 	/*
 	 * 
 	 * Abbreviations that are not expanded:
-	 * KSP: Keyboard Stereo Panning
+	 * KSP: Keyboard Stereo Panning (in GS language this is called 'Wide')
 	 * 
 	 */
 	
@@ -62,10 +60,15 @@ public class ExtensionMidiInstrument {
 		} else if (MSB == 0 && extension == GM2) {
 			// Bank 121 is implicit the default on melodic channels in GM2. But names on LSB==0 will enter the first IF statement.
 			MSB = 121;
-		} else if (extension == GS || extension == GSK) {
+		} else if (extension == GS) {
 			// LSB is used to switch between different synth voice set in GS. Since only have 1 synth file, just pipe all into LSB 0.
 			// LSB 1 = SC-55, 2 = SC-88, 3 = SC-88Pro, 4 = SC-8850
 			LSB = 0;
+			
+			if (rhythmChannel) {
+				// Bank 120 is forced on drum channels in GS.
+				MSB = 120;
+			}
 		}
 		if (MSB == 127 && extension == XG) {
 			// As per XG specs, LSB is ignored if MSB is 0x7F.
@@ -79,8 +82,6 @@ public class ExtensionMidiInstrument {
 			instrName = mapxg.get(String.format("%03d%03d%03d", MSB, LSB, patch));
 		} else if (extension == GS) {
 			instrName = mapgs.get(String.format("%03d%03d%03d", MSB, LSB, patch));
-		} else if (extension == GSK) {
-			instrName = mapgsk.get(String.format("%03d%03d%03d", MSB, LSB, patch));
 		} else if (extension == GM2) {
 			instrName = mapgm2.get(String.format("%03d%03d%03d", MSB, LSB, patch));
 		}
@@ -153,14 +154,16 @@ public class ExtensionMidiInstrument {
 			
 	private static void addInstrument (int extension, byte MSB, byte LSB, byte patch, String name) {
 		//System.err.println("addInstrument "+name+" ("+MSB+", "+LSB+", "+patch+")");
+		String key = String.format("%03d%03d%03d", MSB, LSB, patch);
 		if (extension == XG) {
-			mapxg.put(String.format("%03d%03d%03d", MSB, LSB, patch), name);
+			if (mapxg.get(key) != null) System.out.println("Warning duplicate entry for ("+MSB+", "+LSB+", "+patch+") in XG map");
+			mapxg.put(key, name);
 		} else if (extension == GS) {
-			mapgs.put(String.format("%03d%03d%03d", MSB, LSB, patch), name);
-		} else if (extension == GSK) {
-			mapgsk.put(String.format("%03d%03d%03d", MSB, LSB, patch), name);
+			if (mapgs.get(key) != null) System.out.println("Warning duplicate entry for ("+MSB+", "+LSB+", "+patch+") in GS map");
+			mapgs.put(key, name);
 		} else if (extension == GM2) {
-			mapgm2.put(String.format("%03d%03d%03d", MSB, LSB, patch), name);
+			if (mapgm2.get(key) != null) System.out.println("Warning duplicate entry for ("+MSB+", "+LSB+", "+patch+") in GM2 map");
+			mapgm2.put(key, name);
 		}
 	}
 }
