@@ -1,6 +1,7 @@
 0
 	0	Grand Piano
 	1	Grand Piano KSP
+	2	Grand Piano Dark
 	18	Mellow Grand Piano
 	40	Piano Strings
 	41	Dream Piano

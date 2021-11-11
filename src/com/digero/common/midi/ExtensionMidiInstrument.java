@@ -38,6 +38,13 @@ public class ExtensionMidiInstrument {
 		return instance;
 	}
 	
+	/*
+	 * 
+	 * Abbreviations that are not expanded:
+	 * KSP: Keyboard Stereo Panning
+	 * 
+	 */
+	
 	public String fromId(int extension, byte MSB, byte LSB, byte patch, boolean drumKit, boolean rhythmChannel) {
 		if (!drumKit && (extension < 1 || extension > 4 || (MSB == 0 && LSB == 0))) {
 			return MidiInstrument.fromId(patch).name;
@@ -62,7 +69,7 @@ public class ExtensionMidiInstrument {
 		}
 		if (MSB == 127 && extension == XG) {
 			// As per XG specs, LSB is ignored if MSB is 0x7F.
-			
+			// Note: I wonder why this is not done for 0x7E also..
 			LSB = 0;
 		}
 		
