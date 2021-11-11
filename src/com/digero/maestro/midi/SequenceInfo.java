@@ -536,11 +536,16 @@ public class SequenceInfo implements MidiConstants
 					    	} else if (message[7] == 3) {
 					    		type = "Drums Setup 2";
 					    		yamahaDrumChannels[message[5]] = true;
+					    	} else if (message[7] == 4) {
+					    		type = "Drums Setup 3";
+					    		yamahaDrumChannels[message[5]] = true;
+					    	} else if (message[7] == 5) {
+					    		type = "Drums Setup 4";
+					    		yamahaDrumChannels[message[5]] = true;
 					    	} else {
 					    		type = "Invalid setup: "+message[7];
-					    		//yamahaDrumChannels[message[5]] = true;
-					    		System.err.println("Yamaha XG setting channel #"+message[5]+" to "+type);
 					    	}
+					    	//System.err.println("Yamaha XG setting channel #"+message[5]+" to "+type);
 				    	}				    	
 				    }
 				} else if (msg instanceof ShortMessage) {

@@ -245,6 +245,9 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		}
 		
 		String value = ExtensionMidiInstrument.getInstance().fromId(type, (byte)mapMSB.get(channel, patchTick), (byte)mapLSB.get(channel, patchTick), (byte)mapPatch.get(channel, tick),drumKit, rhythmChannel);
+		//if (value == null && drumKit) {
+		//	System.out.println(mapMSB.get(channel, patchTick)+","+ mapLSB.get(channel, patchTick)+","+mapPatch.get(channel, tick)+"  "+ rhythmChannel);
+		//}
 		return value;
 	}
 
