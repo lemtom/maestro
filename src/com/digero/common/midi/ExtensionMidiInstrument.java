@@ -44,7 +44,11 @@ public class ExtensionMidiInstrument {
 	 */
 	
 	public String fromId(int extension, byte MSB, byte LSB, byte patch, boolean drumKit, boolean rhythmChannel) {
-		if (!drumKit && (extension < 1 || extension > 4 || (MSB == 0 && LSB == 0))) {
+		
+		// GS does not have Dulcimer on patch 15 MSB 0 like GM but a Santur, so we are careful to fetch its actual name.
+		boolean santur = extension == GS && MSB == 0 && patch == 15 && !rhythmChannel;
+		
+		if (!drumKit && (extension == GM || (MSB == 0 && LSB == 0 && !santur))) {
 			return MidiInstrument.fromId(patch).name;
 		} else if (MSB == 0 && rhythmChannel && extension == XG) {
 			//System.out.println("Asking for ("+MSB+", "+LSB+", "+patch+")  Drum channel: "+drumKit);
