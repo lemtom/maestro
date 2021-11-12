@@ -1,4 +1,4 @@
-package com.digero.common.midi;
+/*package com.digero.common.midi;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +33,6 @@ public class sortReset {
 				}
 			});
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("\nCopied "+count+" MIDI files.");
@@ -49,7 +48,7 @@ public class sortReset {
 		if (t == null) {
 			return;
 		}
-		folder = determineStandard(t);
+		folder = determineStandard(t,file.getName());
 		if (folder.isEmpty()) {
 			return;
 		}
@@ -65,9 +64,11 @@ public class sortReset {
 		System.out.println("\nCopy:");
 		System.out.println(fullPath);
 		System.out.println(newFullPath);
+		
 		Path newPath = Paths.get(newFullPath);
 		Files.createDirectories(newPath.getParent());
 		Files.copy(path, newPath);
+		
 		count++;
 	}
 	
@@ -88,7 +89,7 @@ public class sortReset {
 		return tracks[0];
 	}
 	
-	private static String determineStandard (Track track) {
+	private static String determineStandard (Track track, String fileName) {
 		// sysex GM reset:  F0 7E dv 09 01 F7  (dv = device ID)
 		// sysex GM2 reset: F0 7E dv 09 03 F7  (dv = device ID)
 		// sysex Yamaha XG: F0 43 dv md 00 00 7E 00 F7 (dv = device ID, md = model id)
@@ -142,7 +143,18 @@ public class sortReset {
 			    		lastResetTick = evt.getTick();
 			    	}
 			    	GM2 = evt.getTick();
-			    }
+			    }// else if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
+				//		&& (message[4] & 0xFF) == 0x00 && (message[5] & 0xFF) == 0x00 && (message[6] & 0xFF) == 0x07
+				//		&& (message[8] & 0xFF) == 0xF7) {
+			    //	
+			    //	System.err.println(fileName+": Yamaha XG Drum Part Protect mode "+(message[7]==0?"OFF":"ON"));
+			    //} else if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
+				//		&& ((message[4] & 0xFF) == 0x08 || (message[4] & 0xFF) == 0x10) && (message[8] & 0xFF) == 0xF7) {
+			    //	String bank = message[6]==1?"MSB":(message[6]==2?"LSB":(message[6]==3?"Patch":""));
+			    //	if (bank != "") {
+			    //		System.err.println(fileName+": Yamaha XG Sysex "+bank+" set to "+message[7]+" for channel "+message[5]+". ("+message[4]+")");
+			    //	}
+			    //
 			}
 		}
 		
@@ -195,4 +207,4 @@ public class sortReset {
 		}		
 		return standard;
 	}
-}
+}*/
