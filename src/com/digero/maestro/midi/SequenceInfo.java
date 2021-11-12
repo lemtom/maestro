@@ -48,8 +48,8 @@ public class SequenceInfo implements MidiConstants
 	private static int gm2DrumsOnChannel11 = 0;//GM2 allows drums on both channel #9 and channel #10 if this is ==2
 	private static boolean[] rolandDrumChannels = new boolean[16];//Which of the channels GS designates as drums
 	private static boolean[] yamahaDrumChannels = new boolean[16];//Which of the channels XG designates as drums
-	private static ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();//Which channel/tick XG switches to drums outside of designated drum channels
-	private static ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();//Which channel/tick GM2 switches to drums outside of designated drum channels
+	private static ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches = null;//Which channel/tick XG switches to drums outside of designated drum channels
+	private static ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches = null;//Which channel/tick GM2 switches to drums outside of designated drum channels
 	private int primaryTempoMPQ;
 	private final List<TrackInfo> trackInfoList;
 
@@ -367,9 +367,9 @@ public class SequenceInfo implements MidiConstants
 						String trackName = "Track " + trackNumber;
 						
 						// No reason to call it drum channel now. Drum that are switched to in middle of melodic channels is separated out anyway. If not, then so what..
-						//if (standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
+						//if (standard == "XG" && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
 						//	trackName = "XG Drums";
-						//} else if (standard == "GM2" && mmaDrumSwitches != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
+						//} else if (standard == "GM2" && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
 						//	trackName = "GM2 Drums";
 						//} else 
 						if (standard == "XG" && yamahaDrumChannels[chan] == true && chan != DRUM_CHANNEL) {
@@ -409,7 +409,22 @@ public class SequenceInfo implements MidiConstants
 		//        dv: device ID
 		
 		// sysex XG switch channel to/from drums:
-		// //F0,43,dv,md,08,ch,07,xx,F7 (dv = device ID, md = model id, ch = channel, xx = drum mode)
+		// F0,43,dv,md,08,ch,07,xx,F7 (dv = device ID, md = model id, ch = channel, xx = drum mode)
+		
+		// sysex XG drum part protect mode:
+		// F0 43 dv md 00 00 07 pp F7 (dv = device ID, md = model id, pp = 0 is off, 1 is on)
+		// If ON then only MSB 126/127 on chan #10. (unless by sysex bank change). XG Reset is counted as protect ON.
+		// Ignoring this sysex as I have tested 130,000 midi files and none of them had this, so its super rare.
+		
+		// sysex XG bank change:
+		// F0 43 dv md 08 nn 01 bb F7 (dv = device ID, md = model id, bb = MSB, nn = 0=non-chan#10 7F=chan#10) [However the real nn is just channel number]
+		
+		// sysex XG bank change:
+		// F0 43 dv md 08 nn 02 bb F7 (dv = device ID, md = model id, bb = LSB, nn = default 0)
+		
+		// sysex XG program change:
+		// F0 43 dv md 08 nn 03 pp F7 (dv = device ID, md = model id, pp = patch, nn = default 0)
+
 		
 		standard = "GM";
 		
@@ -537,7 +552,35 @@ public class SequenceInfo implements MidiConstants
 					    		type = "Invalid setup: "+message[7];
 					    	}
 					    	//System.err.println("Yamaha XG setting channel #"+message[5]+" to "+type);
-				    	}				    	
+				    	}
+				    } else if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
+    						&& (message[4] & 0xFF) == 0x00 && (message[5] & 0xFF) == 0x00 && (message[6] & 0xFF) == 0x07
+    						&& (message[8] & 0xFF) == 0xF7) {
+				    	
+				    	System.err.println(fileName+": Yamaha XG Drum Part Protect mode "+(message[7]==0?"OFF":"ON"));
+				    } else if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
+    						&& (message[4] & 0xFF) == 0x08 && (message[8] & 0xFF) == 0xF7) {
+				    	String bank = message[6]==1?"MSB":(message[6]==2?"LSB":(message[6]==3?"Patch":""));
+				    	if (bank != "" && message[5] < 16 && message[5] > -1 && message[7] < 128 && message[7] > -1) {
+				    		System.err.println(fileName+": Yamaha XG Sysex "+bank+" set to "+message[7]+" for channel "+message[5]);
+				    		int ch = message[5];
+				    		if (bank == "MSB") {
+					    		if (message[7] != 126 && message[7] != 127 && message[7] != 64) {
+					    			yamahaBankAndPatchChanges[ch] = 0;
+					    		} else if (message[7] == 127 || message[7] == 126 || message[7] == 64) {
+									yamahaBankAndPatchChanges[ch] = 1;
+								}
+				    		} else if (bank == "Patch") {
+				    			if (yamahaBankAndPatchChanges[ch] > 0) {
+									yamahaBankAndPatchChanges[ch] = 2;
+									yamahaDrumSwitches.get(ch).put(evt.getTick(), true);
+									//System.err.println(" XG drums in channel "+(ch+1));
+								} else if (yamahaBankAndPatchChanges[ch] == 0) {
+									yamahaDrumSwitches.get(ch).put(evt.getTick(), false);
+									//System.err.println(" channel "+(ch+1)+" changed voice in track "+i);
+								}
+				    		}
+				    	}
 				    }
 				} else if (msg instanceof ShortMessage) {
 					ShortMessage m = (ShortMessage) msg;
@@ -570,7 +613,7 @@ public class SequenceInfo implements MidiConstants
 					{
 						switch (m.getData1()) {
 							case BANK_SELECT_MSB:
-								if (m.getData2() == 127 || m.getData2() == 126 || m.getData2() == 64) {
+								if (m.getData2() == 127 || m.getData2() == 126 || m.getData2() == 64) {// || (m.getData2() == 64 && ch != DRUM_CHANNEL)) {
 									yamahaBankAndPatchChanges[ch] = 1;
 								} else {
 									yamahaBankAndPatchChanges[ch] = 0;
@@ -593,6 +636,11 @@ public class SequenceInfo implements MidiConstants
 				}
 			}
 		}
+		//for (int i = 0; i<16; i++) {
+		//	if (yamahaDrumChannels[i]) {
+		//		yamahaDrumSwitches.get(i).put(-1l, true);
+		//	}
+		//}
 		if (fileName.endsWith(".abc") || fileName.endsWith(".ABC") || fileName.endsWith(".txt") || fileName.endsWith(".TXT") || fileName.endsWith(".Abc") || fileName.endsWith(".Txt")) {
 			standard = "ABC";
 		}
@@ -637,11 +685,11 @@ public class SequenceInfo implements MidiConstants
 						{
 							GS = 1;
 						}
-						else if (standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
+						else if (standard == "XG" && yamahaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
 						{
 							XG = 1;
 						}
-						else if (standard == "GM2" && mmaDrumSwitches != null && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
+						else if (standard == "GM2" && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
 						{
 							GM2 = 1;
 						}
@@ -689,11 +737,11 @@ public class SequenceInfo implements MidiConstants
 							drumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
-						} else if (brandDrumTrack != null && XG == 1 && yamahaDrumSwitches != null && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
+						} else if (brandDrumTrack != null && XG == 1 && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
-						} else if (brandDrumTrack != null && GM2 == 1 && mmaDrumSwitches != null && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
+						} else if (brandDrumTrack != null && GM2 == 1 && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;

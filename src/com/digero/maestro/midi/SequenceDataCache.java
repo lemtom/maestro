@@ -13,6 +13,7 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Track;
 
 import com.digero.common.midi.ExtensionMidiInstrument;
@@ -142,7 +143,10 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 								pitchBendFine.put(ch, tick, m.getData2());
 							break;
 						case BANK_SELECT_MSB:
-							mapMSB.put(ch, tick, m.getData2());
+							if (standard != "XG" || m.getData2() == 126 || m.getData2() == 127 || (yamahaDrumChannels == null || !yamahaDrumChannels[ch])) {
+								// Due to XG drum part protect mode being ON, drum channels only can switch between MSB 126 & 127.
+								mapMSB.put(ch, tick, m.getData2());
+							}
 							//if(ch==DRUM_CHANNEL) System.err.println("Bank select MSB "+m.getData2()+"  "+tick);
 							break;
 						case BANK_SELECT_LSB:
@@ -151,7 +155,27 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 							break;
 						}
 					}
-				}
+				} else if (msg instanceof SysexMessage) {
+					SysexMessage sysex = (SysexMessage) msg;
+					byte message[] = sysex.getMessage();
+					if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
+						&& (message[4] & 0xFF) == 0x08 && (message[8] & 0xFF) == 0xF7) {
+				    	String bank = message[6]==1?"MSB":(message[6]==2?"LSB":(message[6]==3?"Patch":""));
+				    	if (standard == "XG" && bank != "" && message[5] < 16 && message[5] > -1 && message[7] < 128 && message[7] > -1) {
+				    		if (bank == "MSB") {
+					    		if (message[7] != 126 && message[7] != 127 && yamahaDrumChannels != null && yamahaDrumChannels[message[5]]) {
+					    			// Drum Part Protect Mode in effect.
+					    		} else {
+					    			mapMSB.put((int)message[5], tick, (int)message[7]);
+								}
+				    		} else if (bank == "Patch") {
+				    			mapPatch.put((int)message[5], tick, (int)message[7]);
+				    		} else if (bank == "LSB") {
+				    			mapLSB.put((int)message[5], tick, (int)message[7]);
+				    		}
+				    	}
+					}
+			    }
 				else if (iTrack == 0 && (divisionType == Sequence.PPQ) && MidiUtils.isMetaTempo(msg))
 				{
 					TempoEvent te = getTempoEventForTick(tick);
