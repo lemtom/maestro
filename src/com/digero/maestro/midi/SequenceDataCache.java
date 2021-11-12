@@ -47,17 +47,15 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private int[] brandDrumBanks;// 1 = XG drums, 2 = GS Drums, 3 = normal drums, 4 = GM2 drums
 	private String standard = "GM";
 	private boolean[] rolandDrumChannels = null;
-	private boolean gm2DrumsOn11 = false;
 	private boolean[] yamahaDrumChannels = null;
 
-	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean gm2DrumsOn11, boolean[] yamahaDrumChannels, ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches)
+	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean[] yamahaDrumChannels, ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches)
 	{
 		Map<Integer, Long> tempoLengths = new HashMap<Integer, Long>();
 		
 		this.standard = standard;
 		this.rolandDrumChannels = rolandDrumChannels;
 		this.yamahaDrumChannels = yamahaDrumChannels;
-		this.gm2DrumsOn11 = gm2DrumsOn11;
 		
 		brandDrumBanks = new int[song.getTracks().length];
 		
@@ -102,9 +100,6 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 							brandDrumBanks[iTrack] = 4;// GM2 drums
 						} else if (ch == DRUM_CHANNEL && (rolandDrumChannels == null || standard != "GS" || rolandDrumChannels[ch] == true) && (yamahaDrumChannels == null || standard != "XG" || yamahaDrumChannels[ch] == true)) {
 							brandDrumBanks[iTrack] = 3;// Normal drums on channel #10
-						} else if (ch == DRUM_CHANNEL+1 && gm2DrumsOn11) {
-							brandDrumBanks[iTrack] = 4;// GM2 drums
-							//System.err.println("GM2 drums on 11");
 						} else if (yamahaDrumChannels != null && yamahaDrumChannels[ch] == true && ch != DRUM_CHANNEL && standard == "XG") {
 							brandDrumBanks[iTrack] = 1;// XG drums
 						}
@@ -198,6 +193,38 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 				}
 			}
 		}
+		
+		// Setup default banks for extensions:
+		if (standard == "XG" && yamahaDrumChannels != null) {
+			// Bank 127 is implicit the default on drum channels in XG.
+			for (int i = 0; i < 16;i++) {
+				if (yamahaDrumChannels[i]) mapMSB.put(i, -1, 127);
+			}
+		} else if (standard == "GM2") {
+			// Bank 120 is implicit the default on drum channel in GM2.
+			// Bank 121 is implicit the default on all other channels in GM2.			
+			mapMSB.put(0, -1, 121);
+			mapMSB.put(1, -1, 121);
+			mapMSB.put(2, -1, 121);
+			mapMSB.put(3, -1, 121);
+			mapMSB.put(4, -1, 121);
+			mapMSB.put(5, -1, 121);
+			mapMSB.put(6, -1, 121);
+			mapMSB.put(7, -1, 121);
+			mapMSB.put(8, -1, 121);
+			mapMSB.put(DRUM_CHANNEL, -1, 120);
+			mapMSB.put(10, -1, 121);
+			mapMSB.put(11, -1, 121);
+			mapMSB.put(12, -1, 121);
+			mapMSB.put(13, -1, 121);
+			mapMSB.put(14, -1, 121);
+			mapMSB.put(15, -1, 121);
+		}// else if (standard == "GS" && rolandDrumChannels != null) {
+			// Bank 120 is implicit the default on drum channels in GS. (And also forced, hence why this is commented out)
+			//for (int i = 0; i < 16;i++) {
+			//	if (rolandDrumChannels[i]) mapMSB.put(i, -1, 120);
+			//}
+		//}
 
 		// Account for the duration of the final tempo
 		TempoEvent te = getTempoEventForTick(lastTick);
@@ -247,7 +274,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	public String getInstrumentExt(int channel, long tick, boolean drumKit)
 	{
 		int type = 0;
-		boolean rhythmChannel = false;
+		boolean rhythmChannel = channel == DRUM_CHANNEL;
 		if (standard == "XG") {
 			type = ExtensionMidiInstrument.XG;
 			rhythmChannel = yamahaDrumChannels[channel];
@@ -256,10 +283,8 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 			rhythmChannel = rolandDrumChannels[channel];
 		} else if (standard == "GM2") {
 			type = ExtensionMidiInstrument.GM2;
-			rhythmChannel = channel == DRUM_CHANNEL+1 && gm2DrumsOn11?true:channel == DRUM_CHANNEL;
 		} else {
 			type = ExtensionMidiInstrument.GM;
-			rhythmChannel = channel == DRUM_CHANNEL;
 		}
 		long patchTick = mapPatch.getEntryTick(channel, tick);
 		if (patchTick == -1) {

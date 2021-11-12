@@ -21,7 +21,7 @@
 	40	Brush Drum Kit
 	41	Brush Drum Kit 2
 	42	Brush Drum Kit 2 L/R
-	48	Orchestra Kit
+	48	Orchestra Kit and Timpani
 	49	Ethnic Drum Kit
 	50	Kick & Snare
 	51	Kick & Snare 2

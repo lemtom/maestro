@@ -48,31 +48,20 @@ public class ExtensionMidiInstrument {
 		// GS does not have Dulcimer on patch 15 MSB 0 like GM but a Santur, so we are careful to fetch its actual name.
 		boolean santur = extension == GS && MSB == 0 && patch == 15 && !rhythmChannel;
 		
-		if (!drumKit && (extension == GM || (MSB == 0 && LSB == 0 && !santur))) {
-			return MidiInstrument.fromId(patch).name;
-		} else if (MSB == 0 && rhythmChannel && extension == XG) {
-			//System.out.println("Asking for ("+MSB+", "+LSB+", "+patch+")  Drum channel: "+drumKit);
-			//
-			// Bank 127 is implicit the default on drum channels in XG.
-			MSB = 127;
-		} else if (MSB == 0 && rhythmChannel && extension == GM2) {
-			// Bank 120 is implicit the default on drum channels in GM2.
+		if (extension == GS && rhythmChannel) {
+			// Bank 120 is forced on drum channels in GS.
 			MSB = 120;
-		} else if (MSB == 121 && LSB == 0 && extension == GM2) {
-			// LSB 0 on MSB 121 is same as GM midi standard.
-			return MidiInstrument.fromId(patch).name;
-		} else if (MSB == 0 && extension == GM2) {
-			// Bank 121 is implicit the default on melodic channels in GM2. But names on LSB==0 will enter the first IF statement.
-			MSB = 121;
-		} else if (extension == GS) {
+		}
+		if (extension == GS) {
 			// LSB is used to switch between different synth voice set in GS. Since only have 1 synth file, just pipe all into LSB 0.
 			// LSB 1 = SC-55, 2 = SC-88, 3 = SC-88Pro, 4 = SC-8850
 			LSB = 0;
-			
-			if (rhythmChannel) {
-				// Bank 120 is forced on drum channels in GS.
-				MSB = 120;
-			}
+		}
+		if (!drumKit && (extension == GM || (MSB == 0 && LSB == 0 && !santur))) {
+			return MidiInstrument.fromId(patch).name;
+		} else if (MSB == 121 && LSB == 0 && extension == GM2) {
+			// LSB 0 on MSB 121 is same as GM midi standard.
+			return MidiInstrument.fromId(patch).name;
 		}
 		if (MSB == 127 && extension == XG) {
 			// As per XG specs, LSB is ignored if MSB is 0x7F.
