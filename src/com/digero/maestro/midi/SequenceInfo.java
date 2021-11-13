@@ -80,6 +80,7 @@ public class SequenceInfo implements MidiConstants
 		this.fileName = fileName;
 		this.sequence = sequence;
 		SequenceInfo.midiType = type;
+		//System.err.println("MIDI Type = "+type);
 		
 		determineStandard(sequence, fileName);
 		
@@ -371,13 +372,13 @@ public class SequenceInfo implements MidiConstants
 						//} else if (standard == "GM2" && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
 						//	trackName = "GM2 Drums";
 						//} else 
-						if (standard == "XG" && yamahaDrumChannels[chan] == true && chan != DRUM_CHANNEL) {
+						/*if (standard == "XG" && yamahaDrumChannels[chan] == true && chan != DRUM_CHANNEL) {
 							trackName = "XG Drums";
 						} else if (standard == "GS" && chan != DRUM_CHANNEL && rolandDrumChannels[chan] == true) {
 							trackName = "GS Drums";
 						} else if (chan == DRUM_CHANNEL && (rolandDrumChannels[chan] || standard != "GS") && (yamahaDrumChannels[chan] || standard != "XG")) {
 							trackName = "Drums";
-						}
+						}*/
 						trackNumber++;
 						tracks[chan].add(MidiFactory.createTrackNameEvent(trackName));
 					}
@@ -588,10 +589,10 @@ public class SequenceInfo implements MidiConstants
 						if (yamahaBankAndPatchChanges[ch] > 0) {
 							yamahaBankAndPatchChanges[ch] = 2;
 							yamahaDrumSwitches.get(ch).put(evt.getTick(), true);
-							//System.err.println(" XG drums in channel "+(ch+1));
+							//if (ch == 6) System.err.println("XG channel "+ch+" changed to drum kit in track "+i+" to "+m.getData1()+" at tick "+evt.getTick());
 						} else if (yamahaBankAndPatchChanges[ch] == 0) {
 							yamahaDrumSwitches.get(ch).put(evt.getTick(), false);
-							//System.err.println(" channel "+(ch+1)+" changed voice in track "+i);
+							//if (ch == 6) System.err.println("XG channel "+ch+" changed to voice in track "+i+" to "+m.getData1()+" at tick "+evt.getTick());
 						}
 						if (mmaBankAndPatchChanges[ch] > 0) {
 							mmaBankAndPatchChanges[ch] = 2;
@@ -610,13 +611,14 @@ public class SequenceInfo implements MidiConstants
 									yamahaBankAndPatchChanges[ch] = 1;
 								} else {
 									yamahaBankAndPatchChanges[ch] = 0;
+									//if (ch == 6) System.err.println(" channel "+ch+" changed to voice in track "+i+" to MSB "+m.getData2()+" at tick "+evt.getTick());
 								}
 								if (m.getData2() == 120) {
 									mmaBankAndPatchChanges[ch] = 1;
 								} else {
 									mmaBankAndPatchChanges[ch] = 0;
 								}
-								//System.err.println("Bank select MSB "+m.getData2());
+								//if (ch==6) System.err.println("Bank select MSB "+m.getData2()+" at tick "+evt.getTick());
 								break;
 							case BANK_SELECT_LSB:
 								//System.err.println("Bank select LSB "+m.getData2());
@@ -657,8 +659,14 @@ public class SequenceInfo implements MidiConstants
 			int GS = 0;
 			int XG = 0;
 			int GM2 = 0;
+			int GS9 = 0;
+			int XG9 = 0;
+			int GM29 = 0;
 			int drums = 0;
 			int notes = 0;
+			int notes9 = 0;
+			int brandx = 0;
+			int notesx = 0;
 			
 			for (int j = 0; j < track.size(); j++)
 			{
@@ -667,70 +675,123 @@ public class SequenceInfo implements MidiConstants
 				if (msg instanceof ShortMessage)
 				{
 					ShortMessage m = (ShortMessage) msg;
+					int chan = m.getChannel();
 					if (m.getCommand() == ShortMessage.NOTE_ON)
 					{
-						if (m.getChannel() == DRUM_CHANNEL && standard == "GM")
+						if (chan == DRUM_CHANNEL && standard == "GM")
 						{
 							drums = 1;
 						}
-						else if (standard == "GS" && rolandDrumChannels[m.getChannel()])
+						else if (standard == "GS" && rolandDrumChannels[chan])
 						{
 							GS = 1;
+							if (chan == DRUM_CHANNEL) GS9 = 1;
+							else brandx = 1;
 						}
-						else if (standard == "XG" && yamahaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
+						else if (standard == "XG" && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())
 						{
 							XG = 1;
+							if (chan == DRUM_CHANNEL) XG9 = 1;
+							else brandx = 1;
 						}
-						else if (standard == "GM2" && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
+						else if (standard == "GM2" && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())
 						{
 							GM2 = 1;
+							if (chan == DRUM_CHANNEL) GM29 = 1;
+							else brandx = 1;
 						}
 						else
 						{
 							notes = 1;
+							if (chan == DRUM_CHANNEL) notes9 = 1;
+							else notesx = 1;
 						}
 					}
 				}
 			}
-			if (GS + XG + GM2 + notes + drums > 1) {
+			/*
+			 * I had to design this carefully in high degree to not mess up old Projects too much.
+			 * 
+			 * If channel 9 drums plus brand drums. Then old would have taken channel 9 and made new track.
+			 *   So in that case if no real melodic notes make brand drums stay and funnel channel 9 into new channel even if standard is not GM.
+			 * 
+			 * If notes+channel 9 drums+brand drums, make notes stay, funnel the others into own 2 tracks. channel 9 drums before brand.
+			 * 
+			 * 
+			 */
+			if (GS + XG + GM2 + notes + drums > 1 || (GS9 + XG9 + GM29 + brandx > 1) || (notes9 + notesx > 1)) {
 				Track drumTrack = null;
+				Track noteTrack = null;
 				Track brandDrumTrack = null;
-				if (drums == 1 && notes == 1) {
-					drumTrack = song.createTrack();
-					drumTrack.add(MidiFactory.createTrackNameEvent("Drums"));
-				}
-				if (XG == 1 || GS == 1 || GM2 == 1) {
-					brandDrumTrack = song.createTrack();
-					if (XG == 1) {
-						brandDrumTrack.add(MidiFactory.createTrackNameEvent("XG Drums"));
-					} else if (GS == 1) {
-						brandDrumTrack.add(MidiFactory.createTrackNameEvent("GS Drums"));
-					} else if (GM2 == 1) {
-						brandDrumTrack.add(MidiFactory.createTrackNameEvent("GM2 Drums"));
+				if (notes == 1) {
+					if (drums == 1) {
+						drumTrack = song.createTrack();
+						drumTrack.add(MidiFactory.createTrackNameEvent("Drums"));
+						//System.err.println("Notes! Create GM Drum track. From "+i);
+					}
+					if (notes9 + notesx > 1) {
+						noteTrack = song.createTrack();
+						noteTrack.add(MidiFactory.createTrackNameEvent("Track "+i+"+"));
+						System.err.println("Notes! Create Note ch9 track. From "+i);
+					}
+					if (XG == 1 || GS == 1 || GM2 == 1) {
+						brandDrumTrack = song.createTrack();
+						if (XG == 1) {
+							brandDrumTrack.add(MidiFactory.createTrackNameEvent("XG Drums"));
+						} else if (GS == 1) {
+							brandDrumTrack.add(MidiFactory.createTrackNameEvent("GS Drums"));
+						} else if (GM2 == 1) {
+							brandDrumTrack.add(MidiFactory.createTrackNameEvent("GM2 Drums"));
+						}
+						//System.err.println("Notes! Create EXT Drum track. From "+i);
+					}
+				} else {
+					if (drums == 1) {
+						drumTrack = song.createTrack();
+						drumTrack.add(MidiFactory.createTrackNameEvent("Drums"));
+						//System.err.println("Create GM Drum track. From "+i);
+					} else if (XG9 == 1 || GS9 == 1 || GM29 == 1) {
+						brandDrumTrack = song.createTrack();
+						if (XG9 == 1) {
+							brandDrumTrack.add(MidiFactory.createTrackNameEvent("XG Drums"));
+						} else if (GS9 == 1) {
+							brandDrumTrack.add(MidiFactory.createTrackNameEvent("GS Drums"));
+						} else if (GM29 == 1) {
+							brandDrumTrack.add(MidiFactory.createTrackNameEvent("GM2 Drums"));
+						}
+						//System.err.println("Create EXT Drum track. Channel 9. From "+i);
 					}
 				}
-				// Mixed track: copy only the events on the drum channel
+				// Mixed track:
 				for (int j = 0; j < track.size(); j++)
 				{
 					MidiEvent evt = track.get(j);
 					MidiMessage msg = evt.getMessage();
 					if (msg instanceof ShortMessage) {
 						ShortMessage smsg = (ShortMessage) msg;
-						if (drumTrack != null && standard == "GM" && smsg.getChannel() == DRUM_CHANNEL)
+						int chan = smsg.getChannel();
+						if (drumTrack != null && drums == 1 && chan == DRUM_CHANNEL)
 						{
 							drumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
-						} else if (brandDrumTrack != null && GS == 1 && rolandDrumChannels[smsg.getChannel()])	{
+						} else if (brandDrumTrack != null && GS == 1 && (notes == 1 || chan == DRUM_CHANNEL) && rolandDrumChannels[chan])	{
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
-						} else if (brandDrumTrack != null && XG == 1 && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
+						} else if (brandDrumTrack != null && XG == 1 && (notes == 1 || chan == DRUM_CHANNEL) && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue()) {
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
-						} else if (brandDrumTrack != null && GM2 == 1 && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
+						} else if (brandDrumTrack != null && GM2 == 1 && (notes == 1 || chan == DRUM_CHANNEL) && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue()) {
 							brandDrumTrack.add(evt);
+							if (track.remove(evt))
+								j--;
+						//} else if ((GS == 1 && rolandDrumChannels[chan]) || (XG == 1 && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())
+						//				|| (GM2 == 1 && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())) {
+							// These drum notes stay in the track. Commented out as will never get here.
+						} else if (noteTrack != null && chan == DRUM_CHANNEL) {
+							noteTrack.add(evt);
 							if (track.remove(evt))
 								j--;
 						}
