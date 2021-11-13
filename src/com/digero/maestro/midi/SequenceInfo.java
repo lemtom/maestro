@@ -346,7 +346,7 @@ public class SequenceInfo implements MidiConstants
 	 */
 	public static boolean convertToType1(Sequence song)
 	{
-		if (song.getTracks().length == 1)
+		if (song.getTracks().length == 1 && standard != "ABC")
 		{
 			Track track0 = song.getTracks()[0];
 			Track[] tracks = new Track[CHANNEL_COUNT];
@@ -626,11 +626,14 @@ public class SequenceInfo implements MidiConstants
 				}
 			}
 		}
-		//for (int i = 0; i<16; i++) {
-		//	if (yamahaDrumChannels[i]) {
-		//		yamahaDrumSwitches.get(i).put(-1l, true);
-		//	}
-		//}
+		for (int i = 0; i<16; i++) {
+			yamahaDrumSwitches.get(i).put(-1l, yamahaDrumChannels[i]);
+			if (i == DRUM_CHANNEL) {
+				mmaDrumSwitches.get(i).put(-1l, true);
+			} else if (i != DRUM_CHANNEL) {
+				mmaDrumSwitches.get(i).put(-1l, false);
+			}
+		}
 		if (fileName.endsWith(".abc") || fileName.endsWith(".ABC") || fileName.endsWith(".txt") || fileName.endsWith(".TXT") || fileName.endsWith(".Abc") || fileName.endsWith(".Txt")) {
 			standard = "ABC";
 		}
@@ -643,9 +646,8 @@ public class SequenceInfo implements MidiConstants
 	{
 		Track[] tracks = song.getTracks();
 		
-		// This doesn't work on Type 0 MIDI files
-		if (tracks.length <= 1) {
-			//return;
+		if (standard == "ABC") {// || tracks.length <= 1
+			return;
 		}		
 
 		for (int i = 0; i < tracks.length; i++)
@@ -667,11 +669,11 @@ public class SequenceInfo implements MidiConstants
 					ShortMessage m = (ShortMessage) msg;
 					if (m.getCommand() == ShortMessage.NOTE_ON)
 					{
-						if (m.getChannel() == DRUM_CHANNEL && (standard != "GS" || rolandDrumChannels[DRUM_CHANNEL] == true) && (standard != "XG" || yamahaDrumChannels[DRUM_CHANNEL] == true))
+						if (m.getChannel() == DRUM_CHANNEL && standard == "GM")
 						{
 							drums = 1;
 						}
-						else if (standard == "GS" && rolandDrumChannels[m.getChannel()] == true)
+						else if (standard == "GS" && rolandDrumChannels[m.getChannel()])
 						{
 							GS = 1;
 						}
@@ -682,10 +684,6 @@ public class SequenceInfo implements MidiConstants
 						else if (standard == "GM2" && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(m.getChannel()).floorEntry(evt.getTick()).getValue() == true)
 						{
 							GM2 = 1;
-						}
-						else if (standard == "XG" && yamahaDrumChannels[m.getChannel()] == true)
-						{
-							XG = 1;
 						}
 						else
 						{
@@ -718,9 +716,13 @@ public class SequenceInfo implements MidiConstants
 					MidiMessage msg = evt.getMessage();
 					if (msg instanceof ShortMessage) {
 						ShortMessage smsg = (ShortMessage) msg;
-						if (drumTrack != null && (standard != "GS" || rolandDrumChannels[DRUM_CHANNEL]) && (standard != "XG" || yamahaDrumChannels[DRUM_CHANNEL]) && smsg.getChannel() == DRUM_CHANNEL)
+						if (drumTrack != null && standard == "GM" && smsg.getChannel() == DRUM_CHANNEL)
 						{
 							drumTrack.add(evt);
+							if (track.remove(evt))
+								j--;
+						} else if (brandDrumTrack != null && GS == 1 && rolandDrumChannels[smsg.getChannel()])	{
+							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
 						} else if (brandDrumTrack != null && XG == 1 && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
@@ -728,14 +730,6 @@ public class SequenceInfo implements MidiConstants
 							if (track.remove(evt))
 								j--;
 						} else if (brandDrumTrack != null && GM2 == 1 && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(smsg.getChannel()).floorEntry(evt.getTick()).getValue() == true) {
-							brandDrumTrack.add(evt);
-							if (track.remove(evt))
-								j--;
-						} else if (brandDrumTrack != null && XG == 1 && yamahaDrumChannels[smsg.getChannel()] && smsg.getChannel() != DRUM_CHANNEL) {
-							brandDrumTrack.add(evt);
-							if (track.remove(evt))
-								j--;
-						} else if (brandDrumTrack != null && GS == 1 && rolandDrumChannels[smsg.getChannel()] && smsg.getChannel() != DRUM_CHANNEL)	{
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
