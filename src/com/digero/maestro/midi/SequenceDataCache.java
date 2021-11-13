@@ -195,10 +195,15 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		}
 		
 		// Setup default banks for extensions:
+		for (int i = 0; i < 16;i++) {
+			mapPatch.put(i, -1, 0);
+			mapLSB.put(i, -1, 0);
+		}
 		if (standard == "XG" && yamahaDrumChannels != null) {
 			// Bank 127 is implicit the default on drum channels in XG.
 			for (int i = 0; i < 16;i++) {
 				if (yamahaDrumChannels[i]) mapMSB.put(i, -1, 127);
+				else mapMSB.put(i, -1, 0);
 			}
 		} else if (standard == "GM2") {
 			// Bank 120 is implicit the default on drum channel in GM2.
@@ -219,12 +224,11 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 			mapMSB.put(13, -1, 121);
 			mapMSB.put(14, -1, 121);
 			mapMSB.put(15, -1, 121);
-		}// else if (standard == "GS" && rolandDrumChannels != null) {
-			// Bank 120 is implicit the default on drum channels in GS. (And also forced, hence why this is commented out)
-			//for (int i = 0; i < 16;i++) {
-			//	if (rolandDrumChannels[i]) mapMSB.put(i, -1, 120);
-			//}
-		//}
+		} else {
+			for (int i = 0; i < 16;i++) {
+				mapMSB.put(i, -1, 0);
+			}
+		}
 
 		// Account for the duration of the final tempo
 		TempoEvent te = getTempoEventForTick(lastTick);
@@ -291,7 +295,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 			return null;
 		}
 		
-		String value = ExtensionMidiInstrument.getInstance().fromId(type, (byte)mapMSB.get(channel, patchTick), (byte)mapLSB.get(channel, patchTick), (byte)mapPatch.get(channel, tick),drumKit, rhythmChannel);
+		String value = ExtensionMidiInstrument.getInstance().fromId(type, (byte)mapMSB.get(channel, patchTick), (byte)mapLSB.get(channel, patchTick), (byte)mapPatch.get(channel, tick), drumKit, rhythmChannel);
 		//if (value == null && drumKit) {
 		//	System.out.println(mapMSB.get(channel, patchTick)+","+ mapLSB.get(channel, patchTick)+","+mapPatch.get(channel, tick)+"  "+ rhythmChannel);
 		//}
