@@ -282,117 +282,6 @@ public class SequenceInfo implements MidiConstants
 		return lastNoteTick;
 	}
 
-	@SuppressWarnings("unchecked")//
-	public static void fixupTrackLength(Sequence song)
-	{
-//		System.out.println("Before: " + Util.formatDuration(song.getMicrosecondLength()));
-//		TempoCache tempoCache = new TempoCache(song);
-		Track[] tracks = song.getTracks();
-		List<MidiEvent>[] suspectEvents = new List[tracks.length];
-		long endTick = 0;
-
-		for (int i = 0; i < tracks.length; i++)
-		{
-			Track track = tracks[i];
-			for (int j = track.size() - 1; j >= 0; --j)
-			{
-				MidiEvent evt = track.get(j);
-				if (MidiUtils.isMetaEndOfTrack(evt.getMessage()))
-				{
-					if (suspectEvents[i] == null)
-						suspectEvents[i] = new ArrayList<MidiEvent>();
-					suspectEvents[i].add(evt);
-				}
-				else if (evt.getTick() > endTick)
-				{
-					// Seems like some songs have extra meta messages way past the end
-					if (evt.getMessage() instanceof MetaMessage)
-					{
-						if (suspectEvents[i] == null)
-							suspectEvents[i] = new ArrayList<MidiEvent>();
-						suspectEvents[i].add(0, evt);
-					}
-					else
-					{
-						endTick = evt.getTick();
-						break;
-					}
-				}
-			}
-		}
-
-		for (int i = 0; i < tracks.length; i++)
-		{
-			for (MidiEvent evt : suspectEvents[i])
-			{
-				if (evt.getTick() > endTick)
-				{
-					tracks[i].remove(evt);
-//					System.out.println("Moving event from "
-//							+ Util.formatDuration(MidiUtils.tick2microsecond(song, evt.getTick(), tempoCache)) + " to "
-//							+ Util.formatDuration(MidiUtils.tick2microsecond(song, endTick, tempoCache)));
-					evt.setTick(endTick);
-					tracks[i].add(evt);
-				}
-			}
-		}
-
-//		System.out.println("Real song duration: "
-//				+ Util.formatDuration(MidiUtils.tick2microsecond(song, endTick, tempoCache)));
-//		System.out.println("After: " + Util.formatDuration(song.getMicrosecondLength()));
-	}
-
-	/**
-	 * Separates the MIDI file to have one track per channel (Type 1).
-	 */
-	public static boolean convertToType1(Sequence song)
-	{
-		if (song.getTracks().length == 1 && standard != "ABC")
-		{
-			Track track0 = song.getTracks()[0];
-			Track[] tracks = new Track[CHANNEL_COUNT];
-
-			int trackNumber = 1;
-			int i = 0;
-			while (i < track0.size())
-			{
-				MidiEvent evt = track0.get(i);
-				if (evt.getMessage() instanceof ShortMessage)
-				{
-					int chan = ((ShortMessage) evt.getMessage()).getChannel();
-					if (tracks[chan] == null)
-					{
-						tracks[chan] = song.createTrack();
-						
-						String trackName = "Track " + trackNumber;
-						
-						// No reason to call it drum channel now. Drum that are switched to in middle of melodic channels is separated out anyway. If not, then so what..
-						//if (standard == "XG" && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
-						//	trackName = "XG Drums";
-						//} else if (standard == "GM2" && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
-						//	trackName = "GM2 Drums";
-						//} else 
-						/*if (standard == "XG" && yamahaDrumChannels[chan] == true && chan != DRUM_CHANNEL) {
-							trackName = "XG Drums";
-						} else if (standard == "GS" && chan != DRUM_CHANNEL && rolandDrumChannels[chan] == true) {
-							trackName = "GS Drums";
-						} else if (chan == DRUM_CHANNEL && (rolandDrumChannels[chan] || standard != "GS") && (yamahaDrumChannels[chan] || standard != "XG")) {
-							trackName = "Drums";
-						}*/
-						trackNumber++;
-						tracks[chan].add(MidiFactory.createTrackNameEvent(trackName));
-					}
-					tracks[chan].add(evt);
-					if (track0.remove(evt))
-						continue;
-				}
-				i++;
-			}
-			return true;
-		}
-		return false;
-	}
-
 	private void determineStandard (Sequence seq, String fileName) {
 		// sysex GM reset:  F0 7E dv 09 01 F7  (dv = device ID)
 		// sysex GM2 reset: F0 7E dv 09 03 F7  (dv = device ID)
@@ -436,29 +325,21 @@ public class SequenceInfo implements MidiConstants
 		}		
 		yamahaDrumChannels[DRUM_CHANNEL] = true;
 		
-		yamahaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();
-		for (int i = 0; i<16; i++) {
-			yamahaDrumSwitches.add(new TreeMap<Long, Boolean>());
-		}
-		mmaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();
-		for (int i = 0; i<16; i++) {
-			mmaDrumSwitches.add(new TreeMap<Long, Boolean>());
-		}
-		
 		Track[] tracks = seq.getTracks();
-		Integer[] yamahaBankAndPatchChanges = new Integer[16];
-		Integer[] mmaBankAndPatchChanges = new Integer[16];
 		long lastResetTick = -1;
+		TreeMap<Long, PatchEntry> bankAndPatchTrack = new TreeMap<Long, PatchEntry>();//Maps cannot have duplicate entries, so using a PatchEntry class to store.
 		
 		//System.err.println("\nDetermineStandard:");
 		
+		/*
+		 * 
+		 * Iterate and find all Resets and assignments to rhythm channels.
+		 * 
+		 * 
+		 */
 		for (int i = 0; i < tracks.length; i++)
 		{
 			Track track = tracks[i];
-			for (int k = 0; k<16; k++) {
-				yamahaBankAndPatchChanges[k] = 0;
-				mmaBankAndPatchChanges[k] = 0;
-			}
 			for (int j = 0; j < track.size(); j++)
 			{
 				MidiEvent evt = track.get(j);
@@ -557,28 +438,109 @@ public class SequenceInfo implements MidiConstants
 				    	System.err.println(fileName+": Yamaha XG Drum Part Protect mode "+(message[7]==0?"OFF":"ON"));
 				    } else if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
     						&& (message[4] & 0xFF) == 0x08 && (message[8] & 0xFF) == 0xF7) {
-				    	String bank = message[6]==1?"MSB":(message[6]==2?"LSB":(message[6]==3?"Patch":""));
-				    	if (bank != "" && message[5] < 16 && message[5] > -1 && message[7] < 128 && message[7] > -1) {
-				    		System.err.println(fileName+": Yamaha XG Sysex "+bank+" set to "+message[7]+" for channel "+message[5]);
-				    		int ch = message[5];
-				    		if (bank == "MSB") {
-					    		if (message[7] != 126 && message[7] != 127 && message[7] != 64) {
-					    			yamahaBankAndPatchChanges[ch] = 0;
-					    		} else if (message[7] == 127 || message[7] == 126 || message[7] == 64) {
-									yamahaBankAndPatchChanges[ch] = 1;
-								}
-				    		} else if (bank == "Patch") {
-				    			if (yamahaBankAndPatchChanges[ch] > 0) {
-									yamahaBankAndPatchChanges[ch] = 2;
-									yamahaDrumSwitches.get(ch).put(evt.getTick(), true);
-									//System.err.println(" XG drums in channel "+(ch+1));
-								} else if (yamahaBankAndPatchChanges[ch] == 0) {
-									yamahaDrumSwitches.get(ch).put(evt.getTick(), false);
-									//System.err.println(" channel "+(ch+1)+" changed voice in track "+i);
-								}
-				    		}
-				    	}
+				    	// XG bank/patch change
+				    	PatchEntry entry = null;
+				    	entry = bankAndPatchTrack.get(evt.getTick());
+				    	if (entry == null) {
+				    		entry = new PatchEntry();
+				    		entry.sysex.add(evt);
+				    		bankAndPatchTrack.put(evt.getTick(), entry);
+				    	} else {
+				    		entry.sysex.add(evt);
+				    	}				    	
 				    }
+				} else if (msg instanceof ShortMessage) {
+					ShortMessage m = (ShortMessage) msg;
+					int cmd = m.getCommand();
+					int ch = m.getChannel();
+					
+					if (cmd == ShortMessage.PROGRAM_CHANGE)
+					{
+						PatchEntry entry = null;
+				    	entry = bankAndPatchTrack.get(evt.getTick());
+				    	if (entry == null) {
+				    		entry = new PatchEntry();
+				    		entry.patch.add(evt);
+				    		bankAndPatchTrack.put(evt.getTick(), entry);
+				    	} else {
+				    		entry.patch.add(evt);
+				    	}
+					}
+					else if (cmd == ShortMessage.CONTROL_CHANGE)
+					{
+						PatchEntry entry = null;
+				    	entry = bankAndPatchTrack.get(evt.getTick());
+				    	if (entry == null) {
+				    		entry = new PatchEntry();
+				    		entry.bank.add(evt);
+				    		bankAndPatchTrack.put(evt.getTick(), entry);
+				    	} else {
+				    		entry.bank.add(evt);
+				    	}
+					}
+				}
+			}
+		}
+		yamahaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();
+		for (int i = 0; i<16; i++) {
+			yamahaDrumSwitches.add(new TreeMap<Long, Boolean>());
+		}
+		mmaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();
+		for (int i = 0; i<16; i++) {
+			mmaDrumSwitches.add(new TreeMap<Long, Boolean>());
+		}
+		Integer[] yamahaBankAndPatchChanges = new Integer[16];
+		Integer[] mmaBankAndPatchChanges = new Integer[16];
+		for (int i = 0; i<16; i++) {
+			if (yamahaDrumChannels[i]) {
+				yamahaBankAndPatchChanges[i] = 2;
+			} else {
+				yamahaBankAndPatchChanges[i] = 0;
+			}
+			if (i == DRUM_CHANNEL) {
+				mmaBankAndPatchChanges[i] = 2;
+			} else {
+				mmaBankAndPatchChanges[i] = 0;
+			}
+		}		
+		
+		for (PatchEntry entry : bankAndPatchTrack.values())
+		{
+			List<MidiEvent> masterList = new ArrayList<MidiEvent>();
+			
+			// The order here is important, patch must be last, since not all MIDI files adhere to standard of certain time separation between these events:
+			// Not sure if sysex bank/patch change have higher priority than Control Change events. But giving it lowest priority for now.
+			masterList.addAll(entry.sysex);
+			masterList.addAll(entry.bank);
+			masterList.addAll(entry.patch);
+			
+			for (MidiEvent evt : masterList) {
+				MidiMessage msg = evt.getMessage();
+				if (msg instanceof SysexMessage) {
+					SysexMessage sysex = (SysexMessage) msg;
+					byte message[] = sysex.getMessage();
+					// we already know that this sysex is a XG bank/patch change, so no need for if statement.
+				   	String bank = message[6]==1?"MSB":(message[6]==2?"LSB":(message[6]==3?"Patch":""));
+			    	if (bank != "" && message[5] < 16 && message[5] > -1 && message[7] < 128 && message[7] > -1) {
+			    		//System.err.println(fileName+": Yamaha XG Sysex "+bank+" set to "+message[7]+" for channel "+message[5]);
+			    		int ch = message[5];
+			    		if (bank == "MSB") {
+				    		if (message[7] != 126 && message[7] != 127 && message[7] != 64) {
+				    			yamahaBankAndPatchChanges[ch] = 0;
+				    		} else if (message[7] == 127 || message[7] == 126 || message[7] == 64) {
+								yamahaBankAndPatchChanges[ch] = 1;
+							}
+			    		} else if (bank == "Patch") {
+			    			if (yamahaBankAndPatchChanges[ch] > 0) {
+								yamahaBankAndPatchChanges[ch] = 2;
+								yamahaDrumSwitches.get(ch).put(evt.getTick(), true);
+								//System.err.println(" XG drums in channel "+(ch+1));
+							} else if (yamahaBankAndPatchChanges[ch] == 0) {
+								yamahaDrumSwitches.get(ch).put(evt.getTick(), false);
+								//System.err.println(" channel "+(ch+1)+" changed voice in track "+i);
+							}
+			    		}
+			    	}
 				} else if (msg instanceof ShortMessage) {
 					ShortMessage m = (ShortMessage) msg;
 					int cmd = m.getCommand();
@@ -589,18 +551,18 @@ public class SequenceInfo implements MidiConstants
 						if (yamahaBankAndPatchChanges[ch] > 0) {
 							yamahaBankAndPatchChanges[ch] = 2;
 							yamahaDrumSwitches.get(ch).put(evt.getTick(), true);
-							//if (ch == 6) System.err.println("XG channel "+ch+" changed to drum kit in track "+i+" to "+m.getData1()+" at tick "+evt.getTick());
+							//if (ch == 9) System.err.println("XG channel "+ch+" changed to drum kit "+m.getData1()+" at tick "+evt.getTick());
 						} else if (yamahaBankAndPatchChanges[ch] == 0) {
 							yamahaDrumSwitches.get(ch).put(evt.getTick(), false);
-							//if (ch == 6) System.err.println("XG channel "+ch+" changed to voice in track "+i+" to "+m.getData1()+" at tick "+evt.getTick());
+							//if (ch == 9) System.err.println("XG channel "+ch+" changed to voice "+m.getData1()+" at tick "+evt.getTick());
 						}
 						if (mmaBankAndPatchChanges[ch] > 0) {
 							mmaBankAndPatchChanges[ch] = 2;
 							mmaDrumSwitches.get(ch).put(evt.getTick(), true);
-							//System.err.println(" XG drums in channel "+(ch+1));
+							//System.err.println(" GM2 channel "+ch+" changed kit at tick "+evt.getTick());
 						} else if (mmaBankAndPatchChanges[ch] == 0) {
 							mmaDrumSwitches.get(ch).put(evt.getTick(), false);
-							//System.err.println(" channel "+(ch+1)+" changed voice in track "+i);
+							//System.err.println(" GM2 channel "+ch+" changed voice at tick "+evt.getTick());
 						}
 					}
 					else if (cmd == ShortMessage.CONTROL_CHANGE)
@@ -611,14 +573,14 @@ public class SequenceInfo implements MidiConstants
 									yamahaBankAndPatchChanges[ch] = 1;
 								} else {
 									yamahaBankAndPatchChanges[ch] = 0;
-									//if (ch == 6) System.err.println(" channel "+ch+" changed to voice in track "+i+" to MSB "+m.getData2()+" at tick "+evt.getTick());
+									//if (ch == 9) System.err.println(" channel "+ch+" changed to voice in track "+i+" to MSB "+m.getData2()+" at tick "+evt.getTick());
 								}
 								if (m.getData2() == 120) {
 									mmaBankAndPatchChanges[ch] = 1;
 								} else {
 									mmaBankAndPatchChanges[ch] = 0;
 								}
-								//if (ch==6) System.err.println("Bank select MSB "+m.getData2()+" at tick "+evt.getTick());
+								//System.err.println("Channel "+ch+" bank select MSB "+m.getData2()+" at tick "+evt.getTick());
 								break;
 							case BANK_SELECT_LSB:
 								//System.err.println("Bank select LSB "+m.getData2());
@@ -639,6 +601,57 @@ public class SequenceInfo implements MidiConstants
 		if (fileName.endsWith(".abc") || fileName.endsWith(".ABC") || fileName.endsWith(".txt") || fileName.endsWith(".TXT") || fileName.endsWith(".Abc") || fileName.endsWith(".Txt")) {
 			standard = "ABC";
 		}
+	}
+
+	/**
+	 * Separates the MIDI file to have one track per channel (Type 1).
+	 */
+	public static boolean convertToType1(Sequence song)
+	{
+		if (song.getTracks().length == 1 && standard != "ABC")
+		{
+			Track track0 = song.getTracks()[0];
+			Track[] tracks = new Track[CHANNEL_COUNT];
+
+			int trackNumber = 1;
+			int i = 0;
+			while (i < track0.size())
+			{
+				MidiEvent evt = track0.get(i);
+				if (evt.getMessage() instanceof ShortMessage)
+				{
+					int chan = ((ShortMessage) evt.getMessage()).getChannel();
+					if (tracks[chan] == null)
+					{
+						tracks[chan] = song.createTrack();
+						
+						String trackName = "Track " + trackNumber;
+						
+						// No reason to call it drum channel now. Drum that are switched to in middle of melodic channels is separated out anyway. If not, then so what..
+						//if (standard == "XG" && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
+						//	trackName = "XG Drums";
+						//} else if (standard == "GM2" && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue() == true) {
+						//	trackName = "GM2 Drums";
+						//} else 
+						/*if (standard == "XG" && yamahaDrumChannels[chan] == true && chan != DRUM_CHANNEL) {
+							trackName = "XG Drums";
+						} else if (standard == "GS" && chan != DRUM_CHANNEL && rolandDrumChannels[chan] == true) {
+							trackName = "GS Drums";
+						} else if (chan == DRUM_CHANNEL && (rolandDrumChannels[chan] || standard != "GS") && (yamahaDrumChannels[chan] || standard != "XG")) {
+							trackName = "Drums";
+						}*/
+						trackNumber++;
+						tracks[chan].add(MidiFactory.createTrackNameEvent(trackName));
+					}
+					tracks[chan].add(evt);
+					if (track0.remove(evt))
+						continue;
+				}
+				i++;
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -799,5 +812,71 @@ public class SequenceInfo implements MidiConstants
 				}
 			}
 		}		
+	}
+	
+	@SuppressWarnings("unchecked")//
+	public static void fixupTrackLength(Sequence song)
+	{
+//		System.out.println("Before: " + Util.formatDuration(song.getMicrosecondLength()));
+//		TempoCache tempoCache = new TempoCache(song);
+		Track[] tracks = song.getTracks();
+		List<MidiEvent>[] suspectEvents = new List[tracks.length];
+		long endTick = 0;
+
+		for (int i = 0; i < tracks.length; i++)
+		{
+			Track track = tracks[i];
+			for (int j = track.size() - 1; j >= 0; --j)
+			{
+				MidiEvent evt = track.get(j);
+				if (MidiUtils.isMetaEndOfTrack(evt.getMessage()))
+				{
+					if (suspectEvents[i] == null)
+						suspectEvents[i] = new ArrayList<MidiEvent>();
+					suspectEvents[i].add(evt);
+				}
+				else if (evt.getTick() > endTick)
+				{
+					// Seems like some songs have extra meta messages way past the end
+					if (evt.getMessage() instanceof MetaMessage)
+					{
+						if (suspectEvents[i] == null)
+							suspectEvents[i] = new ArrayList<MidiEvent>();
+						suspectEvents[i].add(0, evt);
+					}
+					else
+					{
+						endTick = evt.getTick();
+						break;
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < tracks.length; i++)
+		{
+			for (MidiEvent evt : suspectEvents[i])
+			{
+				if (evt.getTick() > endTick)
+				{
+					tracks[i].remove(evt);
+//					System.out.println("Moving event from "
+//							+ Util.formatDuration(MidiUtils.tick2microsecond(song, evt.getTick(), tempoCache)) + " to "
+//							+ Util.formatDuration(MidiUtils.tick2microsecond(song, endTick, tempoCache)));
+					evt.setTick(endTick);
+					tracks[i].add(evt);
+				}
+			}
+		}
+
+//		System.out.println("Real song duration: "
+//				+ Util.formatDuration(MidiUtils.tick2microsecond(song, endTick, tempoCache)));
+//		System.out.println("After: " + Util.formatDuration(song.getMicrosecondLength()));
+	}
+	
+	private class PatchEntry {
+		public List<MidiEvent> bank = new ArrayList<MidiEvent>();
+		public List<MidiEvent> patch = new ArrayList<MidiEvent>();
+		public List<MidiEvent> sysex = new ArrayList<MidiEvent>();
 	}
 }
