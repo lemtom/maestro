@@ -416,7 +416,9 @@ public class SequenceInfo implements MidiConstants
 				    } else if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43 && (message[4] & 0xFF) == 0x08
 				    							   && (message[6] & 0xFF) == 0x07 && (message[8] & 0xFF) == 0xF7) {
 				    	String type = "Normal";
-				    	if (message[5] < 16) {//From Tyros 1 data doc: part10=0x02, other parts=0x00. Korg EX-20 say this is channel. TODO: Drum Setup Reset sysex.
+				    	if (message[5] < 16) {
+				    		// From Tyros 1 data doc: part10=0x02, other parts=0x00. Korg EX-20 say this is channel. TODO: Drum Setup Reset sysex.
+				    		// Sure looks like Korg has it correct, at least for pre Tyros XG standard.
 					    	if (message[7] == 0) {
 					    		type = "Normal";
 					    		yamahaDrumChannels[message[5]] = false;
@@ -452,7 +454,6 @@ public class SequenceInfo implements MidiConstants
 				} else if (msg instanceof ShortMessage) {
 					ShortMessage m = (ShortMessage) msg;
 					int cmd = m.getCommand();
-					int ch = m.getChannel();
 					
 					if (cmd == ShortMessage.PROGRAM_CHANGE)
 					{
@@ -527,7 +528,7 @@ public class SequenceInfo implements MidiConstants
 			    		if (bank == "MSB") {
 				    		if (message[7] != 126 && message[7] != 127 && message[7] != 64) {
 				    			yamahaBankAndPatchChanges[ch] = 0;
-				    		} else if (message[7] == 127 || message[7] == 126 || message[7] == 64) {
+				    		} else if (message[7] == 127 || message[7] == 126 || message[7] == 64) {// 64 is really chromatic effects, so should they be treated as drums?
 								yamahaBankAndPatchChanges[ch] = 1;
 							}
 			    		} else if (bank == "Patch") {
@@ -569,7 +570,7 @@ public class SequenceInfo implements MidiConstants
 					{
 						switch (m.getData1()) {
 							case BANK_SELECT_MSB:
-								if (m.getData2() == 127 || m.getData2() == 126 || m.getData2() == 64) {// || (m.getData2() == 64 && ch != DRUM_CHANNEL)) {
+								if (m.getData2() == 127 || m.getData2() == 126 || m.getData2() == 64) {// 64 is really chromatic effects, so should they be treated as drums?
 									yamahaBankAndPatchChanges[ch] = 1;
 								} else {
 									yamahaBankAndPatchChanges[ch] = 0;
