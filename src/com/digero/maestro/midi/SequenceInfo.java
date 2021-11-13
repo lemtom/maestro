@@ -326,7 +326,7 @@ public class SequenceInfo implements MidiConstants
 		yamahaDrumChannels[DRUM_CHANNEL] = true;
 		
 		Track[] tracks = seq.getTracks();
-		long lastResetTick = -1;
+		long lastResetTick = -10000;
 		TreeMap<Long, PatchEntry> bankAndPatchTrack = new TreeMap<Long, PatchEntry>();//Maps cannot have duplicate entries, so using a PatchEntry class to store.
 		
 		//System.err.println("\nDetermineStandard:");
@@ -363,12 +363,14 @@ public class SequenceInfo implements MidiConstants
 				    	if (standard != "GM" && standard != "XG") {
 				    		System.err.println(fileName+": MIDI XG Reset in a "+standard+" file. This is unusual!");
 				    	}
-				    	if (evt.getTick() >= lastResetTick) {
+				    	if (evt.getTick() > lastResetTick) {
 				    		lastResetTick = evt.getTick();
 				    		standard = "XG";
+				    	} else if (standard == "GS" && evt.getTick() == lastResetTick) {
+				    		System.err.println("They are at same tick. Statistically bigger chance its a GS, so not switching to XG.");
 				    	}
 				    	ExtensionMidiInstrument.getInstance();
-				    	//System.err.println("Yamaha XG Reset, track "+i);
+				    	//System.err.println("Yamaha XG Reset, tick "+evt.getTick());
 				    } else if (message.length == 11 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x41 && (message[3] & 0xFF) == 0x42
 				    								&& (message[4] & 0xFF) == 0x12
 				    								&& (message[5] & 0xFF) == 0x40 && (message[6] & 0xFF) == 0x00 && (message[7] & 0xFF) == 0x7F
@@ -381,18 +383,20 @@ public class SequenceInfo implements MidiConstants
 				    		standard = "GS";
 				    	}
 				    	ExtensionMidiInstrument.getInstance();
-				    	//System.err.println("Roland GS Reset, track "+i);
+				    	//System.err.println("Roland GS Reset, tick "+evt.getTick());
 				    } else if (message.length == 6 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x7E && (message[3] & 0xFF) == 0x09
 				    							   && (message[4] & 0xFF) == 0x03 && (message[5] & 0xFF) == 0xF7) {
 				    	if (standard != "GM" && standard != "GM2") {
 				    		System.err.println(fileName+": MIDI GM2 Reset in a "+standard+" file. This is unusual!");
 				    	}
-				    	if (evt.getTick() >= lastResetTick) {
+				    	if (evt.getTick() > lastResetTick) {
 				    		lastResetTick = evt.getTick();
 				    		standard = "GM2";
+				    	} else if (evt.getTick() == lastResetTick && standard != "GM") {
+				    		System.err.println("They are at same tick. Statistically bigger chance its not a GM2, so not switching standard.");
 				    	}
 				    	ExtensionMidiInstrument.getInstance();
-				    	//System.err.println("MIDI GM2 Reset, track "+i);
+				    	//System.err.println("MIDI GM2 Reset, tick "+evt.getTick());
 				    } else if (message.length == 11 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x41 && (message[3] & 0xFF) == 0x42
 				    								&& (message[4] & 0xFF) == 0x12 && (message[5] & 0xFF) == 0x40 && (message[7] & 0xFF) == 0x15
 				    								&& (message[10] & 0xFF) == 0xF7) {
