@@ -139,6 +139,8 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 							if (ch != DRUM_CHANNEL || standard != "XG" || m.getData2() == 126 || m.getData2() == 127) {
 								// Due to XG drum part protect mode being ON, drum channel 9 only can switch between MSB 126 & 127.
 								mapMSB.put(ch, tick, m.getData2());
+							} else if (ch == DRUM_CHANNEL && standard == "XG" && m.getData2() != 126 && m.getData2() != 127) {
+								System.err.println("XG Drum Part Protect Mode prevented bank select MSB.");
 							}
 							//if(ch==DRUM_CHANNEL) System.err.println("Bank select MSB "+m.getData2()+"  "+tick);
 							break;

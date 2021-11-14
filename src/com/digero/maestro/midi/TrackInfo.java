@@ -70,8 +70,7 @@ public class TrackInfo implements MidiConstants
 					name = "Drums";
 				}
 			}
-		}
-		
+		}		
 		
 		instruments = new HashSet<Integer>();
 		instrumentExtensions = new HashSet<String>();

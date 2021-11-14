@@ -368,6 +368,10 @@ public class SequenceInfo implements MidiConstants
 				    		standard = "XG";
 				    	} else if (standard == "GS" && evt.getTick() == lastResetTick) {
 				    		System.err.println("They are at same tick. Statistically bigger chance its a GS, so not switching to XG.");
+				    	} else if (standard == "GM2" && evt.getTick() == lastResetTick) {
+				    		System.err.println("They are at same tick. Statistically bigger chance its a XG, so switching to that.");
+				    		lastResetTick = evt.getTick();
+				    		standard = "XG";
 				    	}
 				    	ExtensionMidiInstrument.getInstance();
 				    	//System.err.println("Yamaha XG Reset, tick "+evt.getTick());
@@ -530,10 +534,10 @@ public class SequenceInfo implements MidiConstants
 			    		//System.err.println(fileName+": Yamaha XG Sysex "+bank+" set to "+message[7]+" for channel "+message[5]);
 			    		int ch = message[5];
 			    		if (bank == "MSB") {
-				    		if (message[7] != 126 && message[7] != 127 && message[7] != 64) {
-				    			yamahaBankAndPatchChanges[ch] = 0;
-				    		} else if (message[7] == 127 || message[7] == 126 || message[7] == 64) {// 64 is really chromatic effects, so should they be treated as drums?
-								yamahaBankAndPatchChanges[ch] = 1;
+				    		if (message[7] == 126 || message[7] == 127) {// 64 is chromatic effects, so not testing for that.
+				    			yamahaBankAndPatchChanges[ch] = 1;
+				    		} else {
+								yamahaBankAndPatchChanges[ch] = 0;
 							}
 			    		} else if (bank == "Patch") {
 			    			if (yamahaBankAndPatchChanges[ch] > 0) {
@@ -574,7 +578,7 @@ public class SequenceInfo implements MidiConstants
 					{
 						switch (m.getData1()) {
 							case BANK_SELECT_MSB:
-								if (m.getData2() == 127 || m.getData2() == 126 || m.getData2() == 64) {// 64 is really chromatic effects, so should they be treated as drums?
+								if (m.getData2() == 127 || m.getData2() == 126) {// 64 is chromatic effects, so not testing for that.
 									yamahaBankAndPatchChanges[ch] = 1;
 								} else {
 									yamahaBankAndPatchChanges[ch] = 0;
