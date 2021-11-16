@@ -35,18 +35,18 @@ public class ExtensionMidiInstrument {
 		
 		/*
 		 * GM  voices: 129
-		 * GS  voices: 1171
-		 * XG  voices: 1012
-		 * GM2 voices: 137
-		 * Total     : 2449 
+		 * GS  voices: 1170
+		 * XG  voices: 1011
+		 * GM2 voices: 136
+		 * Total     : 2446 
 		 */
 		
 		/*
 		System.out.println("GM  voices: 129");
-		System.out.println("GS  voices: "+(mapgs.size()-128));
-		System.out.println("XG  voices: "+(mapxg.size()-128));
-		System.out.println("GM2 voices: "+(mapgm2.size()-128));
-		System.out.println("Total     : "+(mapgm2.size()-128+mapxg.size()-128+mapgs.size()-128+129));
+		System.out.println("GS  voices: "+(mapgs.size()-129));
+		System.out.println("XG  voices: "+(mapxg.size()-129));
+		System.out.println("GM2 voices: "+(mapgm2.size()-129));
+		System.out.println("Total     : "+(mapgm2.size()-129+mapxg.size()-129+mapgs.size()-129+129));
 		*/
 		
 		return instance;
