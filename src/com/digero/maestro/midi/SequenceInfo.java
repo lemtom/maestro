@@ -511,7 +511,14 @@ public class SequenceInfo implements MidiConstants
 			} else {
 				mmaBankAndPatchChanges[i] = 0;
 			}
-		}		
+		}
+		
+		/*
+		 * Iterate again, but this time in order of ticks no matter which track the events come from.
+		 * This time we find where there is changes from rhythm to chromatic voices and the other way around.
+		 * We need that for determining how to seperate drum tracks and which tracks to mark as drum tracks.
+		 * 
+		 */
 		
 		for (PatchEntry entry : bankAndPatchTrack.values())
 		{
@@ -614,6 +621,10 @@ public class SequenceInfo implements MidiConstants
 
 	/**
 	 * Separates the MIDI file to have one track per channel (Type 1).
+	 * 
+	 * If the MIDI is a Type 1, but with only 1 track, it will
+	 * also be separated.
+	 * 
 	 */
 	public static boolean convertToType1(Sequence song)
 	{
@@ -678,17 +689,15 @@ public class SequenceInfo implements MidiConstants
 		{
 			Track track = tracks[i];
 			
-			int GS = 0;
-			int XG = 0;
-			int GM2 = 0;
-			int GS9 = 0;
-			int XG9 = 0;
-			int GM29 = 0;
-			int drums = 0;
-			int notes = 0;
-			int notes9 = 0;
-			int brandx = 0;
-			int notesx = 0;
+			int GS = 0;    // GS drum notes
+			int XG = 0;    // XG drum notes
+			int GM2 = 0;   // GM2 drum notes
+			int drumsExt9=0;//Extension drum notes on default-drum-channel
+			int drums = 0; // Drum notes (GM)
+			int notes = 0; // Chromatic notes
+			int notes9 = 0;// Chromatic notes on default-drum-channel
+			int drumsExtX = 0;// Brand drum notes on non-default-drum-channel
+			int notesx = 0;// Chromatic notes on non-default-drum-channel
 			
 			for (int j = 0; j < track.size(); j++)
 			{
@@ -707,20 +716,20 @@ public class SequenceInfo implements MidiConstants
 						else if (standard == "GS" && rolandDrumChannels[chan])
 						{
 							GS = 1;
-							if (chan == DRUM_CHANNEL) GS9 = 1;
-							else brandx = 1;
+							if (chan == DRUM_CHANNEL) drumsExt9 = 1;
+							else drumsExtX = 1;
 						}
 						else if (standard == "XG" && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())
 						{
 							XG = 1;
-							if (chan == DRUM_CHANNEL) XG9 = 1;
-							else brandx = 1;
+							if (chan == DRUM_CHANNEL) drumsExt9 = 1;
+							else drumsExtX = 1;
 						}
 						else if (standard == "GM2" && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())
 						{
 							GM2 = 1;
-							if (chan == DRUM_CHANNEL) GM29 = 1;
-							else brandx = 1;
+							if (chan == DRUM_CHANNEL) drumsExt9 = 1;
+							else drumsExtX = 1;
 						}
 						else
 						{
@@ -739,9 +748,11 @@ public class SequenceInfo implements MidiConstants
 			 * 
 			 * If notes+channel 9 drums+brand drums, make notes stay, funnel the others into own 2 tracks. channel 9 drums before brand.
 			 * 
+			 * If notes on channel 9 and notes that are not channel 9, then separate them also, to keep backwards
+			 * compat with old projects.
 			 * 
 			 */
-			if (GS + XG + GM2 + notes + drums > 1 || (GS9 + XG9 + GM29 + brandx > 1) || (notes9 + notesx > 1)) {
+			if (GS + XG + GM2 + notes + drums > 1 || (drumsExt9 + drumsExtX > 1) || (notes9 + notesx > 1)) {
 				Track drumTrack = null;
 				Track noteTrack = null;
 				Track brandDrumTrack = null;
@@ -772,13 +783,13 @@ public class SequenceInfo implements MidiConstants
 						drumTrack = song.createTrack();
 						drumTrack.add(MidiFactory.createTrackNameEvent("Drums"));
 						//System.err.println("Create GM Drum track. From "+i);
-					} else if (XG9 == 1 || GS9 == 1 || GM29 == 1) {
+					} else if (drumsExt9 == 1) {
 						brandDrumTrack = song.createTrack();
-						if (XG9 == 1) {
+						if (XG == 1) {
 							brandDrumTrack.add(MidiFactory.createTrackNameEvent("XG Drums"));
-						} else if (GS9 == 1) {
+						} else if (GS == 1) {
 							brandDrumTrack.add(MidiFactory.createTrackNameEvent("GS Drums"));
-						} else if (GM29 == 1) {
+						} else if (GM2 == 1) {
 							brandDrumTrack.add(MidiFactory.createTrackNameEvent("GM2 Drums"));
 						}
 						//System.err.println("Create EXT Drum track. Channel 9. From "+i);
@@ -809,9 +820,12 @@ public class SequenceInfo implements MidiConstants
 							brandDrumTrack.add(evt);
 							if (track.remove(evt))
 								j--;
-						//} else if ((GS == 1 && rolandDrumChannels[chan]) || (XG == 1 && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())
-						//				|| (GM2 == 1 && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())) {
-							// These drum notes stay in the track. Commented out as will never get here.
+						} else if ((GS == 1 && rolandDrumChannels[chan])
+								|| (XG == 1 && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && yamahaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())
+								|| (GM2 == 1 && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()) != null && mmaDrumSwitches.get(chan).floorEntry(evt.getTick()).getValue())) {
+							// These non-channel9 drum notes stay in the track.
+							// This IF clause is mostly for peace of mind. The chromatic notes will never enter here as 'notes' will be 1 when they are there
+							// and therefore no drum notes will reach last IF statement.
 						} else if (noteTrack != null && chan == DRUM_CHANNEL) {
 							noteTrack.add(evt);
 							if (track.remove(evt))

@@ -24,14 +24,30 @@ public class ExtensionMidiInstrument {
 		
 		instance = new ExtensionMidiInstrument();
 		
-		parse(XG, (byte) 0, "xg.txt", true, false);
-		parse(GS, (byte) 0, "gs.txt", true, true);
-		parse(GS, (byte) 120, "gsKits.txt", false, false);
-		parse(GM2, (byte) 121, "gm2.txt", true, false);
-		parse(GM2, (byte) 120, "gm2-120.txt", false, false);
-		parse(XG, (byte) 127,"xg127.txt", false, false);
-		parse(XG, (byte) 126,"xg126.txt", false, false);
-		parse(XG, (byte) 64,"xg64.txt", false, false);
+		parse(XG, (byte)   0, "xg.txt",       true, false);
+		parse(GS, (byte)   0, "gs.txt",       true,  true);
+		parse(GS, (byte) 120, "gsKits.txt",  false, false);
+		parse(GM2,(byte) 121, "gm2.txt",      true, false);
+		parse(GM2,(byte) 120, "gm2-120.txt", false, false);
+		parse(XG, (byte) 127, "xg127.txt",   false, false);
+		parse(XG, (byte) 126, "xg126.txt",   false, false);
+		parse(XG, (byte)  64, "xg64.txt",    false, false);
+		
+		/*
+		 * GM  voices: 129
+		 * GS  voices: 1171
+		 * XG  voices: 1012
+		 * GM2 voices: 137
+		 * Total     : 2449 
+		 */
+		
+		/*
+		System.out.println("GM  voices: 129");
+		System.out.println("GS  voices: "+(mapgs.size()-128));
+		System.out.println("XG  voices: "+(mapxg.size()-128));
+		System.out.println("GM2 voices: "+(mapgm2.size()-128));
+		System.out.println("Total     : "+(mapgm2.size()-128+mapxg.size()-128+mapgs.size()-128+129));
+		*/
 		
 		return instance;
 	}
@@ -39,7 +55,7 @@ public class ExtensionMidiInstrument {
 	/*
 	 * 
 	 * Abbreviations that are not expanded:
-	 * KSP: Keyboard Stereo Panning (in GS language this is called 'Wide')
+	 * KSP: Keyboard Stereo Panning (in GS/GM2 language this is called 'Wide')
 	 * 
 	 */
 	
@@ -146,7 +162,7 @@ public class ExtensionMidiInstrument {
 	}
 			
 	private static void addInstrument (int extension, byte MSB, byte LSB, byte patch, String name) {
-		//System.err.println("addInstrument "+name+" ("+MSB+", "+LSB+", "+patch+")");
+		//System.err.println(" addInstrument "+name+" ("+MSB+", "+LSB+", "+patch+")");
 		String key = String.format("%03d%03d%03d", MSB, LSB, patch);
 		if (extension == XG) {
 			if (mapxg.get(key) != null) System.out.println("Warning duplicate entry for ("+MSB+", "+LSB+", "+patch+") in XG map");

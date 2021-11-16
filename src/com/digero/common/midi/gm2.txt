@@ -20,8 +20,8 @@
 	0	Electric Piano 2
 	1	Detuned Electric Piano
 	2	Electric Piano 2 (velocity mix)
-	3	EP Legend
-	4	EP Phase
+	3	Electric Piano Legend
+	4	Electric Piano Phase
 6
 	0	Harpsichord
 	1	Harpsichord (octave mix)

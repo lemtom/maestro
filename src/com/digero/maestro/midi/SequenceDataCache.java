@@ -71,6 +71,16 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		int[] rpn = new int[CHANNEL_COUNT];
 		Arrays.fill(rpn, REGISTERED_PARAM_NONE);
 
+		/*
+		 * We need to be able to know which tracks have drum notes.
+		 * We also need to know what instrument voices are used in each track,
+		 * so we build maps of voice changes that TrackInfo later can use
+		 * to build strings of instruments for each track.
+		 * 
+		 * This among other things we will find out by iterating through all
+		 * MidiEvents.
+		 * 
+		 */		
 		Track[] tracks = song.getTracks();
 		long lastTick = 0;
 		for (int iTrack = 0; iTrack < tracks.length; iTrack++)
