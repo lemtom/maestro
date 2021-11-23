@@ -5,8 +5,12 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Sequence;
@@ -30,7 +34,8 @@ import com.digero.maestro.midi.NoteEvent;
 public class AbcExporter
 {
 	// Max parts for MIDI preview
-	private static final int MAX_PARTS = MidiConstants.CHANNEL_COUNT - 2; // Track 0 is reserved for metadata, and Track 9 is reserved for drums
+	private static final int MAX_PARTS = MidiConstants.CHANNEL_COUNT - 1; // Channel 0 is no longer reserved for metadata, and Track 9 is reserved for drums
+	private static final int MAX_RAID = 24; // Max number of parts that in any case can be played in lotro
 
 	private final List<AbcPart> parts;
 	private final AbcMetadataSource metadata;
@@ -41,6 +46,7 @@ public class AbcExporter
 	private boolean showPruned;
 	private long exportStartTick;
 	private long exportEndTick;
+	private int lastChannelUsedInPreview = -1;
 	
 	public int stereoPan = 100;// zero is mono, 100 is very wide.
 
@@ -131,12 +137,14 @@ public class AbcExporter
 		public final int trackNumber;
 		public final AbcPart part;
 		public final List<NoteEvent> noteEvents;
+		public final Integer channel;
 
-		public ExportTrackInfo(int trackNumber, AbcPart part, List<NoteEvent> noteEvents)
+		public ExportTrackInfo(int trackNumber, AbcPart part, List<NoteEvent> noteEvents, Integer channel)
 		{
 			this.trackNumber = trackNumber;
 			this.part = part;
 			this.noteEvents = noteEvents;
+			this.channel = channel;
 		}
 	}
 
@@ -145,30 +153,69 @@ public class AbcExporter
 	{
 		try
 		{
-			if (parts.size() > MAX_PARTS)
-			{
-				throw new AbcConversionException("Songs with more than " + MAX_PARTS + " parts cannot be previewed.\n"
-						+ "This song currently has " + parts.size() + " parts.");
-			}
+			
 
 			Pair<Long, Long> startEndTick = getSongStartEndTick(true /* lengthenToBar */, false /* accountForSustain */);
 			exportStartTick = startEndTick.first;
 			exportEndTick = startEndTick.second;
 
+			Map<AbcPart, Integer> shareMap = null;
+			int partsCount = 0;
+			for (AbcPart p : parts) {
+				if (p.getEnabledTrackCount()>0) {
+					partsCount++;
+				}
+			}
+			if (parts.size() > MAX_RAID)
+			{
+				throw new AbcConversionException("Songs with more than " + MAX_RAID + " parts can never be previewed.\n"
+						+ "This song currently has " + parts.size() + " parts and failed to preview.");
+			}
+			if (partsCount > MAX_PARTS)
+			{
+				shareMap = findSharableParts(exportStartTick, exportEndTick, parts.size() - MAX_PARTS);
+				if (shareMap == null) {
+					throw new AbcConversionException("Songs with more than " + MAX_PARTS + " parts cannot be previewed in some circumstances.\n"
+						+ "This song currently has " + parts.size() + " parts and failed to preview.");
+				}
+			}
+			Set<AbcPart> assignedSharingParts = new HashSet<AbcPart>();
+			Set<Integer> assignedChannels = new HashSet<Integer>();
+			if (shareMap != null) {
+				assignedSharingParts = shareMap.keySet();
+			}
+			
 			Sequence sequence = new Sequence(Sequence.PPQ, qtm.getMidiResolution());
 
 			// Track 0: Title and meta info
 			Track track0 = sequence.createTrack();
 			track0.add(MidiFactory.createTrackNameEvent(metadata.getSongTitle()));
+			//track0.add(MidiFactory.createGSResetEvent());
+			//track0.add(MidiFactory.createNoDrumEvent());// does not work since java's midi player is used, not windows'
 			addMidiTempoEvents(track0);
 
 			PanGenerator panner = new PanGenerator();
+			lastChannelUsedInPreview = -1;
 			List<ExportTrackInfo> infoList = new ArrayList<ExportTrackInfo>();
+			for (AbcPart part : assignedSharingParts)
+			{
+				// Do the parts that is sharing channel first, as they will use the lower numbered channels
+				int pan = (parts.size() > 1) ? panner.get(part.getInstrument(), part.getTitle(), stereoPan) : PanGenerator.CENTER;
+				int chan = shareMap.get(part);
+				ExportTrackInfo inf = exportPartToPreview(part, sequence, exportStartTick, exportEndTick, pan, useLotroInstruments, assignedChannels, chan);
+				infoList.add(inf);
+				//System.out.println(part.getTitle()+" assigned to channel "+inf.channel+" on track "+inf.trackNumber);
+				assignedChannels.add(inf.channel);
+			}
 			for (AbcPart part : parts)
 			{
-				int pan = (parts.size() > 1) ? panner.get(part.getInstrument(), part.getTitle(), stereoPan) : PanGenerator.CENTER;
-				infoList.add(exportPartToPreview(part, sequence, exportStartTick, exportEndTick, pan,
-						useLotroInstruments));
+				// Now do the rest of the parts that is not sharing channels
+				if (!assignedSharingParts.contains(part)) {
+					int pan = (parts.size() > 1) ? panner.get(part.getInstrument(), part.getTitle(), stereoPan) : PanGenerator.CENTER;
+					ExportTrackInfo inf = exportPartToPreview(part, sequence, exportStartTick, exportEndTick, pan, useLotroInstruments, assignedChannels, null);
+					infoList.add(inf);
+					assignedChannels.add(inf.channel);
+				}
 			}
 
 			return new Pair<List<ExportTrackInfo>, Sequence>(infoList, sequence);
@@ -181,6 +228,172 @@ public class AbcExporter
 
 			throw e;
 		}
+	}
+	
+	/**
+	 * Use brute force to check which parts can share a preview midi channel.
+	 * Two conditions for that to happen:
+	 * 
+	 * 1 - Must be the same lotro instrument
+	 * 2 - Must not have any notes with same pitch playing at the same time.
+	 * 
+	 * @return null if unsuccessful, else a map of parts to channels.
+	 * @throws AbcConversionException 
+	 */
+	private Map<AbcPart, Integer> findSharableParts (long exportStartTick, long exportEndTick, int target) throws AbcConversionException {
+		System.out.println("Attempting to find parts that can share channel. Need to find "+target+" part pairs.");
+		Map<AbcPart, Integer> shareMap = new HashMap<AbcPart, Integer>();
+		int channel = 0;
+		// evaluate fiddles first as they are most likely to use only single notes.
+		LotroInstrument orderToEvaluate[] ={LotroInstrument.LONELY_MOUNTAIN_FIDDLE,
+											LotroInstrument.BASIC_FIDDLE,
+											LotroInstrument.BARDIC_FIDDLE,
+											LotroInstrument.SPRIGHTLY_FIDDLE,
+											LotroInstrument.STUDENT_FIDDLE,
+											LotroInstrument.BASIC_FLUTE,
+											LotroInstrument.BASIC_CLARINET,
+											LotroInstrument.BASIC_HORN,
+											LotroInstrument.BASIC_BAGPIPE,
+											LotroInstrument.LONELY_MOUNTAIN_BASSOON,
+											LotroInstrument.BASIC_BASSOON,
+											LotroInstrument.BRUSQUE_BASSOON,
+											LotroInstrument.BASIC_PIBGORN,
+											LotroInstrument.BASIC_THEORBO,
+											LotroInstrument.BASIC_LUTE,
+											LotroInstrument.LUTE_OF_AGES,
+											LotroInstrument.BASIC_HARP,
+											LotroInstrument.MISTY_MOUNTAIN_HARP,
+											LotroInstrument.BASIC_DRUM,
+											LotroInstrument.BASIC_COWBELL,
+											LotroInstrument.MOOR_COWBELL,
+											LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE,
+											LotroInstrument.STUDENT_FX_FIDDLE};
+		
+		for (LotroInstrument evalInstr : orderToEvaluate) {
+			if (target < 1) break;
+			List<AbcPart> partsToCompare = new ArrayList<AbcPart>();
+			List<List<Chord>> chordsMade = new ArrayList<List<Chord>>();
+			for (AbcPart part : parts) {
+				if (part.getInstrument().equals(evalInstr)) {
+					partsToCompare.add(part);
+					chordsMade.add(null);
+				}
+			}
+			
+			int iterBParts = 0;
+			for (int iterAParts = 0; iterAParts < partsToCompare.size()-1; iterAParts++) {
+				// brute force
+				AbcPart partA = partsToCompare.get(iterAParts);
+				List<Chord> chordsA = null;
+				if (chordsMade.get(iterAParts) == null) {
+					chordsA = combineAndQuantize(partA, false, exportStartTick, exportEndTick);
+					chordsMade.set(iterAParts, chordsA);
+				} else {
+					chordsA = chordsMade.get(iterAParts);
+				}
+				boolean canBeDone = false;
+				for (iterBParts = iterAParts+1; iterBParts < partsToCompare.size(); iterBParts++) {
+					AbcPart partB = partsToCompare.get(iterBParts);
+					//if (partA.getInstrument().equals(LotroInstrument.BASIC_THEORBO)) System.out.println(" Comparing "+partA.getTitle()+" to "+partB.getTitle());
+					List<Chord> chordsB = null;
+					if (chordsMade.get(iterBParts) == null) {
+						chordsB = combineAndQuantize(partB, false, exportStartTick, exportEndTick);
+						chordsMade.set(iterBParts, chordsB);
+					} else {
+						chordsB = chordsMade.get(iterBParts);
+					}
+					boolean result = chordListComparator(chordsA, chordsB, false);
+					if (result) {
+						System.out.println(partA.getTitle()+" can share a channel with "+partB.getTitle());
+						shareMap.put(partB, channel);
+						shareMap.put(partA, channel);
+						canBeDone = true;
+						break;
+					}
+				}
+				if (canBeDone) {
+					channel++;
+					if (channel == MidiConstants.DRUM_CHANNEL) {
+						channel++;
+					}
+					if (channel > 15) {
+						return null;
+					}
+					target--;
+					if (target > 0) {
+						partsToCompare.remove(iterBParts);//remove this first as it is later in the list
+						partsToCompare.remove(iterAParts);
+						iterAParts--;
+						continue;
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		if (target < 1) {
+			return shareMap;
+		}
+		return null;
+	}
+	
+	/**
+	 * Use brute force to check for any notes with same pitch playing at the same time.
+	 * 
+	 * @return false if such notes were found, else true.
+	 */
+	private boolean chordListComparator (List<Chord> chordsA, List<Chord> chordsB, boolean test) {
+		for (Chord aChord : chordsA) {
+			long startAChord = aChord.getStartTick();
+			long endAChord   = aChord.getEndTick();
+			
+			for (Chord bChord : chordsB) {
+				if (bChord.getStartTick() >= endAChord) {
+					break;
+				}
+				if (bChord.getEndTick() <= startAChord) {
+					continue;
+				}
+				long startBChord = bChord.getStartTick();
+				for (int k = 0; k < aChord.size(); k++) {
+					// Iterate the aChord notes
+					NoteEvent evtA = aChord.get(k);
+					if (Note.REST.equals(evtA.note)) {
+						continue;
+					}
+					int evtAId = evtA.note.id;					
+					long endANote = evtA.getEndTick();
+					if (startBChord > endANote) {
+						continue;
+					}
+					//long startANote = evt.getStartTick();
+					for (int l = 0; l < bChord.size(); l++) {
+						// Iterate the bChord notes
+						NoteEvent evtB = bChord.get(l);
+						int evtIdB = evtB.note.id;
+						if (evtIdB != evtAId) {
+							continue;
+						}
+						
+						long endBNote = evtB.getEndTick();
+						if (endBNote <= startAChord) {
+							continue;
+						}
+						//long startBNote = evtB.getStartTick();
+						if (startBChord >= endANote) {
+							continue;
+						}
+						// The notes are same pitch and overlap
+						if (test) {
+							System.out.println(evtA.note+" and "+evtB.note+" do not match.");
+							System.out.println(" at "+(evtA.getStartMicros()/1000000)+" seconds.");
+						}
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	private void addMidiTempoEvents(Track track0)
@@ -202,11 +415,11 @@ public class AbcExporter
 	}
 
 	private ExportTrackInfo exportPartToPreview(AbcPart part, Sequence sequence, long songStartTick, long songEndTick,
-			int pan, boolean useLotroInstruments) throws AbcConversionException
+			int pan, boolean useLotroInstruments, Set<Integer> assignedChannels, Integer chan) throws AbcConversionException
 	{
 		List<Chord> chords = combineAndQuantize(part, false, songStartTick, songEndTick);
 
-		int trackNumber = exportPartToMidi(part, sequence, chords, pan, useLotroInstruments);
+		Pair<Integer, Integer> trackNumber = exportPartToMidi(part, sequence, chords, pan, useLotroInstruments, assignedChannels, chan);
 
 		List<NoteEvent> noteEvents = new ArrayList<NoteEvent>(chords.size());
 		for (Chord chord : chords)
@@ -231,28 +444,41 @@ public class AbcExporter
 			}
 		}
 
-		return new ExportTrackInfo(trackNumber, part, noteEvents);
+		return new ExportTrackInfo(trackNumber.first, part, noteEvents, trackNumber.second);
 	}
 
-	private int exportPartToMidi(AbcPart part, Sequence out, List<Chord> chords, int pan, boolean useLotroInstruments)
+	private Pair<Integer, Integer> exportPartToMidi(AbcPart part, Sequence out, List<Chord> chords, int pan, boolean useLotroInstruments, Set<Integer> assignedChannels, Integer chan)
 	{
 		int trackNumber = out.getTracks().length;
 		part.setPreviewSequenceTrackNumber(trackNumber);
-		int channel = trackNumber;
-		if (channel >= MidiConstants.DRUM_CHANNEL)
+		
+		int channel = lastChannelUsedInPreview+1;
+		if (chan != null) {
+			channel = chan;
+		} else if (channel == MidiConstants.DRUM_CHANNEL) {
 			channel++;
+		}
+		lastChannelUsedInPreview = Math.max(channel, lastChannelUsedInPreview);
 
 		Track track = out.createTrack();
 
 		track.add(MidiFactory.createTrackNameEvent(part.getTitle()));
-		track.add(MidiFactory.createProgramChangeEvent(part.getInstrument().midi.id(), channel, 0));
-		if (useLotroInstruments)
-		{
-			track.add(MidiFactory.createChannelVolumeEvent(MidiConstants.MAX_VOLUME, channel, 1));
-			track.add(MidiFactory.createReverbControlEvent(AbcConstants.MIDI_REVERB, channel, 1));
-			track.add(MidiFactory.createChorusControlEvent(AbcConstants.MIDI_CHORUS, channel, 1));
+		if (useLotroInstruments && !assignedChannels.contains(channel)) {
+			// Only change the channel voice once
+			track.add(MidiFactory.createProgramChangeEvent(part.getInstrument().midi.id(), channel, 0));
+			if (channel == 0) {
+				//System.out.println(channel+": "+part.getTitle()+" voice assigned to "+part.getInstrument().toString());
+			}
 		}
-		track.add(MidiFactory.createPanEvent(pan, channel));
+		if (!assignedChannels.contains(channel)) {
+			if (useLotroInstruments)
+			{
+				track.add(MidiFactory.createChannelVolumeEvent(MidiConstants.MAX_VOLUME, channel, 1));
+				track.add(MidiFactory.createReverbControlEvent(AbcConstants.MIDI_REVERB, channel, 1));
+				track.add(MidiFactory.createChorusControlEvent(AbcConstants.MIDI_CHORUS, channel, 1));
+			}
+			track.add(MidiFactory.createPanEvent(pan, channel));
+		}
 
 		List<NoteEvent> notesOn = new ArrayList<NoteEvent>();
 
@@ -321,7 +547,7 @@ public class AbcExporter
 			track.add(MidiFactory.createNoteOffEvent(on.note.id + noteDelta, channel, on.getEndTick()));
 		}
 
-		return trackNumber;
+		return new Pair<Integer, Integer>(trackNumber, channel);
 	}
 
 	public void exportToAbc(OutputStream os, boolean delayEnabled) throws AbcConversionException

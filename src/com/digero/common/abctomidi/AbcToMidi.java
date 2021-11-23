@@ -348,7 +348,7 @@ public class AbcToMidi
 						if (channel > MidiConstants.CHANNEL_COUNT - 1)
 						{
 							throw new ParseException(
-									"Too many parts (max = " + (MidiConstants.CHANNEL_COUNT - 1) + ")", fileName,
+									"Too many parts (max = " + (MidiConstants.CHANNEL_COUNT - 2) + ")", fileName,
 									partStartLine);
 						}
 						track = seq.createTrack();
