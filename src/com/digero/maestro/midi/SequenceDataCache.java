@@ -36,6 +36,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private NavigableMap<Long, TempoEvent> tempo = new TreeMap<Long, TempoEvent>();
 
 	private final long songLengthTicks;
+	private final static int NO_RESULT = -250;
 
 	private MapByChannel instruments = new MapByChannel(DEFAULT_INSTRUMENT);
 	private MapByChannel volume = new MapByChannel(DEFAULT_CHANNEL_VOLUME);
@@ -298,7 +299,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 			type = ExtensionMidiInstrument.GM;
 		}
 		long patchTick = mapPatch.getEntryTick(channel, tick);
-		if (patchTick == -2) {
+		if (patchTick == NO_RESULT) {
 			return null;
 		}
 		
@@ -487,11 +488,11 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		public long getEntryTick(int channel, long tick)
 		{
 			if (map[channel] == null)
-				return -2;
+				return NO_RESULT;
 
 			Entry<Long, Integer> entry = map[channel].floorEntry(tick);
 			if (entry == null) // No changes before this tick
-				return -2;
+				return NO_RESULT;
 
 			return entry.getKey();
 		}

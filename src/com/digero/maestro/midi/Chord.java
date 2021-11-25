@@ -48,13 +48,24 @@ public class Chord implements AbcConstants
 		startTick = firstNote.getStartTick();
 		endTick = firstNote.getEndTick();
 		notes.add(firstNote);
-		if (firstNote.origPitch != 0) {
-			highest = firstNote.origPitch;
-			lowest = firstNote.origPitch;
-		} else {
-			highest = firstNote.note.id;
-			lowest = firstNote.note.id;
+		if (Note.REST != firstNote.note) {
+			if (firstNote.origPitch != 0) {
+				highest = firstNote.origPitch;
+				lowest = firstNote.origPitch;
+			} else {
+				highest = firstNote.note.id;
+				lowest = firstNote.note.id;
+			}
 		}
+	}
+	
+	public boolean isRest() {
+		for (NoteEvent evt : notes) {
+			if (Note.REST != evt.note) {
+				return false;
+			}
+		}
+		return true;		
 	}
 
 	public long getStartTick()
@@ -309,19 +320,21 @@ public class Chord implements AbcConstants
 			return false;
 		}
 		notes.add(ne);
-		if (ne.origPitch != 0) {
-			if (ne.origPitch > highest && ne.note != Note.REST) {
-				highest = ne.origPitch;
-			}
-			if (ne.origPitch < lowest && ne.note != Note.REST) {
-				lowest = ne.origPitch;
-			}
-		} else {
-			if (ne.note.id > highest && ne.note != Note.REST) {
-				highest = ne.note.id;
-			}
-			if (ne.note.id < lowest && ne.note != Note.REST) {
-				lowest = ne.note.id;
+		if (Note.REST != ne.note) {
+			if (ne.origPitch != 0) {
+				if (ne.origPitch > highest && ne.note != Note.REST) {
+					highest = ne.origPitch;
+				}
+				if (ne.origPitch < lowest && ne.note != Note.REST) {
+					lowest = ne.origPitch;
+				}
+			} else {
+				if (ne.note.id > highest && ne.note != Note.REST) {
+					highest = ne.note.id;
+				}
+				if (ne.note.id < lowest && ne.note != Note.REST) {
+					lowest = ne.note.id;
+				}
 			}
 		}
 		if (ne.getEndTick() < endTick)
@@ -329,5 +342,20 @@ public class Chord implements AbcConstants
 			endTick = ne.getEndTick();
 		}
 		return true;		
+	}
+
+	public Long getLongestEndTick() {
+		long endNoteTick = getStartTick(); 
+		if (!notes.isEmpty())
+		{
+			for (int k = 0; k < notes.size(); k++)
+			{
+				if (notes.get(k).note != Note.REST && notes.get(k).getEndTick() > endNoteTick)
+				{
+					endNoteTick = notes.get(k).getEndTick();
+				}
+			}
+		}
+		return endNoteTick;
 	}
 }
