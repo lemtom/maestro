@@ -1,1 +1,1 @@
-version.AbcPlayer=2.5.0.79
+version.AbcPlayer=2.5.0.80
