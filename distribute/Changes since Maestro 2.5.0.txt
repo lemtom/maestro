@@ -1,0 +1,293 @@
+Install instruction (.msi)
+===================
+0: Install Java 8 from https://java.com
+1: Run the .msi file
+2: Enjoy. Both 32 and 64 bit .exe will be installed with separate shortcuts. (But its the 32 bit it will try to start when double-click on a .mid or .msx)
+3: Notice this will uninstall any older version of Maestro you have installed. (but not versions that was unpacked from zip)
+
+
+Install instruction (.zip)
+===================
+0: Install Java 8 from https://java.com
+1: Copy the content of this ZIP into a random new folder.
+2: Double click on Maestro.jar or AbcPlayer.jar to start.
+(3): Make a Windows shortcut to Maestro.jar and one for AbcPlayer.jar in the unzipped folder.
+
+
+Getting 32/64 bit Java
+======================
+If you want to use the 32 bit versions, then you need to install 32 bit Java. And opposite for 64 bit.
+You can have both 32 and 64 bit Java installed at same time, as long as you don't install them same place.
+When you click the download link in java.com it will give you the version that match your browser.
+For most people that will be 64 bit. To get the other version you might have to search a bit on java.com.
+
+
+Starting the 64 bit version
+===========================
+- Find the "Maestro 64bit" app in start menu (if you installed using .msi).
+- Click on Maestro64.exe (if you installed using .zip).
+- Or use command-line prompt: java -jar -d64 Maestro.jar
+    If only 32 bit Java is installed (or classpath refers to the 32 bit version of Java), then it will complain.
+
+Notice that double clicking or selecting 'Open' on a MIDI or .msx file will start the 32 bit version.
+
+
+
+Video showing how to use some new features (but not all, as the video is a bit dated)
+==========================================
+https://www.youtube.com/watch?v=Y39EZPfXl9I
+
+
+
+
+Maestro upgrades by Aifel of Laurelin
+================
+
+Version 2.5.0.80
+- ABC preview in Maestro will now work with 15 parts instead of just 14.
+- ABC preview might work with more than 15 parts, if certain conditions are met.
+    Maestro internally uses midi to play the preview.
+    When you make a song with more than 15 parts, it will try to combine parts
+    using 2 methods in order to share midi channels of which there is a limited number.
+    If unsuccesful, then an error message will pop up when preview is in ABC mode. 
+    There is an absolute max of 24 parts due to Lotro's raid maximum.
+    AbcPlayer and Maestro still wont play ABC files that have more than 14 parts,
+    it only works for preview when source is a midi file. Might work on this in future version.
+
+Version 2.5.0.79
+- Added option to show polyphony count while previewing abc song. See tooltip in options for more info.
+- In the delay dialog the time can now be entered using comma as decimal point.
+- In XG, GM2 or GS midis, drums tracks will no longer get assigned some random GM instrument voice.
+    They will be named "XG Drums", "GM2 Drums" or "GS Drums", and will some times still sound wrong when playing the midi.
+    But now at least they will be marked as drum track so people don't assign melodic instruments on them.
+- Added support for showing GS, XG and GM2 instrument and drum kit names. If it does not know the name then it fall back to GM name.
+    Number of known instrument and kit names has gone from 129 to 2446 in total.
+    The name lists was compiled mostly by github.com/jazz-soft and then edited and expanded by me.
+
+Version 2.5.0.76
+- Change preview dynamics for +pppp+ to same as +ppp+ to match Lotro.
+- Include x3 times as many horn samples to make it sound more like Lotro.
+
+Version 2.5.0.75
+- Fixed that a MIDI Note ON event after a Note ON for same pitch, would remove the first Note ON event if the second had non-zero velocity.
+
+Version 2.5.0.74
+- Mix Timings now no longer consider section silenced notes when determining rhythm.
+- When a Lotro instrument part stop using a section edited track, also stop visualizing the section edits, even though it remembers them.
+- Fix that when attempting to load a Maestro Project that has parts assigned to MIDI tracks that does no longer exist in the MIDI,
+    Maestro would sometimes give the user no feedback on why it does not open. It was due to flooding of whitespaces to main Maestro window,
+    which forced the important message out of view.
+
+Version 2.5.0.73
+- Mix Timings is now enabled per default for new projects.
+- Will now export swing/mix timing checkbox settings to abc file as comments.
+
+Version 2.5.0.72
+- Octave doubling will now show visually in the notegraph also.
+    This is helpful for evaluating out of range notes.
+- Less interruptions in very long sustained notes (up to 5s).
+- Improved Mix Timings algorithm near tempo-changes.
+- For drum parts Mix Timings now only use note start times, not end times for evaluating rhythm.
+
+Version 2.5.0.71
+- Fixed that after loading a Maestro Project from .msx file, existing drum-parts would not instantly update the preview audio when individual drum notes were changed.
+
+Version 2.5.0.70
+- Added checkbox for Mix Timings, where it will do parts of song in swing/triplet/even timings depending on the detection of note rhythms.
+    This is instrument-part independent, it might put notes on swing rhythm on the flute while at the same time keeping even rhythm on drums.
+    If that is enabled then the old triplet/swing checkbox will still set the default grid for majority of the song. So remember to still
+    set the triplet/swing checkbox to what most of the song conforms to.
+    One drawback is that with Mix Timings enabled you can no longer reliable hand-edit the .abc file and copy-paste bars. A bar might not be 100%
+    matching duration of same bar in other parts, or exports with different timing settings (this is a ABC cosmetic issue only, the notes will play at correct time). So be careful with editing.
+- Fixed that if sections were not entered in order, the green background coloring of the track would not cover all sections.
+
+Version 2.5.0.69
+- Added ability for octave doubling of sections. Increased number of sections from 6 to 10.
+    Note this will not be visible in the notegraph, but can be heard in abc preview. To visualize it, save to abc and load up the abc to inspect.
+- Added option in section-editor to silence or octave double the parts of the track that is not covered by sections.
+- Fixed regression of minimum tempo to 12bpm instead of Maestro standard 10bpm.
+
+Version 2.5.0.68
+- Enabled section editor for percussion also. (Cowbells, Drum, Student FX)
+- The delays can now be heard in abc preview in Maestro.
+
+Version 2.5.0.67
+- Added student fiddle as an percussion instrument also, with only the noises. Student's FX Fiddle.
+
+Version 2.5.0.66
+- When breaking up long notes, allow them only to be 5s instead of 6s, as some samples are only around 5s long.
+- When breaking up long notes, prioritize again to do it at bar boundaries if possible. Allow it to happen also at the first bar boundary it crosses though.
+    Else break them close to 2.5s to still prevent rounding notes to zero duration.
+- Reduced max meter denominator to 8 again to avoid divide by zero.
+- Fixed that when loading up an ABC file into Maestro 64bit and not having volume at max, the volume could gradually become lower when skipping around while ABC previewing.
+
+Version 2.5.0.65
+- More tidy output of long rests while still preventing too long rests.
+
+Version 2.5.0.64
+- Better detection of when lotro determines minimum note duration by using 'equal to' vs 'greater than'.
+
+Version 2.5.0.63
+- Added a stereo slider, goes from mono to wide stereo panning for ABC preview.
+
+Version 2.5.0.62
+- Reinstated about half of the hold at end of notes for more mimic of lotro release.
+
+Version 2.5.0.61
+- Reverted back to 2.5.0 release envelope duration, as it was a better lotro approximation.
+    Thanks to Pontin for good feedback and to Jersiel to spot that the sound issue in Pontin's video was in the note releases.
+
+Version 2.5.0.60
+- Built a .msi installer and 64-bit executables. 32 bit will still be the default that is run if you double click on MIDI, abc or msx files (unless you change it).
+
+Version 2.5.0.59
+- When exporting with changed tempo, the part description duration should now be correct.
+- The prune algorithm now consider the highest and lowest notes in the chord as that from their pitch before they were compressed into 3 octaves.
+    Thanks to Jersiel for inputting that this way makes more sense.
+- Fixed an old bug that with some MIDIs could result in notes of duration zero seconds, which lotro would reject.
+    The fix I did in 2.5.0.46 would actually allow this old bug to happen more often. But all good now, its fixed.
+- The ZIP file now includes more files and install instructions has changes, scroll down to see them.
+
+Version 2.5.0.58
+- Readded all plucked samples to the .sf2 file to reduce CPU usage when previewing.
+
+Version 2.5.0.57
+- Enabled faster memory cleanup of map of discarded notes inside NoteEvents, and use less memory too.
+- Reduced and changed which samples is shipped in the .sf2 file, to reduce memory usage.
+
+Version 2.5.0.56
+- Added possibility to add a delay up to 1 second on a part. (but only if tempo is higher or equal to 50 bpm)
+    This can be used to get a chorus or echo effect by having two similar parts where one of them has a small delay.
+    When you first click the Delay Part button below the instrument part list,
+    the dialog will popup in upper left corner of your screen (like section editor will too).
+- Section editor and Delay Part dialogs will now pop up where they were last closed.
+
+Version 2.5.0.55
+- Now the new 2.5.0.42 discard algorithm will play in preview also, instead of only happening during export to ABC.
+- The discarded notes will now show as yellow when in Abc Preview if enabled in options.
+- Zoom will now also zoom a little vertical.
+- Fixed that ABC-Player would not detect too short or too long notes if tied. Also beautified the messages slightly.
+- Section editors input lines no longer need to be in chronological order.
+
+Version 2.5.0.53
+- Fixed bug that sometimes would make Delete button greyed out after deleting an instrument part.
+- Added two more tooltips.
+
+Version 2.5.0.52
+- Fixed that some rare MIDIs when changing tempo in Maestro and when in ABC Preview, would show a wrong total song duration.
+    It would however always export the correct duration, only the displayed duration was affected.
+- When a section has been silenced it will no longer visually show the volume of the silenced notes.
+
+Version 2.5.0.51
+- Allow to load a section from .msx file that does nothing. Sometimes its handy to have such section saved, when doing WIP.
+    Bar numbers must still meet requirements though. Still only enabled sections will be saved.
+- Centered the input numbers in the section editor.
+- Now stores the edit line in section editor into the section data, to make it show on same line again. Also saves it in the .msx file.
+- Added possibility for fade-in also. And fading is now adjustable in amount.
+    A value of 0 mean no fading. 100 means full fade-out. -100 means full fade-in.
+    Magnitudes larger than 100/-100, for example -150, will 'over-fade',
+    meaning the fading will become so steep it takes place over less time than the section spans.
+- Added show volume button in section editor. Press down and hold to see volumes in track.
+- Added tooltips to section editor input fields.
+
+Version 2.5.0.50
+- Improved check for overlapping sections in section editor.
+
+Version 2.5.0.49
+- Fixed that if a drum track with drums was active while zooming in its drum notes could not be seen.
+- Section editor will now disable bad input when clicking on APPLY. Plus added more info text.
+
+Version 2.5.0.48
+- Fixed that zoom button sometimes would not work.
+
+Version 2.5.0.47
+- Added a zoom button in lower right corner.
+- Reverted the fix for bar maximum counter and expanded its tooltip info.
+	Seems some songs it worked for, and some only for the MIDI preview and not for the ABC preview.
+	Further investigation is needed for better fix.
+
+Version 2.5.0.46
+- Fix for very slow songs with long bars (for example 50bpm 2/2) could sometimes export a rest longer than 8s, which would make lotro refuse to play it.
+
+Version 2.5.0.45
+- Added option to fadeout specific sections.
+- Optimized some code in section handling.
+- Fixed that bar counter maximum in Maestro and ABC Player would show one too much.
+
+Version 2.5.0.44
+- Added option to change volume of specific sections of a track.
+	How much the number affects the volume depends on the notes volume in the MIDI and on what the volume slider for the track is set to.
+	Its basically an MIDI velocity offset. Examples: -50, 10, 151 etc etc.
+    Although MIDI only goes from 0-127 you can enter a greater number offset to also offset the track volume slider.
+- Adjusted some instrument volumes.
+	This was done by carefully using same velocity/note and comparing them against Lute of Ages. Done by recording in Audacity and check (normalized with lute A) difference between them in lotro and in Maestro.
+	LM Fiddle, Basic fiddle, traveller's was changed. Have not checked cowbells, pibgorn, theo, drum, brusque, b.bassoon, st.fiddle yet. Ongoing work.
+
+Version 2.5.0.43
+- Allow time-signature denominator up to 32 from 8.
+- Added option to change octave or silence specific sections of a track by clicking button next to volume slider.
+	Using this with long songs with many parts might make Maestro less resposive, especially when preview is running.
+- Improved the max 6 note discard algorithm by discarding non-sustainable instrument notes that have tie to previous note and already played past the 1.1s limit.
+
+Version 2.5.0.42
+- Fix for LOTRO failing playback with Note's duration is too short
+- Removed stereo and reverb in Maestro ABC preview
+    This will make it much easier to accurate judge the instruments volumes compared to each other.
+- Export explicit unit note length to ABC output for good measure.
+- Fixed a meter division that was cast in a non helpful way
+- Made ABC Player check duration limits of rests also and those check is now made against actual note durations, not converted tempo changes in ABC file comment sections.
+- When loading ABC file with non-abbreviated tuplets like for example '(3:2:3' it will now process it properly instead of failing.
+- MIDI instrument names now more in line with official specification.
+- Preview note endings now sound more in line with lotro's way of ending notes. Was careful measured, should be fairly accurate.
+- The soundfont now contains all pibgorn and clarinet notes. Reason is that they vary alot in quality and that should be heard in preview to not make songs more beautiful than lotro renders them.
+    This will make the soundfont file slightly larger though and make Maestro consume more memory.
+- Track panel title tooltip will now show count of bad clarinet/pibgorn notes.
+    To see this, select pibgorn or clarinet, and hover mouse over a track title.
+- Lotro has a max 6 notes played at the same time per instrument. The way notes are discarded is now done with a much smarter algorithm instead of usually discarding the highest pitched notes.
+    This feature is very very handy for solo and small bands, where multiple tracks often is combined into same instrument.
+    Jersiel co-developed the algorithm for this.
+
+
+
+
+
+
+Want to have multiple different Maestro versions installed?
+===========================================================
+Somebody asked me how to do this, so here is answer:
+If you want different versions of Maestro installed at same time, just install using the zip as described above.
+
+
+
+FAQ
+===
+Will the upgraded Maestro .msx files load into old 2.5.0 Maestro?
+
+- Yes, but the section edits, Student FX, mix timing and delays will be ignored. And more than 15 parts wont be previewed.
+
+
+Will these upgrades eventually be merged into Digero's code?
+
+- Might happen if he wants that. For now I just use it myself and hand it out to bands and soloists.
+
+
+Maestro starts acting really weird when editing a very large and long midi with many instrument parts, what can I do?
+
+- It is most likely running out of memory, 32 bit Java do not allocate a lot of heap space per default.
+  Uninstall your 32 bit Java, and install a 64 bit Java instead, and start the 64 bit Maestro instead.
+
+
+I get a crash, how can I find out what caused it?
+
+- Start Maestro from commandline with: java -jar Maestro.jar
+  It should then output a stacktrace when crashing. If unsure on how to read it, just send to me.
+
+
+After having put Windows to sleep while Maestro were running the preview starts to sound uneven, there is preview delays. How to fix?
+
+- Save your work, close Maestro and reopen it. Its best to close Maestro before putting Windows to sleep.
+
+
+Can I compile the programs myself, can I get the source-code?
+
+- Yes its open-source, just ask.

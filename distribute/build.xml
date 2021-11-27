@@ -32,6 +32,7 @@
 		<copy file="abcfile.ico" todir="${build}" />
 		<copy file="midifile.ico" todir="${build}" />
 		<copy file="msxfile.ico" todir="${build}" />
+		<copy file="Changes since Maestro 2.5.0.txt" todir="${build}" />
 		<copy todir="${bin}/com/digero/maestro">
 			<fileset dir="${src}/com/digero/maestro" includes="*.txt"/>
 		</copy>
@@ -191,6 +192,7 @@
 			<include name="midifile.ico" />
 			<include name="abcfile.ico" />
 			<include name="msxfile.ico" />
+			<include name="Changes since Maestro 2.5.0.txt" />
 		</zip>
 	</target>
 
