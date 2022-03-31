@@ -67,6 +67,19 @@ public class Chord implements AbcConstants
 		}
 		return true;		
 	}
+	
+	public boolean hasRestAndNotes() {
+		boolean hasNotes = false;
+		boolean hasRests = false;
+		for (NoteEvent evt : notes) {
+			if (Note.REST == evt.note) {
+				hasRests = true;
+			} else if (Note.REST != evt.note) {
+				hasNotes = true;
+			}
+		}
+		return hasRests && hasNotes;
+	}
 
 	public long getStartTick()
 	{
@@ -357,5 +370,30 @@ public class Chord implements AbcConstants
 			}
 		}
 		return endNoteTick;
+	}
+
+	public void removeRests() {
+		List<NoteEvent> rests = new ArrayList<NoteEvent>();
+		for (NoteEvent evt : notes) {
+			if (Note.REST == evt.note) {
+				rests.add(evt);
+			}
+		}
+		notes.removeAll(rests);
+		recalcEndTick();
+	}
+
+	public void printIfUneven() {
+		long endNoteTick = getEndTick(); 
+		if (!notes.isEmpty())
+		{
+			for (int k = 0; k < notes.size(); k++)
+			{
+				if (notes.get(k).note != Note.REST && notes.get(k).getEndTick() != endNoteTick)
+				{
+					System.out.println("Note in chord has bad length! "+(notes.get(k).getEndTick() - endNoteTick));
+				}
+			}
+		}		
 	}
 }

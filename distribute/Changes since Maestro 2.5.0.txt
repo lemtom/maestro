@@ -47,9 +47,16 @@ Version 2.5.0.81
 - Maestro now accept karaoke midi files with .kar ending.
 - Added Close Project to main file menu. Suggested by Paane.
 - Polyphony counter now goes orange above 54 notes. Suggested by Jersiel. Will still go red at 64+.
-- Fixed that MIDIs with low Pulse Per Quarter Note (PPQ) resolution could change note and rest lengths in non-swing mode or with mix timings.
+- Fixed that rare MIDIs with very low Pulse Per Quarter Note (PPQ) resolution could change note and rest lengths in non-swing mode or with mix timings.
     The fix makes the output in sync and correct tempo when using non-swing timing or mix timing or both.
-    It does however not solve the imprecise timings of such MIDI when converted to ABC and I suggest for such MIDI, edit them to a finer resolution in a MIDI editor. 
+    It does however not solve the imprecise timings of such MIDI when converted to ABC.
+    I suggest for such MIDI, edit them to a finer resolution (for example PPQ of 480) in a MIDI editor.
+    Thank you to Jersiel for hearing the issue in the first place.
+- Fixed that final rest in a abc part would start where the event that began last would end,
+    instead of be sure to pick the event that actually ended last and use that ending.
+- Fixed that the very last chord of a abc part would not be broken up and tied,
+    but instead would just be output even if notes in had different lengths.
+    Lotro would not complain, but for consistency it will now also be broken up and tied. 
 
 Version 2.5.0.80
 - ABC preview in Maestro will now work with 15 parts instead of just 14.

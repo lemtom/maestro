@@ -32,6 +32,7 @@ import com.digero.common.util.Util;
 import com.digero.maestro.MaestroMain;
 import com.digero.maestro.midi.Chord;
 import com.digero.maestro.midi.NoteEvent;
+import com.sun.media.sound.MidiUtils;
 
 public class AbcExporter
 {
@@ -904,6 +905,12 @@ public class AbcExporter
 				assert false : "Chord has no notes!";
 				continue;
 			}
+			
+			assert !c.hasRestAndNotes();
+			
+			/*if (c.hasRestAndNotes()) {
+				c.removeRests();
+			}*/
 
 			c.sort();
 
@@ -965,7 +972,7 @@ public class AbcExporter
 			{
 				bar.append('[');
 			}
-
+			
 			int notesWritten = 0;
 			for (int j = 0; j < c.size(); j++)
 			{
@@ -975,7 +982,7 @@ public class AbcExporter
 					assert false : "Zero-length note";
 					continue;
 				}
-
+				
 				String noteAbc = evt.note.abc;
 				if (evt.note != Note.REST)
 				{
@@ -1152,14 +1159,22 @@ public class AbcExporter
 		Collections.sort(events);
 
 		// Quantize the events
+		long lastEnding = 0;
+		NoteEvent lastEvent = null;
 		Iterator<NoteEvent> neIter = events.iterator();
 		while (neIter.hasNext())
 		{
 			NoteEvent ne = neIter.next();
-
+			
 			ne.setStartTick(qtm.quantize(ne.getStartTick(), part));
-			ne.setEndTick(qtm.quantize(ne.getEndTick(), part));
+			long ending = qtm.quantize(ne.getEndTick(), part);
+			ne.setEndTick(ending);
 
+			if (ending > lastEnding) {
+				lastEnding = ending;
+				lastEvent = ne;
+			}
+			
 			// Make sure the note didn't get quantized to zero length
 			if (ne.getLengthTicks() == 0)
 			{
@@ -1175,6 +1190,8 @@ public class AbcExporter
 				ne.setStartTick(qtm.microsToTick(qtm.tickToMicros(ne.getStartTick())+delayMicros));
 			}
 		}
+		
+		Collections.sort(events);
 
 		// Add initial rest if necessary
 		long quantizedStartTick = qtm.quantize(songStartTick, part);
@@ -1188,7 +1205,7 @@ public class AbcExporter
 		if (songEndTick < Long.MAX_VALUE)
 		{
 			long quantizedEndTick = qtm.quantize(songEndTick, part);
-			NoteEvent lastEvent = events.get(events.size() - 1);
+			
 			if (lastEvent.getEndTick() < quantizedEndTick)
 			{
 				if (lastEvent.note == Note.REST)
@@ -1202,8 +1219,6 @@ public class AbcExporter
 				}
 			}
 		}
-
-		Collections.sort(events);
 				
 		// Remove duplicate notes
 		List<NoteEvent> notesOn = new ArrayList<NoteEvent>();
@@ -1268,16 +1283,11 @@ public class AbcExporter
 		for (int i = 1; i < events.size(); i++)
 		{
 			NoteEvent ne = events.get(i);
-			if (curChord.getStartTick() == ne.getStartTick())
-			{
+			
+			if (curChord.getStartTick() == ne.getStartTick()) {
 				// This note starts at the same time as the rest of the notes in the chord				
 				curChord.addAlways(ne);
-			}
-			else
-			{
-				// Create a new chord
-				Chord nextChord = new Chord(ne);
-
+			} else {				
 				List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
 				removeNotes(events, deadnotes, part);
 				if (deadnotes.size() > 0) {
@@ -1286,6 +1296,9 @@ public class AbcExporter
 					i--;
 					continue;
 				}
+				
+				// Create a new chord
+				Chord nextChord = new Chord(ne);
 				
 				if (addTies)
 				{
@@ -1361,10 +1374,51 @@ public class AbcExporter
 				curChord = nextChord;
 			}
 		}
-
-		// Last chord needs to be pruned as that hasn't happened yet.
-		List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
-		removeNotes(events, deadnotes, part);// we need to set the pruned flag for last chord too.
+		
+		boolean reprocessCurrentNote = true;
+		if (addTies) {
+			while (reprocessCurrentNote) {
+				// The last Chord has all the notes it will get. But before continuing, 
+				// normalize the chord so that all notes end at the same time and end 
+				// before the next chord starts.
+				
+				// Last chord needs to be pruned as that hasn't happened yet.
+				List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
+				removeNotes(events, deadnotes, part);// we need to set the pruned flag for last chord too.
+				curChord.recalcEndTick();
+				long targetEndTick = curChord.getEndTick();
+	
+				reprocessCurrentNote = false;
+				
+				Chord nextChord = null;
+				
+				for (int j = 0; j < curChord.size(); j++)
+				{
+					NoteEvent jne = curChord.get(j);
+					if (jne.getEndTick() > targetEndTick) {
+						// This note extends past the end of the chord; break it into two tied notes
+						NoteEvent next = jne.splitWithTieAtTick(targetEndTick);
+						if (nextChord == null) {
+							nextChord = new Chord(next);
+							chords.add(nextChord);
+						} else {
+							nextChord.add(next);
+						}
+					}
+				}
+				curChord.recalcEndTick();
+				if (nextChord != null) {
+					reprocessCurrentNote = true;
+					curChord = nextChord;
+					curChord.recalcEndTick();
+				}
+			}
+		} else {
+			// Last chord needs to be pruned as that hasn't happened yet.
+			List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
+			removeNotes(events, deadnotes, part);// we need to set the pruned flag for last chord too.
+			curChord.recalcEndTick();
+		}
 
 		return chords;
 	}
