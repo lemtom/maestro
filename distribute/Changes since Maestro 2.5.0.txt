@@ -38,6 +38,12 @@ Video showing how to use some new features (but not all, as the video is very da
 https://www.youtube.com/watch?v=Y39EZPfXl9I
 
 
+Special Thanks
+==============
+Thanks to Digero for an amazing original Maestro and ABC Player.
+Thanks to Jersiel for teaching me music theory, ideas and feedback, without which I could not have made much of this.
+Thanks to Trincia for introducing me to the art of composition.
+Thanks to all the feedback of features, bugfixes and some bugs. Plus suggestions.
 
 
 Maestro upgrades by Aifel of Laurelin
