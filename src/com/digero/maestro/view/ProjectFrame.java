@@ -149,6 +149,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JMenuItem saveAsMenuItem;
 	private JMenuItem exportMenuItem;
 	private JMenuItem exportAsMenuItem;
+	private JMenuItem closeProject;
 
 	private JList<AbcPart> partsList;
 	private JButton newPartButton;
@@ -189,6 +190,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JLabel noteCount = new JLabel();
 	private int maxNoteCount = 0;
 	private static Color BRIGHT_RED = new Color(255, 0, 0);
+	private static Color ORANGE = new Color(235, 150, 64);
 	private static Color BLACK = new Color(0, 0, 0);
 
 	public ProjectFrame()
@@ -785,7 +787,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		add(abcPartsAndSettings, "0, 0");
 		add(midiPartsAndControls, "1, 0");
 
-		final FileFilterDropListener dropListener = new FileFilterDropListener(false, "mid", "midi", "abc", "txt",
+		final FileFilterDropListener dropListener = new FileFilterDropListener(false, "mid", "midi", "kar", "abc", "txt",
 				AbcSong.MSX_FILE_EXTENSION_NO_DOT);
 		dropListener.addActionListener(new ActionListener()
 		{
@@ -861,7 +863,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					openFileChooser = new JFileChooser(prefs.get("openFileChooser.path", null));
 					openFileChooser.setMultiSelectionEnabled(false);
 					openFileChooser.setFileFilter(new ExtensionFileFilter("MIDI, ABC, and "
-							+ AbcSong.MSX_FILE_DESCRIPTION_PLURAL, "mid", "midi", "abc", "txt",
+							+ AbcSong.MSX_FILE_DESCRIPTION_PLURAL, "mid", "midi", "kar", "abc", "txt",
 							AbcSong.MSX_FILE_EXTENSION_NO_DOT));
 				}
 
@@ -929,6 +931,15 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		});
 
 		fileMenu.addSeparator();
+		
+		closeProject = fileMenu.add(new JMenuItem("Close Project"));
+		closeProject.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				closeSong();
+			}
+		});
 
 		JMenuItem exitItem = fileMenu.add(new JMenuItem("Exit"));
 		exitItem.setMnemonic('x');
@@ -1150,8 +1161,11 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		if (maxNoteCount < 10) {
 			noteCount.setForeground(BLACK);
 			noteCount.setText("Notes:  "+maxNoteCount+"  ");
-		} else if (maxNoteCount < 64) {
+		} else if (maxNoteCount < 54) {
 			noteCount.setForeground(BLACK);
+			noteCount.setText("Notes: "+maxNoteCount+"  ");
+		} else if (maxNoteCount < 64) {
+			noteCount.setForeground(ORANGE);
 			noteCount.setText("Notes: "+maxNoteCount+"  ");
 		} else {
 			noteCount.setForeground(BRIGHT_RED);
