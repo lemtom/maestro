@@ -48,6 +48,10 @@ public class TimeSignature implements MidiConstants
 			this.denominator = 4;
 			this.metronome = 24;
 			this.thirtySecondNotes = 8;
+			/*
+			System.err.println("Orig MIDI time signature: "+data[0]+"/"+(1 << data[1])+" - "+(data[3] & 0xFF)+" 32nd notes per "+data[2]+" MIDI clocks.");
+			System.err.println("New  MIDI time signature: 4/4 - 8 32nd notes per 24 MIDI clocks.");
+			*/
 		}
 		else
 		{

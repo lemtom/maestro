@@ -54,7 +54,9 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		TimingInfo defaultOddTiming = new TimingInfo(source.getPrimaryTempoMPQ(), resolution, exportTempoFactor, meter,
 				!useTripletTiming, abcSongBPM);
 		timingInfoByTick.put(0L, new TimingInfoEvent(0, 0, 0, defaultTiming, defaultOddTiming));
-
+		//System.out.println("even"+defaultTiming.toString());
+		//System.out.println("odd"+defaultOddTiming.toString());
+		
 		Collection<TimingInfoEvent> reversedEvents = timingInfoByTick.descendingMap().values();
 
 		/* Go through the tempo events from the MIDI file and quantize them so each event starts at
@@ -70,7 +72,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 					useTripletTiming, abcSongBPM);
 			TimingInfo infoOdd = new TimingInfo(sourceEvent.tempoMPQ, resolution, exportTempoFactor, meter,
 					!useTripletTiming, abcSongBPM);
-
+			
 			// Iterate over the existing events in reverse order
 			Iterator<TimingInfoEvent> reverseIterator = reversedEvents.iterator();
 			while (reverseIterator.hasNext())
@@ -127,11 +129,13 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		TimingInfoEvent[] timings = (TimingInfoEvent[]) timingInfoByTick.values().toArray(new TimingInfoEvent[0]);
 		//long totalSwing = 0;
 		//long totalEven = 0;
+		
 		for (int part = 0; part < parts; part++) {
 			// calculate for all parts
 			AbcPart abcPart = song.getParts().get(part);
 			TreeMap<Long, TimingInfoEvent> partMap = new TreeMap<Long, TimingInfoEvent>();
 			oddTimingInfoByTick.put(abcPart, partMap);
+			
 			for (int j = 0; j < timings.length; j++ ) {
 				// calculate for all tempochanges
 				TimingInfoEvent tempoChange = timings[j];
@@ -140,6 +144,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 					nextTempoChange = timings[j+1];
 				}
 				partMap.put(tempoChange.tick, tempoChange);
+				
 				ArrayList<NoteEvent> eventList = new ArrayList<NoteEvent>();  
 				for (int t = 0; t < tracks; t++) {
 					if(abcPart.isTrackEnabled(t)) {
@@ -172,15 +177,23 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 						loopCount++;
 					}
 				}
+				
 				if (loopCount >= 100) {
+					System.out.println("loopCount >= 100");
 					continue;
 				}
+				
+				assert sixTicks % tempoChange.info.getMinNoteLengthTicks() == 0;
+				assert sixTicks % tempoChange.infoOdd.getMinNoteLengthTicks() == 0;
+				
 				// Max possible number of sixGrid before song ending +1
 				int maxSixths = (int) ((this.songLengthTicks-tempoChange.tick+sixTicks)/sixTicks);
+				
 				ArrayList<Integer> sixGridsOdds = new ArrayList<Integer>(maxSixths);
 				for (int k = 0; k < maxSixths; k++) {
 					sixGridsOdds.add(null);
 				}
+				
 				int highest = -1;
 				for (NoteEvent ne : eventList) {
 					if (ne.getStartTick() > tempoChange.tick && (nextTempoChange == null || ne.getStartTick() < nextTempoChange.tick)) {

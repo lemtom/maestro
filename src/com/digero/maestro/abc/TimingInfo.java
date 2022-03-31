@@ -22,6 +22,19 @@ public class TimingInfo
 	private final int minNoteDivisor;
 	private final long minNoteLengthTicks;
 	private final long maxNoteLengthTicks;
+	
+	@Override
+	public String toString() {
+		String str = "  TimingInfo:\n";
+		str += meter.toString()+"\n";
+		str += resolutionPPQ+"\n";
+		str += tempoMPQ+"\n";
+		str += exportTempoFactor+"\n";
+		str += defaultDivisor+"\n";
+		str += minNoteDivisor+"\n";
+		str += minNoteLengthTicks+"\n";
+		return str;		
+	}
 
 	TimingInfo(int tempoMPQ, int resolutionPPQ, float exportTempoFactor, TimeSignature meter, boolean useTripletTiming, int abcSongBPM)
 			throws AbcConversionException
@@ -61,9 +74,9 @@ public class TimingInfo
 			int minNoteDivisor = defaultDivisor;
 			if (useTripletTiming)
 				minNoteDivisor *= 3;
-			long minNoteTicks = resolutionPPQ / (minNoteDivisor / 4);
+			long minNoteTicks = (4 * resolutionPPQ) / (minNoteDivisor);
 
-			while (minNoteTicks < SHORTEST_NOTE_TICKS)
+			while (minNoteTicks < SHORTEST_NOTE_TICKS && minNoteDivisor % 2 == 0)
 			{
 				minNoteTicks *= 2;
 				minNoteDivisor /= 2;
@@ -71,7 +84,7 @@ public class TimingInfo
 
 			assert minNoteDivisor > 0;
 
-			while (minNoteTicks >= SHORTEST_NOTE_TICKS * 2)
+			while (minNoteTicks >= SHORTEST_NOTE_TICKS * 2 && minNoteTicks % 2 == 0)
 			{
 				minNoteTicks /= 2;
 				minNoteDivisor *= 2;

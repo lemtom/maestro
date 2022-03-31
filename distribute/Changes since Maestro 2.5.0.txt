@@ -33,7 +33,7 @@ Notice that double clicking or selecting 'Open' on a MIDI or .msx file will star
 
 
 
-Video showing how to use some new features (but not all, as the video is a bit dated)
+Video showing how to use some new features (but not all, as the video is very dated)
 ==========================================
 https://www.youtube.com/watch?v=Y39EZPfXl9I
 
@@ -42,6 +42,14 @@ https://www.youtube.com/watch?v=Y39EZPfXl9I
 
 Maestro upgrades by Aifel of Laurelin
 ================
+
+Version 2.5.0.81
+- Maestro now accept karaoke midi files with .kar ending.
+- Added Close Project to main file menu. Suggested by Paane.
+- Polyphony counter now goes orange above 54 notes. Suggested by Jersiel. Will still go red at 64+.
+- Fixed that MIDIs with low Pulse Per Quarter Note (PPQ) resolution could change note and rest lengths in non-swing mode or with mix timings.
+    The fix makes the output in sync and correct tempo when using non-swing timing or mix timing or both.
+    It does however not solve the imprecise timings of such MIDI when converted to ABC and I suggest for such MIDI, edit them to a finer resolution in a MIDI editor. 
 
 Version 2.5.0.80
 - ABC preview in Maestro will now work with 15 parts instead of just 14.
@@ -56,7 +64,7 @@ Version 2.5.0.80
 
 Version 2.5.0.79
 - Added option to show polyphony count while previewing abc song. See tooltip in options for more info.
-- In the delay dialog the time can now be entered using comma as decimal point.
+- In the delay dialog the time can now be entered using comma as decimal point. Suggested by Notenzauber.
 - In XG, GM2 or GS midis, drums tracks will no longer get assigned some random GM instrument voice.
     They will be named "XG Drums", "GM2 Drums" or "GS Drums", and will some times still sound wrong when playing the midi.
     But now at least they will be marked as drum track so people don't assign melodic instruments on them.
