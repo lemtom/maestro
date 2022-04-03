@@ -180,10 +180,8 @@
 	<target name="ZipFile" depends="Executables">
 		<mkdir dir="${output}" />
 		<zip destfile="${output}/${basename.Maestro}_v${version.Maestro}.zip" basedir="${build}">
-			<include name="${basename.Maestro}.exe" />
 			<include name="${basename.Maestro}64.exe" />
 			<include name="${basename.Maestro}.jar" />
-			<include name="${basename.AbcPlayer}.exe" />
 			<include name="${basename.AbcPlayer}64.exe" />
 			<include name="${basename.AbcPlayer}.jar" />
 			<include name="${basename.Common}.jar" />
