@@ -11,6 +11,8 @@ public class SaveAndExportSettings
 	public int stereoPan = 100;
 	private final Preferences prefs;
 	public boolean showMaxPolyphony = false;
+	public boolean showBadger = false;
+	public boolean allBadger = false;
 
 	public SaveAndExportSettings(Preferences prefs)
 	{
@@ -21,6 +23,8 @@ public class SaveAndExportSettings
 		showPruned = prefs.getBoolean("showPruned", showPruned);
 		stereoPan = prefs.getInt("stereoPan", stereoPan);
 		showMaxPolyphony = prefs.getBoolean("showMaxPolyphony", showMaxPolyphony);
+		showBadger = prefs.getBoolean("showBadger", showBadger);
+		allBadger = prefs.getBoolean("allBadger", allBadger);
 	}
 
 	public SaveAndExportSettings(SaveAndExportSettings that)
@@ -37,6 +41,8 @@ public class SaveAndExportSettings
 		showPruned = that.showPruned;
 		stereoPan = that.stereoPan;
 		showMaxPolyphony = that.showMaxPolyphony;
+		showBadger = that.showBadger;
+		allBadger = that.allBadger;
 	}
 
 	public void saveToPrefs()
@@ -47,6 +53,8 @@ public class SaveAndExportSettings
 		prefs.putBoolean("showPruned", showPruned);
 		prefs.putInt("stereoPan", stereoPan);
 		prefs.putBoolean("showMaxPolyphony", showMaxPolyphony);
+		prefs.putBoolean("showBadger", showBadger);
+		prefs.putBoolean("allBadger", allBadger);
 	}
 
 	public SaveAndExportSettings getCopy()

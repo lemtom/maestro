@@ -46,6 +46,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	public static final int NUMBERING_TAB = 0;
 	public static final int NAME_TEMPLATE_TAB = 1;
 	public static final int SAVE_EXPORT_TAB = 2;
+	public static final int MISC = 3;
 
 	private static final int PAD = 4;
 
@@ -122,6 +123,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		tabPanel.addTab("ABC Part Numbering", createNumberingPanel()); // NUMBERING_TAB
 		tabPanel.addTab("ABC Part Naming", createNameTemplatePanel()); // NAME_TEMPLATE_TAB
 		tabPanel.addTab("Save & Export", createSaveAndExportSettingsPanel()); // SAVE_EXPORT_TAB
+		tabPanel.addTab("Misc", createMiscPanel()); // MISC_TAB
 
 		JPanel mainPanel = new JPanel(new BorderLayout(PAD, PAD));
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(PAD, PAD, PAD, PAD));
@@ -411,6 +413,34 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				saveSettings.skipSilenceAtStart = skipSilenceAtStartCheckBox.isSelected();
 			}
 		});
+
+		TableLayout layout = new TableLayout();
+		layout.insertColumn(0, FILL);
+		layout.setVGap(PAD);
+
+		JPanel panel = new JPanel(layout);
+		panel.setBorder(BorderFactory.createEmptyBorder(PAD, PAD, PAD, PAD));
+
+		int row = -1;
+
+		layout.insertRow(++row, PREFERRED);
+		panel.add(titleLabel, "0, " + row);
+
+		layout.insertRow(++row, PREFERRED);
+		panel.add(promptSaveCheckBox, "0, " + row);
+
+		layout.insertRow(++row, PREFERRED);
+		panel.add(showExportFileChooserCheckBox, "0, " + row);
+
+		layout.insertRow(++row, PREFERRED);
+		panel.add(skipSilenceAtStartCheckBox, "0, " + row);
+		
+		return panel;
+	}
+	
+	private JPanel createMiscPanel()
+	{
+		JLabel titleLabel = new JLabel("<html><u><b>Misc</b></u></html>");
 		
 		final JCheckBox showPrunedCheckBox = new JCheckBox("Show discarded notes in yellow");
 		showPrunedCheckBox.setToolTipText("<html>" //
@@ -443,6 +473,32 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				saveSettings.showMaxPolyphony = showMaxPolyphonyCheckBox.isSelected();
 			}
 		});
+		
+		final JCheckBox allBadgerCheckBox = new JCheckBox("Output all playable parts per default");
+		allBadgerCheckBox.setToolTipText("<html>Output max playable parts for extended songbooks.</html>");
+		allBadgerCheckBox.setSelected(saveSettings.allBadger);
+		allBadgerCheckBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				saveSettings.allBadger = allBadgerCheckBox.isSelected();
+			}
+		});
+		allBadgerCheckBox.setEnabled(saveSettings.showBadger);
+		
+		final JCheckBox showBadgerCheckBox = new JCheckBox("Support extended songbook");
+		showBadgerCheckBox.setToolTipText("<html>Output and show genre and mood fields<br>"
+				+ "that are used in extended songbooks:<br>"
+				+ "Badger Chapter, White Badger and Zedrock Chapter.</html>");
+		showBadgerCheckBox.setSelected(saveSettings.showBadger);
+		showBadgerCheckBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				saveSettings.showBadger = showBadgerCheckBox.isSelected();
+				allBadgerCheckBox.setEnabled(saveSettings.showBadger);
+			}
+		});
 
 		TableLayout layout = new TableLayout();
 		layout.insertColumn(0, FILL);
@@ -457,19 +513,16 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		panel.add(titleLabel, "0, " + row);
 
 		layout.insertRow(++row, PREFERRED);
-		panel.add(promptSaveCheckBox, "0, " + row);
-
-		layout.insertRow(++row, PREFERRED);
-		panel.add(showExportFileChooserCheckBox, "0, " + row);
-
-		layout.insertRow(++row, PREFERRED);
-		panel.add(skipSilenceAtStartCheckBox, "0, " + row);
-		
-		layout.insertRow(++row, PREFERRED);
 		panel.add(showPrunedCheckBox, "0, " + row);
 		
 		layout.insertRow(++row, PREFERRED);
 		panel.add(showMaxPolyphonyCheckBox, "0, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(showBadgerCheckBox, "0, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(allBadgerCheckBox, "0, " + row);
 
 		return panel;
 	}
@@ -582,6 +635,26 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		@Override public String getPartName(AbcPartMetadataSource abcPart)
 		{
 			return null;
+		}
+		
+		@Override public String getGenre()
+		{
+			return "folk";
+		}
+		
+		@Override public String getMood()
+		{
+			return "sad";
+		}
+		
+		@Override public String getAllParts()
+		{
+			return "N: TS  1,   4";
+		}
+
+		@Override
+		public String getBadgerTitle() {
+			return "N: Title: "+getComposer()+" - "+getSongTitle();
 		}
 	}
 }

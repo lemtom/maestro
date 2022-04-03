@@ -15,4 +15,12 @@ public interface AbcMetadataSource
 	public File getExportFile();
 
 	public String getPartName(AbcPartMetadataSource abcPart);
+	
+	public String getGenre();
+	
+	public String getMood();
+	
+	public String getAllParts();
+	
+	public String getBadgerTitle();	
 }

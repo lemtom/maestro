@@ -1,14 +1,16 @@
+These instructions only apply to the latest version 2.5.0.82. Previous versions differ a bit due to being 32 bit per default.
+
 Install instruction (.msi)
 ===================
-0: Install Java 8 from https://java.com
+0: Install Java (64 bit) from https://java.com
 1: Run the .msi file
-2: Enjoy. Both 32 and 64 bit .exe will be installed with separate shortcuts. (But its the 32 bit it will try to start when double-click on a .mid or .msx)
+2: Enjoy.
 3: Notice this will uninstall any older version of Maestro you have installed. (but not versions that was unpacked from zip)
 
 
 Install instruction (.zip)
 ===================
-0: Install Java 8 from https://java.com
+0: Install Java (64 bit) from https://java.com
 1: Copy the content of this ZIP into a random new folder.
 2: Double click on Maestro.jar or AbcPlayer.jar to start.
 (3): Make a Windows shortcut to Maestro.jar and one for AbcPlayer.jar in the unzipped folder.
@@ -16,21 +18,15 @@ Install instruction (.zip)
 
 Getting 32/64 bit Java
 ======================
-If you want to use the 32 bit versions, then you need to install 32 bit Java. And opposite for 64 bit.
 You can have both 32 and 64 bit Java installed at same time, as long as you don't install them same place.
-When you click the download link in java.com it will give you the version that match your browser.
-For most people that will be 64 bit. To get the other version you might have to search a bit on java.com.
+When you click the download link in java.com it will give you the version that match your browser. This is usually the 64 bit version unless you use a very old browser.
+To get the other version you might have to search a bit on java.com.
 
 
-Starting the 64 bit version
-===========================
-- Find the "Maestro 64bit" app in start menu (if you installed using .msi).
-- Click on Maestro64.exe (if you installed using .zip).
-- Or use command-line prompt: java -jar -d64 Maestro.jar
-    If only 32 bit Java is installed (or classpath refers to the 32 bit version of Java), then it will complain.
-
-Notice that double clicking or selecting 'Open' on a MIDI or .msx file will start the 32 bit version.
-
+Starting from command prompt
+============================
+- Use command-line prompt: java -jar -d64 Maestro.jar
+    If only 32 bit Java is installed, then it will complain.
 
 
 Video showing how to use some new features (but not all, as the video is very dated)
@@ -43,17 +39,33 @@ Special Thanks
 Thanks to Digero for an amazing original Maestro and ABC Player.
 Thanks to Jersiel for teaching me music theory, ideas and feedback, without which I could not have made much of this.
 Thanks to Trincia for introducing me to the art of composition.
-Thanks to all the feedback of features, bugfixes and some bugs. Plus suggestions.
+Thanks to the bands I play in for motivating me.
+Thanks to all who gave feedback of features, bugfixes and some bugs plus suggestions.
 
 
 Maestro upgrades by Aifel of Laurelin
 ================
 
+Version 2.5.0.82
+- Made 64 bit the default version.
+- Removed support for 32 bit.
+- Included more samples for Flute, Horn and Bagpipe.
+- Polyphony counter now also shows peak concurrent playing notes. Suggested by Jersiel.
+    But do remember again that due to technical reasons Maestro note fadeout time is longer than in lotro,
+    and since notes in fadeout phase is counted, the polyphony numbers have a tendency to be too high.
+- German and French words for 'center', 'left' and 'right' in part titles will now also change stereo pan.
+    The words recognized is now: left, links, gauche, right, rechts, droite, middle, center, zentrum, mitte and centre.
+    Upper or lower case does not matter.
+- Added limited support for Songbook variants based on Lina's Badger Chapter.
+    It can output title, genre and mood.
+    There is also an option to output all parts played for convenience.
+    There is no way yet to select individual parts to be played.
+
 Version 2.5.0.81
 - Maestro now accept karaoke midi files with .kar ending.
 - Added Close Project to main file menu. Suggested by Paane.
 - Polyphony counter now goes orange above 54 notes. Suggested by Jersiel. Will still go red at 64+.
-- Fixed that rare MIDIs with very low Pulse Per Quarter Note (PPQ) resolution could change note and rest lengths in non-swing mode or with mix timings.
+- Fixed that rare MIDIs with very low Pulse Per Quarter Note (PPQ) resolution could change note and rest lengths in non-swing mode and in mix timings mode.
     The fix makes the output in sync and correct tempo when using non-swing timing or mix timing or both.
     It does however not solve the imprecise timings of such MIDI when converted to ABC.
     I suggest for such MIDI, edit them to a finer resolution (for example PPQ of 480) in a MIDI editor.
@@ -292,15 +304,9 @@ Will these upgrades eventually be merged into Digero's code?
 - Might happen if he wants that. For now I just use it myself and hand it out to bands and soloists.
 
 
-Maestro starts acting really weird when editing a very large and long midi with many instrument parts, what can I do?
-
-- It is most likely running out of memory, 32 bit Java do not allocate a lot of heap space per default.
-  Uninstall your 32 bit Java, and install a 64 bit Java instead, and start the 64 bit Maestro instead.
-
-
 I get a crash, how can I find out what caused it?
 
-- Start Maestro from commandline with: java -jar Maestro.jar
+- Start Maestro from commandline with: java -jar -d64 Maestro.jar
   It should then output a stacktrace when crashing. If unsure on how to read it, just send to me.
 
 

@@ -791,6 +791,25 @@ public class AbcExporter
 			out.println(AbcField.SWING_RHYTHM + Boolean.toString(qtm.isTripletTiming()));
 			out.println(AbcField.MIX_TIMINGS + Boolean.toString(qtm.isMixTiming()));
 			out.println(AbcField.ABC_VERSION + "2.1");
+			String gnr = metadata.getGenre().toLowerCase().trim();
+			String mood = metadata.getMood().toLowerCase().trim();
+			String outAll = metadata.getAllParts();
+			String badgerTitle = metadata.getBadgerTitle();
+			if (gnr.length() > 0 || mood.length() > 0 || outAll != null || badgerTitle != null) {
+				out.println();
+				if (badgerTitle != null) {
+					out.println(badgerTitle);
+				}
+				if (gnr.length() > 0) {
+					out.println("N: Genre: "+gnr);
+				}
+				if (mood.length() > 0) {
+					out.println("N: Mood: "+mood);
+				}
+				if (outAll != null) {
+					out.println(outAll);			
+				}
+			}
 		}
 
 		for (AbcPart part : parts)

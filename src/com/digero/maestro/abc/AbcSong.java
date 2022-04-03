@@ -46,11 +46,15 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public static final String MSX_FILE_DESCRIPTION_PLURAL = MaestroMain.APP_NAME + " Songs";
 	public static final String MSX_FILE_EXTENSION_NO_DOT = "msx";
 	public static final String MSX_FILE_EXTENSION = "." + MSX_FILE_EXTENSION_NO_DOT;
-	public static final Version SONG_FILE_VERSION = new Version(1, 0, 80);
+	public static final Version SONG_FILE_VERSION = new Version(1, 0, 82);
 
 	private String title = "";
 	private String composer = "";
 	private String transcriber = "";
+	private String genre = "";
+	private String mood = "";
+	private boolean badger = false;
+	private boolean allOut = false;
 	private float tempoFactor = 1.0f;
 	private int transpose = 0;
 	private KeySignature keySignature = KeySignature.C_MAJOR;
@@ -188,6 +192,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		tripletTiming = abcInfo.hasTriplets();
 		mixTiming = abcInfo.hasMixTimings();
 		transcriber = abcInfo.getTranscriber();
+		genre = abcInfo.getGenre();
+		mood = abcInfo.getMood();
 	}
 
 	private void initFromXml(File file, FileResolver fileResolver) throws SAXException, IOException, ParseException
@@ -264,6 +270,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			title = SaveUtil.parseValue(songEle, "title", sequenceInfo.getTitle());
 			composer = SaveUtil.parseValue(songEle, "composer", sequenceInfo.getComposer());
 			transcriber = SaveUtil.parseValue(songEle, "transcriber", transcriber);
+			genre = SaveUtil.parseValue(songEle, "genre", genre);
+			mood = SaveUtil.parseValue(songEle, "mood", mood);
 
 			tempoFactor = SaveUtil.parseValue(songEle, "exportSettings/@tempoFactor", tempoFactor);
 			transpose = SaveUtil.parseValue(songEle, "exportSettings/@transpose", transpose);
@@ -303,6 +311,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		SaveUtil.appendChildTextElement(songEle, "title", title);
 		SaveUtil.appendChildTextElement(songEle, "composer", composer);
 		SaveUtil.appendChildTextElement(songEle, "transcriber", transcriber);
+		if (genre.length() > 0)	SaveUtil.appendChildTextElement(songEle, "genre", genre);
+		if (mood.length() > 0)	SaveUtil.appendChildTextElement(songEle, "mood", mood);
 
 		{
 			Element exportSettingsEle = doc.createElement("exportSettings");
@@ -394,6 +404,36 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			fireChangeEvent(AbcSongProperty.TITLE);
 		}
 	}
+	
+	@Override public String getGenre()
+	{
+		return genre;
+	}
+
+	public void setGenre(String genre)
+	{
+		genre = Util.emptyIfNull(genre);
+		if (!this.genre.equals(genre))
+		{
+			this.genre = genre;
+			fireChangeEvent(AbcSongProperty.GENRE);
+		}
+	}
+	
+	@Override public String getMood()
+	{
+		return mood;
+	}
+
+	public void setMood(String mood)
+	{
+		mood = Util.emptyIfNull(mood);
+		if (!this.genre.equals(mood))
+		{
+			this.mood = mood;
+			fireChangeEvent(AbcSongProperty.MOOD);
+		}
+	}
 
 	@Override public String getComposer()
 	{
@@ -408,6 +448,26 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			this.composer = composer;
 			fireChangeEvent(AbcSongProperty.COMPOSER);
 		}
+	}
+	
+	@Override public String getAllParts()
+	{
+		if (!allOut) {
+			return null;
+		}
+		String str = "N: TS  ";
+		String str2 = "";
+		ListModelWrapper<AbcPart> prts = getParts();
+		int count = 0;
+		for (AbcPart prt : prts) {
+			if (prt.getEnabledTrackCount() > 0) {
+				count += 1;
+				str2 += "  "+prt.getPartNumber();
+			}
+		}
+		if (count == 0) return null;
+		str += count+", ";
+		return str+str2;
 	}
 
 	@Override public String getTranscriber()
@@ -551,6 +611,14 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public boolean isShowPruned()
 	{
 		return showPruned;
+	}
+	
+	public void setBadger (boolean badger) {
+		this.badger = badger;
+	}
+	
+	public void setAllOut (boolean allOut) {
+		this.allOut = allOut;
 	}
 
 	public SequenceInfo getSequenceInfo()
@@ -722,4 +790,10 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			}
 		}
 	};
+
+	@Override
+	public String getBadgerTitle() {
+		if (!badger) return null;
+		return "N: Title: "+getComposer().trim()+" - "+getSongTitle().trim();
+	}
 }

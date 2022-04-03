@@ -135,6 +135,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JTextField songTitleField;
 	private JTextField composerField;
 	private JTextField transcriberField;
+	private JTextField genreField;
+	private JTextField moodField;
+	private TableLayout songInfoLayout;
+	private JPanel songInfoPanel;
+	private JLabel genreLabel = new JLabel("G:");
+	private JLabel moodLabel = new JLabel("M:");
 	private PrefsDocumentListener transcriberFieldListener;
 	private JSpinner transposeSpinner;
 	private JSpinner tempoSpinner;
@@ -325,6 +331,28 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			{
 				if (abcSong != null)
 					abcSong.setComposer(composerField.getText());
+			}
+		});
+		
+		genreField = new JTextField();
+		genreField.setToolTipText("Song Genre(s)");
+		genreField.getDocument().addDocumentListener(new SimpleDocumentListener()
+		{
+			@Override public void changedUpdate(DocumentEvent e)
+			{
+				if (abcSong != null)
+					abcSong.setGenre(genreField.getText());
+			}
+		});
+		
+		moodField = new JTextField();
+		moodField.setToolTipText("Song Mood(s)");
+		moodField.getDocument().addDocumentListener(new SimpleDocumentListener()
+		{
+			@Override public void changedUpdate(DocumentEvent e)
+			{
+				if (abcSong != null)
+					abcSong.setMood(moodField.getText());
 			}
 		});
 
@@ -553,12 +581,18 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		});
 		delayButton.setToolTipText("Open a small dialog to edit delay on part.");
 
-		TableLayout songInfoLayout = new TableLayout(//
+		if (saveSettings.showBadger) {
+			songInfoLayout = new TableLayout(//
 				new double[] { PREFERRED, FILL },//
-				new double[] { PREFERRED, PREFERRED, PREFERRED });
+				new double[] { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED });
+		} else {
+			songInfoLayout = new TableLayout(//
+					new double[] { PREFERRED, FILL },//
+					new double[] { PREFERRED, PREFERRED, PREFERRED });
+		}
 		songInfoLayout.setHGap(HGAP);
 		songInfoLayout.setVGap(VGAP);
-		JPanel songInfoPanel = new JPanel(songInfoLayout);
+		songInfoPanel = new JPanel(songInfoLayout);
 		{
 			int row = 0;
 			songInfoPanel.add(new JLabel("T:"), "0, " + row);
@@ -569,6 +603,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			row++;
 			songInfoPanel.add(new JLabel("Z:"), "0, " + row);
 			songInfoPanel.add(transcriberField, "1, " + row);
+			row++;
+			songInfoPanel.add(genreLabel, "0, " + row);
+			songInfoPanel.add(genreField, "1, " + row);
+			row++;
+			songInfoPanel.add(moodLabel, "0, " + row);
+			songInfoPanel.add(moodField, "1, " + row);
 
 			songInfoPanel.setBorder(BorderFactory.createTitledBorder("Song Info"));
 		}
@@ -1053,6 +1093,11 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			maxNoteCount = 0;
 			maxNoteCountTotal = 0;
 		}
+		if (abcSong != null) {
+			abcSong.setAllOut(saveSettings.showBadger && saveSettings.allBadger);
+			abcSong.setBadger(saveSettings.showBadger);
+		}
+		updateButtons(false);
 	}
 
 	public void onVolumeChanged()
@@ -1353,6 +1398,18 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			songTitleField.setEnabled(midiLoaded);
 			composerField.setEnabled(midiLoaded);
 			transcriberField.setEnabled(midiLoaded);
+			moodField.setEnabled(midiLoaded);
+			genreField.setEnabled(midiLoaded);
+			if (saveSettings.showBadger) {
+				songInfoLayout.setRow(new double[] { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED });
+			} else {
+				songInfoLayout.setRow(new double[] { PREFERRED, PREFERRED, PREFERRED });
+			}
+			songInfoLayout.layoutContainer(songInfoPanel);
+			moodField.setVisible(saveSettings.showBadger);
+			genreField.setVisible(saveSettings.showBadger);
+			moodLabel.setVisible(saveSettings.showBadger);
+			genreLabel.setVisible(saveSettings.showBadger);
 			transposeSpinner.setEnabled(midiLoaded);
 			tempoSpinner.setEnabled(midiLoaded);
 			resetTempoButton.setEnabled(midiLoaded && abcSong != null && abcSong.getTempoFactor() != 1.0f);
@@ -1572,6 +1629,20 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					saveSettings.saveToPrefs();
 				}
 				break;
+			case GENRE:
+				if (!genreField.getText().equals(abcSong.getGenre()))
+				{
+					genreField.setText(abcSong.getGenre());
+					genreField.select(0, 0);
+				}
+				break;
+			case MOOD:
+				if (!moodField.getText().equals(abcSong.getMood()))
+				{
+					moodField.setText(abcSong.getMood());
+					moodField.select(0, 0);
+				}
+				break;
 				
 			case EXPORT_FILE:
 				// Don't care
@@ -1676,6 +1747,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		songTitleField.setText("");
 		composerField.setText("");
+		genreField.setText("");
+		moodField.setText("");
 		transposeSpinner.setValue(0);
 		tempoSpinner.setValue(MidiConstants.DEFAULT_TEMPO_BPM);
 		keySignatureField.setValue(KeySignature.C_MAJOR);
@@ -1708,6 +1781,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		try
 		{
 			abcSong = new AbcSong(file, partAutoNumberer, partNameTemplate, openFileResolver);
+			abcSong.setAllOut(saveSettings.showBadger && saveSettings.allBadger);
+			abcSong.setBadger(saveSettings.showBadger);
 			abcSong.addSongListener(abcSongListener);
 			for (AbcPart part : abcSong.getParts())
 			{
@@ -1718,6 +1793,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			songTitleField.select(0, 0);
 			composerField.setText(abcSong.getComposer());
 			composerField.select(0, 0);
+			genreField.setText(abcSong.getGenre());
+			genreField.select(0, 0);
+			moodField.setText(abcSong.getMood());
+			moodField.select(0, 0);
 
 			if (abcSong.isFromAbcFile() || abcSong.isFromXmlFile())
 			{

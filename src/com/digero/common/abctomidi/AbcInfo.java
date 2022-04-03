@@ -44,6 +44,8 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 	private String songTitle = null;
 	private String songComposer = null;
 	private String songTranscriber = null;
+	private String genre = null;
+	private String mood = null;
 	private TimeSignature timeSignature = TimeSignature.FOUR_FOUR;
 	private KeySignature keySignature = KeySignature.C_MAJOR;
 
@@ -108,6 +110,16 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 				return null;
 		}
 		return z;
+	}
+	
+	public String getGenre()
+	{
+		return Util.emptyIfNull(genre);
+	}
+	
+	public String getMood()
+	{
+		return Util.emptyIfNull(mood);
 	}
 
 	@Override public int tickToBarNumber(long tick)
@@ -242,6 +254,18 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 				titlePrefix = value;
 			else
 				titlePrefix = longestCommonPrefix(titlePrefix, value);
+		} else if (key == 'N') {
+			value = value.toLowerCase().trim();
+			if (genre == null) {				
+				if (value.startsWith("genre:")) {
+					genre = value.substring(6).trim();
+				}
+			}
+			if (mood == null) {
+				if (value.startsWith("mood:")) {
+					mood = value.substring(5).trim();
+				}
+			}
 		}
 	}
 
