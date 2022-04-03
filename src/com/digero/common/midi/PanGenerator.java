@@ -21,9 +21,9 @@ public class PanGenerator
 		Arrays.fill(count, 0);
 	}
 
-	static final Pattern leftRegex = Pattern.compile("\\b(left)\\b");
-	static final Pattern rightRegex = Pattern.compile("\\b(right)\\b");
-	static final Pattern centerRegex = Pattern.compile("\\b(middle|center)\\b");
+	static final Pattern leftRegex = Pattern.compile("\\b(left|links|gauche)\\b");
+	static final Pattern rightRegex = Pattern.compile("\\b(right|rechts|droite)\\b");
+	static final Pattern centerRegex = Pattern.compile("\\b(middle|center|zentrum|mitte|centre)\\b");
 
 	public int get(LotroInstrument instrument, String partTitle)
 	{
@@ -31,9 +31,9 @@ public class PanGenerator
 
 		String titleLower = partTitle.toLowerCase();
 		if (leftRegex.matcher(titleLower).find())
-			pan = CENTER - Math.abs(pan - CENTER);
+			pan = CENTER - 50;//Math.abs(pan - CENTER);
 		else if (rightRegex.matcher(titleLower).find())
-			pan = CENTER + Math.abs(pan - CENTER);
+			pan = CENTER + 50;//Math.abs(pan - CENTER);
 		else if (centerRegex.matcher(titleLower).find())
 			pan = CENTER;
 
@@ -52,9 +52,9 @@ public class PanGenerator
 
 		String titleLower = partTitle.toLowerCase();
 		if (leftRegex.matcher(titleLower).find())
-			pan = CENTER - Math.abs(pan - CENTER);
+			pan = CENTER - (int) (50 * (float) panModifier * 0.01f);//Math.abs(pan - CENTER);
 		else if (rightRegex.matcher(titleLower).find())
-			pan = CENTER + Math.abs(pan - CENTER);
+			pan = CENTER + (int) (50 * (float) panModifier * 0.01f);//Math.abs(pan - CENTER);
 		else if (centerRegex.matcher(titleLower).find())
 			pan = CENTER;
 
