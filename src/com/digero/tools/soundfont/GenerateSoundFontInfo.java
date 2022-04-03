@@ -47,20 +47,19 @@ public class GenerateSoundFontInfo
 			case LUTE_OF_AGES://short notes, differ alot
 			case TRAVELLERS_TRUSTY_FIDDLE://short notes, differ alot
 			case BASIC_THEORBO://short notes
+			case BASIC_HORN:// The notes in high octave differs a bit
+			case BASIC_FLUTE:// differ medium
+			case BASIC_BAGPIPE:
 				return 1;
 
 			case BARDIC_FIDDLE:
-			case BASIC_FLUTE:// differ medium
 			case LONELY_MOUNTAIN_FIDDLE:// differ medium
 			case SPRIGHTLY_FIDDLE://short notes
-			case BASIC_HORN:// The notes in high octave differs a bit
 				return 2;
 
 			case BASIC_FIDDLE:
-			case BASIC_BAGPIPE:
 			case LONELY_MOUNTAIN_BASSOON:// does not differ alot
 				return 4;
-			
 			
 			case BASIC_BASSOON:
 				return 6;
