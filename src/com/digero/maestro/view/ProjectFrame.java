@@ -55,6 +55,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.ToolTipManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -187,11 +188,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private AbcSequencerListener abcSequencerListener;
 	private boolean failedToLoadLotroInstruments = false;
 	private JButton zoom = new JButton("Zoom");
-	private JLabel noteCount = new JLabel();
+	private JLabel noteCountLabel = new JLabel();
 	private int maxNoteCount = 0;
-	private static Color BRIGHT_RED = new Color(255, 0, 0);
+	private int maxNoteCountTotal = 0;
+	/*private static Color BRIGHT_RED = new Color(255, 0, 0);
 	private static Color ORANGE = new Color(235, 150, 64);
-	private static Color BLACK = new Color(0, 0, 0);
+	private static Color BLACK = new Color(0, 0, 0);*/
 
 	public ProjectFrame()
 	{
@@ -715,6 +717,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				sequencer.stop();
 				abcSequencer.reset(false);
 				sequencer.reset(false);
+				maxNoteCountTotal = 0;
+				maxNoteCount = 0;
+				updateNoteCountLabel();
 			}
 		});
 
@@ -762,13 +767,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		});
 		playControlPanel.add(zoom, "7, 2, C, C");
 		
-		noteCount.setToolTipText("<html>Number of simultanious notes<br>"
+		noteCountLabel.setBorder(new EmptyBorder(0,0,0,20));//top,left,bottom,right
+		noteCountLabel.setToolTipText("<html>Number of simultanious notes<br>"
 				+ "that is playing.<br>"
 				+ "Use as rough (as it for tech reasons typically overestimates)<br>"
 				+ "guide to estimate how much of lotro max<br>"
 				+ "polyphony the song will consume.<br>"
 				+ "Stopped notes that are in release phase also counts.</html>");
-		playControlPanel.add(noteCount, "7, 0, C, C");
+		playControlPanel.add(noteCountLabel, "7, 0, 7, 0, L, C");		
 
 		JPanel abcPartsAndSettings = new JPanel(new BorderLayout(HGAP, VGAP));
 		abcPartsAndSettings.add(songInfoPanel, BorderLayout.NORTH);
@@ -1042,9 +1048,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		if (abcSong != null)
 			abcSong.setShowPruned(saveSettings.showPruned);
 		
-		noteCount.setVisible(saveSettings.showMaxPolyphony);
+		noteCountLabel.setVisible(saveSettings.showMaxPolyphony);
 		if (!saveSettings.showMaxPolyphony) {
 			maxNoteCount = 0;
+			maxNoteCountTotal = 0;
 		}
 	}
 
@@ -1152,25 +1159,44 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	}
 	
 	private void updateNoteCount () {
-		noteCount.setVisible(saveSettings.showMaxPolyphony);
+		noteCountLabel.setVisible(saveSettings.showMaxPolyphony);
 		if (!saveSettings.showMaxPolyphony) {
 			return;
-		}
-		//maxNoteCount = Math.max(LotroSequencerWrapper.getNoteCount(), maxNoteCount);
+		}		
 		maxNoteCount = LotroSequencerWrapper.getNoteCount();
-		if (maxNoteCount < 10) {
-			noteCount.setForeground(BLACK);
-			noteCount.setText("Notes:  "+maxNoteCount+"  ");
-		} else if (maxNoteCount < 54) {
-			noteCount.setForeground(BLACK);
-			noteCount.setText("Notes: "+maxNoteCount+"  ");
-		} else if (maxNoteCount < 64) {
-			noteCount.setForeground(ORANGE);
-			noteCount.setText("Notes: "+maxNoteCount+"  ");
-		} else {
-			noteCount.setForeground(BRIGHT_RED);
-			noteCount.setText("Notes: 64+ ");
+		maxNoteCountTotal = Math.max(maxNoteCountTotal, maxNoteCount);
+		updateNoteCountLabel();
+	}
+	
+	private void updateNoteCountLabel () {
+		String totalColor = "<font color=BLACK>";
+		if (maxNoteCountTotal > 63) {
+			totalColor = "<font color=RED>";
+		} else if (maxNoteCountTotal > 53) {
+			totalColor = "<font color=ORANGE>";
 		}
+		String maxColor = "<font color=BLACK>";
+		if (maxNoteCount > 63) {
+			maxColor = "<font color=RED>";
+		} else if (maxNoteCount > 53) {
+			maxColor = "<font color=ORANGE>";
+		}
+		//String pad1 = (maxNoteCount < 10)?"&ensp;":"&nbsp;</pre>";
+		//String pad2 = (maxNoteCountTotal < 10)?"&ensp;":"&nbsp;";
+		
+		String strAdd1 = String.format("<html><tt>Notes: "+maxColor+"%02d", maxNoteCount);
+		String strAdd3 = String.format("(Peak: "+totalColor+"%02d", maxNoteCountTotal);
+		
+		String strAdd2 = " </font>";
+		if (maxNoteCount > 63) {
+			strAdd2 = "+</font>";
+		}
+		String strAdd4 = "</font> )</tt></html>";
+		if (maxNoteCountTotal > 63) {
+			strAdd4 = "+</font>)</tt></html>";
+		}
+		//System.err.println(strAdd1+strAdd2+strAdd3+strAdd4);
+		noteCountLabel.setText(strAdd1+strAdd2+strAdd3+strAdd4);
 	}
 
 	private class AbcSequencerListener implements Listener<SequencerEvent>
@@ -1314,7 +1340,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			abcModeRadioButton.setEnabled(hasAbcNotes);
 			stopButton.setEnabled((midiLoaded && (sequencer.isRunning() || sequencer.getPosition() != 0))
 					|| (abcSequencer.isLoaded() && (abcSequencer.isRunning() || abcSequencer.getPosition() != 0)));
-
+						
 			newPartButton.setEnabled(abcSong != null);
 			deletePartButton.setEnabled(partsList.getSelectedIndex() != -1);
 			updateDelayButton();
@@ -1486,10 +1512,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			case TRIPLET_TIMING:
 				if (tripletCheckBox.isSelected() != abcSong.isTripletTiming())
 					tripletCheckBox.setSelected(abcSong.isTripletTiming());
+				maxNoteCountTotal = 0;
+				maxNoteCount = 0;
 				break;
 			case MIX_TIMING:
 				if (mixCheckBox.isSelected() != abcSong.isMixTiming())
 					mixCheckBox.setSelected(abcSong.isMixTiming());
+				maxNoteCountTotal = 0;
+				maxNoteCount = 0;
 				break;
 
 			case PART_ADDED:
@@ -1500,6 +1530,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				partsList.ensureIndexIsVisible(idx);
 				partsList.repaint();
 				updateButtons(false);
+				maxNoteCountTotal = 0;
+				maxNoteCount = 0;
 				break;
 
 			case BEFORE_PART_REMOVED:
@@ -1523,6 +1555,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 				partsList.repaint();
 				updateButtons(false);
+				maxNoteCountTotal = 0;
+				maxNoteCount = 0;
 				break;
 
 			case PART_LIST_ORDER:
@@ -1578,6 +1612,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		}
 		if (abcSongModified) {
 			maxNoteCount = 0;
+			maxNoteCountTotal = 0;
 		}
 	}
 
