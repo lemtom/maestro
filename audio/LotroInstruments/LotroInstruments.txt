@@ -882,21 +882,9 @@
         FineTune=0
         Type=1
 
-    SampleName=flute_37
-        SampleRate=44100
-        Key=37
-        FineTune=0
-        Type=1
-
     SampleName=flute_38
         SampleRate=44100
         Key=38
-        FineTune=0
-        Type=1
-
-    SampleName=flute_39
-        SampleRate=44100
-        Key=39
         FineTune=0
         Type=1
 
@@ -906,21 +894,9 @@
         FineTune=0
         Type=1
 
-    SampleName=flute_41
-        SampleRate=44100
-        Key=41
-        FineTune=0
-        Type=1
-
     SampleName=flute_42
         SampleRate=44100
         Key=42
-        FineTune=0
-        Type=1
-
-    SampleName=flute_43
-        SampleRate=44100
-        Key=43
         FineTune=0
         Type=1
 
@@ -930,21 +906,9 @@
         FineTune=0
         Type=1
 
-    SampleName=flute_45
-        SampleRate=44100
-        Key=45
-        FineTune=0
-        Type=1
-
     SampleName=flute_46
         SampleRate=44100
         Key=46
-        FineTune=0
-        Type=1
-
-    SampleName=flute_47
-        SampleRate=44100
-        Key=47
         FineTune=0
         Type=1
 
@@ -954,21 +918,9 @@
         FineTune=0
         Type=1
 
-    SampleName=flute_49
-        SampleRate=44100
-        Key=49
-        FineTune=0
-        Type=1
-
     SampleName=flute_50
         SampleRate=44100
         Key=50
-        FineTune=0
-        Type=1
-
-    SampleName=flute_51
-        SampleRate=44100
-        Key=51
         FineTune=0
         Type=1
 
@@ -978,21 +930,9 @@
         FineTune=0
         Type=1
 
-    SampleName=flute_53
-        SampleRate=44100
-        Key=53
-        FineTune=0
-        Type=1
-
     SampleName=flute_54
         SampleRate=44100
         Key=54
-        FineTune=0
-        Type=1
-
-    SampleName=flute_55
-        SampleRate=44100
-        Key=55
         FineTune=0
         Type=1
 
@@ -1002,21 +942,9 @@
         FineTune=0
         Type=1
 
-    SampleName=flute_57
-        SampleRate=44100
-        Key=57
-        FineTune=0
-        Type=1
-
     SampleName=flute_58
         SampleRate=44100
         Key=58
-        FineTune=0
-        Type=1
-
-    SampleName=flute_59
-        SampleRate=44100
-        Key=59
         FineTune=0
         Type=1
 
@@ -1026,21 +954,9 @@
         FineTune=0
         Type=1
 
-    SampleName=flute_61
-        SampleRate=44100
-        Key=61
-        FineTune=0
-        Type=1
-
     SampleName=flute_62
         SampleRate=44100
         Key=62
-        FineTune=0
-        Type=1
-
-    SampleName=flute_63
-        SampleRate=44100
-        Key=63
         FineTune=0
         Type=1
 
@@ -1050,21 +966,9 @@
         FineTune=0
         Type=1
 
-    SampleName=flute_65
-        SampleRate=44100
-        Key=65
-        FineTune=0
-        Type=1
-
     SampleName=flute_66
         SampleRate=44100
         Key=66
-        FineTune=0
-        Type=1
-
-    SampleName=flute_67
-        SampleRate=44100
-        Key=67
         FineTune=0
         Type=1
 
@@ -1074,21 +978,9 @@
         FineTune=0
         Type=1
 
-    SampleName=flute_69
-        SampleRate=44100
-        Key=69
-        FineTune=0
-        Type=1
-
     SampleName=flute_70
         SampleRate=44100
         Key=70
-        FineTune=0
-        Type=1
-
-    SampleName=flute_71
-        SampleRate=44100
-        Key=71
         FineTune=0
         Type=1
 
@@ -4778,13 +4670,6 @@
 
         Sample=flute_36
             Z_LowKey=36
-            Z_HighKey=36
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_37
-            Z_LowKey=37
             Z_HighKey=37
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4792,13 +4677,6 @@
 
         Sample=flute_38
             Z_LowKey=38
-            Z_HighKey=38
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_39
-            Z_LowKey=39
             Z_HighKey=39
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4806,13 +4684,6 @@
 
         Sample=flute_40
             Z_LowKey=40
-            Z_HighKey=40
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_41
-            Z_LowKey=41
             Z_HighKey=41
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4820,13 +4691,6 @@
 
         Sample=flute_42
             Z_LowKey=42
-            Z_HighKey=42
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_43
-            Z_LowKey=43
             Z_HighKey=43
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4834,13 +4698,6 @@
 
         Sample=flute_44
             Z_LowKey=44
-            Z_HighKey=44
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_45
-            Z_LowKey=45
             Z_HighKey=45
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4848,13 +4705,6 @@
 
         Sample=flute_46
             Z_LowKey=46
-            Z_HighKey=46
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_47
-            Z_LowKey=47
             Z_HighKey=47
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4862,13 +4712,6 @@
 
         Sample=flute_48
             Z_LowKey=48
-            Z_HighKey=48
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_49
-            Z_LowKey=49
             Z_HighKey=49
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4876,13 +4719,6 @@
 
         Sample=flute_50
             Z_LowKey=50
-            Z_HighKey=50
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_51
-            Z_LowKey=51
             Z_HighKey=51
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4890,13 +4726,6 @@
 
         Sample=flute_52
             Z_LowKey=52
-            Z_HighKey=52
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_53
-            Z_LowKey=53
             Z_HighKey=53
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4904,13 +4733,6 @@
 
         Sample=flute_54
             Z_LowKey=54
-            Z_HighKey=54
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_55
-            Z_LowKey=55
             Z_HighKey=55
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4918,13 +4740,6 @@
 
         Sample=flute_56
             Z_LowKey=56
-            Z_HighKey=56
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_57
-            Z_LowKey=57
             Z_HighKey=57
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4932,13 +4747,6 @@
 
         Sample=flute_58
             Z_LowKey=58
-            Z_HighKey=58
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_59
-            Z_LowKey=59
             Z_HighKey=59
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4946,13 +4754,6 @@
 
         Sample=flute_60
             Z_LowKey=60
-            Z_HighKey=60
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_61
-            Z_LowKey=61
             Z_HighKey=61
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4960,13 +4761,6 @@
 
         Sample=flute_62
             Z_LowKey=62
-            Z_HighKey=62
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_63
-            Z_LowKey=63
             Z_HighKey=63
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4974,13 +4768,6 @@
 
         Sample=flute_64
             Z_LowKey=64
-            Z_HighKey=64
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_65
-            Z_LowKey=65
             Z_HighKey=65
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -4988,13 +4775,6 @@
 
         Sample=flute_66
             Z_LowKey=66
-            Z_HighKey=66
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_67
-            Z_LowKey=67
             Z_HighKey=67
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -5002,13 +4782,6 @@
 
         Sample=flute_68
             Z_LowKey=68
-            Z_HighKey=68
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_69
-            Z_LowKey=69
             Z_HighKey=69
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -5016,13 +4789,6 @@
 
         Sample=flute_70
             Z_LowKey=70
-            Z_HighKey=70
-            Z_LowVelocity=0
-            Z_HighVelocity=127
-            Z_releaseVolEnv=-1200
-
-        Sample=flute_71
-            Z_LowKey=71
             Z_HighKey=71
             Z_LowVelocity=0
             Z_HighVelocity=127
@@ -8372,7 +8138,7 @@ Engine=E-mu 10K1
 Name=LotroInstruments.sf2
 ROMName=
 ROMVersion=0.0
-Date=04/03/2022 10:07:06 pm
+Date=04/04/2022 04:58:04 pm
 Designer=Digero
 Product=Maestro
 Copyright=Standing Stone Games

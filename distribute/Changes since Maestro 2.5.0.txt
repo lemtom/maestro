@@ -37,10 +37,10 @@ https://www.youtube.com/watch?v=Y39EZPfXl9I
 Special Thanks
 ==============
 Thanks to Digero for an amazing original Maestro and ABC Player.
-Thanks to Jersiel for teaching me music theory, ideas and feedback, without which I could not have made much of this.
+Thanks to Jersiel for teaching me music theory and giving ideas and feedback, without which I could not have made much of this.
 Thanks to Trincia for introducing me to the art of composition.
-Thanks to the bands I play in for motivating me.
-Thanks to all who gave feedback of features, bugfixes and some bugs plus suggestions.
+Thanks to the bands I play in (The White Flames and Midnight) for motivating me.
+Thanks to all who gave feedback of features, bugs plus suggestions.
 
 
 Maestro upgrades by Aifel of Laurelin
@@ -49,17 +49,17 @@ Maestro upgrades by Aifel of Laurelin
 Version 2.5.0.82
 - Made 64 bit the default version.
 - Removed support for 32 bit.
-- Included more samples for Flute, Horn and Bagpipe.
+- Included more samples for Horn and Bagpipe.
 - Polyphony counter now also shows peak concurrent playing notes. Suggested by Jersiel.
     But do remember again that due to technical reasons Maestro note fadeout time is longer than in lotro,
     and since notes in fadeout phase is counted, the polyphony numbers have a tendency to be too high.
 - German and French words for 'center', 'left' and 'right' in part titles will now also change stereo pan.
     The words recognized is now: left, links, gauche, right, rechts, droite, middle, center, zentrum, mitte and centre.
     Upper or lower case does not matter.
-- Added limited support for Songbook variants based on Lina's Badger Chapter.
+- Added limited support for Songbook variants based on The Badgers Chapter.
     It can output title, genre and mood.
     There is also an option to output all parts played for convenience.
-    There is no way yet to select individual parts to be played.
+    There is no way to select individual parts to be played.
 
 Version 2.5.0.81
 - Maestro now accept karaoke midi files with .kar ending.
