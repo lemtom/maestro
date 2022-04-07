@@ -199,7 +199,7 @@ public class Chord implements AbcConstants
 		Collections.sort(notes);
 	}
 
-	public List<NoteEvent> prune(final boolean sustained) {
+	public List<NoteEvent> prune(final boolean sustained, final boolean drum) {
 		// Determine which notes to prune to remain with a max of 6
 		List<NoteEvent> deadNotes = new ArrayList<NoteEvent>();
 		if (size() > MAX_CHORD_NOTES) {
@@ -264,7 +264,7 @@ public class Chord implements AbcConstants
 						}
 						return -1;
 					}
-					if (n1.note.id != n2.note.id) {
+					if (n1.note.id != n2.note.id && !drum) {
 						// return the note if its the highest in the chord
 						if ((n1.origPitch == 0 && highest == n1.note.id)||(n1.origPitch != 0 && highest == n1.origPitch)) {
 							return 1;
@@ -284,7 +284,7 @@ public class Chord implements AbcConstants
 						// The notes differ in volume, return the loudest
 						return n1.velocity - n2.velocity;
 					}
-					if (n1.note.id == n2.note.id) {
+					if (n1.note.id == n2.note.id && !drum) {
 						// The notes have same pitch and same volume. Return the longest.
 						return (int) (n1.getFullLengthTicks() - n2.getFullLengthTicks());
 					}
@@ -292,18 +292,51 @@ public class Chord implements AbcConstants
 					int index1 = removeFirst.indexOf(n1.note.id);
 					int index2 = removeFirst.indexOf(n2.note.id);
 					
-					if (index1 != index2) {
+					if (index1 != index2 && !drum) {
 						// Discard notes first that has octave spacing from highest or lowest notes
 						return index2 - index1;
 					}
 										
-					if (Math.abs(n1.note.id - n2.note.id) == 12 || Math.abs(n1.note.id - n2.note.id) == 24 || Math.abs(n1.note.id - n2.note.id) == 32) {
+					if (!drum && Math.abs(n1.note.id - n2.note.id) == 12 || Math.abs(n1.note.id - n2.note.id) == 24 || Math.abs(n1.note.id - n2.note.id) == 32) {
 						// If 2 notes have octave spacing, keep the highest pitched.
 						return n1.note.id - n2.note.id;
 					}
 					
-					// discard the center-most note
+					if (drum) {
+						// Bass drums get priority:
+						if (n1.note == Note.As3) {// Open bass
+							return 1;
+						} else if (n2.note == Note.As3) {
+							return -1;
+						} else if (n1.note == Note.D3) {// Bass slap 2
+							return 1;
+						} else if (n2.note == Note.D3) {
+							return -1;
+						} else if (n1.note == Note.Gs3) {// Bass
+							return 1;
+						} else if (n2.note == Note.Gs3) {
+							return -1;
+						} else if (n1.note == Note.Cs3) {// Bass slap 1
+							return 1;
+						} else if (n2.note == Note.Cs3) {
+							return -1;
+						} else if (n1.note == Note.F2) {// Muted 1
+							return 1;
+						} else if (n2.note == Note.F2) {
+							return -1;
+						} else if (n1.note == Note.Cs4) {// Muted 2
+							return 1;
+						} else if (n2.note == Note.Cs4) {
+							return -1;
+						} else if (n1.note == Note.C3) {// Muted Mid
+							return 1;
+						} else if (n2.note == Note.C3) {
+							return -1;
+						}
+					}
+					// discard the center-most note (for drum this will become very random)
 					return Math.abs(n1.note.id - (lowest + (highest-lowest)/2))-Math.abs(n2.note.id - (lowest + (highest-lowest)/2));
+					
 					//1: n1 big -1: n2 big 0:equal
 				}
 			};

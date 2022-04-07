@@ -46,6 +46,7 @@ public class NoteEvent implements Comparable<NoteEvent>
 	public NoteEvent tiesTo = null;
 
 	public List<NoteEvent> origEvent;
+	public boolean alreadyMapped = false;
 
 	private Map<AbcPart, Boolean> pruneMap = null;
 

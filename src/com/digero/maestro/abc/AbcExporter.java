@@ -32,6 +32,7 @@ import com.digero.common.util.Util;
 import com.digero.maestro.MaestroMain;
 import com.digero.maestro.midi.Chord;
 import com.digero.maestro.midi.NoteEvent;
+import com.digero.maestro.midi.TrackInfo;
 import com.sun.media.sound.MidiUtils;
 
 public class AbcExporter
@@ -1103,7 +1104,36 @@ public class AbcExporter
 		{
 			if (part.isTrackEnabled(t))
 			{
-				for (NoteEvent ne : part.getTrackEvents(t))
+				boolean specialDrumNotes = false;
+				if (part.getInstrument() == LotroInstrument.BASIC_DRUM) {
+					TrackInfo tInfo = part.getAbcSong().getSequenceInfo().getTrackInfo(t);
+					for (int inNo : tInfo.getNotesInUse()) {
+						byte outNo = part.getDrumMap(t).get(inNo);
+						if (outNo > part.getInstrument().highestPlayable.id) {
+							specialDrumNotes = true;
+							break;
+						}
+					}
+				}
+				List<NoteEvent> listOfNotes = new ArrayList<NoteEvent>(part.getTrackEvents(t));
+				if (specialDrumNotes) {
+					List<NoteEvent> extraList = new ArrayList<NoteEvent>();
+					List<NoteEvent> removeList = new ArrayList<NoteEvent>();
+					for (NoteEvent ne : listOfNotes) {
+						Note possibleCombiNote = part.mapNote(t, ne.note.id, ne.getStartTick());
+						if (possibleCombiNote != null && possibleCombiNote.id > part.getInstrument().highestPlayable.id && possibleCombiNote.id <= LotroCombiDrumInfo.maxCombi.id) {
+							extraList.add(LotroCombiDrumInfo.getId1(ne, possibleCombiNote));
+							extraList.add(LotroCombiDrumInfo.getId2(ne, possibleCombiNote));
+							removeList.add(ne);
+						} else if (possibleCombiNote != null && possibleCombiNote.id > LotroCombiDrumInfo.maxCombi.id) {
+							// Just for safety, should never land here.
+							removeList.add(ne);
+						}
+					}
+					listOfNotes.removeAll(removeList);
+					listOfNotes.addAll(extraList);
+				}
+				for (NoteEvent ne : listOfNotes)
 				{
 					// Skip notes that are outside of the play range.
 					if (ne.getEndTick() <= songStartTick || ne.getStartTick() >= songEndTick)
@@ -1111,8 +1141,12 @@ public class AbcExporter
 					
 					// reset pruned flag
 					ne.resetPruned(part);
-
-					Note mappedNote = part.mapNote(t, ne.note.id, ne.getStartTick());
+					
+					Note mappedNote = ne.note;
+					
+					if (!ne.alreadyMapped) {
+						mappedNote = part.mapNote(t, ne.note.id, ne.getStartTick());
+					}
 					
 					if (mappedNote != null)
 					{
@@ -1307,7 +1341,7 @@ public class AbcExporter
 				// This note starts at the same time as the rest of the notes in the chord				
 				curChord.addAlways(ne);
 			} else {				
-				List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
+				List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable, part.getInstrument() == LotroInstrument.BASIC_DRUM);
 				removeNotes(events, deadnotes, part);
 				if (deadnotes.size() > 0) {
 					// One of the tiedTo notes that was pruned might be the events.get(i) note,
@@ -1402,7 +1436,7 @@ public class AbcExporter
 				// before the next chord starts.
 				
 				// Last chord needs to be pruned as that hasn't happened yet.
-				List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
+				List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable, part.getInstrument() == LotroInstrument.BASIC_DRUM);
 				removeNotes(events, deadnotes, part);// we need to set the pruned flag for last chord too.
 				curChord.recalcEndTick();
 				long targetEndTick = curChord.getEndTick();
@@ -1434,7 +1468,7 @@ public class AbcExporter
 			}
 		} else {
 			// Last chord needs to be pruned as that hasn't happened yet.
-			List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable);
+			List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable, part.getInstrument() == LotroInstrument.BASIC_DRUM);
 			removeNotes(events, deadnotes, part);// we need to set the pruned flag for last chord too.
 			curChord.recalcEndTick();
 		}

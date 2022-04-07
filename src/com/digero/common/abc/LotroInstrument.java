@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import com.digero.common.midi.MidiInstrument;
 import com.digero.common.midi.Note;
 import com.digero.common.util.Pair;
+import com.digero.maestro.abc.LotroCombiDrumInfo;
 
 // @formatter:off
 public enum LotroInstrument
@@ -104,6 +105,9 @@ public enum LotroInstrument
 
 	public boolean isPlayable(int noteId)
 	{
+		if (this == BASIC_DRUM) {
+			return noteId >= lowestPlayable.id && noteId <= LotroCombiDrumInfo.maxCombi.id;
+		}
 		return noteId >= lowestPlayable.id && noteId <= highestPlayable.id;
 	}
 

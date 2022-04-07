@@ -65,8 +65,12 @@ public class LotroDrumInfo implements Comparable<LotroDrumInfo>
 		add(Note.As4, "Conga High");
 		add(Note.B4, "Conga Mid");
 		add(Note.C5, "Slap");
+		add(Note.Cs5, "Xtra Rock Kick Drum");
+		add(Note.D5,  "Xtra Rock Snare Drum");
+		add(Note.Ds5, "Xtra Rock Crash Cymbal");
+		//add(Note.E5, "Xtra Pop Kick Drum");
 
-		int noteCount = Note.MAX_PLAYABLE.id - Note.MIN_PLAYABLE.id + 1;
+		int noteCount = Note.MAX_PLAYABLE.id - Note.MIN_PLAYABLE.id + 1 + LotroCombiDrumInfo.combiNoteCount;
 		if (byId.keySet().size() < noteCount)
 		{
 			List<Integer> unassigned = new ArrayList<Integer>(noteCount);
