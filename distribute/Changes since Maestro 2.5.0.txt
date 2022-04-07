@@ -46,6 +46,9 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 
+Version 2.5.0.83
+- Fix that 64 bit Maestro and AbcPlayer would not open a differently file when already running if initialized by double-clicking in Windows.
+
 Version 2.5.0.82
 - Made 64 bit the default version.
 - Removed support for 32 bit.

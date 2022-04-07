@@ -92,6 +92,7 @@ import com.digero.common.view.NativeVolumeBar;
 import com.digero.common.view.SongPositionBar;
 import com.digero.common.view.SongPositionLabel;
 import com.digero.common.view.TempoBar;
+import com.digero.maestro.MaestroMain;
 
 public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConstants, TrackListPanelCallback
 {
@@ -172,6 +173,12 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	/** A new activation (a.k.a. a file was opened) */
 	public static void activate(String[] args)
 	{
+		mainWindow.openSongFromCommandLine(args);
+	}
+	
+	/** A new activation from WinRun4J 64bit (a.k.a. a file was opened) */
+	public static void activate(String arg0) {
+		final String[] args = {arg0.substring(1, arg0.length()-1)};
 		mainWindow.openSongFromCommandLine(args);
 	}
 

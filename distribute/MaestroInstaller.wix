@@ -227,6 +227,9 @@
 					<Component Id="aifel_changelog.txt" Guid="{46B882CB-E9A8-4A1E-A92C-C5717FDECECB}">
 						<File Id="aifel_changelog.txt" Source="build/Changes since Maestro 2.5.0.txt" KeyPath="yes" />
 					</Component>
+					<!--Component Id="wr4j" Guid="{7652B09C-CE30-42B2-B863-8FA2368BF1DE}">
+						<File Id="wr4j" Source="build/WinRun4J.jar" KeyPath="yes" />
+					</Component-->
 				</Directory>
 			</Directory>
 
@@ -253,6 +256,7 @@
 			<ComponentRef Id="TableLayout.jar" />
 			<ComponentRef Id="LotroInstruments.sf2" />
 			<ComponentRef Id="aifel_changelog.txt" />
+			<!--ComponentRef Id="wr4j" /-->
 		</Feature>
 
 		<Feature Id="Maestro"

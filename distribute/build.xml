@@ -29,6 +29,7 @@
 		    <fileset dir="${build}" includes="*.log" />
 		</delete>
 		<copy file="../TableLayout.jar" todir="${build}" />
+		<!--copy file="../WinRun4J.jar" todir="${build}" /-->
 		<copy file="abcfile.ico" todir="${build}" />
 		<copy file="midifile.ico" todir="${build}" />
 		<copy file="msxfile.ico" todir="${build}" />
@@ -186,6 +187,7 @@
 			<include name="${basename.AbcPlayer}.jar" />
 			<include name="${basename.Common}.jar" />
 			<include name="TableLayout.jar" />
+			<!--include name="WinRun4J.jar" /-->
 			<include name="LotroInstruments.sf2" />
 			<include name="midifile.ico" />
 			<include name="abcfile.ico" />
