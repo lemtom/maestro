@@ -832,7 +832,10 @@ public class AbcExporter
 			out.println("T: " + part.getTitle().trim());
 
 		out.println(AbcField.PART_NAME + part.getTitle().trim());
-		out.println(AbcField.MADE_FOR + part.getInstrument().friendlyName.trim());// Since people might not use the instrumentname when they name part, we add this so can choose the right instruemnt in abcPLayer and maestro when loading abc.
+		
+		// Since people might not use the instrument-name when they name a part,
+		// we add this so can choose the right instrument in abcPlayer and maestro when loading abc.
+		out.println(AbcField.MADE_FOR + part.getInstrument().friendlyName.trim());
 
 		if (metadata != null)
 		{

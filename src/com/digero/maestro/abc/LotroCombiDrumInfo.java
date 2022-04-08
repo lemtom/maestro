@@ -8,7 +8,7 @@ import com.digero.maestro.midi.NoteEvent;
 
 public class LotroCombiDrumInfo {
 	
-	public static Note maxCombi = Note.G5;
+	public static Note maxCombi = Note.Gs5;
 	public static Map<Note, Note> firstNotes = new HashMap<Note, Note>();
 	public static Map<Note, Note> secondNotes = new HashMap<Note, Note>();
 	public static int combiNoteCount = 0;
@@ -44,9 +44,9 @@ public class LotroCombiDrumInfo {
 		firstNotes.put(Note.G5, Note.E3);
 		secondNotes.put(Note.G5, Note.Gs2);
 		
-		// Added Pop Kick Drum (Aifel)
-		//firstNotes.put(Note.E5, Note.C3);
-		//secondNotes.put(Note.E5, Note.Gs3);
+		// Added Xtra Bass March (Aifel)
+		firstNotes.put(Note.Gs5, Note.C3);
+		secondNotes.put(Note.Gs5, Note.Gs3);
 						
 		combiNoteCount = firstNotes.size();
 			

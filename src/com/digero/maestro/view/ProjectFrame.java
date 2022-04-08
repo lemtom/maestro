@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.dnd.DropTarget;
@@ -1229,18 +1230,19 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		//String pad1 = (maxNoteCount < 10)?"&ensp;":"&nbsp;</pre>";
 		//String pad2 = (maxNoteCountTotal < 10)?"&ensp;":"&nbsp;";
 		
-		String strAdd1 = String.format("<html><tt>Notes: "+maxColor+"%02d", maxNoteCount);
+		String strAdd1 = String.format("<html>Notes: "+maxColor+"%02d", maxNoteCount);
 		String strAdd3 = String.format("(Peak: "+totalColor+"%02d", maxNoteCountTotal);
 		
 		String strAdd2 = " </font>";
 		if (maxNoteCount > 63) {
 			strAdd2 = "+</font>";
 		}
-		String strAdd4 = "</font> )</tt></html>";
+		String strAdd4 = "</font> )</html>";
 		if (maxNoteCountTotal > 63) {
-			strAdd4 = "+</font>)</tt></html>";
+			strAdd4 = "+</font>)</html>";
 		}
 		//System.err.println(strAdd1+strAdd2+strAdd3+strAdd4);
+		noteCountLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		noteCountLabel.setText(strAdd1+strAdd2+strAdd3+strAdd4);
 	}
 
@@ -1772,7 +1774,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	{
 		if (!closeSong())
 			return;
-
+		
+		maxNoteCountTotal = 0;
+		maxNoteCount = 0;
+		
 		file = Util.resolveShortcut(file);
 		allowOverwriteSaveFile = false;
 		allowOverwriteExportFile = false;

@@ -336,10 +336,6 @@ public class Chord implements AbcConstants
 							return 1;
 						} else if (n2.note == Note.Cs3) {
 							return -1;
-						} else if (n1.note == Note.F2) {// Muted 1
-							return 1;
-						} else if (n2.note == Note.F2) {
-							return -1;
 						} else if (n1.note == Note.Cs4) {// Muted 2
 							return 1;
 						} else if (n2.note == Note.Cs4) {
@@ -347,6 +343,34 @@ public class Chord implements AbcConstants
 						} else if (n1.note == Note.C3) {// Muted Mid
 							return 1;
 						} else if (n2.note == Note.C3) {
+							return -1;
+						} else if (n1.note == Note.F2) {// Muted 1
+							return 1;
+						} else if (n2.note == Note.F2) {
+							return -1;
+						} else if (n1.note == Note.E3) {// Slap 3
+							return 1;
+						} else if (n2.note == Note.E3) {
+							return -1;
+						} else if (n1.note == Note.C5) {// Slap 7
+							return 1;
+						} else if (n2.note == Note.C5) {
+							return -1;
+						} else if (n1.note == Note.Ds3) {// Rim shot 1 
+							return 1;
+						} else if (n2.note == Note.Ds3) {
+							return -1;
+						} else if (n1.note == Note.Gs2) {// Rattle Short 3
+							return 1;
+						} else if (n2.note == Note.Gs2) {
+							return -1;
+						} else if (n1.note == Note.A3) {// Rattle Long
+							return 1;
+						} else if (n2.note == Note.A3) {
+							return -1;
+						} else if (n1.note == Note.Cs2) {// Rattle Short 1
+							return 1;
+						} else if (n2.note == Note.Cs2) {
 							return -1;
 						}
 					}
