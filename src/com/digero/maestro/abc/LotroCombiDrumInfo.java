@@ -8,7 +8,7 @@ import com.digero.maestro.midi.NoteEvent;
 
 public class LotroCombiDrumInfo {
 	
-	public static Note maxCombi = Note.Ds5;
+	public static Note maxCombi = Note.G5;
 	public static Map<Note, Note> firstNotes = new HashMap<Note, Note>();
 	public static Map<Note, Note> secondNotes = new HashMap<Note, Note>();
 	public static int combiNoteCount = 0;
@@ -16,17 +16,33 @@ public class LotroCombiDrumInfo {
 	static {
 		// When adding here, also add to LotroDrumInfo
 		
-		// Added Rock Kick Drum (Jersiel)
+		// Added Rock Bass (Jersiel)
 		firstNotes.put(Note.Cs5, Note.As3);
 		secondNotes.put(Note.Cs5, Note.D3);
 		
-		// Added Rock Snare Drum (Jersiel)
+		// Added Rock Snare (Jersiel)
 		firstNotes.put(Note.D5, Note.E3);
 		secondNotes.put(Note.D5, Note.C5);
 		
-		// Added Rock Crash Cymbal (Jersiel)
+		// Added Crash Cymbal (Jersiel)
 		firstNotes.put(Note.Ds5, Note.A3);
-		secondNotes.put(Note.Ds5, Note.Cs3);
+		secondNotes.put(Note.Ds5, Note.Cs2);
+		
+		// Added march snare 1: Slap 7 (c') + Rim Shot 1 (^D) (Jersiel)
+		firstNotes.put(Note.E5, Note.C5);
+		secondNotes.put(Note.E5, Note.Ds3);
+		
+		// Concert bass: Bass Open (^A) + Bass (^G) (Jersiel)
+		firstNotes.put(Note.F5, Note.As3);
+		secondNotes.put(Note.F5, Note.Gs3);
+		
+		// Metal Bass: Muted 2 (^c) + Bass Slap 2 (D) (Jersiel)
+		firstNotes.put(Note.Fs5, Note.Cs4);
+		secondNotes.put(Note.Fs5, Note.D3);
+		
+		// March snare 2: Slap 3 (E) + Rattle Short 3 (^G,) (Jersiel)
+		firstNotes.put(Note.G5, Note.E3);
+		secondNotes.put(Note.G5, Note.Gs2);
 		
 		// Added Pop Kick Drum (Aifel)
 		//firstNotes.put(Note.E5, Note.C3);
@@ -36,7 +52,7 @@ public class LotroCombiDrumInfo {
 			
 		// TODO:
 		//
-		//   Solo is silent, but can live with that
+		//   Solo for these is silent, but can live with that
 	}
 	
 	public static NoteEvent getId1 (NoteEvent ne, Note extraNote) {
