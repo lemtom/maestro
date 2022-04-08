@@ -78,6 +78,13 @@ public class Chord implements AbcConstants
 				hasNotes = true;
 			}
 		}
+		/*
+		if (hasRests && hasNotes) {
+			for (NoteEvent evt : notes) {
+				System.out.println(evt.note.getDisplayName()+" "+evt.getStartTick()+" to "+evt.getEndTick());
+			}
+		}
+		*/
 		return hasRests && hasNotes;
 	}
 
@@ -238,7 +245,7 @@ public class Chord implements AbcConstants
 					}
 					
 					// Keep tied notes, there can max be 6 of them anyway
-					if (n1.tiesFrom != null) {
+					if (!drum && n1.tiesFrom != null) {
 						if (!sustained) {
 							long dura = 0;
 							for (NoteEvent neTie = n1.tiesFrom; neTie != null; neTie = neTie.tiesFrom)
@@ -251,7 +258,7 @@ public class Chord implements AbcConstants
 						}						
 						return 1;
 					}
-					if (n2.tiesFrom != null) {
+					if (!drum && n2.tiesFrom != null) {
 						if (!sustained) {
 							long dura = 0;
 							for (NoteEvent neTie = n2.tiesFrom; neTie != null; neTie = neTie.tiesFrom)
@@ -264,6 +271,15 @@ public class Chord implements AbcConstants
 						}
 						return -1;
 					}
+					
+					// discard tiedFrom drum notes
+					if (drum && n1.tiesFrom != null && n2.tiesFrom == null) {
+						return -1;
+					}
+					if (drum && n2.tiesFrom != null && n1.tiesFrom == null) {
+						return 1;
+					}
+					
 					if (n1.note.id != n2.note.id && !drum) {
 						// return the note if its the highest in the chord
 						if ((n1.origPitch == 0 && highest == n1.note.id)||(n1.origPitch != 0 && highest == n1.origPitch)) {
@@ -297,7 +313,7 @@ public class Chord implements AbcConstants
 						return index2 - index1;
 					}
 										
-					if (!drum && Math.abs(n1.note.id - n2.note.id) == 12 || Math.abs(n1.note.id - n2.note.id) == 24 || Math.abs(n1.note.id - n2.note.id) == 32) {
+					if (!drum && (Math.abs(n1.note.id - n2.note.id) == 12 || Math.abs(n1.note.id - n2.note.id) == 24 || Math.abs(n1.note.id - n2.note.id) == 32)) {
 						// If 2 notes have octave spacing, keep the highest pitched.
 						return n1.note.id - n2.note.id;
 					}

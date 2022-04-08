@@ -39,7 +39,7 @@ public class TimeSignature implements MidiConstants
 		byte[] data = midiMessage.getData();
 		if (midiMessage.getType() != META_TIME_SIGNATURE || data.length < 4)
 		{
-			throw new IllegalArgumentException("Midi message is not a time signature event");
+			throw new IllegalArgumentException("Midi message is not a time signature event. Length:"+data.length);
 		}
 
 		if ((1 << data[1]) > MAX_DENOMINATOR)
