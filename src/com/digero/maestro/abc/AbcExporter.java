@@ -770,7 +770,7 @@ public class AbcExporter
 
 	public void exportToAbc(OutputStream os, boolean delayEnabled) throws AbcConversionException
 	{
-		Pair<Long, Long> startEnd = getSongStartEndTick(true /* lengthenToBar */, false /* accountForSustain */);
+		Pair<Long, Long> startEnd = getSongStartEndTick(true /* lengthenToBar */, true /* accountForSustain */);
 		exportStartTick = startEnd.first;
 		exportEndTick = startEnd.second;
 
@@ -1223,11 +1223,6 @@ public class AbcExporter
 			long ending = qtm.quantize(ne.getEndTick(), part);
 			ne.setEndTick(ending);
 
-			if (ending > lastEnding) {
-				lastEnding = ending;
-				lastEvent = ne;
-			}
-			
 			// Make sure the note didn't get quantized to zero length
 			if (ne.getLengthTicks() == 0)
 			{
@@ -1236,6 +1231,10 @@ public class AbcExporter
 				else
 					ne.setLengthTicks(qtm.getTimingInfo(ne.getStartTick(), part).getMinNoteLengthTicks());
 			}
+			if (ne.getEndTick() > lastEnding) {
+				lastEnding = ne.getEndTick();
+				lastEvent = ne;
+			}
 			if (!addTies && qtm.getPrimaryExportTempoBPM() >= 50 && part.delay != 0) {
 				// Make delay on instrument be audible in preview
 				long delayMicros = (long)(part.delay * 1000 * qtm.getExportTempoFactor());
@@ -1243,7 +1242,7 @@ public class AbcExporter
 				ne.setStartTick(qtm.microsToTick(qtm.tickToMicros(ne.getStartTick())+delayMicros));
 			}
 		}
-		
+
 		Collections.sort(events);
 
 		// Add initial rest if necessary
