@@ -21,6 +21,7 @@ class TuneInfo
 	private NavigableMap<Long, Integer> allPartsTempoMap = new TreeMap<Long, Integer>(); // Tick -> BPM
 	private LotroInstrument instrument;
 	private boolean instrumentSet;
+	private boolean instrumentSetHard = false;
 	private Dynamics dynamics;
 	private boolean compoundMeter;
 	private int meterNumerator;
@@ -246,15 +247,21 @@ class TuneInfo
 		return numerator/(double) denominator;
 	}
 
-	public void setInstrument(LotroInstrument instrument)
+	public void setInstrument(LotroInstrument instrument, boolean definitive)
 	{
 		this.instrument = instrument;
 		this.instrumentSet = true;
+		this.instrumentSetHard = definitive;
 	}
 
 	public boolean isInstrumentSet()
 	{
 		return instrumentSet;
+	}
+	
+	public boolean isInstrumentDefinitiveSet()
+	{
+		return instrumentSet && instrumentSetHard;
 	}
 
 	public void setDynamics(String str)

@@ -18,6 +18,7 @@ public enum AbcField
 	TEMPO("Q:"), //
 	SWING_RHYTHM,//
 	MIX_TIMINGS, //
+	MADE_FOR,
 	;
 	
 	private static class MetaData

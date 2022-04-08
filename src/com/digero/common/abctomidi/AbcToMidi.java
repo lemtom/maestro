@@ -198,10 +198,18 @@ public class AbcToMidi
 							if (instrumentOverrideMap == null || !instrumentOverrideMap.containsKey(trackNumber))
 							{
 								LotroInstrument instrument = LotroInstrument.findInstrumentName(value, null);
-								if (instrument != null)
-									info.setInstrument(instrument);
+								if (!info.isInstrumentDefinitiveSet() && instrument != null)
+									info.setInstrument(instrument, false);
 							}
-						}
+						} else if (field == AbcField.MADE_FOR)
+						{
+							if (instrumentOverrideMap == null || !instrumentOverrideMap.containsKey(trackNumber))
+							{
+								LotroInstrument instrument = LotroInstrument.findInstrumentName(value, null);
+								if (instrument != null)
+									info.setInstrument(instrument, true);
+							}
+						} 
 					}
 
 					continue;
@@ -249,7 +257,7 @@ public class AbcToMidi
 								track = null; // Will create a new track after the header is done
 								if (instrumentOverrideMap != null && instrumentOverrideMap.containsKey(trackNumber))
 								{
-									info.setInstrument(instrumentOverrideMap.get(trackNumber));
+									info.setInstrument(instrumentOverrideMap.get(trackNumber), false);
 								}
 								break;
 							case 'T':
@@ -267,7 +275,7 @@ public class AbcToMidi
 									{
 										LotroInstrument instrument = LotroInstrument.findInstrumentName(value, null);
 										if (instrument != null)
-											info.setInstrument(instrument);
+											info.setInstrument(instrument, false);
 									}
 								}
 								break;
@@ -310,7 +318,7 @@ public class AbcToMidi
 						trackNumber = 1;
 						if (instrumentOverrideMap != null && instrumentOverrideMap.containsKey(trackNumber))
 						{
-							info.setInstrument(instrumentOverrideMap.get(trackNumber));
+							info.setInstrument(instrumentOverrideMap.get(trackNumber), false);
 						}
 					}
 

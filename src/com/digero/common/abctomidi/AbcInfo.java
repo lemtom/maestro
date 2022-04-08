@@ -292,6 +292,7 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 			case ABC_CREATOR:
 			case ABC_VERSION:
 			case PART_NAME:
+			case MADE_FOR:
 			case SONG_DURATION:
 			case TEMPO:
 				// Ignore
