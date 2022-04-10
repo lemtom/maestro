@@ -433,19 +433,19 @@ public class Chord implements AbcConstants
 			return false;
 		}
 		notes.add(ne);
-		if (Note.REST != ne.note) {
+		if (ne.note != Note.REST) {
 			if (ne.origPitch != 0) {
-				if (ne.origPitch > highest && ne.note != Note.REST) {
+				if (ne.origPitch > highest) {
 					highest = ne.origPitch;
 				}
-				if (ne.origPitch < lowest && ne.note != Note.REST) {
+				if (ne.origPitch < lowest) {
 					lowest = ne.origPitch;
 				}
 			} else {
-				if (ne.note.id > highest && ne.note != Note.REST) {
+				if (ne.note.id > highest) {
 					highest = ne.note.id;
 				}
-				if (ne.note.id < lowest && ne.note != Note.REST) {
+				if (ne.note.id < lowest) {
 					lowest = ne.note.id;
 				}
 			}

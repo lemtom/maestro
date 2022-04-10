@@ -730,8 +730,8 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	
 	public int[] getSectionVolumeAdjust(int track, NoteEvent ne) {
 		SequenceInfo se = getSequenceInfo();
-		int delta = 0;
-		int factor = 100;
+		int delta = 0;// volume offset
+		int factor = 100;// current fade-out volume factor
 		TreeMap<Integer, PartSection> tree = sections.get(track);
 		if (se != null && tree != null) {
 			SequenceDataCache data = se.getDataCache();
