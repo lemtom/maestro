@@ -441,7 +441,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	private JPanel createMiscPanel()
 	{
 		JLabel titleLabel = new JLabel("<html><u><b>Misc</b></u></html>");
-		
+		/*
 		final JCheckBox showPrunedCheckBox = new JCheckBox("Show discarded notes in yellow");
 		showPrunedCheckBox.setToolTipText("<html>" //
 				+ "Notes that is going to be discarded due to lotro's limit<br>" //
@@ -456,7 +456,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				saveSettings.showPruned = showPrunedCheckBox.isSelected();
 			}
 		});
-		
+		*/
 		final JCheckBox showMaxPolyphonyCheckBox = new JCheckBox("Show polyphony");
 		showMaxPolyphonyCheckBox.setToolTipText("<html>Show number of simultanious notes<br>"
 				+ "that is playing above the Zoom button.<br>"
@@ -512,8 +512,8 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		layout.insertRow(++row, PREFERRED);
 		panel.add(titleLabel, "0, " + row);
 
-		layout.insertRow(++row, PREFERRED);
-		panel.add(showPrunedCheckBox, "0, " + row);
+		//layout.insertRow(++row, PREFERRED);
+		//panel.add(showPrunedCheckBox, "0, " + row);
 		
 		layout.insertRow(++row, PREFERRED);
 		panel.add(showMaxPolyphonyCheckBox, "0, " + row);

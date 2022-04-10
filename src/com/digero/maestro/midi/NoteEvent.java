@@ -46,10 +46,10 @@ public class NoteEvent implements Comparable<NoteEvent>
 	public NoteEvent tiesTo = null;
 	public long continues = 0;
 
-	public List<NoteEvent> origEvent;
+	//public List<NoteEvent> origEvent;
 	public boolean alreadyMapped = false;
 
-	private Map<AbcPart, Boolean> pruneMap = null;
+	//private Map<AbcPart, Boolean> pruneMap = null;
 
 	public int origPitch = 0;
 	public boolean doubledNote = false;
@@ -212,7 +212,7 @@ public class NoteEvent implements Comparable<NoteEvent>
 		return "Note " + note.id + " dura " + getFullLengthTicks() + " |";
 	}
 
-	public boolean isPruned(AbcPart abcPart) {
+	/*public boolean isPruned(AbcPart abcPart) {
 		if (abcPart == null || pruneMap == null) {
 			return false;
 		}
@@ -235,5 +235,5 @@ public class NoteEvent implements Comparable<NoteEvent>
 	
 	public void resetAllPruned() {
 		pruneMap = null;
-	}
+	}*/
 }

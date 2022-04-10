@@ -64,8 +64,8 @@ public enum ColorTable
 	CONTROLS_TEXT(Color.WHITE),
 	CONTROLS_BACKGROUND(new Color(0x222222)),
 	
-	BAR_EDITED(new Color(0,32,0)),
-	NOTE_PRUNED (new Color(1f,1f,0f));
+	BAR_EDITED(new Color(0,32,0));
+	//NOTE_PRUNED (new Color(1f,1f,0f));
 
 	private Color value;
 

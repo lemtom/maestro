@@ -46,7 +46,7 @@ public class AbcExporter
 	private KeySignature keySignature;
 
 	private boolean skipSilenceAtStart;
-	private boolean showPruned;
+	//private boolean showPruned;
 	private long exportStartTick;
 	private long exportEndTick;
 	private int lastChannelUsedInPreview = -1;
@@ -101,7 +101,7 @@ public class AbcExporter
 		this.skipSilenceAtStart = skipSilenceAtStart;
 	}
 	
-	public boolean isShowPruned()
+	/*public boolean isShowPruned()
 	{
 		return showPruned;
 	}
@@ -109,7 +109,7 @@ public class AbcExporter
 	public void setShowPruned(boolean showPruned)
 	{
 		this.showPruned = showPruned;
-	}
+	}*/
 
 	public AbcMetadataSource getMetadataSource()
 	{
@@ -1143,7 +1143,7 @@ public class AbcExporter
 						continue;
 					
 					// reset pruned flag
-					ne.resetPruned(part);
+					//ne.resetPruned(part);
 					
 					Note mappedNote = ne.note;
 					
@@ -1171,11 +1171,11 @@ public class AbcExporter
 								newNE.origPitch = origId;
 							}
 						}
-						if (!addTies) {
+						/*if (!addTies) {
 							// Only associate if doing preview
 							newNE.origEvent = new ArrayList<NoteEvent>();
 							newNE.origEvent.add(ne);
-						}
+						}*/
 						events.add(newNE);
 						
 						Boolean[] doubling = part.getSectionDoubling(ne.getStartTick(), t);
@@ -1301,12 +1301,12 @@ public class AbcExporter
 
 						// Remove the duplicate note
 						neIter.remove();
-						if (ne.origEvent != null) {
+						/*if (ne.origEvent != null) {
 							if (on.origEvent == null) {
 								on.origEvent = new ArrayList<NoteEvent>();
 							}
 							on.origEvent.addAll(ne.origEvent);
-						}
+						}*/
 						continue dupLoop;
 					}
 					else
@@ -1629,11 +1629,11 @@ public class AbcExporter
 			{
 				ne.tiesFrom.tiesTo = null;
 				ne.tiesFrom = null;
-			} else if (ne.origEvent != null && showPruned) {
+			}/* else if (ne.origEvent != null && showPruned) {
 				for (NoteEvent neo : ne.origEvent) {
 					neo.prune(part);
 				}
-			}
+			}*/
 	
 			// Remove the remainder of the notes that this is tied to (if any)
 			for (NoteEvent neTie = ne.tiesTo; neTie != null; neTie = neTie.tiesTo)

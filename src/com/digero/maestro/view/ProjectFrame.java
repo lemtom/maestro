@@ -1086,8 +1086,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		if (abcSong != null)
 			abcSong.setSkipSilenceAtStart(saveSettings.skipSilenceAtStart);
 		
-		if (abcSong != null)
-			abcSong.setShowPruned(saveSettings.showPruned);
+		//if (abcSong != null)
+		//	abcSong.setShowPruned(saveSettings.showPruned);
 		
 		noteCountLabel.setVisible(saveSettings.showMaxPolyphony);
 		if (!saveSettings.showMaxPolyphony) {
@@ -1860,7 +1860,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			}
 
 			abcSong.setSkipSilenceAtStart(saveSettings.skipSilenceAtStart);
-			abcSong.setShowPruned(saveSettings.showPruned);
+			//abcSong.setShowPruned(saveSettings.showPruned);
 
 			setAbcSongModified(false);
 			updateTitle();
@@ -2013,7 +2013,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		try
 		{
 			abcSong.setSkipSilenceAtStart(saveSettings.skipSilenceAtStart);
-			abcSong.setShowPruned(saveSettings.showPruned);
+			//abcSong.setShowPruned(saveSettings.showPruned);
 			AbcExporter exporter = abcSong.getAbcExporter();
 			exporter.stereoPan = saveSettings.stereoPan;
 			SequenceInfo previewSequenceInfo = SequenceInfo.fromAbcParts(exporter, !failedToLoadLotroInstruments);

@@ -48,13 +48,15 @@ Maestro upgrades by Aifel of Laurelin
 
 Version 2.5.0.86
 - Refinement of note pruning to stay under 6 notes per instrument.
+- Removed the "Show discarded notes in yellow" feature.
+    It could get confusing when only part of a note got discarded, but the UI would show entire note as discarded.
 
 Version 2.5.0.85
 - Made extra check to be sure no duplicate drum notes are output as lotro will accept them but not double play them.
 
 Version 2.5.0.84
 - Added 8 new drum sounds that each is a combi of 2 drum sounds, their names start with "Xtra".
-	The sounds are some bass, snares and a crash cymbal. Jersiel supplied the combis, except one.
+    The sounds are some bass, snares and a crash cymbal. Jersiel supplied the combis, except one.
     Note that because they are 2 sounds, they will sound louder, and will eat into the 6 note limit fast, plus add to the 64 full song limit also.
     Note pruning down to 6 for a part, might split them up too, prune one of its sounds but not the other.
     So be very mindful of how the track(s) and song is made when considering to use these.

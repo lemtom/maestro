@@ -62,7 +62,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private boolean tripletTiming = false;
 	private boolean mixTiming = true;
 	private boolean skipSilenceAtStart = true;
-	private boolean showPruned = false;
+	//private boolean showPruned = false;
 
 	private final boolean fromAbcFile;
 	private final boolean fromXmlFile;
@@ -120,14 +120,14 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		}
 		parts.clear();
 		
-		if (sequenceInfo != null) {
+		/*if (sequenceInfo != null) {
 			// Make life easier for Garbage Collector
 			for (TrackInfo ti : sequenceInfo.getTrackList()) {
 				for (NoteEvent ne : ti.getEvents()) {
 					ne.resetAllPruned();
 				}
 			}
-		}
+		}*/
 	}
 
 	private void initFromMidi(File file) throws IOException, InvalidMidiDataException, ParseException
@@ -599,7 +599,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		}
 	}
 	
-	public void setShowPruned(boolean showPruned)
+	/*public void setShowPruned(boolean showPruned)
 	{
 		if (this.showPruned != showPruned)
 		{
@@ -611,7 +611,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public boolean isShowPruned()
 	{
 		return showPruned;
-	}
+	}*/
 	
 	public void setBadger (boolean badger) {
 		this.badger = badger;
@@ -759,8 +759,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			if (abcExporter.isSkipSilenceAtStart() != skipSilenceAtStart)
 				abcExporter.setSkipSilenceAtStart(skipSilenceAtStart);
 			
-			if (abcExporter.isShowPruned() != showPruned)
-				abcExporter.setShowPruned(showPruned);
+			//if (abcExporter.isShowPruned() != showPruned)
+			//	abcExporter.setShowPruned(showPruned);
 		}
 
 		return abcExporter;
