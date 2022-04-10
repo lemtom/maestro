@@ -46,6 +46,9 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 
+Version 2.5.0.86
+- Refinement of note pruning to stay under 6 notes per instrument.
+
 Version 2.5.0.85
 - Made extra check to be sure no duplicate drum notes are output as lotro will accept them but not double play them.
 

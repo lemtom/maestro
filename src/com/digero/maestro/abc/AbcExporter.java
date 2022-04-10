@@ -1409,7 +1409,7 @@ public class AbcExporter
 						// If the chord is too long, add a short rest in the chord to shorten it
 						curChord.addAlways(new NoteEvent(Note.REST, Dynamics.DEFAULT.midiVol, curChord.getStartTick(),
 								nextChord.getStartTick(), qtm));
-						// No pruning if a rest is added, as this is for preview and 6 notes plus a rest should be allowed.
+						// No pruning after a rest is added, as this is for preview and 6 notes plus a rest should be allowed.
 					}
 				}
 
@@ -1525,6 +1525,7 @@ public class AbcExporter
 						next.tiesFrom = ne;
 						ne.tiesTo = next;
 					}
+					ne.continues = next.getLengthTicks();// needed for pruning
 				}
 
 				ne.setEndTick(maxNoteEndTick);

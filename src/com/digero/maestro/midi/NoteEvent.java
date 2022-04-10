@@ -44,6 +44,7 @@ public class NoteEvent implements Comparable<NoteEvent>
 
 	public NoteEvent tiesFrom = null;
 	public NoteEvent tiesTo = null;
+	public long continues = 0;
 
 	public List<NoteEvent> origEvent;
 	public boolean alreadyMapped = false;
