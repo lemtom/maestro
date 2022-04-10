@@ -237,16 +237,16 @@ public class Chord implements AbcConstants
 					
 					if (sustained) {
 						// We keep the longest note, including continuation from notes broken up
-						if (n1.getLengthTicks() + n1.continues > n2.getLengthTicks() + n2.continues) {
+						if (n1.getFullLengthTicks() + n1.continues > n2.getFullLengthTicks() + n2.continues) {
 							return 1;
-						} else if (n2.getLengthTicks() + n2.continues > n1.getLengthTicks() + n1.continues) {
+						} else if (n2.getFullLengthTicks() + n2.continues > n1.getFullLengthTicks() + n1.continues) {
 							return -1;
 						}
 					}
 					
-					// At the point in time when prune() is run, there is no tiedTo, just tiedFrom.
-					assert n1.tiesTo == null;
-					assert n2.tiesTo == null;
+					// At the point in time when prune() is run, there is very few tiedTo, just tiedFrom.
+					//assert n1.tiesTo == null;
+					//assert n2.tiesTo == null;
 					boolean n1Finished = false;
 					boolean n2Finished = false;
 					if (!sustained) {
