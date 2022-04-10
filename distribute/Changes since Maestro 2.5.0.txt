@@ -46,6 +46,9 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 
+Version 2.5.0.85
+- Made extra check to be sure no duplicate drum notes are output as lotro will accept them but not double play them.
+
 Version 2.5.0.84
 - Added 8 new drum sounds that each is a combi of 2 drum sounds, their names start with "Xtra".
 	The sounds are some bass, snares and a crash cymbal. Jersiel supplied the combis, except one.
@@ -54,13 +57,14 @@ Version 2.5.0.84
     So be very mindful of how the track(s) and song is made when considering to use these.
     Its mostly a convenience for small bands. If you need combis and have band members enough,
     consider choosing 2 drum parts instead and make combis yourself to circumvent the 6 note limit.
+    Note that the new Xtra combi sounds cannot be listened to as solo drum sound, but you can still listen solo to the whole drum part.
 - Note pruning down to 6 for drum is now less arbitrary. Louder notes are prioritized and bass notes too.
     Note that pruned drum notes is not shown in yellow even if that feature is enabled.
 - Made a new comment field in each part that tells which lotro instrument it was made for (%%made-for).
     Since transcribers might not use the instrument-name when they name a part, or use it in another language,
     this is added so can choose the right instrument in AbcPlayer and Maestro when loading abc files, less guessing.
     Only forward compatible. If loading old abc files, it will work the old way with guessing from %%part-name or part title (T:).
-- Made sure peak counter is reset when opening new song.
+- Made sure peak counter is reset when opening new song. But if notes from previous song is still in decay phase then they might increase the counter anyway.
 - Changed font of polyphony counter.
     
 Version 2.5.0.83

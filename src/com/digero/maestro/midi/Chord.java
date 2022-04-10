@@ -25,7 +25,9 @@ package com.digero.maestro.midi;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.digero.common.abc.AbcConstants;
 import com.digero.common.abc.Dynamics;
@@ -209,6 +211,30 @@ public class Chord implements AbcConstants
 	public List<NoteEvent> prune(final boolean sustained, final boolean drum) {
 		// Determine which notes to prune to remain with a max of 6
 		List<NoteEvent> deadNotes = new ArrayList<NoteEvent>();
+		if (drum) {
+			// Make sure there is no duplicate drum notes, and if there is, keep the loudest.
+			// We don't care about duration of drum notes. And drum notes that are a tied continuation, we discard.
+			List<NoteEvent> newNotes = new ArrayList<NoteEvent>();
+			Comparator<NoteEvent> vols = new Comparator<NoteEvent>() {
+				@Override
+				public int compare(NoteEvent n1, NoteEvent n2) {
+					return n2.velocity - n1.velocity;
+				}
+			};
+			notes.sort(vols);
+			Set<Note> notesInUse = new HashSet<Note>();
+			for (int i = 0; i < notes.size(); i++) {
+				if (notes.get(i).note == Note.REST) {
+					newNotes.add(notes.get(i));
+				} else if (notes.get(i).tiesFrom == null && !notesInUse.contains(notes.get(i).note)) {
+					notesInUse.add(notes.get(i).note);
+					newNotes.add(notes.get(i));
+				} else {
+					deadNotes.add(notes.get(i));
+				}
+			}
+			notes = newNotes;
+		}
 		if (size() > MAX_CHORD_NOTES) {
 			// Tied?      Keep these, unless non-sustained instr. and durationis over 1.2s  tiesFrom
 			// Velocity?  Keep loudest!                    velocity
