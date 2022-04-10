@@ -213,8 +213,9 @@ public class Chord implements AbcConstants
 		List<NoteEvent> deadNotes = new ArrayList<NoteEvent>();
 		if (drum) {
 			// Make sure there is no duplicate drum notes, and if there is, keep the loudest.
-			// We don't care about duration of drum notes. And drum notes that are a tied continuation, we discard.
+			// We don't care about duration of drum notes. And drum notes that are a tied continuation, we discard, they just fill up the 6 note limit.
 			List<NoteEvent> newNotes = new ArrayList<NoteEvent>();
+			/*
 			Comparator<NoteEvent> vols = new Comparator<NoteEvent>() {
 				@Override
 				public int compare(NoteEvent n1, NoteEvent n2) {
@@ -222,12 +223,13 @@ public class Chord implements AbcConstants
 				}
 			};
 			notes.sort(vols);
-			Set<Note> notesInUse = new HashSet<Note>();
+			*/
+			//Set<Note> notesInUse = new HashSet<Note>();
 			for (int i = 0; i < notes.size(); i++) {
 				if (notes.get(i).note == Note.REST) {
 					newNotes.add(notes.get(i));
-				} else if (notes.get(i).tiesFrom == null && !notesInUse.contains(notes.get(i).note)) {
-					notesInUse.add(notes.get(i).note);
+				} else if (notes.get(i).tiesFrom == null) { //  && !notesInUse.contains(notes.get(i).note)  not needed as that is done in combine and quant
+					//notesInUse.add(notes.get(i).note);
 					newNotes.add(notes.get(i));
 				} else {
 					deadNotes.add(notes.get(i));

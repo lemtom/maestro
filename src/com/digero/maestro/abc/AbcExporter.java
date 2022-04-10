@@ -33,7 +33,6 @@ import com.digero.maestro.MaestroMain;
 import com.digero.maestro.midi.Chord;
 import com.digero.maestro.midi.NoteEvent;
 import com.digero.maestro.midi.TrackInfo;
-import com.sun.media.sound.MidiUtils;
 
 public class AbcExporter
 {
