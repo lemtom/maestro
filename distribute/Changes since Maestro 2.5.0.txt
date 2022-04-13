@@ -47,7 +47,7 @@ Maestro upgrades by Aifel of Laurelin
 ================
 
 Version 2.5.0.86
-- Refinement of note pruning to stay under 6 notes per instrument.
+- Refined the note pruning algorithm for staying under 6 simultaneous notes per instrument. Done in cooperation with Jersiel.
 - Removed the "Show discarded notes in yellow" feature.
     It could get confusing when only part of a note got discarded, but the UI would show entire note as discarded.
 
@@ -85,10 +85,10 @@ Version 2.5.0.82
 - German and French words for 'center', 'left' and 'right' in part titles will now also change stereo pan.
     The words recognized is now: left, links, gauche, right, rechts, droite, middle, center, zentrum, mitte and centre.
     Upper or lower case does not matter.
-- Added limited support for Songbook variants based on The Badgers Chapter.
+- Added support for Songbook variants based on The Badgers Chapter.
     It can output title, genre and mood.
     There is also an option to output all parts played for convenience.
-    There is no way to select individual parts to be played.
+    There is no way to select individual parts to be played though, to do that have to use songbrowser.exe
 
 Version 2.5.0.81
 - Maestro now accept karaoke midi files with .kar ending.
@@ -305,7 +305,7 @@ Version 2.5.0.42
     This will make the soundfont file slightly larger though and make Maestro consume more memory.
 - Track panel title tooltip will now show count of bad clarinet/pibgorn notes.
     To see this, select pibgorn or clarinet, and hover mouse over a track title.
-- Lotro has a max 6 notes played at the same time per instrument. The way notes are discarded is now done with a much smarter algorithm instead of usually discarding the highest pitched notes.
+- Lotro has a max 6 notes played at the same time per instrument. The way notes are discarded is now done with a much smarter algorithm instead of often discarding the highest pitched notes.
     This feature is very very handy for solo and small bands, where multiple tracks often is combined into same instrument.
     Jersiel co-developed the algorithm for this.
 

@@ -210,10 +210,7 @@ public class Chord implements AbcConstants
 		// Determine which notes to prune to remain with a max of 6
 		List<NoteEvent> deadNotes = new ArrayList<NoteEvent>();
 		if (size() > MAX_CHORD_NOTES) {
-			// Tied?      Keep these, unless non-sustained instr. and durationis over 1.2s  tiesFrom
-			// Velocity?  Keep loudest!                    velocity
-			// Pitch?     Keep highest, Keep lowest        note.id
-			// Duration?  All things equal, keep longest   getLengthTicks()
+
 			List<NoteEvent> newNotes = new ArrayList<NoteEvent>();
 			
 			Comparator<NoteEvent> keepMe = new Comparator<NoteEvent>() {
@@ -228,23 +225,15 @@ public class Chord implements AbcConstants
 						return -1;
 					}
 					
+					/*
 					if (n1.doubledNote && !n2.doubledNote) {
 						return -1;
 					}
 					if (n2.doubledNote && !n1.doubledNote) {
 						return 1;
-					}
-					
-					if (sustained) {
-						// We keep the longest note, including continuation from notes broken up
-						if (n1.getFullLengthTicks() + n1.continues > n2.getFullLengthTicks() + n2.continues) {
-							return 1;
-						} else if (n2.getFullLengthTicks() + n2.continues > n1.getFullLengthTicks() + n1.continues) {
-							return -1;
-						}
-					}
-					
-					// At the point in time when prune() is run, there is very few tiedTo, just tiedFrom.
+					}*/
+										
+					// At the point in time when prune() is run, there is very few tiedTo, mostly just tiedFrom.
 					//assert n1.tiesTo == null;
 					//assert n2.tiesTo == null;
 					boolean n1Finished = false;
@@ -278,28 +267,7 @@ public class Chord implements AbcConstants
 						// The notes differ in volume, return the loudest
 						return n1.velocity - n2.velocity;
 					}
-					
-					if (!drum) {
-						// Keep tiedFrom notes, there can max be 6 of them anyway
-						// Will sound more harmonious
-						if(n1.tiesFrom != null && n2.tiesFrom == null) {
-							return 1;
-						} else if(n2.tiesFrom != null && n1.tiesFrom == null) {
-							return -1;
-						}
-					} else {
-						// discard tiedFrom drum notes.
-						// Although we already checked for finished notes,
-						// we don't mind stopping drum note and not let it decay
-						// to prioritize a new drum sound.
-						if (n1.tiesFrom != null && n2.tiesFrom == null) {
-							return -1;
-						}
-						if (n2.tiesFrom != null && n1.tiesFrom == null) {
-							return 1;
-						}
-					}
-					
+										
 					if (!drum) {
 						if (n1.note.id != n2.note.id) {
 							// return the note if its the highest in the chord
@@ -324,6 +292,8 @@ public class Chord implements AbcConstants
 							return (int) (n1.getFullLengthTicks() - n2.getFullLengthTicks());
 						}
 						
+						int points = 0;
+						
 						List<Integer> removeFirst = new ArrayList<Integer>();
 						
 						removeFirst.add(highest-32);
@@ -336,16 +306,56 @@ public class Chord implements AbcConstants
 						int index1 = removeFirst.indexOf(n1.note.id);
 						int index2 = removeFirst.indexOf(n2.note.id);
 						
-						if (index1 != index2) {
-							// Discard notes first that has octave spacing from highest or lowest notes
-							return index2 - index1;
+						// Discard notes first that has octave spacing from highest or lowest notes
+						if (index1 != -1) {
+							points += -2;
+						}
+						if (index2 != -1) {
+							points += 2;
+						} 
+						
+						if (sustained) {
+							// We keep the longest note, including continuation from notes broken up
+							if (n1.getFullLengthTicks() + n1.continues > n2.getFullLengthTicks() + n2.continues) {
+								points += 2;
+							} else if (n2.getFullLengthTicks() + n2.continues > n1.getFullLengthTicks() + n1.continues) {
+								points += -2;
+							}
 						}
 											
-						if ((Math.abs(n1.note.id - n2.note.id) == 12 || Math.abs(n1.note.id - n2.note.id) == 24 || Math.abs(n1.note.id - n2.note.id) == 32)) {
+						if ((Math.abs(n1.note.id - n2.note.id) == 12 || Math.abs(n1.note.id - n2.note.id) == 24 || Math.abs(n1.note.id - n2.note.id) == 36)) {
 							// If 2 notes have octave spacing, keep the highest pitched.
-							return n1.note.id - n2.note.id;
+							if (n1.note.id > n2.note.id) {
+								points += 2;
+							} else if (n2.note.id > n1.note.id) {
+								points += -2;
+							}
 						}
+						
+						if (sustained) {
+							if (n1.tiesFrom != null) {
+								points += 1;
+							}
+							if (n2.tiesFrom != null) {
+								points += -1;
+							}
+						}
+						
+						if (points > 0) return 1;
+						if (points < 0) return -1;
+						
 					} else {
+						// discard tiedFrom drum notes.
+						// Although we already checked for finished notes,
+						// we don't mind stopping drum note and not let it decay
+						// to prioritize a new drum sound.
+						if (n1.tiesFrom != null && n2.tiesFrom == null) {
+							return -1;
+						}
+						if (n2.tiesFrom != null && n1.tiesFrom == null) {
+							return 1;
+						}
+						
 						// Bass drums get priority:
 						if (n1.note == Note.As3) {// Open bass
 							return 1;
@@ -371,40 +381,23 @@ public class Chord implements AbcConstants
 							return 1;
 						} else if (n2.note == Note.C3) {
 							return -1;
-						} else if (n1.note == Note.F2) {// Muted 1
-							return 1;
-						} else if (n2.note == Note.F2) {
-							return -1;
-						} else if (n1.note == Note.E3) {// Slap 3
-							return 1;
-						} else if (n2.note == Note.E3) {
-							return -1;
-						} else if (n1.note == Note.C5) {// Slap 7
-							return 1;
-						} else if (n2.note == Note.C5) {
-							return -1;
-						} else if (n1.note == Note.Ds3) {// Rim shot 1 
-							return 1;
-						} else if (n2.note == Note.Ds3) {
-							return -1;
-						} else if (n1.note == Note.Gs2) {// Rattle Short 3
-							return 1;
-						} else if (n2.note == Note.Gs2) {
-							return -1;
-						} else if (n1.note == Note.A3) {// Rattle Long
-							return 1;
-						} else if (n2.note == Note.A3) {
-							return -1;
-						} else if (n1.note == Note.Cs2) {// Rattle Short 1
-							return 1;
-						} else if (n2.note == Note.Cs2) {
-							return -1;
 						}
+						
+						// Its too constrained to prioritize the rest.
+						// No way to really prioritize them, depends
+						// on song and transcribers taste.
+						//
+						// Note that muted 1 is not included on purpose.
 					}
-					// discard the center-most note (for drum this will become very random)
-					return Math.abs(n1.note.id - (lowest + (highest-lowest)/2))-Math.abs(n2.note.id - (lowest + (highest-lowest)/2));
 					
-					//1: n1 big -1: n2 big 0:equal
+					// discard the center-most note (for drum this is very random)
+					int center = Math.abs(n1.note.id - (lowest + (highest-lowest)/2))-Math.abs(n2.note.id - (lowest + (highest-lowest)/2));
+					
+					if (center > 0) return 1;
+					if (center < 0) return -1;
+					return 0;
+					
+					//1: n1 wins  -1: n2 wins   0:equal
 				}
 			};
 			notes.sort(keepMe);

@@ -171,7 +171,7 @@ public class NoteEvent implements Comparable<NoteEvent>
 			next.tiesFrom = this;
 			this.tiesTo = next;
 		}
-
+		next.continues = this.continues;
 		return next;
 	}
 
