@@ -48,15 +48,6 @@ public class Chord implements AbcConstants
 		startTick = firstNote.getStartTick();
 		endTick = firstNote.getEndTick();
 		notes.add(firstNote);
-		if (Note.REST != firstNote.note) {
-			if (firstNote.origPitch != 0) {
-				highest = firstNote.origPitch;
-				lowest = firstNote.origPitch;
-			} else {
-				highest = firstNote.note.id;
-				lowest = firstNote.note.id;
-			}
-		}
 	}
 	
 	public boolean isRest() {
@@ -210,6 +201,7 @@ public class Chord implements AbcConstants
 		// Determine which notes to prune to remain with a max of 6
 		List<NoteEvent> deadNotes = new ArrayList<NoteEvent>();
 		if (size() > MAX_CHORD_NOTES) {
+			recalcEdges();
 
 			List<NoteEvent> newNotes = new ArrayList<NoteEvent>();
 			
@@ -400,10 +392,10 @@ public class Chord implements AbcConstants
 					//1: n1 wins  -1: n2 wins   0:equal
 				}
 			};
+			
 			notes.sort(keepMe);
 			
-			//System.err.print("Prune\n");
-			
+			//System.err.print("Prune\n");			
 			for (int i = notes.size()-1; i >= 0; i--) {
 				if (newNotes.size() < MAX_CHORD_NOTES) {
 					newNotes.add(notes.get(i));
@@ -426,28 +418,39 @@ public class Chord implements AbcConstants
 			return false;
 		}
 		notes.add(ne);
-		if (ne.note != Note.REST) {
-			if (ne.origPitch != 0) {
-				if (ne.origPitch > highest) {
-					highest = ne.origPitch;
-				}
-				if (ne.origPitch < lowest) {
-					lowest = ne.origPitch;
-				}
-			} else {
-				if (ne.note.id > highest) {
-					highest = ne.note.id;
-				}
-				if (ne.note.id < lowest) {
-					lowest = ne.note.id;
-				}
-			}
-		}
+		
 		if (ne.getEndTick() < endTick)
 		{
 			endTick = ne.getEndTick();
 		}
 		return true;		
+	}
+	
+	/**
+	 *  Called only on demand when the edge values is needed.
+	 */
+	private void recalcEdges() {		
+		highest = 0;
+		lowest = 200;
+		for (NoteEvent evt : notes) {
+			if (evt.note != Note.REST) {
+				if (evt.origPitch != 0) {
+					if (evt.origPitch > highest) {
+						highest = evt.origPitch;
+					}
+					if (evt.origPitch < lowest) {
+						lowest = evt.origPitch;
+					}
+				} else {
+					if (evt.note.id > highest) {
+						highest = evt.note.id;
+					}
+					if (evt.note.id < lowest) {
+						lowest = evt.note.id;
+					}
+				}
+			}
+		}
 	}
 
 	public Long getLongestEndTick() {

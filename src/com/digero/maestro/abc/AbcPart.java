@@ -476,6 +476,13 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 	}
 	
+	/**
+	 *  
+	 * @param track
+	 * @param noteId
+	 * @param tickStart
+	 * @return Return the note id the note would have had if the instrument did not a have range limit.
+	 */
 	public int mapNoteFullOctaves(int track, int noteId, long tickStart)
 	{
 		noteId += getTranspose(track, tickStart);
