@@ -256,7 +256,11 @@ public class SequencerWrapper implements MidiConstants, ITempoCache, IDiscardabl
 
 	public long getPosition()
 	{
-		return sequencer.getMicrosecondPosition();
+		long l = sequencer.getMicrosecondPosition();
+		//if (l < 0) {
+		//	l = -l+3600000000L*2L;
+		//}
+		return l;
 	}
 
 	public void setPosition(long position)
@@ -296,7 +300,11 @@ public class SequencerWrapper implements MidiConstants, ITempoCache, IDiscardabl
 
 	public long getLength()
 	{
-		return sequencer.getMicrosecondLength();
+		long l = sequencer.getMicrosecondLength();
+		//if (l < 0) {
+		//	l = -l+3600000000L*2L;
+		//}
+		return l;
 	}
 
 	public long getTickLength()

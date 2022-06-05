@@ -228,6 +228,7 @@ public class Chord implements AbcConstants
 					// At the point in time when prune() is run, there is very few tiedTo, mostly just tiedFrom.
 					//assert n1.tiesTo == null;
 					//assert n2.tiesTo == null;
+					/* This was commented as experiments in lotro shows than can start a new note even if 6 prev. is still playing.
 					boolean n1Finished = false;
 					boolean n2Finished = false;
 					if (!sustained) {
@@ -254,6 +255,21 @@ public class Chord implements AbcConstants
 					} else if (n2Finished && !n1Finished) {
 						return 1;
 					}
+					*/
+					
+					if (!sustained) {
+						// discard tiedFrom notes.
+						// Although we already checked for finished notes,
+						// we don't mind stopping note and not let it decay
+						// to prioritize a new sound.
+						if (n1.tiesFrom != null && n2.tiesFrom == null) {
+							return -1;
+						}
+						if (n2.tiesFrom != null && n1.tiesFrom == null) {
+							return 1;
+						}
+					}
+					
 					
 					if (n1.velocity != n2.velocity) {
 						// The notes differ in volume, return the loudest
@@ -337,16 +353,6 @@ public class Chord implements AbcConstants
 						if (points < 0) return -1;
 						
 					} else {
-						// discard tiedFrom drum notes.
-						// Although we already checked for finished notes,
-						// we don't mind stopping drum note and not let it decay
-						// to prioritize a new drum sound.
-						if (n1.tiesFrom != null && n2.tiesFrom == null) {
-							return -1;
-						}
-						if (n2.tiesFrom != null && n1.tiesFrom == null) {
-							return 1;
-						}
 						
 						// Bass drums get priority:
 						if (n1.note == Note.As3) {// Open bass

@@ -46,6 +46,13 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 
+Version 2.5.0.88
+- Notes in non-sustained parts that has already been started, will now get very high priority for pruning subsequent tied notes.
+    This is due to some experiments in lotro that shows that they do not count for the max 6 limit.
+    
+Version 2.5.0.87
+- Special release that supports songs over 2 hours. This is only in this release, next release will be normal again.  
+
 Version 2.5.0.86
 - Refined the note pruning algorithm for staying under 6 simultaneous notes per instrument. Done in cooperation with Jersiel.
 - Removed the "Show discarded notes in yellow" feature.
