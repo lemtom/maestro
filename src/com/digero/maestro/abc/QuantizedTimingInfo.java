@@ -161,26 +161,23 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				}
 				//Now calculate duration of sixGrid sections. They will always end and start on quantized grid for both odd and even timing
 				//I call it sixGrid due to durations of 3 and 2 will always coincide each 6th duration.
+				//Its really just LCM (Least Common Multiple)
 				long sixTicks = 0;
 				boolean evenShortest = tempoChange.info.getMinNoteLengthTicks() < tempoChange.infoOdd.getMinNoteLengthTicks();
-				int loopCount = 0;
+				int loopCount = 1;
+				long longest = 0;
+				long shortest = 0;
 				if (evenShortest) {
-					sixTicks = tempoChange.info.getMinNoteLengthTicks();
-					while(sixTicks % tempoChange.infoOdd.getMinNoteLengthTicks() != 0 && loopCount < 100) {
-						sixTicks += tempoChange.info.getMinNoteLengthTicks();
-						loopCount++;
-					}
+					shortest = tempoChange.info.getMinNoteLengthTicks();
+					longest = tempoChange.infoOdd.getMinNoteLengthTicks();
 				} else {
-					sixTicks = tempoChange.infoOdd.getMinNoteLengthTicks();
-					while(sixTicks % tempoChange.info.getMinNoteLengthTicks() != 0 && loopCount < 100) {
-						sixTicks += tempoChange.infoOdd.getMinNoteLengthTicks();
-						loopCount++;
-					}
-				}
-				
-				if (loopCount >= 100) {
-					System.out.println("loopCount >= 100");
-					continue;
+					shortest = tempoChange.infoOdd.getMinNoteLengthTicks();
+					longest = tempoChange.info.getMinNoteLengthTicks();
+				}					
+				sixTicks = longest;
+				while(sixTicks % shortest != 0 && loopCount < shortest) {
+					sixTicks += longest;
+					loopCount++;
 				}
 				
 				assert sixTicks % tempoChange.info.getMinNoteLengthTicks() == 0;
