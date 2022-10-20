@@ -45,9 +45,13 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.90
+- Fix for missing "Delete" part button on MacOS.
+    It will make the left panels wide enough to show LM Bassoon as a part. Which will then also make room for the delete button.
+- LCM algorithm improvement for mix timing. Result should be the same, but slightly faster.
+
 Version 2.5.0.89
-- Attempt for fixing missing "delete part" button on MacOS.
-    It will make the left panels wide enough to show LM Bassoon as a part. Which would then also make room for the delete button.
+- Attempt for fixing missing "delete part" button on MacOS. Didn't work.    
 
 Version 2.5.0.88
 - Notes in non-sustained parts that has already been started, will now get very high priority for pruning subsequent tied notes.
