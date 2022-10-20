@@ -31,6 +31,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -72,6 +73,7 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.digero.common.abc.LotroInstrument;
 import com.digero.common.icons.IconLoader;
 import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.KeySignature;
@@ -101,6 +103,7 @@ import com.digero.maestro.abc.AbcExporter;
 import com.digero.maestro.abc.AbcPart;
 import com.digero.maestro.abc.AbcPartEvent;
 import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
+import com.digero.maestro.abc.AbcPartMetadataSource;
 import com.digero.maestro.abc.AbcSong;
 import com.digero.maestro.abc.AbcSongEvent;
 import com.digero.maestro.abc.PartAutoNumberer;
@@ -115,6 +118,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private static final int HGAP = 4, VGAP = 4;
 	private static final double[] LAYOUT_COLS = new double[] { 180, FILL };
 	private static final double[] LAYOUT_ROWS = new double[] { FILL };
+	private static TableLayout tableLayout = new TableLayout(LAYOUT_COLS,LAYOUT_ROWS);
 
 	private Preferences prefs = Preferences.userNodeForPackage(MaestroMain.class);
 
@@ -159,7 +163,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JMenuItem exportAsMenuItem;
 	private JMenuItem closeProject;
 
-	private JList<AbcPart> partsList;
+	private JList<AbcPartMetadataSource> partsList;
 	private JButton newPartButton;
 	private JButton deletePartButton;
 	private JButton delayButton;
@@ -260,6 +264,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			return;
 		}
 
+		// SWING stuff starts here
+		
 		try
 		{
 			List<Image> icons = new ArrayList<Image>();
@@ -306,10 +312,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			}
 		});
 
-		TableLayout tableLayout = new TableLayout(LAYOUT_COLS, LAYOUT_ROWS);
+		//TableLayout tableLayout = new TableLayout(LAYOUT_COLS, LAYOUT_ROWS);
 		tableLayout.setHGap(HGAP);
 		tableLayout.setVGap(VGAP);
-
+		
 		content = new JPanel(tableLayout, false);
 		setContentPane(content);
 
@@ -529,13 +535,13 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		exportSuccessfulLabel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		exportSuccessfulLabel.setVisible(false);
 
-		partsList = new JList<AbcPart>();
+		partsList = new JList<AbcPartMetadataSource>();
 		partsList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		partsList.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
 			@Override public void valueChanged(ListSelectionEvent e)
 			{
-				AbcPart abcPart = partsList.getSelectedValue();
+				AbcPart abcPart = (AbcPart) partsList.getSelectedValue();
 				sequencer.getFilter().onAbcPartChanged(abcPart != null);
 				abcSequencer.getFilter().onAbcPartChanged(abcPart != null);
 				partPanel.setAbcPart(abcPart);
@@ -546,10 +552,38 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				}
 			}
 		});
+		// Using this class as prototype cell content will set the Jlist width to be at least big enough to display LM bassoon,
+		// and since this list determines the width of the flowlayout where the delete button is also, it should give space.
+		class ProtoClass implements AbcPartMetadataSource {
+
+			@Override
+			public String getTitle() {
+				return null;
+			}
+
+			@Override
+			public int getPartNumber() {
+				return 0;
+			}
+
+			@Override
+			public LotroInstrument getInstrument() {
+				return null;
+			}
+			
+			@Override
+			public String toString()
+			{
+				return "00. " + LotroInstrument.LONELY_MOUNTAIN_BASSOON.toString() + "*";
+			}
+			
+		};
+		partsList.setPrototypeCellValue(new ProtoClass());// This call is attempt of fix for no delete button on MacOS part 1
+		partsList.setVisibleRowCount(8);
 
 		JScrollPane partsListScrollPane = new JScrollPane(partsList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
+		
 		newPartButton = new JButton("New Part");
 		newPartButton.addActionListener(new ActionListener()
 		{
@@ -566,7 +600,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			@Override public void actionPerformed(ActionEvent e)
 			{
 				if (abcSong != null)
-					abcSong.deletePart(partsList.getSelectedValue());
+					abcSong.deletePart((AbcPart) partsList.getSelectedValue());
 			}
 		});
 		
@@ -576,7 +610,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			@Override public void actionPerformed(ActionEvent e)
 			{
 				if (partsList.getSelectedValue() != null) {
-					DelayDialog.show(ProjectFrame.this, partsList.getSelectedValue());
+					DelayDialog.show(ProjectFrame.this, (AbcPart) partsList.getSelectedValue());
 				}
 			}
 		});
@@ -833,7 +867,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		add(abcPartsAndSettings, "0, 0");
 		add(midiPartsAndControls, "1, 0");
-
+		
 		final FileFilterDropListener dropListener = new FileFilterDropListener(false, "mid", "midi", "kar", "abc", "txt",
 				AbcSong.MSX_FILE_EXTENSION_NO_DOT);
 		dropListener.addActionListener(new ActionListener()
@@ -1426,7 +1460,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			} else {
 				midiModeRadioButton.setText("Original");
 			}
-
+			
+			double[] LAYOUT_COLS_DYN = new double[] { partsList.getFixedCellWidth() + 32, FILL };
+			tableLayout.setColumn(LAYOUT_COLS_DYN);// This call is attempt of fix for no delete button on MacOS part 2
+			
 			updateButtonsPending = false;
 		}
 	};
@@ -1827,7 +1864,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			sequencer.setTickPosition(sequenceInfo.calcFirstNoteTick());
 			midiBarLabel.setBarNumberCache(sequenceInfo.getDataCache());
 
-			partsList.setModel(abcSong.getParts().getListModel());
+			setPartsListModel();
 			abcSong.getParts().getListModel().addListDataListener(partsListListener);
 
 			if (abcSong.isFromXmlFile())
@@ -1881,6 +1918,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		{
 			partPanel.showInfoMessage(formatErrorMessage("Could not open " + file.getName(), e.getMessage()));
 		}
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void setPartsListModel () {
+		// Not pretty..
+		partsList.setModel((DefaultListModel) (abcSong.getParts().getListModel()));
 	}
 
 	/** Used when the MIDI file in a Maestro song project can't be loaded. */
