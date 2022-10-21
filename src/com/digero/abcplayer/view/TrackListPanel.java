@@ -269,6 +269,34 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 			}
 		}
 	}
+	
+	public void deselectAll () {
+		if (trackControls != null)
+		{
+			for (int i = 0; i < trackControls.length; i++)
+			{
+				if (trackControls[i] != null) {
+					trackControls[i].checkBox.setSelected(false);
+					int j = (Integer) trackControls[i].checkBox.getClientProperty(TRACK_INDEX_KEY);
+					sequencer.setTrackMute(j, true);
+				}
+			}
+		}
+	}
+	
+	public void selectAll () {
+		if (trackControls != null)
+		{
+			for (int i = 0; i < trackControls.length; i++)
+			{
+				if (trackControls[i] != null) {
+					trackControls[i].checkBox.setSelected(true);
+					int j = (Integer) trackControls[i].checkBox.getClientProperty(TRACK_INDEX_KEY);
+					sequencer.setTrackMute(j, false);
+				}
+			}
+		}
+	}
 
 	public void setShowInstrumentComboBoxes(boolean showInstrumentComboBoxes)
 	{

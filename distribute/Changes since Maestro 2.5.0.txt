@@ -52,6 +52,7 @@ Version 2.5.0.92
     - Prevented Delete part button from deleting the last remaining part from the list.
     - When deleting the first part in the list, the new first part will now be properly selected.
     - If CTRL-clicking the selected part, the first part will now be selected, so a part is always selected.
+- Added an Edit menuitem for (de)selecting all tracks in AbcPlayer.
 
 Version 2.5.0.91
 - Support for very long MIDIs.

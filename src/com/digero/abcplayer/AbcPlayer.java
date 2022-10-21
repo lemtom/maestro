@@ -759,6 +759,27 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				exportMp3MenuItem.setEnabled(true);
 			}
 		});
+		
+		JMenu editMenu = mainMenu.add(new JMenu(" Edit "));
+		editMenu.setMnemonic(KeyEvent.VK_E);
+		JMenuItem select = new JMenuItem("Select all");
+		JMenuItem deselect = new JMenuItem("Deselect all");
+		editMenu.add(select);
+		editMenu.add(deselect);
+		select.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				trackListPanel.selectAll();
+			}
+		});
+		deselect.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				trackListPanel.deselectAll();
+			}
+		});
 
 		JMenu toolsMenu = mainMenu.add(new JMenu(" Tools "));
 		toolsMenu.setMnemonic(KeyEvent.VK_T);
