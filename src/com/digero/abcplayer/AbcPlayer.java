@@ -29,11 +29,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.StringTokenizer;
 import java.util.prefs.Preferences;
 
@@ -104,6 +108,10 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	private static Version APP_VERSION = new Version(0, 0, 0);
 
 	private static AbcPlayer mainWindow = null;
+	
+	private JMenu recentItems;
+	private Queue<String> recentQueue;
+	private int recentMaxItems = 11;
 
 	public static void main(String[] args)
 	{
@@ -664,6 +672,12 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				Toolkit.getDefaultToolkit().beep();
 			}
 		});
+		
+		recentQueue=new LinkedList<>();
+		recentItems = new JMenu();
+		recentItems.setText("Recent files...");
+		recentPrefsRead();
+		fileMenu.add(recentItems);
 
 		fileMenu.addSeparator();
 
@@ -895,6 +909,101 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 			}
 		});
 	}
+	
+	private void recentAdd (final String fileNameToAdd) {
+		boolean removed = false;
+		if (recentQueue.contains(fileNameToAdd)) {
+			removed = recentQueue.remove(fileNameToAdd);
+		}
+		recentQueue.add(fileNameToAdd);
+		
+		if(recentQueue.size() > recentMaxItems) {
+            removed = true;
+            recentQueue.remove();
+		}
+        
+        if(removed){
+            recentItems.removeAll();
+
+            for (final String string : recentQueue) {
+                JMenuItem item = new JMenuItem(recentFilenameFromPath(string));
+                item.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        recentActionPerformed(evt, string);
+                    }               
+                });
+                recentItems.add(item);
+            }
+        } else {
+        	JMenuItem newRecent = new JMenuItem(recentFilenameFromPath(fileNameToAdd));
+            newRecent.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    recentActionPerformed(evt, fileNameToAdd);
+                }               
+            });
+            recentItems.add(newRecent);
+        }
+        recentPrefsWrite();
+	}
+	
+	private void recentRemove (final String fileNameToRemove) {
+		if (recentQueue.remove(fileNameToRemove)) {
+			recentItems.removeAll();
+            for (final String string : recentQueue) {
+                JMenuItem item = new JMenuItem(recentFilenameFromPath(string));
+                item.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        recentActionPerformed(evt, string);
+                    }
+                });
+                recentItems.add(item);
+            }
+		}
+		recentPrefsWrite();
+	}
+	
+	private void recentPrefsWrite () {
+		Object[] recentArray = recentQueue.toArray();
+		for (int i = 0; i < recentMaxItems; i++) {
+			if (i < recentQueue.size()) {
+				prefs.put("recent."+i, (String) recentArray[i]);
+			} else {
+				prefs.remove("recent."+i);
+			}
+		}
+	}
+	
+	private void recentPrefsRead () {
+		for (int i = 0; i < recentMaxItems; i++) {
+			String entry = prefs.get("recent."+i, null);
+			if (entry != null) recentQueue.add(entry);
+		}
+		recentItems.removeAll();
+
+        for (final String string : recentQueue) {
+            JMenuItem item = new JMenuItem(recentFilenameFromPath(string));
+            item.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    recentActionPerformed(evt, string);
+                }
+            });
+            recentItems.add(item);
+        }
+	}
+	
+	private String recentFilenameFromPath (String path) {
+		Path p = Paths.get(path);
+		String fileName = p.getFileName().toString();
+		return fileName;
+	}
+	
+	private void recentActionPerformed(ActionEvent evt, String title) {
+		File[] files = {new File(title)};
+        if (!openSong(files)) {
+        	// The file could not be opened, removing it from the recent list.
+        	recentRemove(title);
+        }
+    }
 
 	private boolean getAbcDataFromClipboard(ArrayList<String> data, boolean checkContents)
 	{
@@ -1266,6 +1375,12 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		updateAbcView(/* showIfHidden = */false, /* retainScrollPosition = */isSameFile);
 
 		sequencer.start();
+		
+		for (FileAndData fileAndData : data)
+		{
+			String fileName = fileAndData.file.getAbsolutePath();
+			recentAdd(fileName);
+		}
 
 		return true;
 	}

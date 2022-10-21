@@ -46,13 +46,14 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 Version 2.5.0.92
+- Added an Edit menuitem for (de)selecting all tracks in AbcPlayer.
+- Added a recent opened files menu item in AbcPlayer.
 - Prevent clearing tracks and mess up MIDI player by not having an abc part selected (does not matter if its assigned or not),
     so often only MIDI drum tracks would play. Would't mess up ABC preview playing though.
     This is the new mechanisms:
     - Prevented Delete part button from deleting the last remaining part from the list.
     - When deleting the first part in the list, the new first part will now be properly selected.
     - If CTRL-clicking the selected part, the first part will now be selected, so a part is always selected.
-- Added an Edit menuitem for (de)selecting all tracks in AbcPlayer.
 
 Version 2.5.0.91
 - Support for very long MIDIs.
