@@ -549,6 +549,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					updateButtons(false);
 				} else {
 					updateDelayButton();
+					if (partsList.getModel().getSize() > 0) {
+						partsList.setSelectedIndex(0);
+					}
 				}
 			}
 		});
@@ -599,8 +602,11 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		{
 			@Override public void actionPerformed(ActionEvent e)
 			{
-				if (abcSong != null)
-					abcSong.deletePart((AbcPart) partsList.getSelectedValue());
+				if (abcSong != null) {
+					if (abcSong.getParts().size() > 1) {
+						abcSong.deletePart((AbcPart) partsList.getSelectedValue());
+					}
+				}
 			}
 		});
 		
@@ -1423,7 +1429,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					|| (abcSequencer.isLoaded() && (abcSequencer.isRunning() || abcSequencer.getPosition() != 0)));
 						
 			newPartButton.setEnabled(abcSong != null);
-			deletePartButton.setEnabled(partsList.getSelectedIndex() != -1);
+			deletePartButton.setEnabled(partsList.getSelectedIndex() != -1 && abcSong != null && abcSong.getParts().size() > 1);
 			updateDelayButton();
 			exportButton.setEnabled(hasAbcNotes);
 			exportMenuItem.setEnabled(hasAbcNotes);
@@ -1636,8 +1642,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				idx = abcSong.getParts().indexOf(e.getPart());
 				if (idx > 0)
 					partsList.setSelectedIndex(idx - 1);
-				else if (abcSong.getParts().size() > 0)
-					partsList.setSelectedIndex(0);
+				else if (abcSong.getParts().size() > 1) {
+					partsList.setSelectedIndex(1);
+				}
 
 				if (abcSong.getParts().size() == 0)
 				{
