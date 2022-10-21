@@ -1,4 +1,4 @@
-These instructions only apply to the latest version 2.5.0.82. Previous versions differ a bit due to being 32 bit per default.
+These instructions only apply to version 2.5.0.82+. Previous versions differ a bit due to being 32 bit per default.
 
 Install instruction (.msi)
 ===================
@@ -45,13 +45,17 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.91
+- Support for very long MIDIs.
+    Tested up to 2 hours and 11 minutes, but probably can handle much more.
+
 Version 2.5.0.90
 - Fix for missing "Delete" part button on MacOS.
     It will make the left panels wide enough to show LM Bassoon as a part. Which will then also make room for the delete button.
 - LCM algorithm improvement for mix timing. Result should be the same, but slightly faster.
 
 Version 2.5.0.89
-- Attempt for fixing missing "delete part" button on MacOS. Didn't work.    
+- Attempt for fixing missing "delete part" button on MacOS. Didn't pan out.
 
 Version 2.5.0.88
 - Notes in non-sustained parts that has already been started, will now get very high priority for pruning subsequent tied notes.

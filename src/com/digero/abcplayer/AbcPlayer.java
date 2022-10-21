@@ -93,6 +93,7 @@ import com.digero.common.view.SongPositionBar;
 import com.digero.common.view.SongPositionLabel;
 import com.digero.common.view.TempoBar;
 
+@SuppressWarnings("serial")
 public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConstants, TrackListPanelCallback
 {
 	private static final ExtensionFileFilter ABC_FILE_FILTER = new ExtensionFileFilter("ABC Files", "abc", "txt");

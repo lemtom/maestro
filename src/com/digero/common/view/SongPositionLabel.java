@@ -9,6 +9,7 @@ import com.digero.common.util.IDiscardable;
 import com.digero.common.util.Listener;
 import com.digero.common.util.Util;
 
+@SuppressWarnings("serial")
 public class SongPositionLabel extends JLabel implements Listener<SequencerEvent>, IDiscardable
 {
 	private SequencerWrapper sequencer;
