@@ -51,6 +51,7 @@ Version 2.5.0.93
 - Add copy/paste buttons to section-editor. Works across parts. Will only copy the bar starts and ends plus if they are enabled.
 - If open a msx file and had to find the midi file in another than the original location, then the project will now be marked as modified.
 - When opening a MIDI it will now do a better job of guessing the artist and title from the filename. Sometimes it might switch them around though.
+- When suggesting an abc filename, it will now remove extra dots, as lotro do not like them.
 
 Version 2.5.0.92
 - Added an Edit menu item for (de)selecting all tracks in AbcPlayer.

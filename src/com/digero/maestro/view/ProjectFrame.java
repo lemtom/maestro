@@ -2209,6 +2209,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			int dot = fileName.lastIndexOf('.');
 			if (dot > 0)
 				fileName = fileName.substring(0, dot);
+			fileName = fileName.replace('.', ' ');// lotro do not like when there is more than one dot
 			fileName += ".abc";
 
 			exportFile = new File(folder, fileName);
