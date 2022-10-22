@@ -47,6 +47,10 @@ public class LotroCombiDrumInfo {
 		// Added Xtra Bass March (Aifel)
 		firstNotes.put(Note.Gs5, Note.C3);
 		secondNotes.put(Note.Gs5, Note.Gs3);
+		
+		// Added Xtra Reverse Cymbal: Long Rattle (A) + Tambourine (^A,) (Aifel)
+		//firstNotes.put(Note.A6, Note.A4);
+		//secondNotes.put(Note.A6, Note.As2);
 						
 		combiNoteCount = firstNotes.size();
 			

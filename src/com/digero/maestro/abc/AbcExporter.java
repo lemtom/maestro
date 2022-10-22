@@ -2,9 +2,11 @@ package com.digero.maestro.abc;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -788,6 +790,7 @@ public class AbcExporter
 				out.println(AbcField.SONG_TRANSCRIBER + metadata.getTranscriber().trim());
 			}
 			out.println(AbcField.ABC_CREATOR + MaestroMain.APP_NAME + " v" + MaestroMain.APP_VERSION);
+			out.println(AbcField.EXPORT_TIMESTAMP + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 			out.println(AbcField.SWING_RHYTHM + Boolean.toString(qtm.isTripletTiming()));
 			out.println(AbcField.MIX_TIMINGS + Boolean.toString(qtm.isMixTiming()));
 			out.println(AbcField.ABC_VERSION + "2.1");

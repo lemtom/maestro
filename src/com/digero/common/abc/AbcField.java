@@ -19,6 +19,7 @@ public enum AbcField
 	SWING_RHYTHM,//
 	MIX_TIMINGS, //
 	MADE_FOR,
+	EXPORT_TIMESTAMP,
 	;
 	
 	private static class MetaData
