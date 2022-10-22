@@ -107,17 +107,22 @@ public class SequenceInfo implements MidiConstants
 		}
 
 		composer = "";
+		/*
 		if (trackInfoList.get(0).hasName())
 		{
 			title = trackInfoList.get(0).getName();
 		}
-		else
-		{
-			title = fileName;
-			int dot = title.lastIndexOf('.');
-			if (dot > 0)
-				title = title.substring(0, dot);
-			title = title.replace('_', ' ');
+		*/
+		title = fileName;
+		int dot = title.lastIndexOf('.');
+		if (dot > 0)
+			title = title.substring(0, dot);
+		title = title.replace('_', ' ');
+		
+		String[] array = title.split("-", 2);
+		if (array.length > 1 && array[0].length() > 0 && array[1].length() > 0) {
+			composer = array[0].trim();
+			title = array[1].trim();
 		}
 
 		this.trackInfoList = Collections.unmodifiableList(trackInfoList);
