@@ -45,11 +45,16 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.93
+- A more elegant solution to not allowing to delete last part.
+- Disable Close Project menu item, when nothing is opened.
+- Add copy/paste buttons to section-editor. Works across parts. Will only copy the bar starts and ends plus if they are enabled.
+
 Version 2.5.0.92
-- Added an Edit menuitem for (de)selecting all tracks in AbcPlayer.
-- Added a recent opened files menu item in AbcPlayer.
+- Added an Edit menu item for (de)selecting all tracks in AbcPlayer.
+- Added a Recent Opened files menu item in AbcPlayer.
 - Prevent clearing tracks and mess up MIDI player by not having an abc part selected (does not matter if its assigned or not),
-    so often only MIDI drum tracks would play. Would't mess up ABC preview playing though.
+    so often only MIDI drum tracks would play. Wouldn't mess up ABC preview playing though.
     This is the new mechanisms:
     - Prevented Delete part button from deleting the last remaining part from the list.
     - When deleting the first part in the list, the new first part will now be properly selected.

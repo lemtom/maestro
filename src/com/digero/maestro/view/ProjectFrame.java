@@ -1757,6 +1757,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 	private boolean closeSong()
 	{
+		SectionEditor.clearClipboard();
 		sequencer.stop();
 		abcSequencer.stop();
 

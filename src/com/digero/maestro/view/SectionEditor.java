@@ -30,6 +30,11 @@ import info.clearthought.layout.TableLayoutConstants;
 public class SectionEditor {
 	
 	protected static Point lastLocation = new Point(0,0);
+	private static final int numberOfSections = 10;
+	private static boolean clipboardArmed = false;
+	private static String[] clipboardStart = new String[numberOfSections];
+	private static String[] clipboardEnd = new String[numberOfSections];
+	private static boolean[] clipboardEnabled = new boolean[numberOfSections];
 
 	public static void show(JFrame jf, NoteGraph noteGraph, AbcPart abcPart, int track, final boolean percussion, final ArrayList<DrumPanel> dPanels) {
 		@SuppressWarnings("serial")
@@ -39,12 +44,14 @@ public class SectionEditor {
 			private double[] LAYOUT_ROWS;
 			private AbcPart abcPart;
 			private int track;
-			private int numberOfSections = 10;
+			
 			
 			private List<SectionEditorLine> sectionInputs = new ArrayList<SectionEditorLine>(numberOfSections);
 			private SectionEditorLine nonSectionInput = new SectionEditorLine();
 			     
 	        JButton showVolume = new JButton("Show volume");
+	        JButton copySections = new JButton("Copy");
+	        JButton pasteSections = new JButton("Paste");
 	        
 	        //NoteGraph noteGraph = null;
 		    
@@ -216,6 +223,36 @@ public class SectionEditor {
 		        panel.add(nonSectionInput.doubling2, "9,"+(3+numberOfSections)+",c,f");
 		        panel.add(nonSectionInput.doubling3, "10,"+(3+numberOfSections)+",c,f");
 		        
+		        copySections.getModel().addActionListener(new ActionListener() {
+	                @Override
+	                public void actionPerformed(ActionEvent e) {
+	                	for (int i = 0; i < numberOfSections; i++) {
+	                		clipboardStart[i] = sectionInputs.get(i).barA.getText();
+	                		clipboardEnd[i] = sectionInputs.get(i).barB.getText();
+	                		clipboardEnabled[i] = sectionInputs.get(i).enable.isSelected();
+	                	}
+	                	clipboardArmed = true;
+	                	pasteSections.setEnabled(clipboardArmed);
+	                }
+	            });
+		        copySections.setToolTipText("<html><b> Copy the section starts and ends.</html>");
+		        panel.add(copySections, "1,"+(4+numberOfSections)+",1,"+(4+numberOfSections)+",f,f");
+		        
+		        pasteSections.getModel().addActionListener(new ActionListener() {
+	                @Override
+	                public void actionPerformed(ActionEvent e) {
+	                	if (!clipboardArmed) return; 
+	                	for (int i = 0; i < numberOfSections; i++) {
+	                		sectionInputs.get(i).barA.setText(clipboardStart[i]);
+	                		sectionInputs.get(i).barB.setText(clipboardEnd[i]);
+	                		sectionInputs.get(i).enable.setSelected(clipboardEnabled[i]);
+	                	}
+	                }
+	            });
+		        pasteSections.setToolTipText("<html><b> Paste the section starts and ends.</html>");
+		        panel.add(pasteSections, "2,"+(4+numberOfSections)+",2,"+(4+numberOfSections)+",f,f");
+		        pasteSections.setEnabled(clipboardArmed);
+		        
 		        showVolume.getModel().addChangeListener(new ChangeListener() {
 	                @Override
 	                public void stateChanged(ChangeEvent e) {
@@ -348,4 +385,7 @@ public class SectionEditor {
 		new SectionDialog(jf, noteGraph, "Section editor", true, abcPart, track);
 	}
 	
+	public static void clearClipboard() {
+		clipboardArmed = false;
+	}	
 }
