@@ -202,6 +202,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JLabel noteCountLabel = new JLabel();
 	private int maxNoteCount = 0;
 	private int maxNoteCountTotal = 0;
+	private boolean midiResolved = false;
 	/*private static Color BRIGHT_RED = new Color(255, 0, 0);
 	private static Color ORANGE = new Color(235, 150, 64);
 	private static Color BLACK = new Color(0, 0, 0);*/
@@ -1739,6 +1740,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			maxNoteCountTotal = 0;
 		}
 	}
+	
+	public void setMIDIFileResolved () {
+		midiResolved = true;
+	}
 
 	private boolean isAbcSongModified()
 	{
@@ -1914,7 +1919,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			abcSong.setSkipSilenceAtStart(saveSettings.skipSilenceAtStart);
 			//abcSong.setShowPruned(saveSettings.showPruned);
 
-			setAbcSongModified(false);
+			setAbcSongModified(midiResolved);
+			midiResolved = false;
 			updateTitle();
 		}
 		catch (SAXParseException e)
@@ -1928,10 +1934,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			}
 
 			partPanel.showInfoMessage(formatErrorMessage("Could not open " + file.getName(), message));
+			midiResolved = false;
 		}
 		catch (InvalidMidiDataException | IOException | ParseException | SAXException e)
 		{
 			partPanel.showInfoMessage(formatErrorMessage("Could not open " + file.getName(), e.getMessage()));
+			midiResolved = false;
 		}
 	}
 	

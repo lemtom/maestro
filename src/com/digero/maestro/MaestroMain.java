@@ -70,6 +70,11 @@ public class MaestroMain
 			//System.exit(0);
 		}
 	}
+	
+	public static void setMIDIFileResolved () {
+		if (mainWindow == null) return;
+		mainWindow.setMIDIFileResolved();
+	}
 
 	/** Tells the WinRun4J launcher that we're ready to accept activate() calls. */
 	public static native void ready();

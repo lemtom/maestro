@@ -215,6 +215,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			{
 				throw SaveUtil.missingValueException(songEle, "<sourceFile>");
 			}
+			File origSourceFile = sourceFile;
 
 			exportFile = SaveUtil.parseValue(songEle, "exportFile", exportFile);
 
@@ -265,6 +266,10 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 				if (sourceFile == null)
 					throw new ParseException("Failed to load file", name);
+			}
+			
+			if (!sourceFile.equals(origSourceFile)) {
+				MaestroMain.setMIDIFileResolved();
 			}
 
 			title = SaveUtil.parseValue(songEle, "title", sequenceInfo.getTitle());

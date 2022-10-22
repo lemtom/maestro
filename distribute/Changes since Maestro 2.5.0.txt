@@ -49,6 +49,7 @@ Version 2.5.0.93
 - A more elegant solution to not allowing to delete last part.
 - Disable Close Project menu item, when nothing is opened.
 - Add copy/paste buttons to section-editor. Works across parts. Will only copy the bar starts and ends plus if they are enabled.
+- If open a msx file and had to find the midi file in another than the original location, then the project will now be marked as modified.
 
 Version 2.5.0.92
 - Added an Edit menu item for (de)selecting all tracks in AbcPlayer.
