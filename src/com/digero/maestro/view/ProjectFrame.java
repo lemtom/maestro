@@ -550,6 +550,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				} else {
 					updateDelayButton();
 					if (partsList.getModel().getSize() > 0) {
+						// If ctrl-clicking to deselect this will ensure something is selected
 						partsList.setSelectedIndex(0);
 					}
 				}
@@ -603,7 +604,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			@Override public void actionPerformed(ActionEvent e)
 			{
 				if (abcSong != null) {
-					if (abcSong.getParts().size() > 1) {
+					if (abcSong.getParts().size() == 1) {
+						// When deleting last past, make sure a new part is replacing it, so something is selected
+						AbcPart deleteMe = (AbcPart) partsList.getSelectedValue();
+						abcSong.createNewPart();
+						abcSong.deletePart(deleteMe);
+					} else if (abcSong.getParts().size() > 1) {
 						abcSong.deletePart((AbcPart) partsList.getSelectedValue());
 					}
 				}
@@ -1429,13 +1435,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					|| (abcSequencer.isLoaded() && (abcSequencer.isRunning() || abcSequencer.getPosition() != 0)));
 						
 			newPartButton.setEnabled(abcSong != null);
-			deletePartButton.setEnabled(partsList.getSelectedIndex() != -1 && abcSong != null && abcSong.getParts().size() > 1);
+			deletePartButton.setEnabled(partsList.getSelectedIndex() != -1);
 			updateDelayButton();
 			exportButton.setEnabled(hasAbcNotes);
 			exportMenuItem.setEnabled(hasAbcNotes);
 			exportAsMenuItem.setEnabled(hasAbcNotes);
 			saveMenuItem.setEnabled(abcSong != null);
 			saveAsMenuItem.setEnabled(abcSong != null);
+			closeProject.setEnabled(midiLoaded);
 
 			songTitleField.setEnabled(midiLoaded);
 			composerField.setEnabled(midiLoaded);
