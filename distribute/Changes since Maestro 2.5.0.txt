@@ -49,6 +49,7 @@ Version 2.5.0.94
 - Added a note button next to zoom button. The note you write will be saved in the msx project file, not the abc file.
     You can use it to keep notes of why you arranged it a certain way,
     or what still needs to be done. Or to keep track of the lyrics.
+- A 99% fix for Soundblaster Audigy 5 not respecting master volume setting when skipping in certain MIDIs.
 
 Version 2.5.0.93
 - A more elegant solution to not allowing to delete last part.

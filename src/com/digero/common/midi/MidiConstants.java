@@ -13,6 +13,8 @@ public interface MidiConstants
 	public static final int META_KEY_SIGNATURE = 0x59;
 
 	public static final byte CHANNEL_VOLUME_CONTROLLER_COARSE = 0x07;
+	public static final byte CHANNEL_VOLUME_CONTROLLER_FINE = 0x27;
+	public static final byte CHANNEL_EXPRESSION_CONTROLLER = 0x0B;
 	public static final int ALL_CONTROLLERS_OFF = 0x79;
 	public static final int REGISTERED_PARAMETER_NUMBER_MSB = 0x65;
 	public static final int REGISTERED_PARAMETER_NUMBER_LSB = 0x64;
