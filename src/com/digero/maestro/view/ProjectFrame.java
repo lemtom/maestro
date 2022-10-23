@@ -199,6 +199,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private AbcSequencerListener abcSequencerListener;
 	private boolean failedToLoadLotroInstruments = false;
 	private JButton zoom = new JButton("Zoom");
+	private JButton noteButton = new JButton("Note");
 	private JLabel noteCountLabel = new JLabel();
 	private int maxNoteCount = 0;
 	private int maxNoteCountTotal = 0;
@@ -846,6 +847,18 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		playControlPanel.add(abcBarLabel, "8, 2, R, T");
 		
 		
+		JPanel flowP = new JPanel(new FlowLayout());
+		noteButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				partPanel.noteToggle();
+			}
+		});
+		noteButton.setToolTipText("<html>Show notepad where custom notes can be entered.<br>"
+				+ "Will be saved in msx project file.</html>");
+		//playControlPanel.add(noteButton, "6, 2, C, C");
+		
 		zoom.addActionListener(new ActionListener() {
 			
 			@Override
@@ -853,7 +866,11 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				partPanel.zoom();
 			}
 		});
-		playControlPanel.add(zoom, "7, 2, C, C");
+		//playControlPanel.add(zoom, "7, 2, C, C");
+		
+		flowP.add(zoom);
+		flowP.add(noteButton);
+		playControlPanel.add(flowP, "7, 2, C, C");
 		
 		noteCountLabel.setBorder(new EmptyBorder(0,0,0,20));//top,left,bottom,right
 		noteCountLabel.setToolTipText("<html>Number of simultanious notes<br>"
@@ -932,6 +949,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		discardObject(midiBarLabel);
 		discardObject(abcBarLabel);
 
+		partPanel.setNote("");
+		partPanel.noteVisible(false);
+		
 		super.dispose();
 	}
 
@@ -1469,6 +1489,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			tripletCheckBox.setEnabled(midiLoaded);
 			mixCheckBox.setEnabled(midiLoaded);
 			zoom.setEnabled(midiLoaded);
+			noteButton.setEnabled(midiLoaded);
 			if (midiLoaded) {
 				midiModeRadioButton.setText("Original ("+SequenceInfo.standard+")");
 			} else {
@@ -1747,7 +1768,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 	private boolean isAbcSongModified()
 	{
-		return abcSong != null && abcSongModified;
+		return abcSong != null && (abcSongModified || !partPanel.getNote().equals(abcSong.getNote()));
 	}
 
 	public int getTranspose()
@@ -1823,6 +1844,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		setAbcSongModified(false);
 		updateButtons(false);
 		updateTitle();
+		partPanel.setNote("");
+		partPanel.noteVisible(false);
 
 		return true;
 	}
@@ -1870,6 +1893,17 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			else
 			{
 				abcSong.setTranscriber(transcriberField.getText());
+			}
+			
+			if (abcSong.isFromXmlFile())
+			{
+				String note = abcSong.getNote();
+				if (note != null) {
+					partPanel.setNote(note);
+					if (note.length() > 0) {
+						partPanel.noteVisible(true);
+					}
+				}
 			}
 
 			transposeSpinner.setValue(abcSong.getTranspose());
@@ -2134,6 +2168,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	{
 		try
 		{
+			abcSong.setNote(partPanel.getNote());
 			partPanel.commitAllFields();
 			transposeSpinner.commitEdit();
 			tempoSpinner.commitEdit();

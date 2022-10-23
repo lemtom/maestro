@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
@@ -72,12 +73,15 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 	private boolean initialized = false;
 	
 	private boolean zoomed = false;
+	private boolean noteVisible = false;
+	private JTextArea noteContent = new JTextArea();
+	private JScrollPane notePanel = null;
 
 	public PartPanel(NoteFilterSequencerWrapper sequencer, PartAutoNumberer partAutoNumberer,
 			SequencerWrapper abcSequencer)
 	{
 		super(new TableLayout(//
-				new double[] { FILL },//
+				new double[] { FILL, PREFERRED },//
 				new double[] { PREFERRED, FILL }));
 
 		TableLayout layout = (TableLayout) getLayout();
@@ -172,6 +176,11 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		messageLabel.setForeground(ColorTable.PANEL_TEXT_DISABLED.get());
 		messageLabel.setVisible(false);
 
+		notePanel = new JScrollPane(noteContent, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		notePanel.setPreferredSize(new Dimension(225,200));
+		noteContent.setLineWrap(true);
+		noteContent.setWrapStyleWord(true);
+		
 		add(dataPanel, "0, 0");
 		add(messageLabel, "0, 1, C, C");
 		add(trackScrollPane, "0, 1");
@@ -429,5 +438,28 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		revalidate();
 		repaint();
 		zoomed = !zoomed;
+	}
+	
+	public void noteToggle () {
+		noteVisible(!noteVisible);
+	}
+	
+	public void noteVisible (boolean vis) {
+		noteVisible = vis;
+		if (noteVisible) {
+			add(notePanel, "1, 0, 1, 1, F, F");
+		} else {
+			remove(notePanel);
+		}
+		validate();
+		repaint();
+	}
+	
+	public String getNote() {
+		return noteContent.getText();
+	}
+	
+	public void setNote(String note) {
+		noteContent.setText(note);
 	}
 }

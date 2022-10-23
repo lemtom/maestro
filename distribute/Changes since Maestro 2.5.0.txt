@@ -45,13 +45,18 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.94
+- Added a note button next to zoom button. The note you write will be saved in the msx project file, not the abc file.
+    You can use it to keep notes of why you arranged it a certain way,
+    or what still needs to be done. Or to keep track of the lyrics.
+
 Version 2.5.0.93
 - A more elegant solution to not allowing to delete last part.
 - Disable Close Project menu item, when nothing is opened.
 - Add copy/paste buttons to section-editor. Works across parts. Will only copy the bar starts and ends plus if they are enabled.
 - If open a msx file and had to find the midi file in another than the original location, then the project will now be marked as modified.
 - When opening a MIDI it will now do a better job of guessing the artist and title from the filename. Sometimes it might switch them around though.
-- When suggesting an abc filename, it will now remove extra dots, as lotro do not like them.
+- When suggesting an abc filename, it will now remove extra dots, as songbook do not like them.
 - Add an export timestamp to the abc header, like this example: %%export-timestamp 2022-10-22 08:26:11
 
 Version 2.5.0.92

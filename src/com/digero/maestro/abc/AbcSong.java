@@ -46,13 +46,14 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public static final String MSX_FILE_DESCRIPTION_PLURAL = MaestroMain.APP_NAME + " Songs";
 	public static final String MSX_FILE_EXTENSION_NO_DOT = "msx";
 	public static final String MSX_FILE_EXTENSION = "." + MSX_FILE_EXTENSION_NO_DOT;
-	public static final Version SONG_FILE_VERSION = new Version(1, 0, 84);
+	public static final Version SONG_FILE_VERSION = new Version(1, 0, 94);
 
 	private String title = "";
 	private String composer = "";
 	private String transcriber = "";
 	private String genre = "";
 	private String mood = "";
+	private String note = "";// not continuously updated
 	private boolean badger = false;
 	private boolean allOut = false;
 	private float tempoFactor = 1.0f;
@@ -137,6 +138,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		composer = sequenceInfo.getComposer();
 		keySignature = (ICompileConstants.SHOW_KEY_FIELD) ? sequenceInfo.getKeySignature() : KeySignature.C_MAJOR;
 		timeSignature = sequenceInfo.getTimeSignature();
+		note = "";
 	}
 
 	private void initFromAbc(File file) throws IOException, InvalidMidiDataException, ParseException
@@ -194,6 +196,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		transcriber = abcInfo.getTranscriber();
 		genre = abcInfo.getGenre();
 		mood = abcInfo.getMood();
+		note = "";
 	}
 
 	private void initFromXml(File file, FileResolver fileResolver) throws SAXException, IOException, ParseException
@@ -277,6 +280,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			transcriber = SaveUtil.parseValue(songEle, "transcriber", transcriber);
 			genre = SaveUtil.parseValue(songEle, "genre", genre);
 			mood = SaveUtil.parseValue(songEle, "mood", mood);
+			note = SaveUtil.parseValue(songEle, "note", "");
 
 			tempoFactor = SaveUtil.parseValue(songEle, "exportSettings/@tempoFactor", tempoFactor);
 			transpose = SaveUtil.parseValue(songEle, "exportSettings/@transpose", transpose);
@@ -302,6 +306,16 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			throw new ParseException("XPath error: " + e.getMessage(), null);
 		}
 	}
+	
+	public String getNote() {
+		// Only call this just after loading a msx file.
+		return note;
+	}
+	
+	public void setNote(String note) {
+		// Only call this just before saving a msx file.
+		this.note = note;
+	}
 
 	public Document saveToXml()
 	{
@@ -318,6 +332,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		SaveUtil.appendChildTextElement(songEle, "transcriber", transcriber);
 		if (genre.length() > 0)	SaveUtil.appendChildTextElement(songEle, "genre", genre);
 		if (mood.length() > 0)	SaveUtil.appendChildTextElement(songEle, "mood", mood);
+		if (note.length() > 0)	SaveUtil.appendChildTextElement(songEle, "note", note);
 
 		{
 			Element exportSettingsEle = doc.createElement("exportSettings");
