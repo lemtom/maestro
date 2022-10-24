@@ -50,6 +50,10 @@ Version 2.5.0.94
     You can use it to keep notes of why you arranged it a certain way,
     or what still needs to be done. Or to keep track of the lyrics.
 - A 99% fix for Soundblaster Audigy 5 not respecting master volume setting when skipping in certain MIDIs.
+- Added a Numerate button to auto assign numbers to identical instrument part titles
+    So "Lute" and "Lute 4" will become "Lute 1" and "Lute 2".
+    It doesn't work when part titles is not in English or if an instrument name is not recognized.
+    Basically it does not attempt to modify or count parts that does not start with an instrument name and then ends or have a number at the end. 
 
 Version 2.5.0.93
 - A more elegant solution to not allowing to delete last part.

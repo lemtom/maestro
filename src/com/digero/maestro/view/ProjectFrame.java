@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.dnd.DropTarget;
@@ -167,6 +168,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JButton newPartButton;
 	private JButton deletePartButton;
 	private JButton delayButton;
+	private JButton numerateButton;
 
 	private PartPanel partPanel;
 
@@ -629,7 +631,17 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			}
 		});
 		delayButton.setToolTipText("Open a small dialog to edit delay on part.");
-
+		
+		numerateButton = new JButton("Numerate");
+		numerateButton.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				if (abcSong != null) abcSong.assignNumbersToSimilarPartTypes();
+			}
+		});
+		numerateButton.setToolTipText("Auto assign numbers to identical instrument part titles.");
+		
 		if (saveSettings.showBadger) {
 			songInfoLayout = new TableLayout(//
 				new double[] { PREFERRED, FILL },//
@@ -670,7 +682,11 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		partsListPanel.setBorder(BorderFactory.createTitledBorder("Song Parts"));
 		partsListPanel.add(partsButtonPanel, BorderLayout.NORTH);
 		partsListPanel.add(partsListScrollPane, BorderLayout.CENTER);
-		partsListPanel.add(delayButton, BorderLayout.SOUTH);
+		GridLayout delayGrid = new GridLayout(2,1);
+		JPanel delayPanel = new JPanel(delayGrid);
+		delayPanel.add(delayButton);
+		delayPanel.add(numerateButton);
+		partsListPanel.add(delayPanel, BorderLayout.SOUTH);
 
 		TableLayout settingsLayout = new TableLayout(//
 				new double[] { PREFERRED, PREFERRED, FILL },//
@@ -1457,6 +1473,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 						
 			newPartButton.setEnabled(abcSong != null);
 			deletePartButton.setEnabled(partsList.getSelectedIndex() != -1);
+			numerateButton.setEnabled(midiLoaded);
 			updateDelayButton();
 			exportButton.setEnabled(hasAbcNotes);
 			exportMenuItem.setEnabled(hasAbcNotes);
@@ -1570,6 +1587,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		{
 			if (e.getProperty() == AbcPartProperty.TRACK_ENABLED)
 				updateButtons(false);
+			
+			if (e.getProperty() == AbcPartProperty.TITLE && partPanel != null)
+				partPanel.setNewTitle(e.getSource());
 
 			partsList.repaint();
 			

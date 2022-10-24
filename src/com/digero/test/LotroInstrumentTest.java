@@ -111,6 +111,7 @@ public class LotroInstrumentTest
 		test(LotroInstrument.BASIC_BAGPIPE, "A BasicBagpipe");
 		test(LotroInstrument.BASIC_BAGPIPE, "A Bag pipe");
 		test(LotroInstrument.BASIC_BAGPIPE, "The bag pipe");
+		test(LotroInstrument.BASIC_BAGPIPE, "pipes");
 
 		test(LotroInstrument.BASIC_PIBGORN, "a basic pibgorn");
 		test(LotroInstrument.BASIC_PIBGORN, "The Pibgorn 2");
@@ -135,8 +136,7 @@ public class LotroInstrumentTest
 		test(null, "Lonely Mountain Bassoonet");
 		test(null, "Bagpiped");
 		test(null, "bag");
-		test(null, "pipes");
-
+		
 		return true;
 	}
 

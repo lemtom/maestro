@@ -9,6 +9,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.prefs.Preferences;
 import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -61,6 +63,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	public ArrayList<PartSection> nonSection;
 	public ArrayList<boolean[]> sectionsModified;
 	public int delay = 0;//ms
+	private int typeNumber = 0;
 
 	public AbcPart(AbcSong abcSong)
 	{
@@ -593,26 +596,152 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		if (!this.title.equals(name))
 		{
 			this.title = name;
+			if (!isTypeNumberMatchingTitle()) {
+				typeNumber = getTypeNumberMatchingTitle();
+			}
 			fireChangeEvent(AbcPartProperty.TITLE);
 		}
 	}
 
 	public void replaceTitleInstrument(LotroInstrument replacement)
 	{
+		stripTypeNumber();
 		Pair<LotroInstrument, MatchResult> result = LotroInstrument.matchInstrument(title);
 		if (result == null)
 		{
 			// No instrument currently in title
 			if (title.isEmpty())
 				setTitle(replacement.toString());
-			else
+			else {
 				setTitle(replacement + " " + title);
+			}
 		}
 		else
 		{
 			MatchResult m = result.second;
-			setTitle(title.substring(0, m.start()) + replacement + title.substring(m.end()));
+			if (isTypeNumberMatchingTitle()) {
+				typeNumber = 0;
+				setTitle(replacement.toString());
+			} else {
+				setTitle(title.substring(0, m.start()) + replacement + title.substring(m.end()));
+			}
 		}
+	}
+	
+	public int getTypeNumber() {
+		return typeNumber;
+	}
+	
+	public boolean setTypeNumber(int typeNumberNew) {
+		if (!isTypeNumberMatchingTitle()) {
+			int potentialOld = getTypeNumberMatchingTitle();
+			typeNumber = potentialOld;
+			if (potentialOld == -1) {
+				//System.out.println("  "+"Modified, setting -1");
+				return typeNumber == typeNumberNew;
+			} else {
+				//System.out.println("  "+"Potential Old is "+potentialOld);
+			}
+		} else if (typeNumber == -1) {
+			//System.out.println("  "+"Modified, keeping -1");
+			return typeNumber == typeNumberNew;
+		} else {
+			//System.out.println("  "+"matching old title at least: "+typeNumber);
+		}
+		if (typeNumberNew != typeNumber) {			
+			Pair<LotroInstrument, MatchResult> result = LotroInstrument.matchInstrument(title);
+
+			String typeString = " "+typeNumberNew;
+			if (typeNumberNew == 0) {
+				typeString = "";
+			}
+			//System.out.println("  "+"Setting: "+result.second.group()+typeString);
+			typeNumber = typeNumberNew;
+			setTitle(result.second.group()+typeString);// no need to check for null, as that is done in isTypeNumberMatchingTitle/getTypeNumberMatchingTitle
+		} else {
+			//System.out.println("  "+"Same, not setting "+typeNumber);
+		}
+		return true;
+	}
+	
+	public void stripTypeNumber () {
+		if (typeNumber != 0 && isTypeNumberMatchingTitle()) {
+			StringBuilder regex = new StringBuilder();
+			
+			String typeString = " "+getTypeNumber();
+			
+			regex.append("\\b(?:");
+			regex.append('(');
+			regex.append((typeString).replace(" ", "[\\s_]*"));
+			regex.append(')');
+			regex.append(")\\b");
+
+			Pattern typeRegex = Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
+			Matcher m = typeRegex.matcher(getTitle());
+			MatchResult last = null;
+			// Iterate through the matches to find the last one
+			for (int i = 0; m.find(i); i = m.end())
+				last = m.toMatchResult();
+			
+			if (last == null) return;
+			setTitle(getTitle().substring(0, last.start()));
+		}
+	}
+	
+	public int getTypeNumberMatchingTitle() {
+		Pair<LotroInstrument, MatchResult> result = LotroInstrument.matchInstrument(title);
+		
+		if (result == null) {
+			return -1;
+		} else if (result.first.equals(instrument)) {
+			if (result.second.start() != 0) return -1;
+			
+			String ending = title.substring(result.second.end());
+			
+			if (ending.length() == 0) return 0;
+			
+			try {
+				int endsWith = Integer.parseInt(ending.trim());
+				return endsWith;
+			} catch (NumberFormatException e) {
+				return -1;
+			}			
+		}
+		return -1;
+	}
+	
+	public boolean isTypeNumberMatchingTitle () {
+		return typeNumber == getTypeNumberMatchingTitle();
+		/*
+		Pair<LotroInstrument, MatchResult> result = LotroInstrument.matchInstrument(title);
+		
+		if (result == null) {
+			System.out.println("    "+getTitle()+" has no instr match");
+			return false;
+		} else if (result.first.equals(instrument)) {
+			StringBuilder regex = new StringBuilder();
+			String typeString = " "+getTypeNumber();
+			
+			regex.append("\\b(?:");
+			regex.append('(');
+			regex.append((result.second.group()+typeString).replace(" ", "[\\s_]*"));
+			regex.append(')');
+			regex.append(")\\b");
+
+			Pattern typeRegex = Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
+			Matcher m = typeRegex.matcher(getTitle());
+			MatchResult last = null;
+			// Iterate through the matches to find the last one
+			for (int i = 0; m.find(i); i = m.end())
+				last = m.toMatchResult();
+			
+			if (last == null) System.out.println("    "+getTitle()+"    last==null");
+			else System.out.println("    "+getTitle()+"    last.start():"+last.start()+" last.end():"+last.end()+" title.length:"+getTitle().length());
+			if (last != null && last.start() == 0 && last.end() == getTitle().length()) {
+				return true;
+			}
+		}
+		return false;*/
 	}
 
 	@Override public LotroInstrument getInstrument()

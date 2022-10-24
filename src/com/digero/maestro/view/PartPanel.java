@@ -76,6 +76,7 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 	private boolean noteVisible = false;
 	private JTextArea noteContent = new JTextArea();
 	private JScrollPane notePanel = null;
+	private boolean syncUpdate = false; 
 
 	public PartPanel(NoteFilterSequencerWrapper sequencer, PartAutoNumberer partAutoNumberer,
 			SequencerWrapper abcSequencer)
@@ -115,19 +116,19 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		{
 			@Override public void removeUpdate(DocumentEvent e)
 			{
-				if (abcPart != null)
+				if (abcPart != null && !syncUpdate)
 					abcPart.setTitle(nameTextField.getText());
 			}
 
 			@Override public void insertUpdate(DocumentEvent e)
 			{
-				if (abcPart != null)
+				if (abcPart != null && !syncUpdate)
 					abcPart.setTitle(nameTextField.getText());
 			}
 
 			@Override public void changedUpdate(DocumentEvent e)
 			{
-				if (abcPart != null)
+				if (abcPart != null && !syncUpdate)
 					abcPart.setTitle(nameTextField.getText());
 			}
 		});
@@ -187,6 +188,13 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 
 		setAbcPart(null);
 		initialized = true;
+	}
+	
+	public void setNewTitle(AbcPart thePart) {
+		if (thePart != abcPart || nameTextField.getText().equals(thePart.getTitle())) return;
+		syncUpdate = true;
+		nameTextField.setText(thePart.getTitle());
+		syncUpdate = false;
 	}
 
 	public void addSettingsActionListener(ActionListener listener)

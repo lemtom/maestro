@@ -48,11 +48,11 @@ public enum LotroInstrument
 	SPRIGHTLY_FIDDLE         ( "Sprightly Fiddle",          false, MidiInstrument.FIDDLE,               1,      false,   -10.0f),
 	STUDENT_FIDDLE           ( "Student's Fiddle",           true, MidiInstrument.GUITAR_FRET_NOISE,    1,      false,     0.0f, "Student'?s? Fiddle"),
 
-	BASIC_BAGPIPE            ( "Basic Bagpipe",              true, MidiInstrument.BAG_PIPE,             1,      false,    -1.5f, "Bag pipes?"),
+	BASIC_BAGPIPE            ( "Basic Bagpipe",              true, MidiInstrument.BAG_PIPE,             1,      false,    -1.5f, "Bag pipes?", "Pipes?"),
 	BASIC_BASSOON            ( "Basic Bassoon",              true, MidiInstrument.BASSOON,              0,      false,     5.0f, "Bassoon"),
 	BRUSQUE_BASSOON          ( "Brusque Bassoon",           false, MidiInstrument.OBOE,                 0,      false,     5.0f, "Brusk Bassoon"),
 	LONELY_MOUNTAIN_BASSOON  ( "Lonely Mountain Bassoon",    true, MidiInstrument.SYNTH_BRASS_2,        0,      false,     5.0f, "Lonely Bassoon", "LM Bassoon"),
-	BASIC_CLARINET           ( "Basic Clarinet",             true, MidiInstrument.CLARINET,             1,      false,    -2.0f, "Clarinet"),
+	BASIC_CLARINET           ( "Basic Clarinet",             true, MidiInstrument.CLARINET,             1,      false,    -2.0f, "Clarinet", "Clari"),
 	BASIC_FLUTE              ( "Basic Flute",                true, MidiInstrument.FLUTE,                2,      false,    -3.5f, "Flute"),
 	BASIC_HORN               ( "Basic Horn",                 true, MidiInstrument.ENGLISH_HORN,         0,      false,    -2.0f, "Horn"),
 	BASIC_PIBGORN            ( "Basic Pibgorn",              true, MidiInstrument.CHARANG,              2,      false,    -3.5f, "Pibgorn"),

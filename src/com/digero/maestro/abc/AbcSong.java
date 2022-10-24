@@ -4,9 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.DefaultListModel;
@@ -815,5 +820,39 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public String getBadgerTitle() {
 		if (!badger) return null;
 		return "N: Title: "+getComposer().trim()+" - "+getSongTitle().trim();
+	}
+	
+	public void assignNumbersToSimilarPartTypes () {
+		//System.out.println();
+		//System.out.println("=== assignNumbersToSimilarPartTypes ===");
+		for (LotroInstrument instr : LotroInstrument.values()) {
+			List<AbcPart> instrParts = new ArrayList<AbcPart>();
+			for (AbcPart part : parts) {
+				if(part.getInstrument().equals(instr)) {
+					instrParts.add(part);
+				}
+			}
+			int partIndex = 0;
+			if (instrParts.size() > 1) {
+				int index = 1;
+				for (AbcPart part : instrParts) {
+					if (part.getEnabledTrackCount() == 0) {
+						//System.out.println(partIndex + ": " + part.getInstrument() + " (old title is " + part.getTitle() +")  = " + 0 + " (not assigned)");partIndex++;
+						part.setTypeNumber(0);
+					} else {
+						//System.out.println(partIndex + ": " + part.getInstrument() + " (old title is " + part.getTitle() +")  = " + index);partIndex++;
+						if (part.setTypeNumber(index)) {
+							index++;
+						} else {
+							//System.out.println("    failure, -1 was set");
+						}
+					}
+				}
+			} else if (instrParts.size() == 1) {
+				//System.out.println(partIndex + ": " + instrParts.get(0).getInstrument() + " = " + 0);
+				instrParts.get(0).setTypeNumber(0);
+			}
+		}
+		//System.out.println();
 	}
 }
