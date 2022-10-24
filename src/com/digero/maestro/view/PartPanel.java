@@ -181,6 +181,7 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		notePanel.setPreferredSize(new Dimension(225,200));
 		noteContent.setLineWrap(true);
 		noteContent.setWrapStyleWord(true);
+		noteContent.setTabSize(4);
 		
 		add(dataPanel, "0, 0");
 		add(messageLabel, "0, 1, C, C");
