@@ -29,9 +29,9 @@ Starting from command prompt
     If only 32 bit Java is installed, then it will complain.
 
 
-Video showing how to use some new features (but not all, as the video is very dated)
-==========================================
-https://www.youtube.com/watch?v=Y39EZPfXl9I
+How-to videos about Maestro:
+============================
+https://www.youtube.com/playlist?list=PL3lucMIJ7RQOGmenI7_Stpj8JPXjCGR_Q
 
 
 Special Thanks
