@@ -213,6 +213,13 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	public ProjectFrame()
 	{
 		super(MaestroMain.APP_NAME);
+		if ("32".equals(System.getProperty("sun.arch.data.model"))) {
+			JOptionPane.showMessageDialog(null, "You are running with 32 bit Java.\nPlease start with 64 bit Java instead,\nto ensure Maestro do not out of memory.\n", "32 bit detected",
+					JOptionPane.ERROR_MESSAGE);
+			System.err.println("You are running with 32 bit Java.\nPlease start with 64 bit Java instead.\n Find Configure Java program in Start menu and\n configure it to start the 64 bit per default.\n\n");
+			//System.exit(1);
+			//return;
+		}
 		setMinimumSize(new Dimension(512, 384));
 		Util.initWinBounds(this, prefs.node("window"), 800, 600);
 

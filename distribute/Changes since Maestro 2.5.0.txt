@@ -45,6 +45,9 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.95
+- When starting Maestro with 32 bit Java, there will now pop up a warning.
+
 Version 2.5.0.94
 - Added a note button next to zoom button. The note you write will be saved in the msx project file, not the abc file.
     You can use it to keep notes of why you arranged it a certain way,
