@@ -46,10 +46,14 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 Version 2.5.0.95
-- AbcPlayer can now use FFmpeg to make MP3 files. (I used v4.4.1-full, but 5.1.2-full works too.)
+- AbcPlayer can now use FFmpeg to make MP3 files.
+    There is a 3 second timer, from clicking the menu till you get dialog up, just like for LAME.
+    I liked v4.4.1-release-full, but newer versions should work too, and release-essentials versions also, they are less bloated.
+    This is not an endorsement for FFmpeg from me. I have no idea which version your going to get,
+    if you trust it, use it. If you don't, don't use it. Don't blame me, I just choose it due to its versatility and popularity.
 - When starting Maestro with 32 bit Java, there will now pop up a warning.
 - Added heap memory usage to Maestro about dialog.
-    If you run out of memory using 64 bit java, please supply me with the 2 numbers and the amount of RAM in your PC.
+    If you run out of memory using 64 bit java, please supply me with the 2nd number (after starting it again) and the amount of RAM in your PC.
     The sign you are running out of memory is usually that the interface starts to get drawn weirdly, and/or Maestro acts up.
 
 Version 2.5.0.94

@@ -1824,6 +1824,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				String line;
 				while ((line = rdr.readLine()) != null)
 				{
+					//System.out.println(line);
 					if (line.contains("ffmpeg version"))
 					{
 						isFF = true;
