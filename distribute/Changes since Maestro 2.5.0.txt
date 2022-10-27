@@ -46,6 +46,7 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 Version 2.5.0.95
+- AbcPlayer can now use FFmpeg to make MP3 files. (I used v4.4.1-full, but 5.1.2-full works too.)
 - When starting Maestro with 32 bit Java, there will now pop up a warning.
 
 Version 2.5.0.94

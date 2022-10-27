@@ -105,7 +105,8 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	private static final String APP_NAME_LONG = APP_NAME + " for The Lord of the Rings Online";
 	private static final String APP_URL = "https://github.com/digero/maestro/";
 	private static final String LAME_URL = "http://lame.sourceforge.net/";
-	private static Version APP_VERSION = new Version(0, 0, 0);
+	private static final String FF_URL = "https://ffmpeg.org/";
+	static Version APP_VERSION = new Version(0, 0, 0);
 
 	private static AbcPlayer mainWindow = null;
 	
@@ -698,7 +699,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 			}
 		});
 
-		final JMenuItem exportMp3MenuItem = fileMenu.add(new JMenuItem("Save as MP3 file..."));
+		final JMenuItem exportMp3MenuItem = fileMenu.add(new JMenuItem("Save as MP3 file (LAME)..."));
 		exportMp3MenuItem.setMnemonic(KeyEvent.VK_M);
 		exportMp3MenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
 		exportMp3MenuItem.addActionListener(new ActionListener()
@@ -711,6 +712,22 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 					return;
 				}
 				exportMp3();
+			}
+		});
+		
+		final JMenuItem exportMp3MenuItemNew = fileMenu.add(new JMenuItem("Save as MP3 file (FFmpeg)..."));
+		//exportMp3MenuItemNew.setMnemonic(KeyEvent.VK_M);
+		//exportMp3MenuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
+		exportMp3MenuItemNew.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				if (!sequencer.isLoaded() || isExporting)
+				{
+					Toolkit.getDefaultToolkit().beep();
+					return;
+				}
+				exportMp3New();
 			}
 		});
 
@@ -756,6 +773,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				saveMenuItem.setEnabled(saveEnabled);
 				exportWavMenuItem.setEnabled(saveEnabled && !isExporting);
 				exportMp3MenuItem.setEnabled(saveEnabled && !isExporting);
+				exportMp3MenuItemNew.setEnabled(saveEnabled && !isExporting);
 			}
 
 			@Override public void menuDeselected(MenuEvent e)
@@ -771,6 +789,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				saveMenuItem.setEnabled(true);
 				exportWavMenuItem.setEnabled(true);
 				exportMp3MenuItem.setEnabled(true);
+				exportMp3MenuItemNew.setEnabled(true);
 			}
 		});
 		
@@ -1755,6 +1774,68 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 			}
 		}
 	}
+	
+	private static File notFFExe = null;
+
+	private boolean isFF(File ffExe)
+	{
+		if (!ffExe.exists() || ffExe.equals(notFFExe))
+			return false;
+
+		FFChecker checker = new FFChecker(ffExe);
+		checker.start();
+		try
+		{
+			// Wait up to 3 seconds for the program to respond
+			checker.join(3000);
+		}
+		catch (InterruptedException e)
+		{
+		}
+		if (checker.isAlive() && checker.process != null) {
+			checker.process.destroy();
+		}
+		if (!checker.isFF)
+		{
+			notFFExe = ffExe;
+			return false;
+		}
+
+		return true;
+	}
+
+	private static class FFChecker extends Thread
+	{
+		private boolean isFF = false;
+		private File ffExe;
+		private Process process;
+
+		public FFChecker(File ffExe)
+		{
+			this.ffExe = ffExe;
+		}
+
+		@Override public void run()
+		{
+			try
+			{
+				process = Runtime.getRuntime().exec(new String[] {Util.quote(ffExe.getAbsolutePath()), "-help"});
+				BufferedReader rdr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+				String line;
+				while ((line = rdr.readLine()) != null)
+				{
+					if (line.contains("ffmpeg version"))
+					{
+						isFF = true;
+						break;
+					}
+				}
+			}
+			catch (IOException e)
+			{
+			}
+		}
+	}
 
 	private void exportMp3()
 	{
@@ -1929,6 +2010,188 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				if (lameExeSav != null)
 				{
 					mp3Prefs.put("lameExe", lameExeSav);
+				}
+				isExporting = false;
+				SwingUtilities.invokeLater(new ExportMp3FinishedTask(error, waitFrame));
+			}
+		}
+	}
+	
+	private void exportMp3New()
+	{
+		File openedFile = null;
+		if (abcData.size() > 0)
+			openedFile = abcData.get(0).file;
+
+		Preferences mp3Prefs = prefs.node("mp3");
+		File ffExe = new File(mp3Prefs.get("ffExe", "./ffmpeg.exe"));
+		if (!ffExe.exists())
+		{
+			outerLoop: for (File dir : new File(".").listFiles())
+			{
+				if (dir.isDirectory())
+				{
+					for (File file : dir.listFiles())
+					{
+						if (file.getName().toLowerCase().equals("ffmpeg.exe"))
+						{
+							ffExe = file;
+							break outerLoop;
+						}
+					}
+				}
+			}
+		}
+
+		JLabel hyperlink = new JLabel("<html><a href='" + FF_URL + "'>" + FF_URL + "</a></html>");
+		hyperlink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		hyperlink.addMouseListener(new MouseAdapter()
+		{
+			@Override public void mouseClicked(MouseEvent e)
+			{
+				if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1)
+				{
+					Util.openURL(FF_URL);
+				}
+			}
+		});
+
+		boolean overrideAndUseExe = false;
+		for (int i = 0; (!overrideAndUseExe && !isFF(ffExe)) || !ffExe.exists(); i++)
+		{
+			if (i > 0)
+			{
+				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new FileFilter()
+				{
+					@Override public boolean accept(File f)
+					{
+						return f.isDirectory() || f.getName().toLowerCase().equals("ffmpeg.exe");
+					}
+
+					@Override public String getDescription()
+					{
+						return "ffmpeg.exe";
+					}
+				});
+				fc.setSelectedFile(ffExe);
+				int result = fc.showOpenDialog(this);
+
+				if (result == JFileChooser.ERROR_OPTION)
+					continue; // Try again
+				else if (result != JFileChooser.APPROVE_OPTION)
+					return;
+				ffExe = fc.getSelectedFile();
+			}
+
+			if (!ffExe.exists())
+			{
+				Object message;
+				int icon;
+				if (i == 0)
+				{
+					message = new Object[] {
+						"Exporting to MP3 requires FFmpeg, a free MP3 encoder.\n" + "To download FFmpeg, visit: ",
+						hyperlink, "\nAfter you download and unzip it, click OK to locate ffmpeg.exe", };
+					icon = JOptionPane.INFORMATION_MESSAGE;
+				}
+				else
+				{
+					message = "File does not exist:\n" + ffExe.getAbsolutePath();
+					icon = JOptionPane.ERROR_MESSAGE;
+				}
+				int result = JOptionPane.showConfirmDialog(this, message, "Export to MP3 requires FFmpeg",
+						JOptionPane.OK_CANCEL_OPTION, icon);
+				if (result != JOptionPane.OK_OPTION)
+					return;
+			}
+			else if (!isFF(ffExe))
+			{
+				Object[] message = new Object[] {
+					"The MP3 converter you selected \"" + ffExe.getName() + "\" doesn't appear to be FFmpeg.\n"
+							+ "You can download FFmpeg from: ",
+					hyperlink,
+					"\nWould you like to use \"" + ffExe.getName() + "\" anyways?\n"
+							+ "If you choose No, you'll be prompted to locate ffmpeg.exe" };
+				int result = JOptionPane.showConfirmDialog(this, message, "Export to MP3 requires FFmpeg",
+						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+				if (result == JOptionPane.YES_OPTION)
+					overrideAndUseExe = true;
+				else if (result == JOptionPane.NO_OPTION)
+					continue; // Try again
+				else
+					return;
+			}
+
+			mp3Prefs.put("ffExe", ffExe.getAbsolutePath());
+		}
+
+		ExportMp3Dialog mp3Dialog = new ExportMp3Dialog(this, ffExe, mp3Prefs, openedFile, abcInfo.getTitle(),
+				abcInfo.getComposer());
+		mp3Dialog.setIconImages(AbcPlayer.this.getIconImages());
+		mp3Dialog.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				ExportMp3Dialog dialog = (ExportMp3Dialog) e.getSource();
+				JDialog waitFrame = new WaitDialog(AbcPlayer.this, dialog.getSaveFile());
+				waitFrame.setVisible(true);
+				new Thread(new ExportMp3TaskNew(sequencer.getSequence(), dialog, waitFrame)).start();
+			}
+		});
+		mp3Dialog.setVisible(true);
+	}
+
+	private class ExportMp3TaskNew implements Runnable
+	{
+		private Sequence sequence;
+		private ExportMp3Dialog mp3Dialog;
+		private JDialog waitFrame;
+
+		public ExportMp3TaskNew(Sequence sequence, ExportMp3Dialog mp3Dialog, JDialog waitFrame)
+		{
+			this.sequence = sequence;
+			this.mp3Dialog = mp3Dialog;
+			this.waitFrame = waitFrame;
+		}
+
+		@Override public void run()
+		{
+			isExporting = true;
+			Exception error = null;
+			String ffExeSav = null;
+			Preferences mp3Prefs = mp3Dialog.getPreferencesNode();
+			try
+			{
+				ffExeSav = mp3Prefs.get("ffExe", null);
+				mp3Prefs.put("ffExe", "");
+				File wavFile = File.createTempFile("AbcPlayer-", ".wav");
+				FileOutputStream fos = new FileOutputStream(wavFile);
+				try
+				{
+					MidiToWav.render(sequence, fos);
+					fos.close();
+					String commando = mp3Dialog.getCommandLineNew(wavFile);
+					//System.out.println(commando);
+					Process p = Runtime.getRuntime().exec(commando);
+					if (p.waitFor() != 0)
+						throw new Exception("FFmpeg failed");
+				}
+				finally
+				{
+					fos.close();
+					wavFile.delete();
+				}
+			}
+			catch (Exception e)
+			{
+				error = e;
+			}
+			finally
+			{
+				if (ffExeSav != null)
+				{
+					mp3Prefs.put("ffExe", ffExeSav);
 				}
 				isExporting = false;
 				SwingUtilities.invokeLater(new ExportMp3FinishedTask(error, waitFrame));

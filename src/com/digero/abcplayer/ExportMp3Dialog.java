@@ -41,7 +41,7 @@ public class ExportMp3Dialog extends JDialog implements TableLayoutConstants
 		Medium, Standard, Extreme
 	}
 
-	private File lameExe;
+	private File theExe;
 
 	private JTextField saveAsField;
 	private JTextField titleField;
@@ -57,13 +57,13 @@ public class ExportMp3Dialog extends JDialog implements TableLayoutConstants
 
 	private List<ActionListener> actionListeners;
 
-	public ExportMp3Dialog(JFrame parent, File lameExe, Preferences prefs, File abcFile, String songTitle,
+	public ExportMp3Dialog(JFrame parent, File theExe, Preferences prefs, File abcFile, String songTitle,
 			String songArtist)
 	{
 		super(parent, AbcPlayer.APP_NAME + " - Export to MP3", false);
 
 		this.prefs = prefs;
-		this.lameExe = lameExe;
+		this.theExe = theExe;
 		this.actionListeners = new ArrayList<ActionListener>();
 
 		Border outerBorder = BorderFactory.createEmptyBorder(8, 8, 8, 8);
@@ -241,6 +241,19 @@ public class ExportMp3Dialog extends JDialog implements TableLayoutConstants
 	{
 		return qualityButtons[getQualityIndex()].getText().toLowerCase();
 	}
+	
+	public String getQualityNew()
+	{
+		switch (getQualityIndex()) {
+		case 0:
+			return "192k";
+		case 1:
+			return "256k";
+		case 2:
+			return "320k";
+		}
+		return "128k";
+	}
 
 	public File getSaveFile()
 	{
@@ -259,7 +272,24 @@ public class ExportMp3Dialog extends JDialog implements TableLayoutConstants
 			args += " --tl " + Util.quote(getAlbum());
 		args += " " + Util.quote(wav.getAbsolutePath());
 		args += " " + Util.quote(getSaveFile().getAbsolutePath());
-		return Util.quote(lameExe.getAbsolutePath()) + args;
+		return Util.quote(theExe.getAbsolutePath()) + args;
+	}
+	
+	public String getCommandLineNew(File wav)
+	{
+		String args = " -i";
+		args += " " + Util.quote(wav.getAbsolutePath());
+		args += " -vn -ar 44100 -ac 2 -b:a "+getQualityNew();
+		//args += " -sample_fmt s16p";
+		if (getSongTitle().length() > 0)
+			args += " -metadata title=" + Util.quote(getSongTitle());
+		if (getArtist().length() > 0)
+			args += " -metadata artist=" + Util.quote(getArtist());
+		if (getAlbum().length() > 0)
+			args += " -metadata album=" + Util.quote(getAlbum());
+		args += " -metadata encoded_by=" + Util.quote(AbcPlayer.APP_NAME+" "+AbcPlayer.APP_VERSION);
+		args += " " + Util.quote(getSaveFile().getAbsolutePath());
+		return Util.quote(theExe.getAbsolutePath()) + args;
 	}
 
 	private boolean validateFile()
