@@ -5,6 +5,9 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -32,13 +35,24 @@ public final class AboutDialog
 			e1.printStackTrace();
 			aboutIcon = null;
 		}
+		
+		String heapInUse = "unknown.";
+		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+		if (memoryMXBean != null) {
+			MemoryUsage usage = memoryMXBean.getHeapMemoryUsage();
+			if (usage != null) {
+				heapInUse = ""+(usage.getUsed()/(1024*1024))+"MB/"+(usage.getMax()/(1024*1024))+"MB";
+			}
+		}
+		
 		JLabel aboutMessage = new JLabel("<html>" //
 				+ appName + "<br>" //
 				+ "Version " + appVersion + "<br>" //
 				+ "Created by Digero of Landroval<br>" //
 				+ "Copyright &copy; 2015 Ben Howell<br>" //
 				+ "Upgraded by Aifel of Laurelin<br>" //
-				+ "<a href='" + appUrl + "'>" + appUrl + "</a>" //
+				+ "<a href='" + appUrl + "'>" + appUrl + "</a><br>" //
+				+ "Heap in use is " + heapInUse
 				+ "</html>");
 		aboutMessage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		aboutMessage.addMouseListener(new MouseAdapter()
