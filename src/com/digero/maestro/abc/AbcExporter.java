@@ -959,7 +959,7 @@ public class AbcExporter
 				int exportBarNumber = curBarNumber - firstBarNumber;
 				if ((exportBarNumber + 1) % 10 == 0)
 				{
-					long micros = qtm.barNumberToMicrosecond(curBarNumber) - songStartMicros;
+					long micros = (long)((qtm.barNumberToMicrosecond(curBarNumber) - songStartMicros)/qtm.getExportTempoFactor());
 					out.println("% Bar " + (exportBarNumber + 1) + " (" + Util.formatDuration(micros) + ")");
 				}
 
@@ -1499,7 +1499,10 @@ public class AbcExporter
 				
 				// Align with a bar boundary if it extends across 1 or more full bars.
 				long endBarTick = qtm.tickToBarStartTick(maxNoteEndTick);
-				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick)
+				
+				long slipMicros = qtm.tickToMicrosABC(maxNoteEndTick)-qtm.tickToMicrosABC(endBarTick);
+				
+				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick) // getExportTempoFactor
 				{
 					maxNoteEndTick = qtm.quantize(endBarTick, part);
 					assert ne.getEndTick() > maxNoteEndTick;

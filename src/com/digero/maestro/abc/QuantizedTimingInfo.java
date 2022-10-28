@@ -325,14 +325,41 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		return e.tick + Util.roundGrid(tick - e.tick, e.info.getMinNoteLengthTicks());
 	}
 
+	/**
+	 *  Microseconds to tick. Does not take export tempo change into consideration.
+	 */
 	@Override public long tickToMicros(long tick)
 	{
 		TimingInfoEvent e = getTimingEventForTick(tick);
 		return e.micros + MidiUtils.ticks2microsec(tick - e.tick, e.info.getTempoMPQ(), e.info.getResolutionPPQ());
 	}
 
+	/**
+	 *  Tick to microseconds. Does not take export tempo change into consideration.
+	 */
 	@Override public long microsToTick(long micros)
 	{
+		TimingInfoEvent e = getTimingEventForMicros(micros);
+		return e.tick + MidiUtils.microsec2ticks(micros - e.micros, e.info.getTempoMPQ(), e.info.getResolutionPPQ());
+	}
+	
+	/**
+	 *  Microseconds to tick. Does take export tempo change into consideration.
+	 *  Returns micros in the ABC song.
+	 */
+	public long tickToMicrosABC(long tick)
+	{
+		TimingInfoEvent e = getTimingEventForTick(tick);
+		return (long) ((e.micros + MidiUtils.ticks2microsec(tick - e.tick, e.info.getTempoMPQ(), e.info.getResolutionPPQ()))*getExportTempoFactor());
+	}
+
+	/**
+	 *  Tick to microseconds. Does take export tempo change into consideration.
+	 *  The micro is in the ABC song.
+	 */
+	public long microsToTickABC(long micros)
+	{
+		micros = (long)(micros / getExportTempoFactor());
 		TimingInfoEvent e = getTimingEventForMicros(micros);
 		return e.tick + MidiUtils.microsec2ticks(micros - e.micros, e.info.getTempoMPQ(), e.info.getResolutionPPQ());
 	}
