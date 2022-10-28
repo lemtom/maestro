@@ -1502,7 +1502,7 @@ public class AbcExporter
 				
 				long slipMicros = qtm.tickToMicrosABC(maxNoteEndTick)-qtm.tickToMicrosABC(endBarTick);
 				
-				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick) // getExportTempoFactor
+				if (qtm.tickToBarEndTick(ne.getStartTick()) < endBarTick && slipMicros < 1000000)
 				{
 					maxNoteEndTick = qtm.quantize(endBarTick, part);
 					assert ne.getEndTick() > maxNoteEndTick;

@@ -46,7 +46,8 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 Version 2.5.0.95
-- Fix that Maestro would output timestamps at each bar that did not take tempo change into consideration.
+- Fix that Maestro would output ABC timestamps at each bar that did not take tempo change into consideration.
+- Set a limit to the amount that Maestro adjust long note ends to fit on bars.
 - AbcPlayer can now use FFmpeg to make MP3 files.
     There is a 3 second timer, from clicking the menu till you get dialog up, just like for LAME.
     I used v4.4.1-release-full, but newer versions should work too, and vX.X.X-release-essentials versions also, they are less bloated.
