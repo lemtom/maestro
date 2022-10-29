@@ -45,6 +45,13 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.98
+- Fix again that drum panel was misaligned
+
+Version 2.5.0.97
+- Fix that drum panel was misaligned
+- Improved Abcplayer ability to verify FFmpeg file.
+
 Version 2.5.0.96
 - Introduced combine priorities.
     When using Mix Timings it allows to set which tracks are more important with regards to rhythm,

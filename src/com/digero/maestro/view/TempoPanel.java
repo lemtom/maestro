@@ -39,7 +39,7 @@ public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConst
 	static final int GRAPH_COLUMN = 3;
 
 	private static final int GUTTER_WIDTH = TrackPanel.GUTTER_WIDTH;
-	private static final int TITLE_WIDTH = TrackPanel.TITLE_WIDTH + TrackPanel.PRIORITY_WIDTH;
+	private static final int TITLE_WIDTH = TrackPanel.TITLE_WIDTH + TrackPanel.HGAP + TrackPanel.PRIORITY_WIDTH;
 	private static final int TEMPO_WIDTH = TrackPanel.CONTROL_WIDTH;
 
 	private static final double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH, TEMPO_WIDTH, FILL };
