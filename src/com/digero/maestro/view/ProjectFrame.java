@@ -155,6 +155,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JFormattedTextField timeSignatureField;
 	private JCheckBox tripletCheckBox;
 	private JCheckBox mixCheckBox;
+	private JCheckBox prioCheckBox;
 	private JButton exportButton;
 	private JLabel exportSuccessfulLabel;
 	private Timer exportLabelHideTimer;
@@ -513,6 +514,23 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					refreshPreviewSequence(false);
 			}
 		});
+		
+		prioCheckBox = new JCheckBox("Combine Priorities");
+		prioCheckBox.setToolTipText("<html>This allow to set track priority for Mix Timings.<br><br>"
+				+ "Checkboxes will appear when combining tracks,<br>"
+				+ "those enabled will prioritize the timings of those"
+				+ "tracks over non-prioritized tracks.</html>");
+		prioCheckBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				if (abcSong != null)
+					abcSong.setPriorityActive(prioCheckBox.isSelected());
+
+				if (abcSequencer.isRunning())
+					refreshPreviewSequence(false);
+			}
+		});
 
 		exportButton = new JButton(); // Label set in onSaveAndExportSettingsChanged()
 		exportButton.setToolTipText("<html><b>Export ABC</b><br>(Ctrl+E)</html>");
@@ -736,6 +754,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			row++;
 			settingsLayout.insertRow(row, PREFERRED);
 			settingsPanel.add(mixCheckBox, "0, " + row + ", 2, " + row + ", L, C");
+			
+			row++;
+			settingsLayout.insertRow(row, PREFERRED);
+			settingsPanel.add(prioCheckBox, "0, " + row + ", 2, " + row + ", C, C");
 
 			row++;
 			settingsLayout.insertRow(row, PREFERRED);
@@ -1512,6 +1534,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			timeSignatureField.setEnabled(midiLoaded);
 			tripletCheckBox.setEnabled(midiLoaded);
 			mixCheckBox.setEnabled(midiLoaded);
+			prioCheckBox.setEnabled(midiLoaded && mixCheckBox.isSelected());
 			zoom.setEnabled(midiLoaded);
 			noteButton.setEnabled(midiLoaded);
 			if (midiLoaded) {
@@ -1679,7 +1702,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				maxNoteCountTotal = 0;
 				maxNoteCount = 0;
 				break;
-
+			case MIX_TIMING_COMBINE_PRIORITIES:
+				if (prioCheckBox.isSelected() != abcSong.isPriorityActive())
+					prioCheckBox.setSelected(abcSong.isPriorityActive());
+				break;
 			case PART_ADDED:
 				e.getPart().addAbcListener(abcPartListener);
 
@@ -1862,6 +1888,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		timeSignatureField.setValue(TimeSignature.FOUR_FOUR);
 		tripletCheckBox.setSelected(false);
 		mixCheckBox.setSelected(true);
+		prioCheckBox.setSelected(false);		
 
 		midiBarLabel.setBarNumberCache(null);
 		abcBarLabel.setBarNumberCache(null);
@@ -1939,6 +1966,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			timeSignatureField.setValue(abcSong.getTimeSignature());
 			tripletCheckBox.setSelected(abcSong.isTripletTiming());
 			mixCheckBox.setSelected(abcSong.isMixTiming());
+			prioCheckBox.setSelected(abcSong.isPriorityActive());
 
 			SequenceInfo sequenceInfo = abcSong.getSequenceInfo();
 			sequencer.setSequence(sequenceInfo.getSequence());

@@ -75,15 +75,17 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	//   +---+------------------------------+--------------------+
 	static final int GUTTER_COLUMN = 0;
 	static final int TITLE_COLUMN = 1;
-	static final int CONTROL_COLUMN = 2;
-	static final int NOTE_COLUMN = 3;
+	static final int PRIORITY_COLUMN = 2;
+	static final int CONTROL_COLUMN = 3;
+	static final int NOTE_COLUMN = 4;
 
 	static final int HGAP = 4;
 	static final int SECTIONBUTTON_WIDTH = 22;
 	static final int GUTTER_WIDTH = 8;
-	static final int TITLE_WIDTH = 150;
+	static final int PRIORITY_WIDTH = 22;
+	static final int TITLE_WIDTH = 150 - PRIORITY_WIDTH;	
 	static final int CONTROL_WIDTH = 64;
-	private static final double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH, CONTROL_WIDTH, FILL };
+	private static final double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH, PRIORITY_WIDTH, CONTROL_WIDTH, FILL };
 	private static final double[] LAYOUT_ROWS = new double[] { 48, PREFERRED };
 
 	private final TrackInfo trackInfo;
@@ -95,7 +97,9 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	private JCheckBox checkBox;
 	private TableLayoutConstraints checkBoxLayout_ControlsHidden;
 	private TableLayoutConstraints checkBoxLayout_ControlsVisible;
+	private TableLayoutConstraints checkBoxLayout_ControlsAndPriorityVisible;
 	private JButton sectionButton;
+	private JCheckBox priorityBox;
 	private JSpinner transposeSpinner;
 	private TrackVolumeBar trackVolumeBar;
 	private JPanel drumSavePanel;
@@ -267,6 +271,20 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			}
 			
 		});
+		
+		priorityBox = new JCheckBox();
+		priorityBox.setOpaque(false);
+		priorityBox.setToolTipText("Prioritize this tracks rhythm when combining tracks with Mix Timings enabled");
+		priorityBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int track = trackInfo.getTrackNumber();
+				boolean prio = priorityBox.isSelected();
+				abcPart.setTrackPriority(track, prio);
+			}
+			
+		});
 
 		trackVolumeBar = new TrackVolumeBar(trackInfo.getMinVelocity(), trackInfo.getMaxVelocity());
 		trackVolumeBar.setToolTipText("Adjust this track's volume");
@@ -291,11 +309,13 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			controlPanel.add(transposeSpinner, BorderLayout.CENTER);
 		controlPanel.add(trackVolumeBar, BorderLayout.SOUTH);
 
-		checkBoxLayout_ControlsHidden = new TableLayoutConstraints(TITLE_COLUMN, 0, CONTROL_COLUMN, 0);
-		checkBoxLayout_ControlsVisible = new TableLayoutConstraints(TITLE_COLUMN, 0);
+		checkBoxLayout_ControlsHidden             = new TableLayoutConstraints(TITLE_COLUMN, 0, CONTROL_COLUMN, 0);
+		checkBoxLayout_ControlsAndPriorityVisible = new TableLayoutConstraints(TITLE_COLUMN, 0); 
+		checkBoxLayout_ControlsVisible            = new TableLayoutConstraints(TITLE_COLUMN, 0, PRIORITY_COLUMN, 0);
 
 		add(gutter, GUTTER_COLUMN + ", 0, " + GUTTER_COLUMN + ", 1, f, f");
 		add(checkBox, checkBoxLayout_ControlsHidden);
+		add(priorityBox, PRIORITY_COLUMN + ", 0, f, c");
 		add(controlPanel, CONTROL_COLUMN + ", 0, f, c");
 		add(noteGraph, NOTE_COLUMN + ", 0, " + NOTE_COLUMN + ", 1");
 
@@ -471,13 +491,20 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		checkBox.setToolTipText("<html><b>" + title + "</b><br>" + instr + badString + "</html>");
 
 		int titleWidth = TITLE_WIDTH;
-		if (!trackVolumeBar.isVisible())
-			titleWidth += CONTROL_WIDTH;
+		if (!trackVolumeBar.isVisible()) {
+			titleWidth += CONTROL_WIDTH + PRIORITY_WIDTH;
+		} else if (!isPriorityEnabled()) {
+			titleWidth += PRIORITY_WIDTH;
+		}
 		
 		title = Util.ellipsis(title, titleWidth - ELLIPSIS_OFFSET, checkBox.getFont().deriveFont(Font.BOLD));
 		instr = Util.ellipsis(instr, titleWidth - ELLIPSIS_OFFSET, checkBox.getFont());
 		checkBox.setText("<html><b>" + title + "</b><br>" + instr + "</html>");
 		
+	}
+	
+	private boolean isPriorityEnabled() {
+		return abcPart.getAbcSong().isMixTiming() && abcPart.getAbcSong().isPriorityActive() && abcPart.getEnabledTrackCount() > 1; //  && abcPart.getAbcSong().isMixTiming()
 	}
 
 	@Override public void setBackground(Color bg)
@@ -605,6 +632,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		updateColors();
 
 		boolean trackEnabled = abcPart.isTrackEnabled(trackInfo.getTrackNumber());
+		boolean priorityEnabled = isPriorityEnabled();
 		checkBox.setSelected(trackEnabled);
 
 		// Update the visibility of controls
@@ -615,14 +643,17 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			sectionButton.setVisible(trackEnabled);
 
 		TableLayout layout = (TableLayout) getLayout();
-		TableLayoutConstraints newCheckBoxLayout = trackEnabled ? checkBoxLayout_ControlsVisible
-				: checkBoxLayout_ControlsHidden;
+		TableLayoutConstraints newCheckBoxLayout = trackEnabled ? (priorityEnabled ? checkBoxLayout_ControlsAndPriorityVisible : checkBoxLayout_ControlsVisible) : checkBoxLayout_ControlsHidden;
 
 		if (layout.getConstraints(checkBox) != newCheckBoxLayout)
 		{
 			layout.setConstraints(checkBox, newCheckBoxLayout);
 			updateTitleText();
 		}
+		
+		
+		priorityBox.setVisible(trackEnabled && priorityEnabled);
+		priorityBox.setSelected(abcPart.isTrackPriority(trackInfo.getTrackNumber()));
 		
 		noteGraph.setShowingNoteVelocity(trackVolumeBar.isDragging());
 

@@ -51,7 +51,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public static final String MSX_FILE_DESCRIPTION_PLURAL = MaestroMain.APP_NAME + " Songs";
 	public static final String MSX_FILE_EXTENSION_NO_DOT = "msx";
 	public static final String MSX_FILE_EXTENSION = "." + MSX_FILE_EXTENSION_NO_DOT;
-	public static final Version SONG_FILE_VERSION = new Version(1, 0, 94);
+	public static final Version SONG_FILE_VERSION = new Version(1, 0, 96);
 
 	private String title = "";
 	private String composer = "";
@@ -67,6 +67,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private TimeSignature timeSignature = TimeSignature.FOUR_FOUR;
 	private boolean tripletTiming = false;
 	private boolean mixTiming = true;
+	private boolean priorityActive = false;
 	private boolean skipSilenceAtStart = true;
 	//private boolean showPruned = false;
 
@@ -198,6 +199,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 		tripletTiming = abcInfo.hasTriplets();
 		mixTiming = abcInfo.hasMixTimings();
+		priorityActive = false;
 		transcriber = abcInfo.getTranscriber();
 		genre = abcInfo.getGenre();
 		mood = abcInfo.getMood();
@@ -247,6 +249,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 						tripletTiming = abcInfo.hasTriplets();
 						mixTiming = abcInfo.hasMixTimings();
+						priorityActive = false;
 						transcriber = abcInfo.getTranscriber();
 					}
 					else
@@ -294,6 +297,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			timeSignature = SaveUtil.parseValue(songEle, "exportSettings/@timeSignature", timeSignature);
 			tripletTiming = SaveUtil.parseValue(songEle, "exportSettings/@tripletTiming", tripletTiming);
 			mixTiming = SaveUtil.parseValue(songEle, "exportSettings/@mixTiming", false);// default false as old projects did not have that available. This means for old project with source abc that was exported with mix timings, the project will decide and it will be false.
+			priorityActive = SaveUtil.parseValue(songEle, "exportSettings/@combinePriorities", false);
 
 			for (Element ele : XmlUtil.selectElements(songEle, "part"))
 			{
@@ -361,6 +365,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				exportSettingsEle.setAttribute("tripletTiming", String.valueOf(tripletTiming));
 			
 			exportSettingsEle.setAttribute("mixTiming", String.valueOf(mixTiming));
+			if (mixTiming)
+				exportSettingsEle.setAttribute("combinePriorities", String.valueOf(priorityActive));
 
 			if (exportSettingsEle.getAttributes().getLength() > 0 || exportSettingsEle.getChildNodes().getLength() > 0)
 				songEle.appendChild(exportSettingsEle);
@@ -854,5 +860,20 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			}
 		}
 		//System.out.println();
+	}
+	
+	public boolean isPriorityActive()
+	{
+		return priorityActive;
+	}
+	
+	public void setPriorityActive(boolean priorityActive)
+	{
+		if (this.priorityActive != priorityActive)
+		{
+			mixDirty = true;
+			this.priorityActive = priorityActive;
+			fireChangeEvent(AbcSongProperty.MIX_TIMING_COMBINE_PRIORITIES);
+		}
 	}
 }

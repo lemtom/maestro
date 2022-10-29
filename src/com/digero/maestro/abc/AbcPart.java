@@ -46,6 +46,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	private LotroInstrument instrument;
 	private int[] trackTranspose;
 	private boolean[] trackEnabled;
+	private boolean[] trackPriority;
 	private int[] trackVolumeAdjust;
 	private DrumNoteMap[] drumNoteMap;
 	private StudentFXNoteMap[] fxNoteMap;
@@ -75,6 +76,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		int t = getTrackCount();
 		this.trackTranspose = new int[t];
 		this.trackEnabled = new boolean[t];
+		this.trackPriority = new boolean[t];
 		this.trackVolumeAdjust = new int[t];
 		this.drumNoteMap = new DrumNoteMap[t];
 		this.fxNoteMap = new StudentFXNoteMap[t];
@@ -144,7 +146,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				SaveUtil.appendChildTextElement(trackEle, "transpose", String.valueOf(trackTranspose[t]));
 			if (trackVolumeAdjust[t] != 0)
 				SaveUtil.appendChildTextElement(trackEle, "volumeAdjust", String.valueOf(trackVolumeAdjust[t]));
-
+			if (abcSong.isMixTiming() && abcSong.isPriorityActive() && trackPriority[t])
+				SaveUtil.appendChildTextElement(trackEle, "combinePriority", String.valueOf(QuantizedTimingInfo.COMBINE_PRIORITY_MULTIPLIER));// Hardcoded to 4 for now, change QTM and UI if messing with this
+			
 			TreeMap<Integer, PartSection> tree = sections.get(t);
 	        if (tree != null) {
 		        for(Entry<Integer, PartSection> entry : tree.entrySet()) {
@@ -342,6 +346,12 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				enabledTrackCount++;
 				trackTranspose[t] = SaveUtil.parseValue(trackEle, "transpose", trackTranspose[t]);
 				trackVolumeAdjust[t] = SaveUtil.parseValue(trackEle, "volumeAdjust", trackVolumeAdjust[t]);
+				int prio = SaveUtil.parseValue(trackEle, "combinePriority", 1);
+				if (prio == QuantizedTimingInfo.COMBINE_PRIORITY_MULTIPLIER) {
+					// Hardcoded to 4 for now, change QTM and UI if messing with this
+					trackPriority[t] = true;
+				}
+				
 
 				if (instrument.isPercussion)
 				{
@@ -434,6 +444,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			if (e.getProperty() == AbcSongProperty.TRANSPOSE)
 			{
 				fireChangeEvent(AbcPartProperty.BASE_TRANSPOSE, !isDrumPart() /* affectsAbcPreview */);
+			}
+			if (e.getProperty() == AbcSongProperty.MIX_TIMING_COMBINE_PRIORITIES || e.getProperty() == AbcSongProperty.MIX_TIMING) {
+				fireChangeEvent(AbcPartProperty.TRACK_PRIORITY);
 			}
 		}
 	};
@@ -762,6 +775,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				if (enabled)
 				{
 					affectsPreview = true;
+					abcSong.mixDirty = true;// Might have switched from sustained instr to non, or opposite, so lets recompute mixTimings
 					break;
 				}
 			}
@@ -1123,6 +1137,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				if (!(map instanceof PassThroughDrumNoteMap) && !(map instanceof StudentFXNoteMap))
 					map.save(drumPrefs);
 
+				abcSong.mixDirty = true;// Some drum sounds might have been toggled, so need to recompute mixTimings
 				fireChangeEvent(AbcPartProperty.DRUM_MAPPING);
 			}
 		}
@@ -1201,10 +1216,23 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	}
 
 	public void sectionEdited(int track) {
+		abcSong.mixDirty = true; // Some notes might have gotten silenced in which case the mixTimings need to be recomputed
 		fireChangeEvent(AbcPartProperty.TRACK_SECTION_EDIT, track);
 	}
 	
 	public void delayEdited() {
 		fireChangeEvent(AbcPartProperty.DELAY_EDIT);
+	}
+
+	public void setTrackPriority(int track, boolean prio) {
+		if (trackPriority[track] != prio) {
+			trackPriority[track] = prio;
+			abcSong.mixDirty = true;
+			fireChangeEvent(AbcPartProperty.TRACK_PRIORITY, true, track);
+		}
+	}
+
+	public boolean isTrackPriority(int trackNumber) {
+		return trackPriority[trackNumber];
 	}
 }

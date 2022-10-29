@@ -45,9 +45,15 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.96
+- Introduced combine priorities.
+    When using Mix Timings it allows to set which tracks are more important with regards to rhythm,
+    when you combine multiple tracks into a part. When this is enabled and tracks are combined,
+    a checkbox will appear for each combined track for increasing priority.
+
 Version 2.5.0.95
 - Fix that Maestro would output ABC timestamps at each bar that did not take tempo change into consideration.
-- Set a limit to the amount that Maestro adjust long note ends to fit on bars.
+- Set a limit to the amount that Maestro adjust long note breaks to fit on bars.
 - Add .bat files to the zip release that will ensure that if you have both 32 and 64 bit Java installed, that it starts the 64 bit version.
 - AbcPlayer can now use FFmpeg to make MP3 files.
     There is a 3 second timer, from clicking the menu till you get dialog up, just like for LAME.

@@ -36,6 +36,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 	private final TimeSignature meter;
 	private final boolean tripletTiming;
 	private final boolean oddsAndEnds;
+	public final static int COMBINE_PRIORITY_MULTIPLIER = 4;// Do not change this number without exposing the int in UI. Since old projects will have 4 saved in msx.
 
 	public QuantizedTimingInfo(SequenceInfo source, float exportTempoFactor, TimeSignature meter,
 			boolean useTripletTiming, int abcSongBPM, AbcSong song, boolean oddsAndEnds) throws AbcConversionException
@@ -136,6 +137,28 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 			TreeMap<Long, TimingInfoEvent> partMap = new TreeMap<Long, TimingInfoEvent>();
 			oddTimingInfoByTick.put(abcPart, partMap);
 			
+			// Lets us build an array of all notes in this part
+			// Combine-priorities means some notes might be added several times.
+			ArrayList<NoteEvent> eventList = new ArrayList<NoteEvent>();  
+			for (int t = 0; t < tracks; t++) {
+				if(abcPart.isTrackEnabled(t)) {
+					int scoreMultiplier = (song.isPriorityActive() && abcPart.getEnabledTrackCount() > 1 && abcPart.isTrackPriority(t)) ? COMBINE_PRIORITY_MULTIPLIER : 1;
+					if (abcPart.sectionsModified.get(t) == null && abcPart.nonSection.get(t) == null) {
+						eventList.addAll(abcPart.getTrackEvents(t));
+						for(NoteEvent note : abcPart.getTrackEvents(t)) {
+							note.combinePrioritiesScoreMultiplier = scoreMultiplier;
+						}
+					} else {
+						for(NoteEvent note : abcPart.getTrackEvents(t)) {
+							if (abcPart.getAudible(t, note.getStartTick())) {
+								note.combinePrioritiesScoreMultiplier = scoreMultiplier;
+								eventList.add(note);
+							}
+						}
+					}
+				}
+			}
+			
 			for (int j = 0; j < timings.length; j++ ) {
 				// calculate for all tempochanges
 				TimingInfoEvent tempoChange = timings[j];
@@ -145,20 +168,6 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				}
 				partMap.put(tempoChange.tick, tempoChange);
 				
-				ArrayList<NoteEvent> eventList = new ArrayList<NoteEvent>();  
-				for (int t = 0; t < tracks; t++) {
-					if(abcPart.isTrackEnabled(t)) {
-						if (abcPart.sectionsModified.get(t) == null && abcPart.nonSection.get(t) == null) {
-							eventList.addAll(abcPart.getTrackEvents(t));
-						} else {
-							for(NoteEvent note : abcPart.getTrackEvents(t)) {
-								if (abcPart.getAudible(t, note.getStartTick())) {
-									eventList.add(note);
-								}
-							}
-						}
-					}
-				}
 				//Now calculate duration of sixGrid sections. They will always end and start on quantized grid for both odd and even timing
 				//I call it sixGrid due to durations of 3 and 2 will always coincide each 6th duration.
 				//Its really just LCM (Least Common Multiple)
@@ -194,6 +203,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				int highest = -1;
 				for (NoteEvent ne : eventList) {
 					if (ne.getStartTick() > tempoChange.tick && (nextTempoChange == null || ne.getStartTick() < nextTempoChange.tick)) {
+						// Note starting scores
 						// The note starts after current tempo change and either is last tempochange or note starts before next tempo change
 						long q = tempoChange.tick + Util.roundGrid(ne.getStartTick() - tempoChange.tick, tempoChange.info.getMinNoteLengthTicks());
 						long qOdd = tempoChange.tick + Util.roundGrid(ne.getStartTick() - tempoChange.tick, tempoChange.infoOdd.getMinNoteLengthTicks());
@@ -204,7 +214,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 						if (sixGrid >= maxSixths) continue;
 						if (sixGrid > highest) highest = sixGrid;
 						// Add a point to this sixGrid odd vs. default list.
-						int oddScore = odd*2;
+						int oddScore = odd*2*ne.combinePrioritiesScoreMultiplier;
 						if (sixGridsOdds.get(sixGrid) != null) {
 							sixGridsOdds.set(sixGrid, sixGridsOdds.get(sixGrid)+oddScore);
 						} else {
@@ -212,6 +222,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 						}
 					}
 					if (!abcPart.getInstrument().equals(LotroInstrument.BASIC_DRUM) && ne.getEndTick() > tempoChange.tick && (nextTempoChange == null || ne.getEndTick() < nextTempoChange.tick)) {
+						// Note ending scores
 						// Do not evaluate note endings for drum
 						// The note ends after current tempo change and either is last tempochange or note ends before next tempo change
 						long q = tempoChange.tick + Util.roundGrid(ne.getEndTick() - tempoChange.tick, tempoChange.info.getMinNoteLengthTicks());
@@ -223,7 +234,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 						if (sixGrid >= maxSixths) continue;
 						if (sixGrid > highest) highest = sixGrid;
 						// Add a point to this sixGrid odd vs. default list.
-						int oddScore = odd*1;
+						int oddScore = odd*1*ne.combinePrioritiesScoreMultiplier;
 						if (sixGridsOdds.get(sixGrid) != null) {
 							sixGridsOdds.set(sixGrid, sixGridsOdds.get(sixGrid)+oddScore);
 						} else {
