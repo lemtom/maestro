@@ -47,7 +47,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 	//   +---+--------------------+----------+--------------------+
 	private static final int GUTTER_WIDTH = TrackPanel.GUTTER_WIDTH;
 	private static final int COMBO_WIDTH = 122;
-	private static final int TITLE_WIDTH = TrackPanel.TITLE_WIDTH + TrackPanel.CONTROL_WIDTH - COMBO_WIDTH;
+	private static final int TITLE_WIDTH = TrackPanel.TITLE_WIDTH + TrackPanel.PRIORITY_WIDTH + TrackPanel.CONTROL_WIDTH - COMBO_WIDTH;
 	private static final double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH, COMBO_WIDTH, FILL };
 	private static final double[] LAYOUT_ROWS = new double[] { PREFERRED };
 
