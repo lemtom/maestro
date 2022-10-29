@@ -1822,13 +1822,16 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				process = Runtime.getRuntime().exec(new String[] {Util.quote(ffExe.getAbsolutePath()), "-help"});
 				BufferedReader rdr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 				String line;
-				while ((line = rdr.readLine()) != null)
+				long start = System.currentTimeMillis();
+				while ((line = rdr.readLine()) != null || System.currentTimeMillis()-start < 50)
 				{
-					//System.out.println(line);
-					if (line.contains("ffmpeg version"))
+					if (line != null && line.toLowerCase().contains("ffmpeg"))
 					{
+						//System.out.println("ERR:"+line);
 						isFF = true;
 						break;
+					} else if (line != null) {
+						//System.out.println("ERR:"+line);
 					}
 				}
 			}
@@ -2058,7 +2061,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		});
 
 		boolean overrideAndUseExe = false;
-		for (int i = 0; (!overrideAndUseExe && !isFF(ffExe)) || !ffExe.exists(); i++)
+		for (int i = 0; !ffExe.exists() || (!overrideAndUseExe && !isFF(ffExe)); i++)
 		{
 			if (i > 0)
 			{
