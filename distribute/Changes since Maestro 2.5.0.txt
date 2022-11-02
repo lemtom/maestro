@@ -45,8 +45,11 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.99
+- Added bat files to the MSI installer also.
+
 Version 2.5.0.98
-- Fix again that drum panel was misaligned
+- Fix again that drum panel was still misaligned by 4 pixels.
 
 Version 2.5.0.97
 - Fix that drum panel was misaligned
@@ -69,7 +72,7 @@ Version 2.5.0.95
     if you trust it, use it. If you don't, don't use it. Don't blame me, I just choose it due to its versatility and popularity.
 - When starting Maestro with 32 bit Java, there will now pop up a warning.
 - Added heap memory usage to Maestro about dialog.
-    If you should run out of memory using 64 bit java, please supply me with the 2nd number (after starting it again) and the amount of RAM in your PC.
+    If you should run out of memory using 64 bit java, try use the bat files that came with the ZIP or double click the jars directly.
     The sign you are running out of memory is usually that the interface starts to get drawn weirdly and/or Maestro acts up.
 
 Version 2.5.0.94
