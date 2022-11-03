@@ -46,10 +46,12 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 Version 2.5.0.99
+- Fixed that when the midi had a track where ASCII control character(s) was used, it would save a project file that could not again be opened.
+    The project file saved is now xml v1.1 instead of v1.0, which allows reading of such chars.
+    If you have some old project files that you could save but not open again afterwards, just edit it and change 1.0 to 1.1 in the first line.
 - Added bat files to the MSI installer also.
 - Added German and French nicknames for instruments.
     Thanks to Brago and Thalvo for helping.
-- Fixed that when the midi had a track where the ASCII control character VERTICAL-TAB was used, it would save a project file that could not again be opened.
 
 Version 2.5.0.98
 - Fix again that drum panel was still misaligned by 4 pixels.

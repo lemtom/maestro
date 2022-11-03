@@ -241,10 +241,10 @@ public class TrackInfo implements MidiConstants
 								&& !tmp.equalsIgnoreCase("WinJammer Demo")) {
 							//System.out.println("Starts with @ "+data[0]+" "+(data[0] & 0xFF));
 							
-							String pattern = "\u000B";// Vertical tab in unicode
+							/*String pattern = "\u000B";// Vertical tab in unicode
 							Pattern r = Pattern.compile(pattern);
 						    Matcher match = r.matcher(tmp);
-						    tmp = match.replaceAll(" ");
+						    tmp = match.replaceAll(" ");*/
 							
 							name = tmp;
 						}
