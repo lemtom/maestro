@@ -42,7 +42,7 @@ public enum LotroInstrument
 	BASIC_THEORBO            ( "Basic Theorbo",             false, MidiInstrument.ACOUSTIC_BASS,       -1,      false,   -12.0f, "Theorbo", "Theo", "Bass", "theorbe", "théorbe"),
 	TRAVELLERS_TRUSTY_FIDDLE ( "Traveller's Trusty Fiddle", false, MidiInstrument.PIZZICATO_STRINGS,    1,      false,    -3.0f, "Travell?er'?s? (Trusty)? Fiddle", "Trusty Fiddle", "TT Fiddle", "violon (de)? voyageur"),
 
-	BARDIC_FIDDLE            ( "Bardic Fiddle",              true, MidiInstrument.VIOLIN,               1,      false,     6.0f, "Fiddle", "Violin", "Barden-?Geige", "violon de barde"),
+	BARDIC_FIDDLE            ( "Bardic Fiddle",              true, MidiInstrument.VIOLIN,               1,      false,     6.0f, "Fiddle", "Violin", "Barden-?Geige", "violon (de)? barde"),
 	BASIC_FIDDLE             ( "Basic Fiddle",               true, MidiInstrument.VIOLA,                1,      false,     6.25f, "Violon (de)? base"),
 	LONELY_MOUNTAIN_FIDDLE   ( "Lonely Mountain Fiddle",     true, MidiInstrument.SYNTH_STRING_2,       1,      false,     5.5f, "Lonely Fiddle", "LM Fiddle", "LM fidel", "LM geige", "Violon (du)? Mont solitaire"),
 	SPRIGHTLY_FIDDLE         ( "Sprightly Fiddle",          false, MidiInstrument.FIDDLE,               1,      false,   -10.0f, "Muntere Geige", "Violon alerte"),

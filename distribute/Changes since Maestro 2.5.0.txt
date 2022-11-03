@@ -49,6 +49,7 @@ Version 2.5.0.99
 - Added bat files to the MSI installer also.
 - Added German and French nicknames for instruments.
     Thanks to Brago and Thalvo for helping.
+- Fixed that when the midi had a track where the ASCII control character VERTICAL-TAB was used, it would save a project file that could not again be opened.
 
 Version 2.5.0.98
 - Fix again that drum panel was still misaligned by 4 pixels.

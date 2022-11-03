@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -238,6 +240,12 @@ public class TrackInfo implements MidiConstants
 						if (tmp.length() > 0 && !tmp.equalsIgnoreCase("untitled")
 								&& !tmp.equalsIgnoreCase("WinJammer Demo")) {
 							//System.out.println("Starts with @ "+data[0]+" "+(data[0] & 0xFF));
+							
+							String pattern = "\u000B";// Vertical tab in unicode
+							Pattern r = Pattern.compile(pattern);
+						    Matcher match = r.matcher(tmp);
+						    tmp = match.replaceAll(" ");
+							
 							name = tmp;
 						}
 					}
