@@ -66,7 +66,7 @@ public class SequenceInfo implements MidiConstants
 	public static SequenceInfo fromMidi(File midiFile) throws InvalidMidiDataException, IOException, ParseException
 	{
 		MidiFileFormat midiFileFormat = MidiSystem.getMidiFileFormat(midiFile);
-		return new SequenceInfo(midiFile.getName(), MidiSystem.getSequence(midiFile), midiFileFormat.getType());
+		return new SequenceInfo(midiFile.getName(), ConvertPPQ.convert(MidiSystem.getSequence(midiFile)), midiFileFormat.getType());
 	}
 
 	public static SequenceInfo fromAbcParts(AbcExporter abcExporter, boolean useLotroInstruments)
