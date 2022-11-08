@@ -3,7 +3,6 @@ package com.digero.maestro.midi;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
 
 public class ConvertPPQ {
@@ -40,6 +39,17 @@ public class ConvertPPQ {
 		int multi = 1 << doubleTimes; // (int)Math.pow(2, doubleTimes);
 		
 		int newPPQ = origPPQ * multi;
+		
+		while (newPPQ > 3000) {
+			// Protection against too high PPQ
+			doubleTimes -= 1;
+			if (doubleTimes < 1) {
+				//System.out.println("PPQ  high  . Old="+origPPQ);
+				return orig;
+			}
+			multi = 1 << doubleTimes;
+			newPPQ = origPPQ * multi;
+		}
 			
 		//System.out.println("PPQ scaling. Old="+origPPQ+" New="+newPPQ);
 		

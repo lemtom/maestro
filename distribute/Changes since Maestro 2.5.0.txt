@@ -47,7 +47,7 @@ Maestro upgrades by Aifel of Laurelin
 ================
 Version 2.5.0.99
 - MIDIs with low time resolution that can not be halved many times, will now be PPQ upscaled when Maestro loads the MIDI.
-    If you have in the past exported ABCs where the timing sounded a bit off, it is recommended to re-export them from midi with this version.
+    If you have in the past exported ABCs where the timing sounded off, it is recommended to re-export them from midi with this version.
     For some midi with this issue, export were not affected though. And for some only normal rhythm was affected while swing was okay. And some opposite.
 - Fixed that when the midi had a track where ASCII control character(s) was used, it would save a project file that could not again be opened.
     The project file saved is now xml v1.1 instead of v1.0, which allows reading of such chars.
