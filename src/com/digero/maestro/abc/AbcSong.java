@@ -883,7 +883,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				}
 			}
 			//int partIndex = 0;
-			if (instrParts.size() > 1) {
+			if (instrParts.size() > 1) {// This is not super tight, as one or more of them might not have assigned any track. TODO.
 				int index = 1;
 				for (AbcPart part : instrParts) {
 					if (part.getEnabledTrackCount() == 0) {
