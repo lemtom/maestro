@@ -5,13 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.DefaultListModel;
@@ -37,7 +37,7 @@ import com.digero.common.util.Version;
 import com.digero.maestro.MaestroMain;
 import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
 import com.digero.maestro.abc.AbcSongEvent.AbcSongProperty;
-import com.digero.maestro.midi.NoteEvent;
+import com.digero.maestro.midi.SequenceDataCache;
 import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.midi.TrackInfo;
 import com.digero.maestro.util.FileResolver;
@@ -51,7 +51,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public static final String MSX_FILE_DESCRIPTION_PLURAL = MaestroMain.APP_NAME + " Songs";
 	public static final String MSX_FILE_EXTENSION_NO_DOT = "msx";
 	public static final String MSX_FILE_EXTENSION = "." + MSX_FILE_EXTENSION_NO_DOT;
-	public static final Version SONG_FILE_VERSION = new Version(1, 0, 99);
+	public static final Version SONG_FILE_VERSION = new Version(1, 0, 100);
 
 	private String title = "";
 	private String composer = "";
@@ -70,6 +70,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private boolean priorityActive = false;
 	private boolean skipSilenceAtStart = true;
 	//private boolean showPruned = false;
+	public TreeMap<Integer, TuneLine> tuneBars = null;
+	public boolean[] tuneBarsModified = null;
 
 	private final boolean fromAbcFile;
 	private final boolean fromXmlFile;
@@ -101,7 +103,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		String fileName = file.getName().toLowerCase();
 		fromXmlFile = fileName.endsWith(MSX_FILE_EXTENSION);
 		fromAbcFile = fileName.endsWith(".abc") || fileName.endsWith(".txt");
-
+		
 		if (fromXmlFile)
 			initFromXml(file, fileResolver);
 		else if (fromAbcFile)
@@ -126,6 +128,9 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				part.discard();
 		}
 		parts.clear();
+		
+		tuneBarsModified = null;
+		tuneBars = null;
 		
 		/*if (sequenceInfo != null) {
 			// Make life easier for Garbage Collector
@@ -299,6 +304,33 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			mixTiming = SaveUtil.parseValue(songEle, "exportSettings/@mixTiming", false);// default false as old projects did not have that available. This means for old project with source abc that was exported with mix timings, the project will decide and it will be false.
 			priorityActive = SaveUtil.parseValue(songEle, "exportSettings/@combinePriorities", false);
 
+			int lastEnd = 0;
+			for (Element tuneEle : XmlUtil.selectElements(songEle, "tuneSection")) {
+				TuneLine tl = new TuneLine();
+				tl.startBar = SaveUtil.parseValue(tuneEle, "startBar", 0);
+				tl.endBar = SaveUtil.parseValue(tuneEle, "endBar", 0);
+				tl.seminoteStep = SaveUtil.parseValue(tuneEle, "seminoteStep", 0);
+				tl.tempo = SaveUtil.parseValue(tuneEle, "tempoChange", 0);
+				tl.dialogLine = SaveUtil.parseValue(tuneEle, "dialogLine", -1);
+				if (tl.startBar > 0 && tl.endBar >= tl.startBar) {
+					if (tuneBars == null) {
+						tuneBars = new TreeMap<Integer, TuneLine>();
+					}
+					if (tl.endBar > lastEnd) {
+						lastEnd = tl.endBar;
+					}
+					tuneBars.put(tl.startBar, tl);
+				}
+			}
+			boolean[] booleanArray = new boolean[lastEnd+1];
+			if (tuneBars != null) {
+				for(int i = 0; i<lastEnd+1; i++) {
+					Entry<Integer, TuneLine> entry = tuneBars.floorEntry(i+1);
+					booleanArray[i] = entry != null && entry.getValue().startBar <= i+1 && entry.getValue().endBar >= i+1;
+				}
+				tuneBarsModified = booleanArray;
+			}
+			
 			for (Element ele : XmlUtil.selectElements(songEle, "part"))
 			{
 				AbcPart part = AbcPart.loadFromXml(this, ele, fileVersion);
@@ -373,6 +405,17 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				songEle.appendChild(exportSettingsEle);
 		}
 
+		if (tuneBars != null && tuneBarsModified != null) {
+			for (TuneLine tuneLine : tuneBars.values()) {
+				Element tuneEle = (Element) songEle.appendChild(doc.createElement("tuneSection"));
+				SaveUtil.appendChildTextElement(tuneEle, "startBar", String.valueOf(tuneLine.startBar));
+				SaveUtil.appendChildTextElement(tuneEle, "endBar", String.valueOf(tuneLine.endBar));
+				SaveUtil.appendChildTextElement(tuneEle, "seminoteStep", String.valueOf(tuneLine.seminoteStep));
+				SaveUtil.appendChildTextElement(tuneEle, "tempoChange", String.valueOf(tuneLine.tempo));
+				SaveUtil.appendChildTextElement(tuneEle, "dialogLine", String.valueOf(tuneLine.dialogLine));
+			}
+		}
+		
 		for (AbcPart part : parts)
 		{
 			part.saveToXml((Element) songEle.appendChild(doc.createElement("part")));
@@ -839,7 +882,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 					instrParts.add(part);
 				}
 			}
-			int partIndex = 0;
+			//int partIndex = 0;
 			if (instrParts.size() > 1) {
 				int index = 1;
 				for (AbcPart part : instrParts) {
@@ -877,4 +920,93 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			fireChangeEvent(AbcSongProperty.MIX_TIMING_COMBINE_PRIORITIES);
 		}
 	}
+
+	public void tuneEdited() {
+		mixDirty = true; // Tempo might have changed, in which case the mixTimings need to be recomputed
+		fireChangeEvent(AbcSongProperty.TUNE_EDIT);
+	}
+	
+	public int getTuneTranspose(long tickStart) {
+		int tuneTrans = 0;
+		SequenceInfo se = getSequenceInfo();
+		TreeMap<Integer, TuneLine> tree = tuneBars;
+		if (se != null && tree != null) {
+			SequenceDataCache data = se.getDataCache();
+			long barLengthTicks = data.getBarLengthTicks();
+
+			long startTick = barLengthTicks;
+			long endTick = data.getSongLengthTicks();
+
+			int bar = -1;
+			int curBar = 1;
+			for (long barTick = startTick; barTick <= endTick+barLengthTicks; barTick += barLengthTicks) {
+				if (tickStart < barTick) {
+					bar = curBar;
+					break;
+				}
+				curBar += 1;
+			}
+			if (bar != -1) {
+				Entry<Integer, TuneLine> entry = tree.floorEntry(bar);
+				if (entry != null) {
+					if (bar <= entry.getValue().endBar) {
+						tuneTrans = entry.getValue().seminoteStep;
+					}
+				}
+			}
+		}		
+		return tuneTrans;
+	}
+	
+	public TreeMap<Long, Integer> getTuneTempoChanges() {
+		SequenceInfo se = getSequenceInfo();
+		TreeMap<Integer, TuneLine> tree = tuneBars;
+		TreeMap<Long, Integer> treeChanges = new TreeMap<Long, Integer>();
+		if (se != null && tree != null) {
+			SequenceDataCache data = se.getDataCache();
+			Collection<TuneLine> lines = tree.values();
+			long barLength = data.getBarLengthTicks();
+			for (TuneLine line : lines) {
+				if (line.tempo != 0) {
+					long tickStart = data.getBarToTick(line.startBar);
+					long tickEnd = data.getBarToTick(line.endBar)+barLength;
+					treeChanges.put(tickStart, line.tempo);
+					treeChanges.put(tickEnd, 0);
+				}
+			}
+		}
+		return treeChanges;
+	}
+
+	/*public boolean isKept(long tickStart) {
+		SequenceInfo se = getSequenceInfo();
+		TreeMap<Integer, TuneLine> tree = tuneBars;
+		if (se != null && tree != null) {
+			SequenceDataCache data = se.getDataCache();
+			long barLengthTicks = data.getBarLengthTicks();
+
+			long startTick = barLengthTicks;
+			long endTick = data.getSongLengthTicks();
+
+			int bar = -1;
+			int curBar = 1;
+			for (long barTick = startTick; barTick <= endTick+barLengthTicks; barTick += barLengthTicks) {
+				if (tickStart < barTick) {
+					bar = curBar;
+					break;
+				}
+				curBar += 1;
+			}
+			if (bar != -1) {
+				Entry<Integer, TuneLine> entry = tree.floorEntry(bar);
+				if (entry != null) {
+					if (bar <= entry.getValue().endBar) {
+						return !entry.getValue().remove;
+					}
+				}
+			}
+		}
+		
+		return true;
+	}*/
 }

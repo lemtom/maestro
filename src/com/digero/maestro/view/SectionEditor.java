@@ -30,11 +30,11 @@ import info.clearthought.layout.TableLayoutConstants;
 public class SectionEditor {
 	
 	protected static Point lastLocation = new Point(0,0);
-	private static final int numberOfSections = 10;
-	private static boolean clipboardArmed = false;
-	private static String[] clipboardStart = new String[numberOfSections];
-	private static String[] clipboardEnd = new String[numberOfSections];
-	private static boolean[] clipboardEnabled = new boolean[numberOfSections];
+	static final int numberOfSections = 10;
+	static boolean clipboardArmed = false;
+	static String[] clipboardStart = new String[numberOfSections];
+	static String[] clipboardEnd = new String[numberOfSections];
+	static boolean[] clipboardEnabled = new boolean[numberOfSections];
 
 	public static void show(JFrame jf, NoteGraph noteGraph, AbcPart abcPart, int track, final boolean percussion, final ArrayList<DrumPanel> dPanels) {
 		@SuppressWarnings("serial")

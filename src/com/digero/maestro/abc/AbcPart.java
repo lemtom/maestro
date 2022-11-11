@@ -801,7 +801,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	{
 		if (isDrumPart())
 			return 0;
-		return abcSong.getTranspose() + trackTranspose[track] - getInstrument().octaveDelta * 12 + getSectionTranspose(tickStart, track);
+		return abcSong.getTranspose() + abcSong.getTuneTranspose(tickStart) + trackTranspose[track] - getInstrument().octaveDelta * 12 + getSectionTranspose(tickStart, track);
 	}
 	
 	public int getSectionTranspose(long tickStart, int track) {

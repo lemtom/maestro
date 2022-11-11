@@ -398,6 +398,10 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		// tickResolution is in ticks per quarter note
 		return 4L * tickResolution * timeSignature.numerator / timeSignature.denominator;
 	}
+	
+	public long getBarToTick(int bar) {
+		return getBarLengthTicks()*(bar-1);
+	}
 
 	@Override public int tickToBarNumber(long tick)
 	{
@@ -425,7 +429,11 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 
 		public final int tempoMPQ;
 		public final long tick;
-		public final long micros;
+		public long micros;
+	}
+	
+	public TempoEvent getATempoEvent(int tempoMPQ, long startTick, long startMicros) {
+		return new TempoEvent(tempoMPQ, startTick, startMicros);
 	}
 
 	public TempoEvent getTempoEventForTick(long tick)

@@ -2,9 +2,11 @@ package com.digero.maestro.abc;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.TreeMap;
@@ -17,8 +19,10 @@ import com.digero.common.midi.TimeSignature;
 import com.digero.common.util.Util;
 import com.digero.maestro.midi.NoteEvent;
 import com.digero.maestro.midi.SequenceDataCache;
+import com.digero.maestro.midi.SequenceDataCache.TempoEvent;
 import com.digero.maestro.midi.SequenceInfo;
 import com.sun.media.sound.MidiUtils;
+import com.digero.common.midi.MidiConstants;
 
 public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 {
@@ -64,7 +68,55 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		 * an integral multiple of the previous event's MinNoteLengthTicks. This ensures that we can
 		 * split notes at each tempo change without creating a note that is shorter than
 		 * MinNoteLengthTicks. */
-		for (SequenceDataCache.TempoEvent sourceEvent : source.getDataCache().getTempoEvents().values())
+		Collection<SequenceDataCache.TempoEvent> origTempos = source.getDataCache().getTempoEvents().values();
+		
+		TreeMap<Long, Integer> changeTree = song.getTuneTempoChanges();
+		ArrayList<SequenceDataCache.TempoEvent> combinedTempos = new ArrayList<SequenceDataCache.TempoEvent>();
+		
+		for (SequenceDataCache.TempoEvent midiTempo : origTempos) {
+			long tick = midiTempo.tick;
+			Entry<Long, Integer> midiEntry = changeTree.floorEntry(tick);
+			if (midiEntry != null && midiEntry.getValue() != 0) {
+				int newTempo = (int) MidiUtils.convertTempo(Math.max(1.0d, MidiUtils.convertTempo(midiTempo.tempoMPQ) + midiEntry.getValue()));
+				SequenceDataCache.TempoEvent te = source.getDataCache().getATempoEvent(newTempo, midiTempo.tick, midiTempo.micros);
+				combinedTempos.add(te);
+			} else {
+				combinedTempos.add(source.getDataCache().getATempoEvent(midiTempo.tempoMPQ, midiTempo.tick, midiTempo.micros));
+			}
+		}
+		for (Entry<Long, Integer> tuneTempo : changeTree.entrySet()) {
+			long tick = tuneTempo.getKey();
+			SequenceDataCache.TempoEvent oldTempo = source.getDataCache().getTempoEvents().get(tick);
+			if (oldTempo == null) {
+				Entry<Long, TempoEvent> prevTempo = source.getDataCache().getTempoEvents().floorEntry(tick);
+				if (prevTempo != null) {
+					int mpq = prevTempo.getValue().tempoMPQ;
+					if (tuneTempo.getValue() != 0) {
+						mpq = (int) MidiUtils.convertTempo(Math.max(1.0d, MidiUtils.convertTempo(mpq) + tuneTempo.getValue()));
+					}
+					SequenceDataCache.TempoEvent te = source.getDataCache().getATempoEvent(mpq, tick, prevTempo.getValue().micros);
+					combinedTempos.add(te);
+				} else {
+					int mpq = MidiConstants.DEFAULT_TEMPO_MPQ;
+					mpq = (int) MidiUtils.convertTempo(Math.max(1.0d, MidiUtils.convertTempo(mpq) + tuneTempo.getValue()));
+					SequenceDataCache.TempoEvent te = source.getDataCache().getATempoEvent(mpq, tick, SequenceDataCache.TempoEvent.DEFAULT_TEMPO.micros);
+					combinedTempos.add(te);
+				}
+			}
+		}		
+		Comparator<SequenceDataCache.TempoEvent> rator = new Comparator<SequenceDataCache.TempoEvent>() {
+			@Override public int compare(TempoEvent o1, TempoEvent o2) {
+				if (o1.tick == o2.tick) {
+					return 0;
+				} else if (o1.tick > o2.tick) {
+					return 1;
+				}
+				return -1;
+			}
+		};
+		combinedTempos.sort(rator);
+		calcNewMicros(combinedTempos);
+		for (SequenceDataCache.TempoEvent sourceEvent : combinedTempos)
 		{
 			long tick = 0;
 			long micros = 0;
@@ -283,6 +335,38 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		//if (totalEven+totalSwing > 0) {
 		//	System.err.println("Mix Timing: "+(int)(100*totalSwing/(float)(totalEven+totalSwing))+"% of abc song is swing/triplet timing.");
 		//}
+	}
+
+	/**
+	 * Recalculate all the microseconds in the ABC timing events.
+	 * This will modify the TempoEvents, so make sure that you
+	 * do not send the original midi tempo events to this method.
+	 * 
+	 * @param combinedTempos Sorted list of tempo events
+	 */
+	private void calcNewMicros(ArrayList<TempoEvent> combinedTempos) {
+		int lastTempo = MidiConstants.DEFAULT_TEMPO_MPQ;
+		long lastTick = 0L;
+		long lastMicros = 0L;
+		if(!combinedTempos.isEmpty()) {
+			TempoEvent first = combinedTempos.get(0);
+			if (first.tick < 0L) {
+				// since the first is going to have negative micros from start
+				// those micros should be calced from its own tempo
+				lastTempo = first.tempoMPQ;
+			}
+		}
+		for (TempoEvent event : combinedTempos) {
+			if (event.tick == 0) {
+				event.micros = 0L;
+				continue;
+			}
+		    long newMicros = lastMicros + MidiUtils.ticks2microsec(event.tick-lastTick, lastTempo, tickResolution);
+		    event.micros = newMicros;
+		    lastTick   = event.tick;
+		    lastMicros = event.micros;
+		    lastTempo  = event.tempoMPQ;
+		}		
 	}
 
 	public int getPrimaryTempoMPQ()

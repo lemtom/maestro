@@ -173,6 +173,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 	private PartPanel partPanel;
 
+	private JButton tuneEditorButton;
 	static boolean abcPreviewMode = false;
 	private JToggleButton abcModeRadioButton;
 	private JToggleButton midiModeRadioButton;
@@ -856,10 +857,21 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				updateNoteCountLabel();
 			}
 		});
+		
+		tuneEditorButton = new JButton();
+		tuneEditorButton.setText("T");
+		tuneEditorButton.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				TuneEditor.show(ProjectFrame.this, abcSong);
+			}
+		});		
 
 		JPanel modeButtonPanel = new JPanel(new BorderLayout());
 		modeButtonPanel.add(midiModeRadioButton, BorderLayout.NORTH);
 		modeButtonPanel.add(abcModeRadioButton, BorderLayout.SOUTH);
+		//modeButtonPanel.add(tuneEditorButton, BorderLayout.WEST);
 
 		JPanel playButtonPanel = new JPanel(new TableLayout(//
 				new double[] { 0.5, 0.5 },//
@@ -880,10 +892,11 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		abcBarLabel.setVisible(!midiBarLabel.isVisible());
 
 		JPanel playControlPanel = new JPanel(new TableLayout(//
-				new double[] { 4, 0.50, 4, PREFERRED, 4, 0.25, 0.25, PREFERRED, PREFERRED, 4 },//
+				new double[] { PREFERRED, 0.50, 4, PREFERRED, 4, 0.25, 0.25, PREFERRED, PREFERRED, 4 },//
 				new double[] { PREFERRED, 4, PREFERRED }));
 		playControlPanel.add(playButtonPanel, "3, 0, 3, 2, C, C");
-		playControlPanel.add(modeButtonPanel, "1, 0, 1, 2, C, F");
+		playControlPanel.add(tuneEditorButton, "0, 0, 0, 2, L, C");
+		playControlPanel.add(modeButtonPanel, "1, 0, 1, 2, C, F");		
 		playControlPanel.add(volumePanel, "5, 0, 5, 2, C, C");
 		playControlPanel.add(stereoPanel, "6, 0, 6, 2, C, C");
 		playControlPanel.add(midiPositionLabel, "8, 0, R, B");
@@ -1528,6 +1541,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			genreLabel.setVisible(saveSettings.showBadger);
 			transposeSpinner.setEnabled(midiLoaded);
 			tempoSpinner.setEnabled(midiLoaded);
+			tuneEditorButton.setEnabled(midiLoaded);
+			if (midiLoaded && abcSong.tuneBars != null) {
+				tuneEditorButton.setForeground(new Color(0.2f, 0.8f, 0.2f));
+			} else if (midiLoaded) {
+				tuneEditorButton.setForeground(Color.black);
+			} else {
+				tuneEditorButton.setForeground(Color.gray);
+			}
 			resetTempoButton.setEnabled(midiLoaded && abcSong != null && abcSong.getTempoFactor() != 1.0f);
 			resetTempoButton.setVisible(resetTempoButton.isEnabled());
 			keySignatureField.setEnabled(midiLoaded);
@@ -1716,6 +1737,18 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				updateButtons(false);
 				maxNoteCountTotal = 0;
 				maxNoteCount = 0;
+				break;
+				
+			case TUNE_EDIT:
+				updateButtons(false);
+				if (partsList.getSelectedValue() != null) {
+					// We do this to show the tempo panel if tune editor has changed something
+					partPanel.tuneUpdated((AbcPart) partsList.getSelectedValue());
+				}
+				if (abcSequencer.isRunning())
+					refreshPreviewSequence(false);
+				else if (abcPreviewMode)
+					refreshPreviewSequence(false);
 				break;
 
 			case BEFORE_PART_REMOVED:

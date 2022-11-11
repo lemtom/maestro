@@ -18,6 +18,7 @@ import com.digero.common.midi.SequencerWrapper;
 import com.digero.common.util.IDiscardable;
 import com.digero.common.util.Listener;
 import com.digero.common.view.ColorTable;
+import com.digero.maestro.abc.AbcSong;
 import com.digero.maestro.midi.NoteEvent;
 import com.digero.maestro.midi.SequenceDataCache;
 import com.digero.maestro.midi.SequenceDataCache.TempoEvent;
@@ -52,11 +53,13 @@ public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 	private TempoNoteGraph tempoGraph;
 	private JLabel currentTempoLabel;
+	
+	private AbcSong abcSong;
 
-	public TempoPanel(SequenceInfo sequenceInfo, SequencerWrapper sequencer, SequencerWrapper abcSequencer)
+	public TempoPanel(SequenceInfo sequenceInfo, SequencerWrapper sequencer, SequencerWrapper abcSequencer, AbcSong abcSong)
 	{
 		super(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
-
+		this.abcSong = abcSong;
 		TableLayout tableLayout = (TableLayout) getLayout();
 		tableLayout.setHGap(TrackPanel.HGAP);
 
@@ -226,6 +229,13 @@ public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConst
 			if (events == null)
 				recalcTempoEvents();
 			return events;
+		}
+		
+		@Override protected boolean[] getSectionsModified() {
+			if (abcSong == null) {
+				return null;
+			}
+			return abcSong.tuneBarsModified;
 		}
 	}
 }

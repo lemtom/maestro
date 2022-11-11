@@ -45,6 +45,17 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.100
+- Added a Tune editor that allows setting tempo changes and seminote transposing for certain bars.
+    Works like Section Editor and copy/paste works from section editor too.
+    The button is marked "T" and will become green when edits has been made.
+    The tempo panel above the tracks will also show the edits with a dark green color. But neither
+    the tempo-lines or the tempo-indicator will change, it will still show the original tempo.
+    Beware of pitfalls:
+      Setting too high or too low tempo, might cause a popup warning that tempo at a certain points get beyond the limit.
+      If setting a high tempo, it might also pop up a warning that meter denominator is too high. If that happens, either
+      reduce the tempo again, or set the denominator to a lower value. For example if it was 4/4 then you can try 2/2 or 4/2.
+
 Version 2.5.0.99
 - MIDIs with low time resolution that can not be halved many times, will now be PPQ upscaled when Maestro loads the MIDI.
     If you have in the past exported ABCs where the timing sounded off, it is recommended to re-export them from midi with this version.

@@ -93,7 +93,7 @@ public class TimingInfo
 			if (meter.denominator > minNoteDivisor)
 			{
 				throw new AbcConversionException("The denominator of the meter must be no greater than "
-						+ minNoteDivisor);
+						+ minNoteDivisor + " at this tempo");
 			}
 
 			this.minNoteLengthTicks = minNoteTicks;

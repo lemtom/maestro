@@ -25,8 +25,9 @@ public class AbcSongEvent extends EventObject
 		MIX_TIMING, //
 		GENRE, //
 		MOOD, //
-		MIX_TIMING_COMBINE_PRIORITIES
+		MIX_TIMING_COMBINE_PRIORITIES,
 		//SHOW_PRUNED, //
+		TUNE_EDIT
 		;
 	}
 

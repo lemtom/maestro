@@ -265,9 +265,95 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 			clearTrackListPanel();
 
 			// Add the tempo panel if this song contains tempo changes
-			if (abcPart.getSequenceInfo().hasTempoChanges())
+			if (abcPart.getSequenceInfo().hasTempoChanges() || abcPart.getAbcSong().tuneBarsModified != null)
 			{
-				TempoPanel tempoPanel = new TempoPanel(abcPart.getSequenceInfo(), sequencer, abcSequencer);
+				TempoPanel tempoPanel = new TempoPanel(abcPart.getSequenceInfo(), sequencer, abcSequencer, abcPart.getAbcSong());
+				tempoPanel.setAbcPreviewMode(isAbcPreviewMode);
+				trackScrollPane.getVerticalScrollBar().setUnitIncrement(tempoPanel.getPreferredSize().height);
+				trackListVGroup.addComponent(tempoPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+						GroupLayout.PREFERRED_SIZE);
+				trackListHGroup.addComponent(tempoPanel);
+			}
+
+			for (TrackInfo track : abcPart.getSequenceInfo().getTrackList())
+			{
+				int trackNumber = track.getTrackNumber();
+				if (track.hasEvents())
+				{
+					TrackPanel trackPanel = new TrackPanel(track, sequencer, abcPart, abcSequencer);
+					trackPanel.setAbcPreviewMode(isAbcPreviewMode);
+					trackScrollPane.getVerticalScrollBar().setUnitIncrement(trackPanel.getPreferredSize().height);
+					trackListVGroup.addComponent(trackPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+							GroupLayout.PREFERRED_SIZE);
+					trackListHGroup.addComponent(trackPanel);
+
+					if (MUTE_DISABLED_TRACKS)
+						sequencer.setTrackMute(trackNumber, !abcPart.isTrackEnabled(trackNumber));
+				}
+
+				if (!MUTE_DISABLED_TRACKS)
+					sequencer.setTrackMute(trackNumber, false);
+
+				sequencer.setTrackSolo(trackNumber, false);
+			}
+		}
+
+		this.abcPart = abcPart;
+		if (this.abcPart != null)
+		{
+			this.abcPart.addAbcListener(abcPartListener);
+		}
+
+		updateTracksVisible();
+		validate();
+		repaint();
+	}
+	
+	public void tuneUpdated(AbcPart abcPart)
+	{
+		messageLabel.setVisible(false);
+
+		if (this.abcPart != null)
+		{
+			try
+			{
+				numberSpinner.commitEdit();
+			}
+			catch (ParseException e)
+			{
+			}
+			this.abcPart.removeAbcListener(abcPartListener);
+			this.abcPart = null;
+		}
+
+		if (abcPart == null)
+		{
+			numberSpinner.setEnabled(false);
+			nameTextField.setEnabled(false);
+			instrumentComboBox.setEnabled(false);
+
+			numberSpinner.setValue(0);
+			nameTextField.setText("");
+			instrumentComboBox.setSelectedItem(LotroInstrument.DEFAULT_INSTRUMENT);
+
+			clearTrackListPanel();
+		}
+		else
+		{
+			numberSpinner.setEnabled(true);
+			nameTextField.setEnabled(true);
+			instrumentComboBox.setEnabled(true);
+
+			numberSpinner.setValue(abcPart.getPartNumber());
+			nameTextField.setText(abcPart.getTitle());
+			instrumentComboBox.setSelectedItem(abcPart.getInstrument());
+
+			clearTrackListPanel();
+
+			// Add the tempo panel if this song contains tempo changes
+			if (abcPart.getSequenceInfo().hasTempoChanges() || abcPart.getAbcSong().tuneBarsModified != null)
+			{
+				TempoPanel tempoPanel = new TempoPanel(abcPart.getSequenceInfo(), sequencer, abcSequencer, abcPart.getAbcSong());
 				tempoPanel.setAbcPreviewMode(isAbcPreviewMode);
 				trackScrollPane.getVerticalScrollBar().setUnitIncrement(tempoPanel.getPreferredSize().height);
 				trackListVGroup.addComponent(tempoPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
