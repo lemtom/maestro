@@ -28,7 +28,7 @@ import info.clearthought.layout.TableLayoutConstants;
 
 public class TuneEditor {
 	
-	protected static Point lastLocation = new Point(100, 100);
+	private static Point lastLocation = new Point(100, 100);
 
 	public static void show(JFrame jf, AbcSong abcSong) {
 		@SuppressWarnings("serial")

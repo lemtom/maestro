@@ -31,7 +31,7 @@ import info.clearthought.layout.TableLayoutConstants;
 
 public class SectionEditor {
 	
-	protected static Point lastLocation = new Point(100,100);
+	private static Point lastLocation = new Point(100,100);
 	static final int numberOfSections = 10;
 	static boolean clipboardArmed = false;
 	static String[] clipboardStart = new String[numberOfSections];
