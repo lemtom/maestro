@@ -2,6 +2,7 @@ package com.digero.maestro.view;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -18,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -29,7 +31,7 @@ import info.clearthought.layout.TableLayoutConstants;
 
 public class SectionEditor {
 	
-	protected static Point lastLocation = new Point(0,0);
+	protected static Point lastLocation = new Point(100,100);
 	static final int numberOfSections = 10;
 	static boolean clipboardArmed = false;
 	static String[] clipboardStart = new String[numberOfSections];
@@ -68,8 +70,9 @@ public class SectionEditor {
 		            	SectionEditor.lastLocation = SectionDialog.this.getLocation();
 		            }
 		        });
-		        
-		        this.setSize(625,271+21*numberOfSections);
+		        int w = 625;
+		        int h = 271+21*numberOfSections;
+		        this.setSize(w,h);
 		        JPanel panel=new JPanel();
 		        
 		        LAYOUT_ROWS = new double[3+numberOfSections+1+10]; 
@@ -376,7 +379,17 @@ public class SectionEditor {
 		        panel.add(new JLabel("notes that is not covered by sections."), "7, "+(11+numberOfSections)+", 10," +(11+numberOfSections)+", c, c");
 		        
 		        this.getContentPane().add(panel);
-		        this.setLocation(SectionEditor.lastLocation);
+		        Window window = SwingUtilities.windowForComponent(this);
+		        if (window != null) {
+		        	// Lets keep the dialog inside the screen, in case the screen changed resolution since it was last popped up
+			        int maxX = window.getBounds().width - w;
+			        int maxY = window.getBounds().height - h;
+			        int x = Math.max(0, Math.min(maxX, SectionEditor.lastLocation.x));
+			        int y = Math.max(0, Math.min(maxY, SectionEditor.lastLocation.y));
+			        this.setLocation(new Point(x,y));
+		        } else {
+		        	this.setLocation(SectionEditor.lastLocation);
+		        }
 		        this.setVisible(true);
 		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }

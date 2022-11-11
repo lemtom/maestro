@@ -2,6 +2,7 @@ package com.digero.maestro.view;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -17,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import com.digero.maestro.abc.AbcSong;
 import com.digero.maestro.abc.TuneLine;
@@ -26,7 +28,7 @@ import info.clearthought.layout.TableLayoutConstants;
 
 public class TuneEditor {
 	
-	protected static Point lastLocation = new Point(0,0);
+	protected static Point lastLocation = new Point(100, 100);
 
 	public static void show(JFrame jf, AbcSong abcSong) {
 		@SuppressWarnings("serial")
@@ -53,7 +55,9 @@ public class TuneEditor {
 		            }
 		        });
 		        
-		        this.setSize(400,271+21*SectionEditor.numberOfSections);
+		        int w = 400;
+		        int h = 271+21*SectionEditor.numberOfSections;
+		        this.setSize(w,h);
 		        JPanel panel=new JPanel();
 		        
 		        LAYOUT_ROWS = new double[3+SectionEditor.numberOfSections+1+10]; 
@@ -256,9 +260,19 @@ public class TuneEditor {
 		        panel.add(warn3, "0," +(13+SectionEditor.numberOfSections)+", 4," +(13+SectionEditor.numberOfSections)+", c, c");
 		        
 		        this.getContentPane().add(panel);
-		        this.setLocation(TuneEditor.lastLocation);
+		        Window window = SwingUtilities.windowForComponent(this);
+		        if (window != null) {
+		        	// Lets keep the dialog inside the screen, in case the screen changed resolution since it was last popped up
+			        int maxX = window.getBounds().width - w;
+			        int maxY = window.getBounds().height - h;
+			        int x = Math.max(0, Math.min(maxX, TuneEditor.lastLocation.x));
+			        int y = Math.max(0, Math.min(maxY, TuneEditor.lastLocation.y));
+			        this.setLocation(new Point(x,y));
+		        } else {
+		        	this.setLocation(TuneEditor.lastLocation);
+		        }
 		        this.setVisible(true);
-		        this.setResizable(true);
+		        //this.setResizable(true);
 		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }
 		};
