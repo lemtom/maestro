@@ -2,7 +2,6 @@ package com.digero.common.midi;
 
 import java.util.Arrays;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;

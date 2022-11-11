@@ -40,6 +40,7 @@ import com.digero.maestro.midi.SequenceDataCache;
 import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.midi.TrackInfo;
 
+@SuppressWarnings("serial")
 public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDiscardable
 {
 	protected final SequencerWrapper sequencer;

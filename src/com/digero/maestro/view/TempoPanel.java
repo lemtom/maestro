@@ -25,6 +25,7 @@ import com.digero.maestro.midi.SequenceDataCache.TempoEvent;
 import com.digero.maestro.midi.SequenceInfo;
 import com.sun.media.sound.MidiUtils;
 
+@SuppressWarnings("serial")
 public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConstants
 {
 	//     0           1              2               3

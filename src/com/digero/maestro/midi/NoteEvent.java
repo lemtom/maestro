@@ -22,13 +22,8 @@
 
 package com.digero.maestro.midi;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.Note;
-import com.digero.maestro.abc.AbcPart;
 
 public class NoteEvent implements Comparable<NoteEvent>
 {
