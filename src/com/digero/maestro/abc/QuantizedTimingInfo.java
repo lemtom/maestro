@@ -74,6 +74,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		ArrayList<SequenceDataCache.TempoEvent> combinedTempos = new ArrayList<SequenceDataCache.TempoEvent>();
 		
 		for (SequenceDataCache.TempoEvent midiTempo : origTempos) {
+			// Modify the orig midi tempos by tune editor amount
 			long tick = midiTempo.tick;
 			Entry<Long, Integer> midiEntry = changeTree.floorEntry(tick);
 			if (midiEntry != null && midiEntry.getValue() != 0) {
@@ -85,6 +86,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 			}
 		}
 		for (Entry<Long, Integer> tuneTempo : changeTree.entrySet()) {
+			// Add in tune editor tempo changes where there was not a midi tempo change
 			long tick = tuneTempo.getKey();
 			SequenceDataCache.TempoEvent oldTempo = source.getDataCache().getTempoEvents().get(tick);
 			if (oldTempo == null) {
@@ -98,7 +100,9 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 					combinedTempos.add(te);
 				} else {
 					int mpq = MidiConstants.DEFAULT_TEMPO_MPQ;
-					mpq = (int) MidiUtils.convertTempo(Math.max(1.0d, MidiUtils.convertTempo(mpq) + tuneTempo.getValue()));
+					if (tuneTempo.getValue() != 0) {
+						mpq = (int) MidiUtils.convertTempo(Math.max(1.0d, MidiUtils.convertTempo(mpq) + tuneTempo.getValue()));
+					}
 					SequenceDataCache.TempoEvent te = source.getDataCache().getATempoEvent(mpq, tick, SequenceDataCache.TempoEvent.DEFAULT_TEMPO.micros);
 					combinedTempos.add(te);
 				}
