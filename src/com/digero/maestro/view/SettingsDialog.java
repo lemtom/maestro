@@ -12,6 +12,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -34,6 +36,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import com.digero.common.abc.LotroInstrument;
+import com.digero.common.midi.NoteFilterSequencerWrapper;
+import com.digero.common.midi.SequencerWrapper;
 import com.digero.common.util.Util;
 import com.digero.maestro.abc.AbcMetadataSource;
 import com.digero.maestro.abc.AbcPartMetadataSource;
@@ -499,6 +503,47 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				allBadgerCheckBox.setEnabled(saveSettings.showBadger);
 			}
 		});
+		
+		final String defaultStr = "Default";
+		String preferredDevice = NoteFilterSequencerWrapper.prefs.get(NoteFilterSequencerWrapper.prefMIDISelect, null);
+		final JLabel deviceText = new JLabel("Preferred MIDI out device:");
+		final JComboBox deviceBox = new JComboBox();
+		deviceBox.setToolTipText("<html>Select preferred MIDI Device<br>"
+				+ "Will take effect next time a midi is loaded as source.</html>");
+		deviceBox.addItem(defaultStr);
+		Preferences prefsNode = NoteFilterSequencerWrapper.prefs.node(NoteFilterSequencerWrapper.prefMIDIHeader);
+		String[] keys = {};
+		try {
+			keys = prefsNode.keys();
+		} catch (BackingStoreException e1) {
+			//e1.printStackTrace();
+		}
+		for (String key : keys) {
+			deviceBox.addItem(key);
+		}
+		if (preferredDevice != null) {
+			deviceBox.setSelectedItem(preferredDevice);
+		} else {
+			deviceBox.setSelectedItem(defaultStr);
+		}
+		deviceBox.setEditable(false);
+		deviceBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				String s = (String) deviceBox.getSelectedItem();
+				if ("Default".equals(s)) {
+					NoteFilterSequencerWrapper.prefs.remove(NoteFilterSequencerWrapper.prefMIDISelect);
+				} else {
+					NoteFilterSequencerWrapper.prefs.put(NoteFilterSequencerWrapper.prefMIDISelect, s);
+				}
+				try {
+					NoteFilterSequencerWrapper.prefs.flush();
+				} catch (BackingStoreException e1) {
+					//e1.printStackTrace();
+				}
+			}
+		});
 
 		TableLayout layout = new TableLayout();
 		layout.insertColumn(0, FILL);
@@ -523,6 +568,11 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		
 		layout.insertRow(++row, PREFERRED);
 		panel.add(allBadgerCheckBox, "0, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(deviceText, "0, " + row);
+		layout.insertRow(++row, PREFERRED);
+		panel.add(deviceBox, "0, " + row);
 
 		return panel;
 	}
