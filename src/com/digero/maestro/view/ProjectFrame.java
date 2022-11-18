@@ -930,6 +930,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		flowP.add(noteButton);
 		playControlPanel.add(flowP, "7, 2, C, C");
 		
+		noteCountLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		noteCountLabel.setBorder(new EmptyBorder(0,0,0,20));//top,left,bottom,right
 		noteCountLabel.setToolTipText("<html>Number of simultanious notes<br>"
 				+ "that is playing.<br>"
@@ -1333,9 +1334,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		noteCountLabel.setVisible(saveSettings.showMaxPolyphony);
 		if (!saveSettings.showMaxPolyphony) {
 			return;
-		}		
-		maxNoteCount = LotroSequencerWrapper.getNoteCount();
-		maxNoteCountTotal = Math.max(maxNoteCountTotal, maxNoteCount);
+		}
+		if (midiModeRadioButton.isSelected()) {
+			maxNoteCount = 0;
+			maxNoteCountTotal = 0;
+		} else {
+			maxNoteCount = LotroSequencerWrapper.getNoteCount();
+			maxNoteCountTotal = Math.max(maxNoteCountTotal, maxNoteCount);
+		}
 		updateNoteCountLabel();
 	}
 	
@@ -1367,7 +1373,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			strAdd4 = "+</font>)</html>";
 		}
 		//System.err.println(strAdd1+strAdd2+strAdd3+strAdd4);
-		noteCountLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		
 		noteCountLabel.setText(strAdd1+strAdd2+strAdd3+strAdd4);
 	}
 
@@ -1502,6 +1508,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 			if (!hasAbcNotes)
 			{
+				maxNoteCountTotal = 0;
+				maxNoteCount = 0;
+				updateNoteCountLabel();
 				midiModeRadioButton.setSelected(true);
 				abcSequencer.setRunning(false);
 				updatePreviewMode(false);
@@ -2152,6 +2161,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			newSequencer.setRunning(running);
 
 			abcPreviewMode = newAbcPreviewMode;
+			
+			maxNoteCountTotal = 0;
+			maxNoteCount = 0;
+			updateNoteCountLabel();
 
 			partPanel.setAbcPreviewMode(abcPreviewMode);
 			updateButtons(false);
