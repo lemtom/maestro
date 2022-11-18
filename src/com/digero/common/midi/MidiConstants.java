@@ -11,6 +11,7 @@ public interface MidiConstants
 	public static final int META_TEMPO = 0x51;
 	public static final int META_TIME_SIGNATURE = 0x58;
 	public static final int META_KEY_SIGNATURE = 0x59;
+	public static final int META_PORT_CHANGE = 0x21;
 
 	public static final byte CHANNEL_VOLUME_CONTROLLER_COARSE = 0x07;
 	public static final byte CHANNEL_VOLUME_CONTROLLER_FINE = 0x27;
@@ -27,6 +28,7 @@ public interface MidiConstants
 
 	public static final int DRUM_CHANNEL = 9;
 	public static final int CHANNEL_COUNT = 16;
+	public static final int PORT_COUNT = 16;
 	public static final int LOWEST_NOTE_ID = 0;
 	public static final int HIGHEST_NOTE_ID = 127;
 	public static final int NOTE_COUNT = HIGHEST_NOTE_ID - LOWEST_NOTE_ID + 1;

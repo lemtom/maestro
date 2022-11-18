@@ -51,6 +51,7 @@ public class SequenceInfo implements MidiConstants
 	private static ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches = null;//Which channel/tick GM2 switches to drums outside of designated drum channels
 	private int primaryTempoMPQ;
 	private final List<TrackInfo> trackInfoList;
+	private TreeMap<Integer, Integer> portMap = new TreeMap<Integer, Integer>();
 
 	public static SequenceInfo fromAbc(AbcToMidi.Params params) throws InvalidMidiDataException, ParseException
 	{
@@ -97,13 +98,13 @@ public class SequenceInfo implements MidiConstants
 			throw new InvalidMidiDataException("The MIDI file doesn't have any tracks");
 		}
 
-		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumSwitches, yamahaDrumChannels, mmaDrumSwitches);
+		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumSwitches, yamahaDrumChannels, mmaDrumSwitches, portMap);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
 		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(tracks.length);
 		for (int i = 0; i < tracks.length; i++)
 		{
-			trackInfoList.add(new TrackInfo(this, tracks[i], i, sequenceCache, sequenceCache.isXGDrumsTrack(i), sequenceCache.isGSDrumsTrack(i), wasType0, sequenceCache.isDrumsTrack(i), sequenceCache.isGM2DrumsTrack(i)));
+			trackInfoList.add(new TrackInfo(this, tracks[i], i, sequenceCache, sequenceCache.isXGDrumsTrack(i), sequenceCache.isGSDrumsTrack(i), wasType0, sequenceCache.isDrumsTrack(i), sequenceCache.isGM2DrumsTrack(i), portMap));
 		}
 
 		composer = "";
@@ -139,7 +140,7 @@ public class SequenceInfo implements MidiConstants
 		Pair<List<ExportTrackInfo>, Sequence> result = abcExporter.exportToPreview(useLotroInstruments);
 
 		sequence = result.second;
-		sequenceCache = new SequenceDataCache(sequence, standard, null, null, null, null);
+		sequenceCache = new SequenceDataCache(sequence, standard, null, null, null, null, portMap);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
 		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(result.first.size());

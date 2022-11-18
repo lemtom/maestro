@@ -38,7 +38,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private final long songLengthTicks;
 	private final static int NO_RESULT = -250;
 
-	private MapByChannel instruments = new MapByChannel(DEFAULT_INSTRUMENT);
+	private MapByChannelPort instruments = new MapByChannelPort(DEFAULT_INSTRUMENT);
 	private MapByChannel volume = new MapByChannel(DEFAULT_CHANNEL_VOLUME);
 	private MapByChannel pitchBendCoarse = new MapByChannel(DEFAULT_PITCH_BEND_RANGE_SEMITONES);
 	private MapByChannel pitchBendFine = new MapByChannel(DEFAULT_PITCH_BEND_RANGE_CENTS);
@@ -50,7 +50,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private boolean[] rolandDrumChannels = null;
 	private boolean[] yamahaDrumChannels = null;
 
-	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean[] yamahaDrumChannels, ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches)
+	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean[] yamahaDrumChannels, ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches, TreeMap<Integer, Integer> portMap)
 	{
 		Map<Integer, Long> tempoLengths = new HashMap<Integer, Long>();
 		
@@ -83,6 +83,33 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		 * 
 		 */		
 		Track[] tracks = song.getTracks();
+		for (int iiTrack = 0; iiTrack < tracks.length; iiTrack++)
+		{
+			Track track = tracks[iiTrack];
+			int port = 0;
+			portMap.put(iiTrack, port);
+			
+			for (int jj = 0, sz1 = track.size(); jj < sz1; jj++)
+			{
+				MidiEvent evt = track.get(jj);
+				MidiMessage msg = evt.getMessage();
+				long tick = evt.getTick();
+				if (msg instanceof MetaMessage)
+				{
+					MetaMessage m = (MetaMessage) msg;
+					if (m.getType() == META_PORT_CHANGE)	{						
+						byte[] portChange = m.getData();
+						if (portChange.length == 1 && tick == 0) {
+							// Support for (non-midi-standard) port assignments used by Cakewalk and Musescore. 
+							// We only support this for GM, and only super well-formed (tick == 0).
+							port = (int) portChange[0];
+							//System.out.println("Port change on track "+iiTrack+"  tick "+tick+"  port "+formatBytes(portChange));
+							portMap.put(iiTrack, port);
+						}
+					}
+				}
+			}
+		}
 		long lastTick = 0;
 		for (int iTrack = 0; iTrack < tracks.length; iTrack++)
 		{
@@ -121,7 +148,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 								&& (standard != "XG" || yamahaDrumSwitches == null || yamahaDrumSwitches.get(ch).floorEntry(tick) == null || yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == false)
 								&& (standard != "GM2" || mmaDrumSwitches == null || mmaDrumSwitches.get(ch).floorEntry(tick) == null || mmaDrumSwitches.get(ch).floorEntry(tick).getValue() == false))
 						{
-							instruments.put(ch, tick, m.getData1());
+							instruments.put(portMap.get(iTrack), ch, tick, m.getData1());
 						}
 						mapPatch.put(ch, tick, m.getData1());
 					}
@@ -258,6 +285,19 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		songLengthTicks = lastTick;
 	}
 	
+	private String formatBytes(byte[] portChange) {
+		String str = "";
+		for (byte by : portChange) {
+			str += (int)by + " ";
+		}
+		StringBuilder sb = new StringBuilder();
+	    for (byte b : portChange) {
+	        sb.append(String.format("%02X ", b));
+	    }				    				    
+	    str += "[ "+sb.toString()+"]";
+		return str;
+	}
+
 	public boolean isXGDrumsTrack (int track) {
 		if (track >= brandDrumBanks.length) return false;
 		return brandDrumBanks[track] == 1;
@@ -278,9 +318,9 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		return brandDrumBanks[track] == 4;
 	}
 
-	public int getInstrument(int channel, long tick)
+	public int getInstrument(int port, int channel, long tick)
 	{
-		return instruments.get(channel, tick);
+		return instruments.get(port, channel, tick);
 	}
 	
 	public String getInstrumentExt(int channel, long tick, boolean drumKit)
@@ -504,5 +544,57 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 
 			return entry.getKey();
 		}
+	}
+	
+	/**
+	 * Map by channel
+	 */
+	private static class MapByChannelPort
+	{
+		private NavigableMap<Long, Integer>[][] map;
+		private int defaultValue;
+
+		@SuppressWarnings("unchecked")//
+		public MapByChannelPort(int defaultValue)
+		{
+			map = new NavigableMap[PORT_COUNT][CHANNEL_COUNT];
+			this.defaultValue = defaultValue;
+		}
+
+		public void put(int port, int channel, long tick, Integer value)
+		{
+			if (map[port][channel] == null)
+				map[port][channel] = new TreeMap<Long, Integer>();
+
+			map[port][channel].put(tick, value);
+		}
+
+		public int get(int port, int channel, long tick)
+		{
+			if (map[port][channel] == null)
+				return defaultValue;
+
+			Entry<Long, Integer> entry = map[port][channel].floorEntry(tick);
+			if (entry == null) // No changes before this tick
+				return defaultValue;
+
+			return entry.getValue();
+		}
+		
+		public long getEntryTick(int port, int channel, long tick)
+		{
+			if (map[port][channel] == null)
+				return NO_RESULT;
+
+			Entry<Long, Integer> entry = map[port][channel].floorEntry(tick);
+			if (entry == null) // No changes before this tick
+				return NO_RESULT;
+
+			return entry.getKey();
+		}
+	}
+	
+	public boolean isGM () {
+		return "GM".equals(standard);
 	}
 }

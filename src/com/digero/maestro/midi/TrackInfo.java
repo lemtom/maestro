@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -45,7 +46,7 @@ public class TrackInfo implements MidiConstants
 	private final int maxVelocity;
 	
 	@SuppressWarnings("unchecked")//
-	TrackInfo(SequenceInfo parent, Track track, int trackNumber, SequenceDataCache sequenceCache, boolean isXGDrumTrack, boolean isGSDrumTrack, boolean wasType0, boolean isDrumsTrack, boolean isGM2DrumTrack)
+	TrackInfo(SequenceInfo parent, Track track, int trackNumber, SequenceDataCache sequenceCache, boolean isXGDrumTrack, boolean isGSDrumTrack, boolean wasType0, boolean isDrumsTrack, boolean isGM2DrumTrack, TreeMap<Integer, Integer> portMap)
 			throws InvalidMidiDataException
 	{
 		this.sequenceInfo = parent;
@@ -167,7 +168,7 @@ public class TrackInfo implements MidiConstants
 
 						if (!isDrumTrack)
 						{
-							instruments.add(sequenceCache.getInstrument(c, tick));
+							instruments.add(sequenceCache.getInstrument(portMap.get(trackNumber), c, tick));
 							instrumentExtensions.add(sequenceCache.getInstrumentExt(c, tick, isDrumTrack));
 						} else if (isXGDrumTrack || isGSDrumTrack || isGM2DrumTrack) {
 							String ins = sequenceCache.getInstrumentExt(c, tick, isDrumTrack);
@@ -438,15 +439,17 @@ public class TrackInfo implements MidiConstants
 		String names = "";
 		boolean first = true;
 		
-		for (String i : instrumentExtensions)
-		{
-			if (i == null) break;
-			if (!first)
-				names += ", ";
-			else
-				first = false;
-
-			names += i;
+		if (!isGM()) {// Due to Maestro only supporting port assignments for GM, we make sure to use the GM instr. names for GM. 
+			for (String i : instrumentExtensions)
+			{
+				if (i == null) break;
+				if (!first)
+					names += ", ";
+				else
+					first = false;
+	
+				names += i;
+			}
 		}
 		if (names.isEmpty()) {
 			first = true;		
@@ -462,6 +465,10 @@ public class TrackInfo implements MidiConstants
 		}
 
 		return names;
+	}
+	
+	private boolean isGM() {
+		return sequenceInfo.getDataCache().isGM();
 	}
 
 	public int getInstrumentCount()
