@@ -46,11 +46,12 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 Maestro upgrades by Aifel of Laurelin
 ================
 Version 2.5.0.101
+- Made sure polyphony counter gets reset when switching to original preview.
+- Added option to choose MIDI playback device.
+    If a device is selected but no longer connected, default will do the playback.
 - Added support for ports (which is not a part of the midi standard).
     Programs such as Cakewalk and Musescore export those kind of midi.
-    Maestro still wont playback the midi correct, but at least the tracks instrument names should now be correct.
-    The playback wont be fixed, as Maestro uses Windows MIDI system to playback, which does not support ports.
-    Thanks to Jersiel for alerting me to the issue. 
+    Maestro default midi device still wont playback the midi correct, but at least the tracks instrument names should now be correct.
 
 Version 2.5.0.100
 - Added a Tune editor that allows setting tempo changes and seminote transposing for certain bars.
