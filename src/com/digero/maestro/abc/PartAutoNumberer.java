@@ -242,6 +242,10 @@ public class PartAutoNumberer
 		if (parts == null)
 			return;
 
+		if (!isAutoAssigned(partDeleted)) {
+			return;
+		}
+		
 		for (NumberedAbcPart part : parts)
 		{
 			int partNumber = part.getPartNumber();
@@ -249,11 +253,43 @@ public class PartAutoNumberer
 			int partFirstNumber = getFirstNumber(part.getInstrument());
 			int deletedFirstNumber = getFirstNumber(partDeleted.getInstrument());
 			if (part != partDeleted && partNumber > deletedNumber && partNumber > partFirstNumber
-					&& partFirstNumber == deletedFirstNumber)
+					&& partFirstNumber == deletedFirstNumber && isAutoAssigned(part))
 			{
 				part.setPartNumber(partNumber - getIncrement());
 			}
 		}
+	}
+	
+	private boolean isAutoAssigned(NumberedAbcPart testPart) {
+		// Return true if this part fit into the auto numbering scheme.
+		// If it does not or a part with lower part number has a different firstNumber,
+		// but seemingly fit into this parts numbering scheme
+		// it will also return false.
+		int testNumber = testPart.getPartNumber();
+		int testFirstNumber = getFirstNumber(testPart.getInstrument());
+		if (testNumber == testFirstNumber) return true;
+		if (getIncrement() == 10 && Math.abs(testNumber) % 10 != testFirstNumber) {
+			return false;
+		}
+		if (testNumber < testFirstNumber) return false;
+		boolean cohesive = true;
+		int checkNumber = testFirstNumber;
+		while(cohesive && checkNumber < testNumber) {
+			for (NumberedAbcPart part : parts)
+			{
+				int partNumber = part.getPartNumber();
+				
+				if (checkNumber == partNumber) {
+					if (testFirstNumber != getFirstNumber(part.getInstrument())) {
+						return false;
+					}
+					checkNumber += getIncrement();
+					break;
+				}
+			}
+			cohesive = false;
+		}
+		return cohesive;
 	}
 
 	public void setPartNumber(NumberedAbcPart partToChange, int newPartNumber)

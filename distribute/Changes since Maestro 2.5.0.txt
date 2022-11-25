@@ -45,6 +45,10 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.102
+- When manually changing a part number so that the numbering scheme no longer applies for 1 or more parts,
+    those parts will not be auto assigned new numbers but will keep their numbers. 
+
 Version 2.5.0.101
 - Made sure polyphony counter gets reset when switching to original preview.
 - Added option to choose MIDI playback device.
