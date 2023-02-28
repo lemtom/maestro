@@ -54,9 +54,9 @@ public class TuneEditor {
 		            	TuneEditor.lastLocation = TuneDialog.this.getLocation();
 		            }
 		        });
-		        
+		        int rowHeight = 16;
 		        int w = 400;
-		        int h = 271+21*SectionEditor.numberOfSections;
+		        int h = 153+(rowHeight+0)*SectionEditor.numberOfSections;
 		        this.setSize(w,h);
 		        JPanel panel=new JPanel();
 		        
@@ -65,11 +65,12 @@ public class TuneEditor {
 		        LAYOUT_ROWS[1] = 20;
 		        LAYOUT_ROWS[2] = TableLayoutConstants.PREFERRED;
 		        for (int l = 0;l<SectionEditor.numberOfSections;l++) {
-		        	LAYOUT_ROWS[3+l] = TableLayoutConstants.PREFERRED;		        	
+		        	LAYOUT_ROWS[3+l] = rowHeight;		        	
 		        }
 		        LAYOUT_ROWS[3+SectionEditor.numberOfSections] = TableLayoutConstants.PREFERRED;
 		        LAYOUT_ROWS[4+SectionEditor.numberOfSections] = TableLayoutConstants.PREFERRED;
 		        LAYOUT_ROWS[5+SectionEditor.numberOfSections] = TableLayoutConstants.FILL;
+		        /*
 		        LAYOUT_ROWS[6+SectionEditor.numberOfSections] = TableLayoutConstants.PREFERRED;
 		        LAYOUT_ROWS[7+SectionEditor.numberOfSections] = TableLayoutConstants.PREFERRED;
 		        LAYOUT_ROWS[8+SectionEditor.numberOfSections] = TableLayoutConstants.PREFERRED;
@@ -78,6 +79,7 @@ public class TuneEditor {
 		        LAYOUT_ROWS[11+SectionEditor.numberOfSections] = TableLayoutConstants.PREFERRED;
 		        LAYOUT_ROWS[12+SectionEditor.numberOfSections] = TableLayoutConstants.PREFERRED;
 		        LAYOUT_ROWS[13+SectionEditor.numberOfSections] = TableLayoutConstants.PREFERRED;
+		        */
 		        
 		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
 		        //panel.add(new JLabel("<html><b> " + abcSong.getTitle() + "</html>"), "0, 0, 6, 0, C, C");
@@ -179,6 +181,15 @@ public class TuneEditor {
 		        panel.add(pasteSections, "2,"+(3+SectionEditor.numberOfSections)+",2,"+(3+SectionEditor.numberOfSections)+",f,f");
 		        pasteSections.setEnabled(SectionEditor.clipboardArmed);
 		        
+		        JTextField help = new JTextField("Help");
+		        help.setEditable(false);
+		        help.setHorizontalAlignment(JTextField.CENTER);
+		        help.setToolTipText("<html><b>Enabled sections must have no overlap.<br>Bar numbers are inclusive and use original MIDI bars.<br>"
+		        		+ "No decimal numbers allowed, only whole numbers.<br>Bar numbers must be positive and greater than zero.<br>"
+		        		+ "Clicking APPLY will also disable faulty sections.<br><br>Warning: If 'Remove initial silence' is enabled or the<br>"
+		        		+ "meter is modified, then the bar counter in lower-right might<br>not match up, unless your preview mode is in 'Original'.</b></html>");
+		        panel.add(help, "4,"+(3+SectionEditor.numberOfSections)+", 4, "+(3+SectionEditor.numberOfSections)+",f,f");
+		        
 		        JButton okButton = new JButton("APPLY");
 		        okButton.addActionListener(new ActionListener() {
 		        	
@@ -243,6 +254,7 @@ public class TuneEditor {
 				});
 		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
 		        panel.add(okButton, "4,"+(4+SectionEditor.numberOfSections)+", 4, "+(4+SectionEditor.numberOfSections)+",f,f");
+		        /*
 		        panel.add(new JLabel("Enabled sections must have no overlap."), "0,"+(6+SectionEditor.numberOfSections)+", 4," +(6+SectionEditor.numberOfSections)+", c, c");
 		        panel.add(new JLabel("Bar numbers are inclusive and use original MIDI bars."), "0, "+(7+SectionEditor.numberOfSections)+", 4, "+(7+SectionEditor.numberOfSections)+", c, c");
 		        panel.add(new JLabel("No decimal numbers allowed, only whole numbers."), "0, "+(8+SectionEditor.numberOfSections)+", 4," +(8+SectionEditor.numberOfSections)+", c, c");
@@ -258,7 +270,7 @@ public class TuneEditor {
 		        panel.add(warn1, "0," +(11+SectionEditor.numberOfSections)+", 4," +(11+SectionEditor.numberOfSections)+", c, c");
 		        panel.add(warn2, "0," +(12+SectionEditor.numberOfSections)+", 4," +(12+SectionEditor.numberOfSections)+", c, c");
 		        panel.add(warn3, "0," +(13+SectionEditor.numberOfSections)+", 4," +(13+SectionEditor.numberOfSections)+", c, c");
-		        
+		        */
 		        this.getContentPane().add(panel);
 		        Window window = SwingUtilities.windowForComponent(this);
 		        if (window != null) {
