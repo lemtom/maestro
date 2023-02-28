@@ -860,6 +860,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		
 		tuneEditorButton = new JButton();
 		tuneEditorButton.setText("T");
+		tuneEditorButton.setToolTipText("<html><b> Tune Editor </b><br> Edit the tempo or key in specific sections </html>");
 		tuneEditorButton.addActionListener(new ActionListener()
 		{
 			@Override public void actionPerformed(ActionEvent e)
