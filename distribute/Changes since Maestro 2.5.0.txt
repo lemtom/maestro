@@ -12,8 +12,8 @@ Install instruction (.zip)
 ===================
 0: Install Java (64 bit) from https://java.com
 1: Copy the content of this ZIP into a random new folder.
-2: Double click on Maestro.jar or AbcPlayer.jar to start.
-(3): Make a Windows shortcut to Maestro.jar and one for AbcPlayer.jar in the unzipped folder.
+2: Double click on Maestro.jar or AbcPlayer.jar to start. Or use the bat files.
+(3): Make a Windows shortcut to 'Start Maestro.bat' and one for 'Start AbcPlayer.bat' in the unzipped folder.
 
 
 Getting 32/64 bit Java
@@ -45,6 +45,12 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.104
+- Removed the exe files, it will now use the bat files instead.
+    This should solve the issue some users have experienced with running out of memory.
+    The first time you run Maestro or AbcPlayer, your firewall might ask you to allow Java to connect to network. You can allow or disallow, it does not use Internet, so either should work.
+      Technical explanation: It use ports locally for passing file path to already running program when opening files, hence why firewall asks.
+
 Version 2.5.0.103
 - Doubled the number of available sections in section-editor and tune-editor. Moved the help text into a tooltip, just hover mouse over 'Help'.
 
@@ -436,7 +442,7 @@ FAQ
 ===
 Will the upgraded Maestro .msx files load into old 2.5.0 Maestro?
 
-- Yes, but the section edits, Student FX, mix timing, Badger Chapter metainfo and delays will be ignored. Combi drum sounds will be silenced. And more than 15 parts wont be previewed.
+- Yes, but the section edits, tune edits, Student FX, mix timing, Badger Chapter metainfo and delays will be ignored. Combi drum sounds will be silenced. And more than 15 parts wont be previewed.
 
 
 Will these upgrades eventually be merged into Digero's code?
@@ -446,7 +452,7 @@ Will these upgrades eventually be merged into Digero's code?
 
 I get a crash, how can I find out what caused it?
 
-- Start Maestro from commandline with: java -jar -d64 Maestro.jar
+- Start Maestro from commandline with: java -d64 -jar Maestro.jar
   It should then output a stacktrace when crashing. If unsure on how to read it, just send to me.
 
 

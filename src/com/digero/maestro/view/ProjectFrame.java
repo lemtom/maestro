@@ -301,6 +301,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				{
 					setVisible(false);
 					dispose();
+					System.exit(0);
 				}
 			}
 		});

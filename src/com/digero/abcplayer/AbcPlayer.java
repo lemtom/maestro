@@ -24,11 +24,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -113,9 +116,12 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	private JMenu recentItems;
 	private Queue<String> recentQueue;
 	private int recentMaxItems = 11;
+	
+	private static ServerSocket serverSocket;
 
 	public static void main(String[] args)
 	{
+		
 		try
 		{
 			Properties props = new Properties();
@@ -126,6 +132,11 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		}
 		catch (IOException ex)
 		{
+		}
+		
+		if(!openPort()) {
+			sendArgsToPort(args);
+			return;
 		}
 
 		System.setProperty("sun.sound.useNewAudioEngine", "true");
@@ -2258,6 +2269,65 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		{
 			JOptionPane.showMessageDialog(this, e.getMessage(), "MIDI error", JOptionPane.ERROR_MESSAGE);
 			return;
+		}
+	}
+	
+	private static boolean openPort() {
+		
+		try {
+			serverSocket = new ServerSocket(9000+APP_VERSION.getBuild());
+			if (serverSocket == null) {
+				//System.out.println("Port is null");
+				return false;
+			}
+			if (serverSocket.getLocalPort() != 9000+APP_VERSION.getBuild()) {
+				//System.out.println("Port is "+serverSocket.getLocalPort());
+				return false;
+			}			
+		} catch (IOException e) {
+			//e.printStackTrace();
+			return false;
+		}
+		//System.out.println("Made port");
+		(new Thread() {
+			public void run() {
+				try {
+					while (true) {
+						Socket socket = serverSocket.accept();
+						//System.out.println("Accepted");
+				        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			        	//while (socket.isConnected()) {
+			        		String data = in.readLine();
+						
+			        		if (data != null) {
+			        			//System.out.println("Received "+data);
+			        			String[] datas = {data};
+			        			activate(datas);
+			        		} else {
+			        			//System.out.println("Received nothing");
+			        		}
+			        	//}
+			        	//socket.close();
+				    }
+			    } catch (IOException e) {
+			    	//e.printStackTrace();
+			    }
+			}
+		}).start();
+	    return true;
+	}
+	
+	private static void sendArgsToPort(final String[] args) {
+		try {
+			Socket clientSocket = new Socket("localhost", 9000+APP_VERSION.getBuild());
+			DataOutputStream os = new DataOutputStream(clientSocket.getOutputStream());
+			//for (String arg : args) {
+				os.writeBytes(args[0]);
+				//System.out.println("Wrote "+args[0]+" to 8002");
+			//}
+			clientSocket.close();
+		} catch (IOException e) {
+			//e.printStackTrace();
 		}
 	}
 }
