@@ -575,20 +575,29 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 			boolean[] barArray = getSectionsModified();
 			long barCount = data.microsToTick(clipPosStart) / barLengthTicks-1;
 			long barMicros = clipPosStart;
+			boolean barEdited = false;
 			for (long barTick = firstBarTick; barTick <= lastBarTick + barLengthTicks; barTick += barLengthTicks)
 			{
+				barEdited = false;
 				long barTempMicros = data.tickToMicros(barTick);
 				if (barArray != null && barCount < barArray.length && barCount > -1) {
 					if (barArray[(int)barCount]) {
 						rectTmp.setRect(barMicros+lineWidth, MIN_RENDERED - 1, barTempMicros-barMicros-lineWidth, MAX_RENDERED - MIN_RENDERED + 2);
 						g2.setColor(ColorTable.BAR_EDITED.get());
 						g2.fill(rectTmp);
+						barEdited = true;
 					}
 				}
 				barCount++;
 				barMicros = barTempMicros;
 				rectTmp.setRect(barMicros, MIN_RENDERED - 1, lineWidth, MAX_RENDERED - MIN_RENDERED + 2);
-				g2.setColor(ColorTable.BAR_LINE.get());
+				boolean barNextEdited = false;
+				if (barArray != null && barCount < barArray.length && barCount > -1) {
+					if (barArray[(int)barCount]) {
+						barNextEdited = true;
+					}
+				}
+				g2.setColor(barEdited && barNextEdited?ColorTable.BAR_LINE_EDITED.get():ColorTable.BAR_LINE.get());
 				g2.fill(rectTmp);
 			}
 		}

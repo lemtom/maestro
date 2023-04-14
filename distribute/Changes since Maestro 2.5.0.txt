@@ -45,6 +45,10 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.105
+- Made the bar lines inside edited sections be greenish. When the bar lines is dense it can otherwise be hard to see edited areas.
+- Fixed that the exe files was not removed from ZIP distribution.
+
 Version 2.5.0.104
 - Removed the exe files, it will now use the bat files instead.
     This should solve the issue some users have experienced with running out of memory.
