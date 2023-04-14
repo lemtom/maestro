@@ -126,8 +126,8 @@
 								Advertise="yes"
 							/>
 						</File>
-						<File Id="maestro.ico" Source="maestro.ico" />
-						<File Id="midifile.ico" Source="midifile.ico" />
+						<File Id="maestro.bat" Source="maestro.ico" /><!-- Was suggested that ending should be same as file, so bat instead of ico. But doesn't seem to work. -->
+						<File Id="midifile.bat" Source="midifile.ico" />
 						<File Id="msxfile.ico" Source="msxfile.ico" />
 						
 						<!-- Define ProgIds for file types -->
@@ -136,7 +136,7 @@
 								<Verb Id="edit" Command="&amp;Edit with $(var.MaestroAppName)" TargetFile="Start_Maestro.bat" Argument='"%1"' />
 							</Extension>
 						</ProgId>
-						<ProgId Id="Maestro.AssocFile.MIDI" Description="MIDI Sequence" Icon="midifile.ico" IconIndex="0">
+						<ProgId Id="Maestro.AssocFile.MIDI" Description="MIDI Sequence" Icon="midifile.bat" IconIndex="0">
 							<Extension Id="mid" ContentType="audio/mid">
 								<Verb Id="edit" Command="&amp;Edit with $(var.MaestroAppName)" TargetFile="Start_Maestro.bat" Argument='"%1"' />
 							</Extension>
@@ -152,8 +152,8 @@
 						<!-- Support Set Program Access and Defaults -->
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\Maestro\Capabilities" Type="string" Name="ApplicationName" Value="$(var.MaestroAppName)" />
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\Maestro\Capabilities" Type="string" Name="ApplicationDescription" Value="$(var.MaestroDescriptionLong)" />
-						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\Maestro\Capabilities" Type="string" Name="ApplicationIcon" Value="[#Start_Maestro.bat],0" />
-						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\Maestro\Capabilities\DefaultIcon" Type="string" Value="[#midifile.ico],0" />
+						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\Maestro\Capabilities" Type="string" Name="ApplicationIcon" Value="[APPLICATIONFOLDER]maestro.ico,0" />
+						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\Maestro\Capabilities\DefaultIcon" Type="string" Value="[APPLICATIONFOLDER]maestro.ico,0" />
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\Maestro\Capabilities\FileAssociations" Type="string" Name=".abc" Value="Maestro.AssocFile.ABC" />
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\Maestro\Capabilities\FileAssociations" Type="string" Name=".mid" Value="Maestro.AssocFile.MIDI" />
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\Maestro\Capabilities\FileAssociations" Type="string" Name=".kar" Value="Maestro.AssocFile.MIDI" />
@@ -207,7 +207,7 @@
 						<!-- Support Set Program Access and Defaults -->
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\AbcPlayer\Capabilities" Type="string" Name="ApplicationName" Value="$(var.AbcPlayerAppName)" />
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\AbcPlayer\Capabilities" Type="string" Name="ApplicationDescription" Value="$(var.AbcPlayerDescriptionLong)" />
-						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\AbcPlayer\Capabilities" Type="string" Name="ApplicationIcon" Value="[#Start_AbcPlayer.bat],0" />
+						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\AbcPlayer\Capabilities" Type="string" Name="ApplicationIcon" Value="[APPLICATIONFOLDER]abcplayer.ico,0" />
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\AbcPlayer\Capabilities\DefaultIcon" Type="string" Value="[#abcfile.ico],0" />
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\AbcPlayer\Capabilities\FileAssociations" Type="string" Name=".abc" Value="AbcPlayer.AssocFile.ABC" />
 						<RegistryValue Root="HKLM" Key="SOFTWARE\[Manufacturer]\AbcPlayer\Capabilities\MIMEAssociations" Type="string" Name="text/plain" Value="AbcPlayer.AssocFile.ABC" />
@@ -265,8 +265,8 @@
 				Description="$(var.MaestroAppName) is a MIDI to ABC converter. Arrange multipart ABC files from MIDI source files.">
 			<!--ComponentRef Id="Maestro64.exe" /-->
 			<ComponentRef Id="Maestro.jar" />
-			<ComponentRef Id="MaestroStartMenuFolder" />
 			<ComponentRef Id="bat_file_m" />
+			<ComponentRef Id="MaestroStartMenuFolder" />
 		</Feature>
 
 		<Feature Id="AbcPlayer"
@@ -277,8 +277,8 @@
 				Description="$(var.AbcPlayerAppName) lets you preview ABC files as they would sound in The Lord of the Rings Online.">
 			<!--ComponentRef Id="AbcPlayer64.exe" /-->
 			<ComponentRef Id="AbcPlayer.jar" />
-			<ComponentRef Id="MaestroStartMenuFolder" />
 			<ComponentRef Id="bat_file_a" />
+			<ComponentRef Id="MaestroStartMenuFolder" />
 		</Feature>
 	</Product>
 </Wix>
