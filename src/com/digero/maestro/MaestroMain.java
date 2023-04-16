@@ -191,7 +191,7 @@ public class MaestroMain
 			        	//while (socket.isConnected()) {
 			        		String data = in.readLine();
 						
-			        		if (data != null) {
+			        		if (data != null && data.length() >= 5 && (data.substring(data.length() - 4).equalsIgnoreCase(".mid") || data.substring(data.length() - 5).equalsIgnoreCase(".midi") || data.substring(data.length() - 4).equalsIgnoreCase(".abc") || data.substring(data.length() - 4).equalsIgnoreCase(".msx") || data.substring(data.length() - 4).equalsIgnoreCase(".kar"))) {
 			        			//System.out.println("Received "+data);
 			        			String[] datas = {data};
 			        			activate(datas);
@@ -199,7 +199,7 @@ public class MaestroMain
 			        			//System.out.println("Received nothing");
 			        		}
 			        	//}
-			        	//socket.close();
+			        	socket.close();
 				    }
 			    } catch (IOException e) {
 			    	//e.printStackTrace();
@@ -210,6 +210,9 @@ public class MaestroMain
 	}
 	
 	private static void sendArgsToPort(final String[] args) {
+		if (args == null || args.length == 0 || args[0].length() < 3) {
+			return;
+		}
 		try {
 			Socket clientSocket = new Socket("localhost", 8000+APP_VERSION.getBuild());
 			DataOutputStream os = new DataOutputStream(clientSocket.getOutputStream());

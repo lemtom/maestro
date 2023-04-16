@@ -193,6 +193,11 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	/** A new activation (a.k.a. a file was opened) */
 	public static void activate(String[] args)
 	{
+		/*
+		if (args != null && args.length > 0 && args[0] != null) {
+			System.out.println(" Processing file path ("+args[0].length()+" chars):\n"+args[0]);
+		}
+		*/
 		mainWindow.openSongFromCommandLine(args);
 	}
 	
@@ -2299,15 +2304,15 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 			        	//while (socket.isConnected()) {
 			        		String data = in.readLine();
 						
-			        		if (data != null) {
-			        			//System.out.println("Received "+data);
+			        		if (data != null && data.length() >= 4 && data.substring(data.length() - 4).equalsIgnoreCase(".abc")) {// && !data.substring(0,3).equalsIgnoreCase("GET") && 
+			        			//System.out.println("Receiving file path ("+data.length()+" chars) from port "+(9000+APP_VERSION.getBuild())+":\n"+data);
 			        			String[] datas = {data};
 			        			activate(datas);
 			        		} else {
 			        			//System.out.println("Received nothing");
 			        		}
 			        	//}
-			        	//socket.close();
+			        	socket.close();
 				    }
 			    } catch (IOException e) {
 			    	//e.printStackTrace();
@@ -2318,12 +2323,16 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	}
 	
 	private static void sendArgsToPort(final String[] args) {
-		try {
+		if (args == null || args.length == 0 || args[0].length() < 3) {
+			//System.out.println("AbcPlayer already running. No filepath detected. Closing.");
+			return;
+		}
+		try {			
 			Socket clientSocket = new Socket("localhost", 9000+APP_VERSION.getBuild());
 			DataOutputStream os = new DataOutputStream(clientSocket.getOutputStream());
 			//for (String arg : args) {
 				os.writeBytes(args[0]);
-				//System.out.println("Wrote "+args[0]+" to 8002");
+				//System.out.println("AbcPlayer already running. Sending file path ("+args[0].length()+" chars) to port "+(9000+APP_VERSION.getBuild())+":\n"+args[0]);
 			//}
 			clientSocket.close();
 		} catch (IOException e) {

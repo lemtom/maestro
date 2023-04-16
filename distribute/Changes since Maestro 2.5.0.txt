@@ -45,6 +45,9 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.108
+- Ignore when receiving data that is not a filename. This fixes the odd error messages that could pop up. 
+
 Version 2.5.0.105
 - Made the bar lines inside edited sections be greenish. When the bar lines is dense it can otherwise be hard to see edited areas.
 - Fixed that the exe files was not removed from ZIP distribution.
