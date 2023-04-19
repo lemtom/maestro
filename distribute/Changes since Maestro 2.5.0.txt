@@ -47,6 +47,7 @@ Maestro upgrades by Aifel of Laurelin
 ================
 Version 2.5.0.109
 - Fixed a regression in the auto part numbering scheme introduced in v2.5.0.102
+- A fix for that when switching auto part numbering scheme it would sometimes not convert all instruments to new scheme.
 
 Version 2.5.0.108
 - Ignore when receiving data that is not a filename. This fixes the odd error messages that could pop up. 

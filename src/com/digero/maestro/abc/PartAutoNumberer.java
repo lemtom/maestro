@@ -1,5 +1,6 @@
 package com.digero.maestro.abc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -196,12 +197,15 @@ public class PartAutoNumberer
 
 	public void renumberAllParts()
 	{
+
 		if (parts == null)
 			return;
 
 		Set<Integer> numbersInUse = new HashSet<Integer>(parts.size());
-
-		for (NumberedAbcPart part : parts)
+		
+		List<? extends NumberedAbcPart> partsCopy = new ArrayList<NumberedAbcPart>(parts);// This is to prevent a reordering of parts while iterating through it.
+		
+		for (NumberedAbcPart part : partsCopy)
 		{
 			int partNumber = getFirstNumber(part.getInstrument());
 			while (numbersInUse.contains(partNumber))
@@ -211,10 +215,12 @@ public class PartAutoNumberer
 			numbersInUse.add(partNumber);
 			part.setPartNumber(partNumber);
 		}
+		
 	}
 
 	public void onPartAdded(NumberedAbcPart partAdded)
 	{
+		
 		if (parts == null)
 			return;
 
@@ -309,6 +315,7 @@ public class PartAutoNumberer
 
 	public void setPartNumber(NumberedAbcPart partToChange, int newPartNumber)
 	{
+		
 		if (parts == null)
 			return;
 
@@ -325,6 +332,7 @@ public class PartAutoNumberer
 
 	public void setInstrument(NumberedAbcPart partToChange, LotroInstrument newInstrument)
 	{
+		
 		if (newInstrument != partToChange.getInstrument())
 		{
 			if (getFirstNumber(partToChange.getInstrument()) == getFirstNumber(newInstrument)) {
