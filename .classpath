@@ -27,5 +27,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="tinysound-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
