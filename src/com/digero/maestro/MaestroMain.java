@@ -1,10 +1,10 @@
 package com.digero.maestro;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
@@ -187,7 +187,7 @@ public class MaestroMain
 					while (true) {
 						Socket socket = serverSocket.accept();
 						//System.out.println("Accepted");
-				        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF16"));
 			        	//while (socket.isConnected()) {
 			        		String data = in.readLine();
 						
@@ -196,7 +196,7 @@ public class MaestroMain
 			        			String[] datas = {data};
 			        			activate(datas);
 			        		} else {
-			        			//System.out.println("Received nothing");
+			        			//System.out.println("Received nothing: "+data);
 			        		}
 			        	//}
 			        	socket.close();
@@ -215,10 +215,12 @@ public class MaestroMain
 		}
 		try {
 			Socket clientSocket = new Socket("localhost", 8000+APP_VERSION.getBuild());
-			DataOutputStream os = new DataOutputStream(clientSocket.getOutputStream());
+			OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream(), "UTF16");//NTFS uses UTF16 for filenames
 			//for (String arg : args) {
-				os.writeBytes(args[0]);
-				//System.out.println("Wrote "+args[0]+" to 8001");
+				os.write(args[0]);
+				os.close();//Must be here to flush to stream
+				//Path path = Paths.get(args[0]);
+				//System.out.println("Wrote "+args[0]+" to 8001 ("+Files.exists(path)+")");
 			//}
 			clientSocket.close();
 		} catch (IOException e) {

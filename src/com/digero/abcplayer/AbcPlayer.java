@@ -24,11 +24,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -2300,7 +2300,8 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 					while (true) {
 						Socket socket = serverSocket.accept();
 						//System.out.println("Accepted");
-				        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+						BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF16"));
+				        
 			        	//while (socket.isConnected()) {
 			        		String data = in.readLine();
 						
@@ -2329,9 +2330,10 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		}
 		try {			
 			Socket clientSocket = new Socket("localhost", 9000+APP_VERSION.getBuild());
-			DataOutputStream os = new DataOutputStream(clientSocket.getOutputStream());
+			OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream(), "UTF16");//NTFS uses UTF16 for filenames
 			//for (String arg : args) {
-				os.writeBytes(args[0]);
+				os.write(args[0]);
+				os.close();//Must be here to flush to stream
 				//System.out.println("AbcPlayer already running. Sending file path ("+args[0].length()+" chars) to port "+(9000+APP_VERSION.getBuild())+":\n"+args[0]);
 			//}
 			clientSocket.close();

@@ -45,6 +45,9 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.110
+- Fixed that some unicode chars in filenames could prevent an already running Maestro/Abcplayer from opening the file by double-clicking in Windows.
+
 Version 2.5.0.109
 - Fixed a regression in the auto part numbering scheme introduced in v2.5.0.102
 - When changing an instrument to another that has same number scheme, for example Lute of Ages to Basic lute, the part number will now not change.
