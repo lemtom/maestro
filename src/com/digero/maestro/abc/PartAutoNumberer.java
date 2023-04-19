@@ -239,28 +239,32 @@ public class PartAutoNumberer
 
 	public void onPartDeleted(NumberedAbcPart partDeleted)
 	{
+		//System.out.println(partDeleted.getPartNumber()+" deleted");
 		if (parts == null)
 			return;
-
-		if (!isAutoAssigned(partDeleted)) {
+		
+		int deletedNumber = partDeleted.getPartNumber();
+		int deletedFirstNumber = getFirstNumber(partDeleted.getInstrument());//System.out.println(deletedFirstNumber+" is the first from the deleted");
+		if (!isAutoAssigned(partDeleted, -1, deletedFirstNumber)) {
+			//System.out.println(partDeleted.getInstrument().toString()+" deleted and did not fit");
 			return;
 		}
 		
 		for (NumberedAbcPart part : parts)
 		{
 			int partNumber = part.getPartNumber();
-			int deletedNumber = partDeleted.getPartNumber();
-			int partFirstNumber = getFirstNumber(part.getInstrument());
-			int deletedFirstNumber = getFirstNumber(partDeleted.getInstrument());
+			int partFirstNumber = getFirstNumber(part.getInstrument());//System.out.println(partFirstNumber+" is the first");
+			boolean autoTest = isAutoAssigned(part, deletedNumber, deletedFirstNumber);
 			if (part != partDeleted && partNumber > deletedNumber && partNumber > partFirstNumber
-					&& partFirstNumber == deletedFirstNumber && isAutoAssigned(part))
+					&& partFirstNumber == deletedFirstNumber && autoTest)
 			{
-				part.setPartNumber(partNumber - getIncrement());
-			}
+				part.setPartNumber(partNumber - getIncrement());//System.out.println(partNumber+" decremented");
+				if (part.getPartNumber() == deletedNumber) deletedNumber = partNumber;// the deleted spot was filled out, the one that filled it out is now considered deleted
+			}// else System.out.println(autoTest+"  "+partNumber+" isAutoAssigned(part)");
 		}
 	}
 	
-	private boolean isAutoAssigned(NumberedAbcPart testPart) {
+	private boolean isAutoAssigned(NumberedAbcPart testPart, int deletedNumber, int deletedFirstNumber) {
 		// Return true if this part fit into the auto numbering scheme.
 		// If it does not or a part with lower part number has a different firstNumber,
 		// but seemingly fit into this parts numbering scheme
@@ -274,20 +278,31 @@ public class PartAutoNumberer
 		if (testNumber < testFirstNumber) return false;
 		boolean cohesive = true;
 		int checkNumber = testFirstNumber;
-		while(cohesive && checkNumber < testNumber) {
+		if (testFirstNumber != deletedFirstNumber) {
+			deletedNumber = -1;// should not be considered
+		}
+		outer:while(cohesive && checkNumber < testNumber) {
+			if (checkNumber == deletedNumber) {
+				//System.out.println(checkNumber+" checks out (deleted)");
+				checkNumber += getIncrement();
+				continue outer;
+			}
 			for (NumberedAbcPart part : parts)
 			{
 				int partNumber = part.getPartNumber();
 				
 				if (checkNumber == partNumber) {
 					if (testFirstNumber != getFirstNumber(part.getInstrument())) {
+						//System.out.println(" testFirstNumber != getFirstNumber(part.getInstrument())");
 						return false;
 					}
+					//System.out.println(checkNumber+" checks out");
 					checkNumber += getIncrement();
-					break;
+					continue outer;
 				}
 			}
 			cohesive = false;
+			//System.out.println(testNumber+" not cohesive");
 		}
 		return cohesive;
 	}
@@ -312,9 +327,14 @@ public class PartAutoNumberer
 	{
 		if (newInstrument != partToChange.getInstrument())
 		{
-			onPartDeleted(partToChange);
-			partToChange.setInstrument(newInstrument);
-			onPartAdded(partToChange);
+			if (getFirstNumber(partToChange.getInstrument()) == getFirstNumber(newInstrument)) {
+				// Lets keep the part number, since it has the same first number
+				partToChange.setInstrument(newInstrument);
+			} else {
+				onPartDeleted(partToChange);
+				partToChange.setInstrument(newInstrument);
+				onPartAdded(partToChange);
+			}
 		}
 	}
 
