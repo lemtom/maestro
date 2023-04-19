@@ -657,7 +657,7 @@ public class AbcExporter
 				noteEvents.add(ne);
 			}
 		}
-		com.digero.common.Preview2.setNotes(noteEvents);
+		
 		return new ExportTrackInfo(trackNumber.first, part, noteEvents, trackNumber.second);
 	}
 

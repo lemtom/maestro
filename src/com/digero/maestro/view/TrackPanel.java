@@ -267,8 +267,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int track = trackInfo.getTrackNumber();
-				//SectionEditor.show((JFrame)sectionButton.getTopLevelAncestor(), noteGraph, abcPart, track, abcPart.getInstrument().isPercussion, dPanels);// super hack! :(
-				com.digero.common.Preview2.play(abcPart);
+				SectionEditor.show((JFrame)sectionButton.getTopLevelAncestor(), noteGraph, abcPart, track, abcPart.getInstrument().isPercussion, dPanels);// super hack! :(
 			}
 			
 		});

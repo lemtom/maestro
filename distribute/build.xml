@@ -29,7 +29,6 @@
 		    <fileset dir="${build}" includes="*.log" />
 		</delete>
 		<copy file="../TableLayout.jar" todir="${build}" />
-		<copy file="../tinysound-1.1.1.jar" todir="${build}" />
 		<!--copy file="../WinRun4J.jar" todir="${build}" /-->
 		<copy file="abcfile.ico" todir="${build}" />
 		<copy file="midifile.ico" todir="${build}" />
@@ -59,7 +58,7 @@
 		<jar destfile="${build}/${basename.Maestro}.jar" basedir="${bin}" includes="com/digero/maestro/**">
 			<manifest>
 				<attribute name="Main-Class" value="com.digero.maestro.MaestroMain" />
-				<attribute name="Class-Path" value=". TableLayout.jar tinysound-1.1.1.jar ${basename.Common}.jar" />
+				<attribute name="Class-Path" value=". TableLayout.jar ${basename.Common}.jar" />
 			</manifest>
 		</jar>
 	</target>

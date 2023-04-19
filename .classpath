@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry including="**/*.java" excluding="com/digero/common/icons/unused/" kind="src" output="bin" path="src">
+	<classpathentry excluding="com/digero/common/icons/unused/" including="**/*.java" kind="src" output="bin" path="src">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
@@ -27,6 +27,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="tinysound-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
