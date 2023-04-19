@@ -47,6 +47,7 @@ Maestro upgrades by Aifel of Laurelin
 ================
 Version 2.5.0.109
 - Fixed a regression in the auto part numbering scheme introduced in v2.5.0.102
+- When changing an instrument to another that has same number scheme, for example Lute of Ages to Basic lute, the part number will now not change.
 - A fix for that when switching auto part numbering scheme it would sometimes not convert all instruments to new scheme.
 
 Version 2.5.0.108
