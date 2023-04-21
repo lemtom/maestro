@@ -119,6 +119,7 @@ public class SequenceInfo implements MidiConstants
 		if (dot > 0)
 			title = title.substring(0, dot);
 		title = title.replace('_', ' ');
+		title = title.replaceAll("—", "-");//replace long dash with normal ascii dash
 		
 		String[] array = title.split("-", 2);
 		if (array.length > 1 && array[0].length() > 0 && array[1].length() > 0) {

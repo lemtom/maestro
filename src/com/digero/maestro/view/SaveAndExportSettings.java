@@ -13,6 +13,7 @@ public class SaveAndExportSettings
 	public boolean showMaxPolyphony = false;
 	public boolean showBadger = false;
 	public boolean allBadger = false;
+	public boolean convertABCStringsToBasicAscii = true;
 
 	public SaveAndExportSettings(Preferences prefs)
 	{
@@ -25,6 +26,7 @@ public class SaveAndExportSettings
 		showMaxPolyphony = prefs.getBoolean("showMaxPolyphony", showMaxPolyphony);
 		showBadger = prefs.getBoolean("showBadger", showBadger);
 		allBadger = prefs.getBoolean("allBadger", allBadger);
+		convertABCStringsToBasicAscii = prefs.getBoolean("convertABCStringsToBasicAscii", convertABCStringsToBasicAscii);
 	}
 
 	public SaveAndExportSettings(SaveAndExportSettings that)
@@ -43,6 +45,7 @@ public class SaveAndExportSettings
 		showMaxPolyphony = that.showMaxPolyphony;
 		showBadger = that.showBadger;
 		allBadger = that.allBadger;
+		convertABCStringsToBasicAscii = that.convertABCStringsToBasicAscii;
 	}
 
 	public void saveToPrefs()
@@ -55,6 +58,7 @@ public class SaveAndExportSettings
 		prefs.putBoolean("showMaxPolyphony", showMaxPolyphony);
 		prefs.putBoolean("showBadger", showBadger);
 		prefs.putBoolean("allBadger", allBadger);
+		prefs.putBoolean("convertABCStringsToBasicAscii", convertABCStringsToBasicAscii);
 	}
 
 	public SaveAndExportSettings getCopy()

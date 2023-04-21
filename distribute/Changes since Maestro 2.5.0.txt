@@ -45,6 +45,11 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin
 ================
+Version 2.5.0.111
+- Added option to convert most extended ascii and diacritical marks in ABC to simple latin letters and remove unicode chars.
+    This will be enabled by default.
+    It is useful for most LUA based songbooks that have trouble with many non-latin letters.
+
 Version 2.5.0.110
 - Fixed that some unicode chars in filenames could prevent an already running Maestro/Abcplayer from opening the file by double-clicking in Windows.
 

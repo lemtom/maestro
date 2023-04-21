@@ -37,7 +37,6 @@ import javax.swing.event.DocumentListener;
 
 import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.NoteFilterSequencerWrapper;
-import com.digero.common.midi.SequencerWrapper;
 import com.digero.common.util.Util;
 import com.digero.maestro.abc.AbcMetadataSource;
 import com.digero.maestro.abc.AbcPartMetadataSource;
@@ -45,6 +44,7 @@ import com.digero.maestro.abc.AbcSong;
 import com.digero.maestro.abc.PartAutoNumberer;
 import com.digero.maestro.abc.PartNameTemplate;
 
+@SuppressWarnings("serial")
 public class SettingsDialog extends JDialog implements TableLayoutConstants
 {
 	public static final int NUMBERING_TAB = 0;
@@ -417,6 +417,22 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				saveSettings.skipSilenceAtStart = skipSilenceAtStartCheckBox.isSelected();
 			}
 		});
+		
+		final JCheckBox convertABCStringsToBasicAsciiCheckBox = new JCheckBox("Convert unicode, most ext. ascii and diacritical marks in ABC");
+		convertABCStringsToBasicAsciiCheckBox.setToolTipText("<html>" //
+				+ "If checked, exported ABC files will not include letters such as<br>" //
+				+ "זרוצהß etc.<br>" //
+				+ "<br>" //
+				+ "Most songbooks cannot handle such chars, it's recommended to have this enabled." //
+				+ "</html>");
+		convertABCStringsToBasicAsciiCheckBox.setSelected(saveSettings.convertABCStringsToBasicAscii);
+		convertABCStringsToBasicAsciiCheckBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				saveSettings.convertABCStringsToBasicAscii = convertABCStringsToBasicAsciiCheckBox.isSelected();
+			}
+		});
 
 		TableLayout layout = new TableLayout();
 		layout.insertColumn(0, FILL);
@@ -438,6 +454,9 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 
 		layout.insertRow(++row, PREFERRED);
 		panel.add(skipSilenceAtStartCheckBox, "0, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(convertABCStringsToBasicAsciiCheckBox, "0, " + row);
 		
 		return panel;
 	}
@@ -507,7 +526,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		final String defaultStr = "Default";
 		String preferredDevice = NoteFilterSequencerWrapper.prefs.get(NoteFilterSequencerWrapper.prefMIDISelect, null);
 		final JLabel deviceText = new JLabel("Preferred MIDI out device:");
-		final JComboBox deviceBox = new JComboBox();
+		final JComboBox<String> deviceBox = new JComboBox<String>();
 		deviceBox.setToolTipText("<html>Select preferred MIDI Device<br>"
 				+ "Will take effect next time a midi is loaded as source.</html>");
 		deviceBox.addItem(defaultStr);

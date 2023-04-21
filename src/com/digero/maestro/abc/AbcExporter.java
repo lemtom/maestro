@@ -24,6 +24,7 @@ import com.digero.common.abc.AbcConstants;
 import com.digero.common.abc.AbcField;
 import com.digero.common.abc.Dynamics;
 import com.digero.common.abc.LotroInstrument;
+import com.digero.common.abc.StringCleaner;
 import com.digero.common.midi.KeySignature;
 import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.MidiFactory;
@@ -779,23 +780,23 @@ public class AbcExporter
 		if (!parts.isEmpty())
 		{
 			out.println("%abc-2.1");
-			out.println(AbcField.SONG_TITLE + metadata.getSongTitle().trim());
+			out.println(AbcField.SONG_TITLE + StringCleaner.cleanForABC(metadata.getSongTitle()));
 			if (metadata.getComposer().length() > 0)
 			{
-				out.println(AbcField.SONG_COMPOSER + metadata.getComposer().trim());
+				out.println(AbcField.SONG_COMPOSER + StringCleaner.cleanForABC(metadata.getComposer()));
 			}
 			out.println(AbcField.SONG_DURATION + Util.formatDuration(metadata.getSongLengthMicros()));
 			if (metadata.getTranscriber().length() > 0)
 			{
-				out.println(AbcField.SONG_TRANSCRIBER + metadata.getTranscriber().trim());
+				out.println(AbcField.SONG_TRANSCRIBER + StringCleaner.cleanForABC(metadata.getTranscriber()));
 			}
 			out.println(AbcField.ABC_CREATOR + MaestroMain.APP_NAME + " v" + MaestroMain.APP_VERSION);
 			out.println(AbcField.EXPORT_TIMESTAMP + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 			out.println(AbcField.SWING_RHYTHM + Boolean.toString(qtm.isTripletTiming()));
 			out.println(AbcField.MIX_TIMINGS + Boolean.toString(qtm.isMixTiming()));
 			out.println(AbcField.ABC_VERSION + "2.1");
-			String gnr = metadata.getGenre().toLowerCase().trim();
-			String mood = metadata.getMood().toLowerCase().trim();
+			String gnr = StringCleaner.cleanForABC(metadata.getGenre()).toLowerCase().trim();
+			String mood = StringCleaner.cleanForABC(metadata.getMood()).toLowerCase().trim();
 			String outAll = metadata.getAllParts();
 			String badgerTitle = metadata.getBadgerTitle();
 			if (gnr.length() > 0 || mood.length() > 0 || outAll != null || badgerTitle != null) {
@@ -810,7 +811,7 @@ public class AbcExporter
 					out.println("N: Mood: "+mood);
 				}
 				if (outAll != null) {
-					out.println(outAll);			
+					out.println(outAll);
 				}
 			}
 		}
@@ -829,11 +830,11 @@ public class AbcExporter
 		out.println();
 		out.println("X: " + part.getPartNumber());
 		if (metadata != null)
-			out.println("T: " + metadata.getPartName(part).trim());
+			out.println("T: " + StringCleaner.cleanForABC(metadata.getPartName(part)));
 		else
 			out.println("T: " + part.getTitle().trim());
 
-		out.println(AbcField.PART_NAME + part.getTitle().trim());
+		out.println(AbcField.PART_NAME + StringCleaner.cleanForABC(part.getTitle()));
 		
 		// Since people might not use the instrument-name when they name a part,
 		// we add this so can choose the right instrument in abcPlayer and maestro when loading abc.
@@ -842,10 +843,10 @@ public class AbcExporter
 		if (metadata != null)
 		{
 			if (metadata.getComposer().length() > 0)
-				out.println("C: " + metadata.getComposer().trim());
+				out.println("C: " + StringCleaner.cleanForABC(metadata.getComposer()));
 
 			if (metadata.getTranscriber().length() > 0)
-				out.println("Z: " + metadata.getTranscriber().trim());
+				out.println("Z: " + StringCleaner.cleanForABC(metadata.getTranscriber()));
 		}
 
 		out.println("M: " + qtm.getMeter());

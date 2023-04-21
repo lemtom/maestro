@@ -23,6 +23,8 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -75,6 +77,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.digero.common.abc.LotroInstrument;
+import com.digero.common.abc.StringCleaner;
 import com.digero.common.icons.IconLoader;
 import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.KeySignature;
@@ -2347,7 +2350,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			int dot = fileName.lastIndexOf('.');
 			if (dot > 0)
 				fileName = fileName.substring(0, dot);
-			fileName = fileName.replace('.', ' ');// lotro do not like when there is more than one dot
+			fileName = StringCleaner.cleanForFileName(fileName);
 			fileName += ".abc";
 
 			exportFile = new File(folder, fileName);
@@ -2396,6 +2399,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		try
 		{
+			StringCleaner.cleanABC = saveSettings.convertABCStringsToBasicAscii;
 			abcSong.exportAbc(abcSong.getExportFile());
 
 			SwingUtilities.invokeLater(new Runnable()

@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.digero.common.abc.LotroInstrument;
+import com.digero.common.abc.StringCleaner;
 import com.digero.common.abctomidi.AbcInfo;
 import com.digero.common.abctomidi.AbcToMidi;
 import com.digero.common.midi.KeySignature;
@@ -869,7 +870,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	@Override
 	public String getBadgerTitle() {
 		if (!badger) return null;
-		return "N: Title: "+getComposer().trim()+" - "+getSongTitle().trim();
+		return "N: Title: "+StringCleaner.cleanForABC(getComposer())+" - "+StringCleaner.cleanForABC(getSongTitle());
 	}
 	
 	public void assignNumbersToSimilarPartTypes () {
