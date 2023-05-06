@@ -675,7 +675,7 @@ public class AbcToMidi
 							
 							double lengthSeconds = info.getWholeNoteTime()*(numerator_abc/(double)denominator_abc);
 							
-							if (enableLotroErrors && lengthSeconds < AbcConstants.SHORTEST_NOTE_SECONDS)
+							if (enableLotroErrors && ((float)lengthSeconds) < ((float)AbcConstants.SHORTEST_NOTE_SECONDS))// Using double for lengthSeconds can result in rounding errors in 17 decimal place.
 							{
 								throw new LotroParseException("Rest's duration is too short ("+String.format("%.3f",lengthSeconds)+"s)("+noteLetter+" "+abcNoteL+")", fileName, lineNumber,
 										m.start());
@@ -815,7 +815,7 @@ public class AbcToMidi
 							{
 								double lengthSeconds = info.getWholeNoteTime()*(numerator_abc/(double)denominator_abc);
 								
-								if (enableLotroErrors && lengthSeconds < AbcConstants.SHORTEST_NOTE_SECONDS)
+								if (enableLotroErrors && ((float)lengthSeconds) < ((float)AbcConstants.SHORTEST_NOTE_SECONDS))// Using double for lengthSeconds can result in rounding errors in 17 decimal place.
 								{
 									throw new LotroParseException("Note's duration is too short ("+String.format("%.3f",lengthSeconds)+"s)("+abcNoteAcc+noteLetter+octaveStr+abcNoteL+m.group(NOTE_TIE)+")", fileName, lineNumber,
 											m.start());
@@ -834,7 +834,7 @@ public class AbcToMidi
 								//double lengthMicros = (noteEndTick - chordStartTick) * MPQN / PPQN;
 								double lengthSeconds = info.getWholeNoteTime()*(numerator_abc/(double)denominator_abc);
 								
-								if (enableLotroErrors && lengthSeconds < AbcConstants.SHORTEST_NOTE_SECONDS)
+								if (enableLotroErrors && ((float)lengthSeconds) < ((float)AbcConstants.SHORTEST_NOTE_SECONDS))// Using double for lengthSeconds can result in rounding errors in 17 decimal place.
 								{
 									throw new LotroParseException("Note's duration is too short ("+String.format("%.3f",lengthSeconds)+"s)("+abcNoteAcc+noteLetter+octaveStr+abcNoteL+")", fileName, lineNumber,
 											m.start());
