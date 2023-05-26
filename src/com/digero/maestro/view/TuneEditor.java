@@ -1,6 +1,8 @@
 package com.digero.maestro.view;
 
-import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -19,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import com.digero.maestro.abc.AbcSong;
 import com.digero.maestro.abc.TuneLine;
@@ -55,9 +58,17 @@ public class TuneEditor {
 		            }
 		        });
 		        int rowHeight = 16;
-		        int w = 400;
-		        int h = 153+(rowHeight+0)*SectionEditor.numberOfSections;
-		        this.setSize(w,h);
+		        int auxHeight = 24;
+		        Font font = UIManager.getFont("defaultFont");
+		        Graphics graphics = jf.getGraphics();
+		        if (font != null && graphics != null) // Using a flat theme - resize panel based on text size
+		        {
+		        	FontMetrics metrics = graphics.getFontMetrics(font);
+		        	int fontHeight = metrics.getHeight();
+		        	rowHeight = fontHeight + Math.max(4, (int)(fontHeight * 0.3));
+		        	auxHeight = (int)(rowHeight * 1.5);
+		        }
+		        
 		        JPanel panel=new JPanel();
 		        
 		        LAYOUT_ROWS = new double[3+SectionEditor.numberOfSections+1+10]; 
@@ -81,7 +92,14 @@ public class TuneEditor {
 		        LAYOUT_ROWS[13+SectionEditor.numberOfSections] = TableLayoutConstants.PREFERRED;
 		        */
 		        
-		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
+		        TableLayout layout = new TableLayout(LAYOUT_COLS, LAYOUT_ROWS);
+		        int vg = layout.getVGap();
+		        int w = 25 * rowHeight;
+		        //int h = 153+(rowHeight+0)*SectionEditor.numberOfSections;
+		        int h = (SectionEditor.numberOfSections)* rowHeight + 4 * auxHeight + (3 + SectionEditor.numberOfSections) * vg;
+		        this.setSize(w,h);
+		        
+		        panel.setLayout(layout);
 		        //panel.add(new JLabel("<html><b> " + abcSong.getTitle() + "</html>"), "0, 0, 6, 0, C, C");
 		        panel.add(new JLabel("Enable"), "0, 2, c, c");
 		        panel.add(new JLabel("From bar"), "1, 2, c, c");
@@ -188,7 +206,7 @@ public class TuneEditor {
 		        		+ "No decimal numbers allowed, only whole numbers.<br>Bar numbers must be positive and greater than zero.<br>"
 		        		+ "Clicking APPLY will also disable faulty sections.<br><br>Warning: If 'Remove initial silence' is enabled or the<br>"
 		        		+ "meter is modified, then the bar counter in lower-right might<br>not match up, unless your preview mode is in 'Original'.</b></html>");
-		        panel.add(help, "4,"+(3+SectionEditor.numberOfSections)+", 4, "+(3+SectionEditor.numberOfSections)+",f,f");
+		        panel.add(help, "3,"+(3+SectionEditor.numberOfSections)+", 3, "+(3+SectionEditor.numberOfSections)+",f,f");
 		        
 		        JButton okButton = new JButton("APPLY");
 		        okButton.addActionListener(new ActionListener() {
@@ -253,7 +271,7 @@ public class TuneEditor {
 					}
 				});
 		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
-		        panel.add(okButton, "4,"+(4+SectionEditor.numberOfSections)+", 4, "+(4+SectionEditor.numberOfSections)+",f,f");
+		        panel.add(okButton, "4,"+(3+SectionEditor.numberOfSections)+", 4, "+(3+SectionEditor.numberOfSections)+",f,f");
 		        /*
 		        panel.add(new JLabel("Enabled sections must have no overlap."), "0,"+(6+SectionEditor.numberOfSections)+", 4," +(6+SectionEditor.numberOfSections)+", c, c");
 		        panel.add(new JLabel("Bar numbers are inclusive and use original MIDI bars."), "0, "+(7+SectionEditor.numberOfSections)+", 4, "+(7+SectionEditor.numberOfSections)+", c, c");

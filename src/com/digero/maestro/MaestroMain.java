@@ -1,5 +1,6 @@
 package com.digero.maestro;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -9,13 +10,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import com.digero.common.util.Version;
 import com.digero.maestro.view.ProjectFrame;
+import com.digero.maestro.view.Themer;
 
 //import org.boris.winrun4j.DDE;
 
@@ -53,10 +57,13 @@ public class MaestroMain
 
 		try
 		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			Themer.SetLookAndFeel();
 		}
 		catch (Exception e)
 		{
+			// Reset theme to default if an error occurred setting look and feel
+			Preferences preferences = Preferences.userNodeForPackage(MaestroMain.class);
+			preferences.node("saveAndExportSettings").put("theme", "Default");
 		}
 		
 		mainWindow = new ProjectFrame();

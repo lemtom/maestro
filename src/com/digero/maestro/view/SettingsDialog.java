@@ -153,7 +153,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		JLabel instrumentsTitle = new JLabel("<html><b><u>First part number</u></b></html>");
 
 		TableLayout instrumentsLayout = new TableLayout(//
-				new double[] { 50, PREFERRED, 2 * PAD, 50, PREFERRED },//
+				new double[] { PREFERRED, PREFERRED, 2 * PAD, PREFERRED, PREFERRED },//
 				new double[] { });
 		instrumentsLayout.setHGap(PAD);
 		instrumentsLayout.setVGap(3);
@@ -421,7 +421,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		final JCheckBox convertABCStringsToBasicAsciiCheckBox = new JCheckBox("Convert unicode, most ext. ascii and diacritical marks in ABC");
 		convertABCStringsToBasicAsciiCheckBox.setToolTipText("<html>" //
 				+ "If checked, exported ABC files will not include letters such as<br>" //
-				+ "זרוצהß etc.<br>" //
+				+ "<E6><F8><E5><F6><E4><DF> etc.<br>" //
 				+ "<br>" //
 				+ "Most songbooks cannot handle such chars, it's recommended to have this enabled." //
 				+ "</html>");
@@ -563,6 +563,50 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				}
 			}
 		});
+		
+		final JLabel themeText = new JLabel("Theme (Requires restart):");
+		final JComboBox<String> themeBox = new JComboBox<String>();
+		final JLabel fontSizeLabel = new JLabel("Font size (Requires restart):");
+		final JComboBox<String> fontBox = new JComboBox<String>();
+		
+		themeBox.setToolTipText("<html>Select the theme for Maestro. Must restart Maestro for it to take effect.</html>");
+		themeBox.addItem(defaultStr);
+		for (String theme : Themer.themes)
+		{
+			themeBox.addItem(theme);
+		}
+		themeBox.setEditable(false);
+		themeBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				saveSettings.theme = (String) themeBox.getSelectedItem();
+				fontBox.setEnabled(saveSettings.theme.equals(defaultStr) == false);
+			}
+		});
+		themeBox.setSelectedItem(saveSettings.theme);
+		
+		fontBox.setToolTipText("<html>Select a font size. Only supported with a non-default theme. Must restart Maestro for it to take effect.</html>");
+		for (int i : Themer.fontSizes)
+		{
+			fontBox.addItem(Integer.toString(i));
+		}
+		fontBox.setEditable(false);
+		fontBox.addActionListener(new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					saveSettings.fontSize = Integer.parseInt((String) fontBox.getSelectedItem());
+				}
+				catch(Exception ex)
+				{
+				}
+			}
+		});
+		fontBox.setSelectedItem(Integer.toString(saveSettings.fontSize));
+		fontBox.setEnabled(saveSettings.theme.equals(defaultStr) == false);
 
 		TableLayout layout = new TableLayout();
 		layout.insertColumn(0, FILL);
@@ -592,6 +636,16 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		panel.add(deviceText, "0, " + row);
 		layout.insertRow(++row, PREFERRED);
 		panel.add(deviceBox, "0, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(themeText, "0, " + row);
+		layout.insertRow(++row, PREFERRED);
+		panel.add(themeBox, "0, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(fontSizeLabel, "0, " + row);
+		layout.insertRow(++row, PREFERRED);
+		panel.add(fontBox, "0, " + row);
 
 		return panel;
 	}
