@@ -16,6 +16,7 @@
 	<classpathentry kind="lib" path="jogg-0.0.7.jar"/>
 	<classpathentry kind="lib" path="jorbis-0.0.15.jar"/>
 	<classpathentry kind="lib" path="tritonus_share.jar"/>
+	<classpathentry kind="lib" path="flatlaf-3.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
