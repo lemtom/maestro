@@ -411,25 +411,26 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	static TrackDimensions calculateTrackDims()
 	{
 		Font font = UIManager.getFont("defaultFont");
-		if (font != null && font.getSize() > 11) // Using a flat theme - resize panel based on text size
+		if (font != null) // Using a flat theme - resize panel based on text size
 		{
-			System.err.println("Font height for size: " + font.getSize());
-			int sizeDiff = font.getSize() - 11;
+			//System.err.println("Font height for size: " + font.getSize());
+			int sizeDiff = font.getSize() - 10;
+			final double divider = 18.0 - 10.0; // Used for lerp
 
 			final int widthAt18Pt = 414;
-			final int widthAt11Pt = 214; // Title + priority + control
+			final int widthAt10Pt = 214;
 			
-			int widthAtThisFont = (int)(widthAt11Pt + (widthAt18Pt - widthAt11Pt) * (sizeDiff / 7.0));
+			int widthAtThisFont = (int)(widthAt10Pt + (widthAt18Pt - widthAt10Pt) * (sizeDiff / divider));
 			TrackDimensions dims = new TrackDimensions();
 			dims.titleWidth = (int)(widthAtThisFont * .60);
 			dims.priorityWidth = (int)(widthAtThisFont * .10);
 			dims.controlWidth = (int)(widthAtThisFont * .30);
 			
-			// Lerp section button width between default (22) and 18pt (34)
-			SECTIONBUTTON_WIDTH = (int)(22 + (34 - 22) * (sizeDiff / 7.0));
+			// Lerp section button width between 10pt (22) and 18pt (34)
+			SECTIONBUTTON_WIDTH = (int)(22 + (34 - 22) * (sizeDiff / divider));
 			
-			// Lerp track height between default (48) and 18pt (72)
-			LAYOUT_ROWS[0] = (int)(48 + (72 - 48) * (sizeDiff / 7.0));
+			// Lerp track height between 10pt (48) and 18pt (72)
+			LAYOUT_ROWS[0] = (int)(48 + (72 - 48) * (sizeDiff / divider));
 			
 			return dims;
 		}
