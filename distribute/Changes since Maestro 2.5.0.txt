@@ -43,8 +43,11 @@ Thanks to the bands I play in (The White Flames and Midnight) for motivating me.
 Thanks to all who gave feedback of features, bugs plus suggestions.
 
 
-Maestro upgrades by Aifel of Laurelin
+Maestro upgrades by Aifel of Laurelin and Elamond of Landroval
 ================
+Version 2.5.0.113
+- Added flat dark and flat light user-interface modes.
+
 Version 2.5.0.112
 - Fixed an issue in AbcPlayer where it would think a note was shorter than 0.06s, but it was due to precision error in 17th decimal place.
 
