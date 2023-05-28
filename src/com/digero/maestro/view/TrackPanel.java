@@ -10,6 +10,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
@@ -35,6 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -63,6 +66,7 @@ import com.digero.maestro.midi.TrackInfo;
 @SuppressWarnings("serial")
 public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConstants, ICompileConstants
 {
+	
 	private static final String DRUM_NOTE_MAP_DIR_PREF_KEY = "DrumNoteMap.directory";
 
 	//     0           1              2               3
@@ -73,20 +77,44 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	//   +   +-------------------+----------+                    |
 	// 1 |   |Drum save controls (optional) |                    |
 	//   +---+------------------------------+--------------------+
-	static final int GUTTER_COLUMN = 0;
-	static final int TITLE_COLUMN = 1;
-	static final int PRIORITY_COLUMN = 2;
-	static final int CONTROL_COLUMN = 3;
-	static final int NOTE_COLUMN = 4;
+	private static final int GUTTER_COLUMN = 0;
+	private static final int TITLE_COLUMN = 1;
+	private static final int PRIORITY_COLUMN = 2;
+	private static final int CONTROL_COLUMN = 3;
+	private static final int NOTE_COLUMN = 4;
+	
+	
+//	static final int HGAP = 4;
+//	static final int SECTIONBUTTON_WIDTH = 22;
+//	static final int GUTTER_WIDTH = 8;
+//	static final int PRIORITY_WIDTH = 22;
+//	static final int TITLE_WIDTH = 150 - PRIORITY_WIDTH;
+//	static final int CONTROL_WIDTH = 64;
 
 	static final int HGAP = 4;
-	static final int SECTIONBUTTON_WIDTH = 22;
+	static int SECTIONBUTTON_WIDTH = 22;
 	static final int GUTTER_WIDTH = 8;
-	static final int PRIORITY_WIDTH = 22;
-	static final int TITLE_WIDTH = 150 - PRIORITY_WIDTH;	
-	static final int CONTROL_WIDTH = 64;
-	private static final double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH, PRIORITY_WIDTH, CONTROL_WIDTH, FILL };
-	private static final double[] LAYOUT_ROWS = new double[] { 48, PREFERRED };
+	static final int PRIORITY_WIDTH_DEFAULT = 22;
+	static final int TITLE_WIDTH_DEFAULT = 150 - PRIORITY_WIDTH_DEFAULT;
+	static final int CONTROL_WIDTH_DEFAULT = 64;
+	static final int ROW_HEIGHT_DEFAULT = 48;
+	private static double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH_DEFAULT, PRIORITY_WIDTH_DEFAULT, CONTROL_WIDTH_DEFAULT, FILL };
+	private static double[] LAYOUT_ROWS = new double[] { ROW_HEIGHT_DEFAULT, PREFERRED };
+	
+	public static class TrackDimensions
+	{
+		public TrackDimensions() {}
+		public TrackDimensions(int titleW, int priW, int controlW)
+		{
+			titleWidth = titleW;
+			priorityWidth = priW;
+			controlWidth = controlW;
+		}
+		
+		public int titleWidth = TITLE_WIDTH_DEFAULT;
+		public int priorityWidth = PRIORITY_WIDTH_DEFAULT;
+		public int controlWidth = CONTROL_WIDTH_DEFAULT;
+	}
 
 	private final TrackInfo trackInfo;
 	private final NoteFilterSequencerWrapper seq;
@@ -113,6 +141,8 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	private boolean wasDrumPart;
 	private boolean isAbcPreviewMode = false;
 	
+	public TrackDimensions dims = new TrackDimensions(TITLE_WIDTH_DEFAULT, PRIORITY_WIDTH_DEFAULT, CONTROL_WIDTH_DEFAULT);
+	
 	private String badString = ""; 
 
 	public TrackPanel(TrackInfo info, NoteFilterSequencerWrapper sequencer, AbcPart part, SequencerWrapper abcSequencer_)
@@ -128,6 +158,11 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 		TableLayout tableLayout = (TableLayout) getLayout();
 		tableLayout.setHGap(HGAP);
+		
+		dims = calculateTrackDims();
+		
+		tableLayout.setColumn(new double[] {GUTTER_WIDTH, dims.titleWidth, dims.priorityWidth, dims.controlWidth, FILL});
+		tableLayout.setRow(LAYOUT_ROWS);
 
 		gutter = new JPanel((LayoutManager) null);
 		gutter.setOpaque(false);
@@ -370,6 +405,40 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 		updateState(true);
 	}
+	
+	// returns <titleWidth, priorityWidth, controlWidth 
+	// Also sets some static constants in this class to be scaled properly
+	static TrackDimensions calculateTrackDims()
+	{
+		Font font = UIManager.getFont("defaultFont");
+		if (font != null) // Using a flat theme - resize panel based on text size
+		{
+			//System.err.println("Font height for size: " + font.getSize());
+			int sizeDiff = font.getSize() - 10;
+			final double divider = 18.0 - 10.0; // Used for lerp
+
+			final int widthAt18Pt = 414;
+			final int widthAt10Pt = 214;
+			
+			int widthAtThisFont = (int)(widthAt10Pt + (widthAt18Pt - widthAt10Pt) * (sizeDiff / divider));
+			TrackDimensions dims = new TrackDimensions();
+			dims.titleWidth = (int)(widthAtThisFont * .60);
+			dims.priorityWidth = (int)(widthAtThisFont * .10);
+			dims.controlWidth = (int)(widthAtThisFont * .30);
+			
+			// Lerp section button width between 10pt (22) and 18pt (34)
+			SECTIONBUTTON_WIDTH = (int)(22 + (34 - 22) * (sizeDiff / divider));
+			
+			// Lerp track height between 10pt (48) and 18pt (72)
+			LAYOUT_ROWS[0] = (int)(48 + (72 - 48) * (sizeDiff / divider));
+			
+			return dims;
+		}
+		else
+		{
+			return new TrackDimensions(TITLE_WIDTH_DEFAULT, PRIORITY_WIDTH_DEFAULT, CONTROL_WIDTH_DEFAULT);
+		}
+	}
 
 	private void initDrumSavePanel()
 	{
@@ -481,7 +550,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 	private void updateTitleText()
 	{
-		final int ELLIPSIS_OFFSET = 28;
+		final int ELLIPSIS_OFFSET = 38;
 
 		
 		
@@ -490,11 +559,11 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				
 		checkBox.setToolTipText("<html><b>" + title + "</b><br>" + instr + badString + "</html>");
 
-		int titleWidth = TITLE_WIDTH;
+		int titleWidth = dims.titleWidth;
 		if (!trackVolumeBar.isVisible()) {
-			titleWidth += CONTROL_WIDTH + PRIORITY_WIDTH;
+			titleWidth += dims.controlWidth + dims.priorityWidth;
 		} else if (!isPriorityEnabled()) {
-			titleWidth += PRIORITY_WIDTH;
+			titleWidth += dims.priorityWidth;
 		}
 		
 		title = Util.ellipsis(title, titleWidth - ELLIPSIS_OFFSET, checkBox.getFont().deriveFont(Font.BOLD));

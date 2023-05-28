@@ -23,8 +23,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -60,6 +58,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -1351,13 +1350,13 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	}
 	
 	private void updateNoteCountLabel () {
-		String totalColor = "<font color=BLACK>";
+		String totalColor = "<font>";
 		if (maxNoteCountTotal > 63) {
 			totalColor = "<font color=RED>";
 		} else if (maxNoteCountTotal > 53) {
 			totalColor = "<font color=ORANGE>";
 		}
-		String maxColor = "<font color=BLACK>";
+		String maxColor = "<font>";
 		if (maxNoteCount > 63) {
 			maxColor = "<font color=RED>";
 		} else if (maxNoteCount > 53) {
@@ -1589,7 +1588,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		if (partsList.getSelectedIndex() != -1 && partPanel != null && partPanel.getAbcPart() != null && partPanel.getAbcPart().delay != 0) {
 			delayButton.setForeground(new Color(0.2f, 0.8f, 0.2f));//green
 		} else if (partsList.getSelectedIndex() != -1) {
-			delayButton.setForeground(new Color(0.0f, 0.0f, 0.0f));
+			Color c = UIManager.getColor("TextField.foreground");
+			delayButton.setForeground(c);
 		} else {
 			// This is needed since when starting to set foreground color manually,
 			// it will no longer appear greyed out when disabled automatically.

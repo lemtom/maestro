@@ -14,6 +14,8 @@ public class SaveAndExportSettings
 	public boolean showBadger = false;
 	public boolean allBadger = false;
 	public boolean convertABCStringsToBasicAscii = true;
+	public String theme = "Default";
+	public int fontSize = 12;
 
 	public SaveAndExportSettings(Preferences prefs)
 	{
@@ -27,6 +29,8 @@ public class SaveAndExportSettings
 		showBadger = prefs.getBoolean("showBadger", showBadger);
 		allBadger = prefs.getBoolean("allBadger", allBadger);
 		convertABCStringsToBasicAscii = prefs.getBoolean("convertABCStringsToBasicAscii", convertABCStringsToBasicAscii);
+		theme = prefs.get("theme", theme);
+		fontSize = prefs.getInt("fontSize", fontSize);
 	}
 
 	public SaveAndExportSettings(SaveAndExportSettings that)
@@ -46,6 +50,8 @@ public class SaveAndExportSettings
 		showBadger = that.showBadger;
 		allBadger = that.allBadger;
 		convertABCStringsToBasicAscii = that.convertABCStringsToBasicAscii;
+		theme = that.theme;
+		fontSize = that.fontSize;
 	}
 
 	public void saveToPrefs()
@@ -59,6 +65,8 @@ public class SaveAndExportSettings
 		prefs.putBoolean("showBadger", showBadger);
 		prefs.putBoolean("allBadger", allBadger);
 		prefs.putBoolean("convertABCStringsToBasicAscii", convertABCStringsToBasicAscii);
+		prefs.put("theme", theme);
+		prefs.putInt("fontSize", fontSize);
 	}
 
 	public SaveAndExportSettings getCopy()

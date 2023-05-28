@@ -1,6 +1,8 @@
 package com.digero.maestro.view;
 
-import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -20,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -42,7 +45,7 @@ public class SectionEditor {
 		@SuppressWarnings("serial")
 		class SectionDialog extends JDialog {
 			
-			private final double[] LAYOUT_COLS = new double[] { 0.068,0.102,0.102,0.102,0.102,0.0816,0.1224,0.08,0.08,0.08,0.08 };
+			private final double[] LAYOUT_COLS = new double[] { 0.089,0.102,0.102,0.102,0.102,0.081,0.102,0.08,0.08,0.08,0.08 };
 			private double[] LAYOUT_ROWS;
 			private AbcPart abcPart;
 			private int track;
@@ -70,22 +73,42 @@ public class SectionEditor {
 		            	SectionEditor.lastLocation = SectionDialog.this.getLocation();
 		            }
 		        });
+		        
 		        int rowHeight = 16;
-		        int w = 625;
-		        int h = 150+(rowHeight+0)*numberOfSections;//was 271
-		        this.setSize(w,h);
+		        int auxHeight = 24;
+		        Font font = UIManager.getFont("defaultFont");
+		        Graphics graphics = jf.getGraphics();
+		        if (font != null && graphics != null) // Using a flat theme - resize panel based on text size
+		        {
+		        	FontMetrics metrics = graphics.getFontMetrics(font);
+		        	int fontHeight = metrics.getHeight();
+		        	rowHeight = fontHeight + Math.max(4, (int)(fontHeight * 0.3));
+		        	auxHeight = (int)(rowHeight * 1.5);
+		        }
+		        
 		        JPanel panel=new JPanel();
 		        
-		        LAYOUT_ROWS = new double[3+numberOfSections+1+10]; 
-		        LAYOUT_ROWS[0] = TableLayoutConstants.PREFERRED;
-		        LAYOUT_ROWS[1] = 20;
-		        LAYOUT_ROWS[2] = TableLayoutConstants.PREFERRED;
-		        for (int l = 0;l<numberOfSections;l++) {
-		        	LAYOUT_ROWS[3+l] = rowHeight;		        	
+		        // 2 header rows, sections, remainder section, bottom buttons
+		        LAYOUT_ROWS = new double[2+numberOfSections+1+1];
+		        // Set the index of the first row to 2. Rows 0 and 1 are titles and headers
+		        final int firstRowIndex = 2;
+		        LAYOUT_ROWS[0] = auxHeight;
+		        LAYOUT_ROWS[1] = auxHeight;
+		        for (int i = 0; i < numberOfSections + 1; i++)
+		        {
+		        	LAYOUT_ROWS[i + firstRowIndex] = rowHeight;
 		        }
-		        LAYOUT_ROWS[3+numberOfSections] = TableLayoutConstants.PREFERRED;
-		        LAYOUT_ROWS[4+numberOfSections] = TableLayoutConstants.PREFERRED;
-		        LAYOUT_ROWS[5+numberOfSections] = TableLayoutConstants.FILL;
+		        LAYOUT_ROWS[numberOfSections + firstRowIndex + 1] = auxHeight;
+		        
+//		        LAYOUT_ROWS[0] = TableLayoutConstants.PREFERRED;
+//		        LAYOUT_ROWS[1] = 20;
+//		        LAYOUT_ROWS[2] = TableLayoutConstants.PREFERRED;
+//		        for (int l = 0;l<numberOfSections;l++) {
+//		        	LAYOUT_ROWS[3+l] = rowHeight;		        	
+//		        }
+//		        LAYOUT_ROWS[3+numberOfSections] = TableLayoutConstants.PREFERRED;
+//		        LAYOUT_ROWS[4+numberOfSections] = TableLayoutConstants.PREFERRED;
+//		        LAYOUT_ROWS[5+numberOfSections] = TableLayoutConstants.FILL;
 		        /*
 		        LAYOUT_ROWS[6+numberOfSections] = TableLayoutConstants.PREFERRED;
 		        LAYOUT_ROWS[7+numberOfSections] = TableLayoutConstants.PREFERRED;
@@ -95,30 +118,40 @@ public class SectionEditor {
 		        LAYOUT_ROWS[11+numberOfSections] = TableLayoutConstants.PREFERRED;
 		        LAYOUT_ROWS[12+numberOfSections] = TableLayoutConstants.PREFERRED;
 		        LAYOUT_ROWS[13+numberOfSections] = TableLayoutConstants.PREFERRED;
+		        
 		        */
+		        TableLayout layout = new TableLayout(LAYOUT_COLS, LAYOUT_ROWS);
+		        int vg = layout.getVGap();
+		        int w = 32 * rowHeight;
+		        int h = (numberOfSections + 1)* rowHeight + 5 * auxHeight + (4 + numberOfSections) * vg;
+		        this.setSize(w,h);
 		        
 		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
+		        
+		        // Row 0
 		        panel.add(new JLabel("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>"), "0, 0, 6, 0, C, C");
-		        panel.add(new JLabel("Enable"), "0, 2, c, c");
-		        panel.add(new JLabel("From bar"), "1, 2, c, c");
-		        panel.add(new JLabel("To bar"), "2, 2, c, c");
-		        panel.add(new JLabel("Octave"), "3, 2, c, c");
-		        panel.add(new JLabel("Volume"), "4, 2, c, c");
-		        panel.add(new JLabel("Silence"), "5, 2, c, c");
-		        panel.add(new JLabel("Fade %"), "6, 2, c, c");
 		        JTextField octDouble = new JTextField("Octave doubling");
 		        octDouble.setEditable(false);
 		        octDouble.setHorizontalAlignment(JTextField.CENTER);
-		        panel.add(octDouble, "7, 1, 10, 1, f, f");
-		        //panel.add(new JLabel("Octave doubling"), "8, 1, 9, 1, c, c");
-		        panel.add(new JLabel("2 down"), "7, 2, c, c");
-		        panel.add(new JLabel("1 down"), "8, 2, c, c");
-		        panel.add(new JLabel("1 up"), "9, 2, c, c");
-		        panel.add(new JLabel("2 up"), "10, 2, c, c");
+//		        panel.add(octDouble, "7, 0, 10, 0, f, f");
+		        panel.add(new JLabel("Octave doubling"), "7, 0, 10, 0, c, c");
+		        
+		        // Row 1
+		        panel.add(new JLabel("Enable"), "0, 1, c, c");
+		        panel.add(new JLabel("From bar"), "1, 1, c, c");
+		        panel.add(new JLabel("To bar"), "2, 1, c, c");
+		        panel.add(new JLabel("Octave"), "3, 1, c, c");
+		        panel.add(new JLabel("Volume"), "4, 1, c, c");
+		        panel.add(new JLabel("Silence"), "5, 1, c, c");
+		        panel.add(new JLabel("Fade %"), "6, 1, c, c");
+		        panel.add(new JLabel("2 down"), "7, 1, c, c");
+		        panel.add(new JLabel("1 down"), "8, 1, c, c");
+		        panel.add(new JLabel("1 up"), "9, 1, c, c");
+		        panel.add(new JLabel("2 up"), "10, 1, c, c");
 		        JTextField nonSection = new JTextField("Rest of the track");
 		        nonSection.setEditable(false);
 		        nonSection.setHorizontalAlignment(JTextField.CENTER);
-		        panel.add(nonSection, "1, "+(3+numberOfSections)+", 2, "+(3+numberOfSections)+", f, f");
+		        panel.add(nonSection, "1, "+(firstRowIndex+numberOfSections)+", 4, "+(firstRowIndex+numberOfSections)+", f, f");
 		        //panel.add(new JLabel("Rest of the track"), "1, "+(3+numberOfSections)+", 2, "+(3+numberOfSections)+", c, c");
 		        
 		        for (int j = 0;j<numberOfSections;j++) {
@@ -205,17 +238,17 @@ public class SectionEditor {
 		        	sectionInputs.get(i).velo.setHorizontalAlignment(JTextField.CENTER);
 		        	sectionInputs.get(i).fade.setHorizontalAlignment(JTextField.CENTER);
 		        	
-		        	panel.add(sectionInputs.get(i).enable, "0,"+(3+i)+",C,C");
-			        panel.add(sectionInputs.get(i).barA, "1,"+(3+i)+",f,f");
-			        panel.add(sectionInputs.get(i).barB, "2,"+(3+i)+",f,f");
-			        panel.add(sectionInputs.get(i).transpose, "3,"+(3+i)+",f,f");
-			        panel.add(sectionInputs.get(i).velo, "4,"+(3+i)+",f,f");
-			        panel.add(sectionInputs.get(i).silent, "5,"+(3+i)+",c,f");
-			        panel.add(sectionInputs.get(i).fade, "6,"+(3+i)+",f,f");
-			        panel.add(sectionInputs.get(i).doubling0, "7,"+(3+i)+",c,f");
-			        panel.add(sectionInputs.get(i).doubling1, "8,"+(3+i)+",c,f");
-			        panel.add(sectionInputs.get(i).doubling2, "9,"+(3+i)+",c,f");
-			        panel.add(sectionInputs.get(i).doubling3, "10,"+(3+i)+",c,f");
+		        	panel.add(sectionInputs.get(i).enable, "0,"+(firstRowIndex+i)+",C,C");
+			        panel.add(sectionInputs.get(i).barA, "1,"+(firstRowIndex+i)+",f,f");
+			        panel.add(sectionInputs.get(i).barB, "2,"+(firstRowIndex+i)+",f,f");
+			        panel.add(sectionInputs.get(i).transpose, "3,"+(firstRowIndex+i)+",f,f");
+			        panel.add(sectionInputs.get(i).velo, "4,"+(firstRowIndex+i)+",f,f");
+			        panel.add(sectionInputs.get(i).silent, "5,"+(firstRowIndex+i)+",c,f");
+			        panel.add(sectionInputs.get(i).fade, "6,"+(firstRowIndex+i)+",f,f");
+			        panel.add(sectionInputs.get(i).doubling0, "7,"+(firstRowIndex+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling1, "8,"+(firstRowIndex+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling2, "9,"+(firstRowIndex+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling3, "10,"+(firstRowIndex+i)+",c,f");
 		        }
 		        
 		        nonSectionInput.silent.setToolTipText(silent);
@@ -223,11 +256,11 @@ public class SectionEditor {
 	        	nonSectionInput.doubling1.setToolTipText(d1);
 	        	nonSectionInput.doubling2.setToolTipText(d2);
 	        	nonSectionInput.doubling3.setToolTipText(d3);
-	        	panel.add(nonSectionInput.silent, "5,"+(3+numberOfSections)+",c,f");
-		        panel.add(nonSectionInput.doubling0, "7,"+(3+numberOfSections)+",c,f");
-		        panel.add(nonSectionInput.doubling1, "8,"+(3+numberOfSections)+",c,f");
-		        panel.add(nonSectionInput.doubling2, "9,"+(3+numberOfSections)+",c,f");
-		        panel.add(nonSectionInput.doubling3, "10,"+(3+numberOfSections)+",c,f");
+	        	panel.add(nonSectionInput.silent, "5,"+(firstRowIndex+numberOfSections)+",c,f");
+		        panel.add(nonSectionInput.doubling0, "7,"+(firstRowIndex+numberOfSections)+",c,f");
+		        panel.add(nonSectionInput.doubling1, "8,"+(firstRowIndex+numberOfSections)+",c,f");
+		        panel.add(nonSectionInput.doubling2, "9,"+(firstRowIndex+numberOfSections)+",c,f");
+		        panel.add(nonSectionInput.doubling3, "10,"+(firstRowIndex+numberOfSections)+",c,f");
 		        
 		        copySections.getModel().addActionListener(new ActionListener() {
 	                @Override
@@ -242,7 +275,7 @@ public class SectionEditor {
 	                }
 	            });
 		        copySections.setToolTipText("<html><b> Copy the section starts and ends.</html>");
-		        panel.add(copySections, "1,"+(4+numberOfSections)+",1,"+(4+numberOfSections)+",f,f");
+		        panel.add(copySections, "1,"+(firstRowIndex + 1 + numberOfSections)+",2,"+(firstRowIndex + 1 + numberOfSections)+",f,f");
 		        
 		        pasteSections.getModel().addActionListener(new ActionListener() {
 	                @Override
@@ -256,7 +289,7 @@ public class SectionEditor {
 	                }
 	            });
 		        pasteSections.setToolTipText("<html><b> Paste the section starts and ends.</html>");
-		        panel.add(pasteSections, "2,"+(4+numberOfSections)+",2,"+(4+numberOfSections)+",f,f");
+		        panel.add(pasteSections, "3,"+(firstRowIndex + 1 + numberOfSections)+",4,"+(firstRowIndex + 1 + numberOfSections)+",f,f");
 		        pasteSections.setEnabled(clipboardArmed);
 		        
 		        showVolume.getModel().addChangeListener(new ChangeListener() {
@@ -281,7 +314,7 @@ public class SectionEditor {
 	                }
 	            });
 		        showVolume.setToolTipText("<html><b> Press and hold to see the note volumes on the track. </b><br> Only edits after clicking APPLY will show. </html>");
-		        panel.add(showVolume, "4,"+(4+numberOfSections)+",5,"+(4+numberOfSections)+",f,f");
+		        panel.add(showVolume, "5,"+(firstRowIndex + 1 + numberOfSections)+",6,"+(firstRowIndex + 1 +numberOfSections)+",f,f");
 		        
 		        JTextField help = new JTextField("Help");
 		        help.setEditable(false);
@@ -292,7 +325,7 @@ public class SectionEditor {
 		        		+ "meter is modified, then the bar counter in lower-right might<br>not match up, unless your preview mode is in 'Original'.<br><br>"
 		        		+ "Doubling works by copying all<br>notes and pasting them 1 or 2<br>octaves from their original pitch.<br><br>"
 		        		+ "The last line under the sections 'Rest of the track' is all<br>notes that is not covered by sections.</b></html>");
-		        panel.add(help, "7,"+(4+numberOfSections)+", 7, "+(4+numberOfSections)+",f,f");
+		        panel.add(help, "7,"+(firstRowIndex + 1 + numberOfSections)+", 7, "+(firstRowIndex + 1 + numberOfSections)+",f,f");
 		        
 		        JButton okButton = new JButton("APPLY");
 		        okButton.addActionListener(new ActionListener() {
@@ -368,7 +401,7 @@ public class SectionEditor {
 					}
 				});
 		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
-		        panel.add(okButton, "9,"+(4+numberOfSections)+", 10, "+(4+numberOfSections)+",f,f");
+		        panel.add(okButton, "8,"+(firstRowIndex + 1 + numberOfSections)+", 9, "+(firstRowIndex + 1 + numberOfSections)+",f,f");
 		        /*
 		        panel.add(new JLabel("Enabled sections must have no overlap."), "0,"+(6+numberOfSections)+", 6," +(6+numberOfSections)+", c, c");
 		        panel.add(new JLabel("Bar numbers are inclusive and use original MIDI bars."), "0, "+(7+numberOfSections)+", 6, "+(7+numberOfSections)+", c, c");
@@ -393,6 +426,7 @@ public class SectionEditor {
 		        panel.add(new JLabel("The last line under the sections is all"), "7, "+(10+numberOfSections)+", 10," +(10+numberOfSections)+", c, c");
 		        panel.add(new JLabel("notes that is not covered by sections."), "7, "+(11+numberOfSections)+", 10," +(11+numberOfSections)+", c, c");
 		        */
+		        
 		        this.getContentPane().add(panel);
 		        Window window = SwingUtilities.windowForComponent(this);
 		        if (window != null) {

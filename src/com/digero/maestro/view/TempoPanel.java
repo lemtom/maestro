@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import com.digero.common.midi.Note;
 import com.digero.common.midi.SequencerEvent;
@@ -23,6 +24,7 @@ import com.digero.maestro.midi.NoteEvent;
 import com.digero.maestro.midi.SequenceDataCache;
 import com.digero.maestro.midi.SequenceDataCache.TempoEvent;
 import com.digero.maestro.midi.SequenceInfo;
+import com.digero.maestro.view.TrackPanel.TrackDimensions;
 import com.sun.media.sound.MidiUtils;
 
 @SuppressWarnings("serial")
@@ -41,11 +43,11 @@ public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConst
 	static final int GRAPH_COLUMN = 3;
 
 	private static final int GUTTER_WIDTH = TrackPanel.GUTTER_WIDTH;
-	private static final int TITLE_WIDTH = TrackPanel.TITLE_WIDTH + TrackPanel.HGAP + TrackPanel.PRIORITY_WIDTH;
-	private static final int TEMPO_WIDTH = TrackPanel.CONTROL_WIDTH;
+	private static final int TITLE_WIDTH = TrackPanel.TITLE_WIDTH_DEFAULT + TrackPanel.HGAP + TrackPanel.PRIORITY_WIDTH_DEFAULT;
+	private static final int TEMPO_WIDTH = TrackPanel.CONTROL_WIDTH_DEFAULT;
 
-	private static final double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH, TEMPO_WIDTH, FILL };
-	private static final double[] LAYOUT_ROWS = new double[] { 24 };
+	private static double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH, TEMPO_WIDTH, FILL };
+	private static double[] LAYOUT_ROWS = new double[] { 32 };
 
 	private final SequenceInfo sequenceInfo;
 	private final SequencerWrapper sequencer;
@@ -63,6 +65,11 @@ public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConst
 		this.abcSong = abcSong;
 		TableLayout tableLayout = (TableLayout) getLayout();
 		tableLayout.setHGap(TrackPanel.HGAP);
+		
+		TrackDimensions dims = TrackPanel.calculateTrackDims();
+		LAYOUT_COLS[1] = dims.titleWidth + TrackPanel.HGAP + dims.priorityWidth;
+		LAYOUT_COLS[2] = dims.controlWidth;
+		tableLayout.setColumn(LAYOUT_COLS);
 
 		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, ColorTable.PANEL_BORDER.get()));
 

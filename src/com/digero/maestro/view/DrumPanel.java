@@ -35,6 +35,7 @@ import com.digero.maestro.abc.LotroDrumInfo;
 import com.digero.maestro.abc.LotroStudentFXInfo;
 import com.digero.maestro.midi.NoteEvent;
 import com.digero.maestro.midi.TrackInfo;
+import com.digero.maestro.view.TrackPanel.TrackDimensions;
 
 @SuppressWarnings("serial")
 public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConstants, ICompileConstants
@@ -47,8 +48,8 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 	//   +---+--------------------+----------+--------------------+
 	private static final int GUTTER_WIDTH = TrackPanel.GUTTER_WIDTH;
 	private static final int COMBO_WIDTH = 122;
-	private static final int TITLE_WIDTH = TrackPanel.TITLE_WIDTH + TrackPanel.HGAP + TrackPanel.PRIORITY_WIDTH + TrackPanel.CONTROL_WIDTH - COMBO_WIDTH;
-	private static final double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH, COMBO_WIDTH, FILL };
+	private static final int TITLE_WIDTH = TrackPanel.TITLE_WIDTH_DEFAULT + TrackPanel.HGAP + TrackPanel.PRIORITY_WIDTH_DEFAULT + TrackPanel.CONTROL_WIDTH_DEFAULT - COMBO_WIDTH;
+	private static double[] LAYOUT_COLS = new double[] { GUTTER_WIDTH, TITLE_WIDTH, COMBO_WIDTH, FILL };
 	private static final double[] LAYOUT_ROWS = new double[] { PREFERRED };
 
 	private TrackInfo trackInfo;
@@ -66,6 +67,8 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 	private TrackVolumeBar trackVolumeBar;
 	private ActionListener trackVolumeBarListener;
 	private boolean showVolume = false;
+	
+	private TrackDimensions dims = new TrackDimensions(TITLE_WIDTH, 0, COMBO_WIDTH);
 
 	public DrumPanel(TrackInfo info, NoteFilterSequencerWrapper sequencer, AbcPart part, int drumNoteId,
 			SequencerWrapper abcSequencer_, TrackVolumeBar trackVolumeBar_)
@@ -81,6 +84,18 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 
 		TableLayout tableLayout = (TableLayout) getLayout();
 		tableLayout.setHGap(TrackPanel.HGAP);
+		
+		dims = TrackPanel.calculateTrackDims();
+		
+		int totalW = dims.titleWidth + TrackPanel.HGAP + dims.priorityWidth + dims.controlWidth;
+		int div2 = totalW / 2;
+		
+		dims.titleWidth = div2+ (div2 + div2 == totalW? 0 : 1);
+		dims.controlWidth = div2;
+		
+		LAYOUT_COLS[1] = dims.titleWidth;
+		LAYOUT_COLS[2] = dims.controlWidth;
+		tableLayout.setColumn(LAYOUT_COLS);
 
 		gutter = new JPanel((LayoutManager) null);
 		gutter.setOpaque(false);
@@ -109,7 +124,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 
 		checkBox.setToolTipText("<html><b>" + title + "</b><br>" + instr + "</html>");
 
-		instr = Util.ellipsis(instr, TITLE_WIDTH, checkBox.getFont());
+		instr = Util.ellipsis(instr, dims.titleWidth, checkBox.getFont());
 		checkBox.setText(instr);
 
 		drumComboBoxFX = new JComboBox<LotroStudentFXInfo>(LotroStudentFXInfo.ALL_FX.toArray(new LotroStudentFXInfo[0]));
