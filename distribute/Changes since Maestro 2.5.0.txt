@@ -45,6 +45,9 @@ Thanks to all who gave feedback of features, bugs plus suggestions.
 
 Maestro upgrades by Aifel of Laurelin and Elamond of Landroval
 ================
+Version 2.5.0.114
+- Fix missing file in MSI install.
+
 Version 2.5.0.113
 - Added flat dark and flat light user-interface modes.
 
