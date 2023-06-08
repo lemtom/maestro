@@ -169,6 +169,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 		checkBox = new JCheckBox();
 		checkBox.setOpaque(false);
+//		checkBox.setFocusable(false);
 		checkBox.setSelected(abcPart.isTrackEnabled(trackInfo.getTrackNumber()));
 
 		checkBox.addActionListener(new ActionListener()

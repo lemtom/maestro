@@ -72,6 +72,7 @@ public class MaestroMain
 			@Override public void run()
 			{
 				mainWindow.setVisible(true);
+				mainWindow.getRootPane().requestFocus();
 				openSongFromCommandLine(args);
 			}
 		});
