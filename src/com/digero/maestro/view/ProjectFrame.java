@@ -637,7 +637,20 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		partsList.setPrototypeCellValue(new ProtoClass());// This call is attempt of fix for no delete button on MacOS part 1
 		partsList.setVisibleRowCount(8);
 
-		JScrollPane partsListScrollPane = new JScrollPane(partsList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		// Wrap the part list in a panel that forces the list to the top
+		// Fixes a swing bug where clicking after the end of the list will select the last element
+		JPanel partListWrapperPanel = new JPanel(new BorderLayout());
+		partListWrapperPanel.add(partsList, BorderLayout.NORTH);
+		partListWrapperPanel.setBackground(partsList.getBackground());
+		
+		// Remove focus from text boxes if area under parts is clicked
+		partListWrapperPanel.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e)
+			{
+				getRootPane().requestFocus();
+			}
+		});
+		JScrollPane partsListScrollPane = new JScrollPane(partListWrapperPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		newPartButton = new JButton("New Part");

@@ -11,6 +11,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.ParseException;
 
 import javax.swing.BorderFactory;
@@ -170,6 +172,13 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 
 		trackScrollPane = new JScrollPane(trackListPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		// Remove focus from text boxes if area under midi tracks is clicked
+		trackScrollPane.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e)
+			{
+				getRootPane().requestFocus();
+			}
+		});
 
 		messageLabel = new JLabel();
 		messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -186,6 +195,16 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		add(dataPanel, "0, 0");
 		add(messageLabel, "0, 1, C, C");
 		add(trackScrollPane, "0, 1");
+		
+		
+		// Remove focus if any empty space in the window is clicked
+		MouseAdapter listenForFocus = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e)
+			{
+				getRootPane().requestFocus();
+			}
+		};
+		addMouseListener(listenForFocus);
 
 		setAbcPart(null);
 		initialized = true;
