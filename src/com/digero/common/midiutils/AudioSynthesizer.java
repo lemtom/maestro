@@ -26,7 +26,6 @@ package com.digero.common.midiutils;
  */
 import java.util.Map;
 
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 import javax.sound.sampled.AudioFormat;

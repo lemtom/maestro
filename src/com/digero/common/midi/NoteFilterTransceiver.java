@@ -40,7 +40,7 @@ public class NoteFilterTransceiver implements Transceiver, MidiConstants, ICompi
 
 	public boolean isNoteActive(int noteId)
 	{
-		return (!solos.isEmpty()) ? solos.get(noteId) : true;
+		return solos.isEmpty() || solos.get(noteId);
 	}
 
 	public boolean isAnyNoteSolo()

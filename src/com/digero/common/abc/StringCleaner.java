@@ -1,6 +1,6 @@
 package com.digero.common.abc;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 
 public class StringCleaner {
@@ -33,18 +33,18 @@ public class StringCleaner {
 	}
 	
 	private static String replaceUmlaut(String before) {
-		before = before.replaceAll("ß", "ss");
-		before = before.replaceAll("æ", "ae");
-		before = before.replaceAll("Æ", "AE");
-		before = before.replaceAll("ø", "oe");
-		before = before.replaceAll("Ø", "OE");
-		before = before.replaceAll("å", "aa");
-		before = before.replaceAll("Å", "AA");
-		before = before.replaceAll("ä", "ae");
-		before = before.replaceAll("Ä", "AE");
-		before = before.replaceAll("ö", "oe");
-		before = before.replaceAll("Ö", "OE");
-		before = before.replaceAll("—", "-");
+		before = before.replaceAll("ÃŸ", "ss");
+		before = before.replaceAll("Ã¦", "ae");
+		before = before.replaceAll("Ã†", "AE");
+		before = before.replaceAll("Ã¸", "oe");
+		before = before.replaceAll("Ã˜", "OE");
+		before = before.replaceAll("Ã¥", "aa");
+		before = before.replaceAll("Ã…", "AA");
+		before = before.replaceAll("Ã¤", "ae");
+		before = before.replaceAll("Ã„", "AE");
+		before = before.replaceAll("Ã¶", "oe");
+		before = before.replaceAll("Ã–", "OE");
+		before = before.replaceAll("Â—", "-");
 	    return before;
 	}
 	
@@ -52,13 +52,9 @@ public class StringCleaner {
 	    String s1 = Normalizer.normalize(before, Normalizer.Form.NFKD);
 	    String regex = "[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+";
 	    //String regex = "[\\P{InBasicLatin}]+";
-	    String after = new String(s1);
-	    try {
-	    	after = new String(s1.replaceAll(regex, "").getBytes("ascii"), "ascii");
-		} catch (UnsupportedEncodingException e) {
-			//e.printStackTrace();
-		}
-	    after = after.replace('?', ' ');
+	    String after = s1;
+		after = new String(s1.replaceAll(regex, "").getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII);
+		after = after.replace('?', ' ');
 	    return after;
 	}
 	

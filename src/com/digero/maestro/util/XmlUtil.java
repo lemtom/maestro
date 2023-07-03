@@ -130,7 +130,7 @@ public class XmlUtil
 	private static class LineNumberHandler extends DefaultHandler
 	{
 		private Document doc = null;
-		private Stack<Node> stack = new Stack<Node>();
+		private Stack<Node> stack = new Stack<>();
 		private StringBuilder text = new StringBuilder();
 		private Locator locator = null;
 
@@ -262,7 +262,7 @@ public class XmlUtil
 	public static NodeListWrapper<Element> selectElements(Node fromNode, String xpathString)
 			throws XPathExpressionException
 	{
-		return new NodeListWrapper<Element>((NodeList) xpath.evaluate(xpathString, fromNode, XPathConstants.NODESET));
+		return new NodeListWrapper<>((NodeList) xpath.evaluate(xpathString, fromNode, XPathConstants.NODESET));
 	}
 
 	//

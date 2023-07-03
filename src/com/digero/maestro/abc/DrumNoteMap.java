@@ -101,7 +101,7 @@ public class DrumNoteMap implements IDiscardable
 	public void addChangeListener(ChangeListener listener)
 	{
 		if (listeners == null)
-			listeners = new ArrayList<ChangeListener>(2);
+			listeners = new ArrayList<>(2);
 
 		if (!listeners.contains(listener))
 			listeners.add(listener);
@@ -176,16 +176,8 @@ public class DrumNoteMap implements IDiscardable
 
 	public void save(File outputFile) throws IOException
 	{
-		PrintStream outStream = null;
-		try
-		{
-			outStream = new PrintStream(outputFile);
+		try (PrintStream outStream = new PrintStream(outputFile)) {
 			save(outStream);
-		}
-		finally
-		{
-			if (outStream != null)
-				outStream.close();
 		}
 	}
 
@@ -233,23 +225,15 @@ public class DrumNoteMap implements IDiscardable
 				drumName = "(" + drumName + ")";
 
 			out.format("%2d => %2d  %% %-" + maxDrumLen + "s => %s", midiNoteId, note.id, drumName,
-					lotroDrum.toString());
+					lotroDrum);
 			out.println();
 		}
 	}
 
 	public void load(File inputFile) throws IOException, ParseException
 	{
-		FileInputStream inputStream = null;
-		try
-		{
-			inputStream = new FileInputStream(inputFile);
+		try (FileInputStream inputStream = new FileInputStream(inputFile)) {
 			load(inputStream, inputFile.getName());
-		}
-		finally
-		{
-			if (inputStream != null)
-				inputStream.close();
 		}
 	}
 

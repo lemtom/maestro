@@ -13,9 +13,9 @@ public class ExtensionMidiInstrument {
 	public static int XG  = 2;//Yamaha
 	public static int GM2 = 3;//MMA
 	private static ExtensionMidiInstrument instance = null;
-	private static HashMap<String,String> mapxg = new HashMap<String,String>();
-	private static HashMap<String,String> mapgs = new HashMap<String,String>();
-	private static HashMap<String,String> mapgm2 = new HashMap<String,String>();
+	private static HashMap<String,String> mapxg = new HashMap<>();
+	private static HashMap<String,String> mapgs = new HashMap<>();
+	private static HashMap<String,String> mapgm2 = new HashMap<>();
 	
 	public static ExtensionMidiInstrument getInstance() {
 		if (instance != null) {

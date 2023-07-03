@@ -27,8 +27,8 @@ import com.digero.common.midi.MidiConstants;
 public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 {
 	// Tick => TimingInfoEvent
-	private final NavigableMap<Long, TimingInfoEvent> timingInfoByTick = new TreeMap<Long, TimingInfoEvent>();
-	private final HashMap<AbcPart, NavigableMap<Long, TimingInfoEvent>> oddTimingInfoByTick = new HashMap<AbcPart, NavigableMap<Long, TimingInfoEvent>>();
+	private final NavigableMap<Long, TimingInfoEvent> timingInfoByTick = new TreeMap<>();
+	private final HashMap<AbcPart, NavigableMap<Long, TimingInfoEvent>> oddTimingInfoByTick = new HashMap<>();
 
 	private NavigableSet<Long> barStartTicks = null;
 	private Long[] barStartTickByBar = null;
@@ -71,7 +71,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		Collection<SequenceDataCache.TempoEvent> origTempos = source.getDataCache().getTempoEvents().values();
 		
 		TreeMap<Long, Integer> changeTree = song.getTuneTempoChanges();
-		ArrayList<SequenceDataCache.TempoEvent> combinedTempos = new ArrayList<SequenceDataCache.TempoEvent>();
+		ArrayList<SequenceDataCache.TempoEvent> combinedTempos = new ArrayList<>();
 		
 		for (SequenceDataCache.TempoEvent midiTempo : origTempos) {
 			// Modify the orig midi tempos by tune editor amount
@@ -108,15 +108,13 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				}
 			}
 		}		
-		Comparator<SequenceDataCache.TempoEvent> rator = new Comparator<SequenceDataCache.TempoEvent>() {
-			@Override public int compare(TempoEvent o1, TempoEvent o2) {
-				if (o1.tick == o2.tick) {
-					return 0;
-				} else if (o1.tick > o2.tick) {
-					return 1;
-				}
-				return -1;
+		Comparator<SequenceDataCache.TempoEvent> rator = (o1, o2) -> {
+			if (o1.tick == o2.tick) {
+				return 0;
+			} else if (o1.tick > o2.tick) {
+				return 1;
 			}
+			return -1;
 		};
 		combinedTempos.sort(rator);
 		calcNewMicros(combinedTempos);
@@ -190,12 +188,12 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		for (int part = 0; part < parts; part++) {
 			// calculate for all parts
 			AbcPart abcPart = song.getParts().get(part);
-			TreeMap<Long, TimingInfoEvent> partMap = new TreeMap<Long, TimingInfoEvent>();
+			TreeMap<Long, TimingInfoEvent> partMap = new TreeMap<>();
 			oddTimingInfoByTick.put(abcPart, partMap);
 			
 			// Lets us build an array of all notes in this part
 			// Combine-priorities means some notes might be added several times.
-			ArrayList<NoteEvent> eventList = new ArrayList<NoteEvent>();  
+			ArrayList<NoteEvent> eventList = new ArrayList<>();
 			for (int t = 0; t < tracks; t++) {
 				if(abcPart.isTrackEnabled(t)) {
 					int scoreMultiplier = (song.isPriorityActive() && abcPart.getEnabledTrackCount() > 1 && abcPart.isTrackPriority(t)) ? COMBINE_PRIORITY_MULTIPLIER : 1;
@@ -251,7 +249,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 				// Max possible number of sixGrid before song ending +1
 				int maxSixths = (int) ((this.songLengthTicks-tempoChange.tick+sixTicks)/sixTicks);
 				
-				ArrayList<Integer> sixGridsOdds = new ArrayList<Integer>(maxSixths);
+				ArrayList<Integer> sixGridsOdds = new ArrayList<>(maxSixths);
 				for (int k = 0; k < maxSixths; k++) {
 					sixGridsOdds.add(null);
 				}
@@ -521,7 +519,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 
 	private void calcBarStarts()
 	{
-		barStartTicks = new TreeSet<Long>();
+		barStartTicks = new TreeSet<>();
 		barStartTicks.add(0L);
 		TimingInfoEvent prev = null;
 		for (TimingInfoEvent event : timingInfoByTick.values())

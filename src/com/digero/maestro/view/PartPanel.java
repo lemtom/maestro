@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 
@@ -25,8 +24,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -45,7 +42,6 @@ import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
 import com.digero.maestro.abc.PartAutoNumberer;
 import com.digero.maestro.midi.TrackInfo;
 
-@SuppressWarnings("serial")
 public class PartPanel extends JPanel implements ICompileConstants, TableLayoutConstants
 {
 	private static final int HGAP = 4, VGAP = 4;
@@ -97,13 +93,9 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 
 		numberSpinnerModel = new SpinnerNumberModel(0, 0, 999, partAutoNumberer.getIncrement());
 		numberSpinner = new JSpinner(numberSpinnerModel);
-		numberSpinner.addChangeListener(new ChangeListener()
-		{
-			@Override public void stateChanged(ChangeEvent e)
-			{
-				if (abcPart != null)
-					PartPanel.this.partAutoNumberer.setPartNumber(abcPart, (Integer) numberSpinner.getValue());
-			}
+		numberSpinner.addChangeListener(e -> {
+			if (abcPart != null)
+				PartPanel.this.partAutoNumberer.setPartNumber(abcPart, (Integer) numberSpinner.getValue());
 		});
 
 		numberSettingsButton = new JButton(IconLoader.getImageIcon("gear_16.png"));
@@ -134,18 +126,14 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		});
 
 		instrumentComboBox = new InstrumentComboBox();
-		instrumentComboBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		instrumentComboBox.addActionListener(e -> {
+			if (abcPart != null)
 			{
-				if (abcPart != null)
-				{
-					LotroInstrument newInstrument = (LotroInstrument) instrumentComboBox.getSelectedItem();
-					PartPanel.this.partAutoNumberer.setInstrument(abcPart, newInstrument);
-					abcPart.replaceTitleInstrument(newInstrument);
-					nameTextField.setText(abcPart.getTitle());
-					updateTracksVisible();
-				}
+				LotroInstrument newInstrument = (LotroInstrument) instrumentComboBox.getSelectedItem();
+				PartPanel.this.partAutoNumberer.setInstrument(abcPart, newInstrument);
+				abcPart.replaceTitleInstrument(newInstrument);
+				nameTextField.setText(abcPart.getTitle());
+				updateTracksVisible();
 			}
 		});
 

@@ -1,8 +1,6 @@
 package com.digero.maestro.view;
 
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -21,7 +19,6 @@ public class DelayDialog {
 	protected static Point lastLocation = new Point(0,0);
 
 	public static void show(ProjectFrame jf, AbcPart abcPart) {
-		@SuppressWarnings("serial")
 		class DelayDialogWindow extends JDialog {
 			
 			private final double[] LAYOUT_COLS = new double[] { 0.1, 0.4, 0.4, 0.1 };
@@ -48,21 +45,17 @@ public class DelayDialog {
 		        delayField.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        JButton okButton = new JButton("APPLY");
-		        okButton.addActionListener(new ActionListener() {
-		        	
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						try {
-							float delay = Float.parseFloat(delayField.getText().replace(',', '.'));
-							if (delay >= 0.000f && delay <= 1.00f) {
-								abcPart.delay = (int)(delay*1000);
-								abcPart.delayEdited();
-							}
-						} catch (NumberFormatException nfe) {
-							
+		        okButton.addActionListener(e -> {
+					try {
+						float delay = Float.parseFloat(delayField.getText().replace(',', '.'));
+						if (delay >= 0.000f && delay <= 1.00f) {
+							abcPart.delay = (int)(delay*1000);
+							abcPart.delayEdited();
 						}
-						delayField.setText(String.format("%.3f",abcPart.delay*0.001f));
+					} catch (NumberFormatException nfe) {
+
 					}
+					delayField.setText(String.format("%.3f",abcPart.delay*0.001f));
 				});
 		        panel.add(new JLabel("<html><b> Delay on " + abcPart.getTitle() + " </html>"), "0, 0, 3, 0, C, C");
 		        panel.add(delayField, "1, 1, f, f");

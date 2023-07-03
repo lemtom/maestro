@@ -51,7 +51,7 @@ public class SequenceInfo implements MidiConstants
 	private static ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches = null;//Which channel/tick GM2 switches to drums outside of designated drum channels
 	private int primaryTempoMPQ;
 	private final List<TrackInfo> trackInfoList;
-	private TreeMap<Integer, Integer> portMap = new TreeMap<Integer, Integer>();
+	private TreeMap<Integer, Integer> portMap = new TreeMap<>();
 
 	public static SequenceInfo fromAbc(AbcToMidi.Params params) throws InvalidMidiDataException, ParseException
 	{
@@ -101,7 +101,7 @@ public class SequenceInfo implements MidiConstants
 		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumSwitches, yamahaDrumChannels, mmaDrumSwitches, portMap);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
-		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(tracks.length);
+		List<TrackInfo> trackInfoList = new ArrayList<>(tracks.length);
 		for (int i = 0; i < tracks.length; i++)
 		{
 			trackInfoList.add(new TrackInfo(this, tracks[i], i, sequenceCache, sequenceCache.isXGDrumsTrack(i), sequenceCache.isGSDrumsTrack(i), wasType0, sequenceCache.isDrumsTrack(i), sequenceCache.isGM2DrumsTrack(i), portMap));
@@ -144,7 +144,7 @@ public class SequenceInfo implements MidiConstants
 		sequenceCache = new SequenceDataCache(sequence, standard, null, null, null, null, portMap);
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
-		List<TrackInfo> trackInfoList = new ArrayList<TrackInfo>(result.first.size());
+		List<TrackInfo> trackInfoList = new ArrayList<>(result.first.size());
 		for (ExportTrackInfo i : result.first)
 		{
 			trackInfoList.add(new TrackInfo(this, i.trackNumber, i.part.getTitle(), i.part.getInstrument(), abcExporter
@@ -334,7 +334,7 @@ public class SequenceInfo implements MidiConstants
 		
 		Track[] tracks = seq.getTracks();
 		long lastResetTick = -10000;
-		TreeMap<Long, PatchEntry> bankAndPatchTrack = new TreeMap<Long, PatchEntry>();//Maps cannot have duplicate entries, so using a PatchEntry class to store.
+		TreeMap<Long, PatchEntry> bankAndPatchTrack = new TreeMap<>();//Maps cannot have duplicate entries, so using a PatchEntry class to store.
 		
 		//System.err.println("\nDetermineStandard:");
 		
@@ -491,13 +491,13 @@ public class SequenceInfo implements MidiConstants
 				}
 			}
 		}
-		yamahaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();
+		yamahaDrumSwitches = new ArrayList<>();
 		for (int i = 0; i<16; i++) {
-			yamahaDrumSwitches.add(new TreeMap<Long, Boolean>());
+			yamahaDrumSwitches.add(new TreeMap<>());
 		}
-		mmaDrumSwitches = new ArrayList<TreeMap<Long, Boolean>>();
+		mmaDrumSwitches = new ArrayList<>();
 		for (int i = 0; i<16; i++) {
-			mmaDrumSwitches.add(new TreeMap<Long, Boolean>());
+			mmaDrumSwitches.add(new TreeMap<>());
 		}
 		Integer[] yamahaBankAndPatchChanges = new Integer[16];
 		Integer[] mmaBankAndPatchChanges = new Integer[16];
@@ -523,7 +523,7 @@ public class SequenceInfo implements MidiConstants
 		
 		for (PatchEntry entry : bankAndPatchTrack.values())
 		{
-			List<MidiEvent> masterList = new ArrayList<MidiEvent>();
+			List<MidiEvent> masterList = new ArrayList<>();
 			
 			// The order here is important, patch must be last, since not all MIDI files adhere to standard of certain time separation between these events:
 			// Not sure if sysex bank/patch change have higher priority than Control Change events. But giving it lowest priority for now.
@@ -856,7 +856,7 @@ public class SequenceInfo implements MidiConstants
 				if (MidiUtils.isMetaEndOfTrack(evt.getMessage()))
 				{
 					if (suspectEvents[i] == null)
-						suspectEvents[i] = new ArrayList<MidiEvent>();
+						suspectEvents[i] = new ArrayList<>();
 					suspectEvents[i].add(evt);
 				}
 				else if (evt.getTick() > endTick)
@@ -865,7 +865,7 @@ public class SequenceInfo implements MidiConstants
 					if (evt.getMessage() instanceof MetaMessage)
 					{
 						if (suspectEvents[i] == null)
-							suspectEvents[i] = new ArrayList<MidiEvent>();
+							suspectEvents[i] = new ArrayList<>();
 						suspectEvents[i].add(0, evt);
 					}
 					else
@@ -899,8 +899,8 @@ public class SequenceInfo implements MidiConstants
 	}
 	
 	private class PatchEntry {
-		public List<MidiEvent> bank = new ArrayList<MidiEvent>();
-		public List<MidiEvent> patch = new ArrayList<MidiEvent>();
-		public List<MidiEvent> sysex = new ArrayList<MidiEvent>();
+		public List<MidiEvent> bank = new ArrayList<>();
+		public List<MidiEvent> patch = new ArrayList<>();
+		public List<MidiEvent> sysex = new ArrayList<>();
 	}
 }

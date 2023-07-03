@@ -26,7 +26,6 @@ import com.digero.maestro.midi.SequenceDataCache.TempoEvent;
 import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.view.TrackPanel.TrackDimensions;
 
-@SuppressWarnings("serial")
 public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConstants
 {
 	//     0           1              2               3
@@ -200,7 +199,7 @@ public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConst
 		private void recalcTempoEvents()
 		{
 			// Make fake note events for every tempo event
-			events = new ArrayList<NoteEvent>();
+			events = new ArrayList<>();
 			TempoEvent prevEvent = null;
 			SequenceDataCache dataCache = sequenceInfo.getDataCache();
 			for (TempoEvent event : dataCache.getTempoEvents().values())

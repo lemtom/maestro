@@ -32,9 +32,9 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 
 	private boolean empty = true;
 	private String titlePrefix;
-	private Map<Character, String> metadata = new HashMap<Character, String>();
-	private NavigableMap<Long, Integer> bars = new TreeMap<Long, Integer>();
-	private Map<Integer, AbcInfo.PartInfo> partInfoByIndex = new HashMap<Integer, AbcInfo.PartInfo>();
+	private Map<Character, String> metadata = new HashMap<>();
+	private NavigableMap<Long, Integer> bars = new TreeMap<>();
+	private Map<Integer, AbcInfo.PartInfo> partInfoByIndex = new HashMap<>();
 	private NavigableSet<AbcRegion> regions;
 	private int primaryTempoBPM = 120;
 	private boolean hasTriplets = false;
@@ -394,7 +394,7 @@ public class AbcInfo implements AbcConstants, IBarNumberCache
 	void addRegion(AbcRegion region)
 	{
 		if (regions == null)
-			regions = new TreeSet<AbcRegion>();
+			regions = new TreeSet<>();
 
 		regions.add(region);
 	}

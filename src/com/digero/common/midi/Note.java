@@ -116,7 +116,7 @@ public enum Note
 	{
 		if (lookupAbc == null)
 		{
-			lookupAbc = new HashMap<String, Note>(values().length * 4 / 3 + 1);
+			lookupAbc = new HashMap<>(values().length * 4 / 3 + 1);
 			for (Note n : values())
 			{
 				lookupAbc.put(n.abc, n);

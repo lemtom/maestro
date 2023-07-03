@@ -30,13 +30,12 @@ public class InstrumentComboBox extends JComboBox<LotroInstrument>
 
 	@SuppressWarnings("unchecked") public InstrumentComboBox()
 	{
-		ArrayList<Object> items = new ArrayList<Object>(Arrays.asList(LotroInstrument.values()));
+		ArrayList<Object> items = new ArrayList<>(Arrays.asList(LotroInstrument.values()));
 
 		items.addAll(Arrays.asList(LotroInstrumentGroup.values()));
-		Collections.sort(items, new Comparator<Object>()
-		{
-			@Override public int compare(Object a, Object b)
-			{
+		items.sort(new Comparator<Object>() {
+			@Override
+			public int compare(Object a, Object b) {
 				if (a == b)
 					return 0;
 
@@ -56,8 +55,7 @@ public class InstrumentComboBox extends JComboBox<LotroInstrument>
 				return instA.ordinal() - instB.ordinal();
 			}
 
-			private LotroInstrumentGroup groupOf(Object o)
-			{
+			private LotroInstrumentGroup groupOf(Object o) {
 				return (o instanceof LotroInstrumentGroup) ? (LotroInstrumentGroup) o : //
 						LotroInstrumentGroup.groupOf((LotroInstrument) o);
 			}

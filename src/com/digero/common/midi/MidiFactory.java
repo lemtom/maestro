@@ -1,6 +1,6 @@
 package com.digero.common.midi;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -38,12 +38,12 @@ public class MidiFactory implements MidiConstants
 	{
 		try
 		{
-			byte[] data = name.getBytes("US-ASCII");
+			byte[] data = name.getBytes(StandardCharsets.US_ASCII);
 			MetaMessage msg = new MetaMessage();
 			msg.setMessage(META_TRACK_NAME, data, data.length);
 			return new MidiEvent(msg, 0);
 		}
-		catch (UnsupportedEncodingException | InvalidMidiDataException e)
+		catch (InvalidMidiDataException e)
 		{
 			throw new RuntimeException(e);
 		}

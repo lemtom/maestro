@@ -6,7 +6,6 @@ import info.clearthought.layout.TableLayoutConstants;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -83,23 +82,15 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		JButton okButton = new JButton("OK");
 		getRootPane().setDefaultButton(okButton);
 		okButton.setMnemonic('O');
-		okButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				success = true;
-				SettingsDialog.this.setVisible(false);
-			}
+		okButton.addActionListener(e -> {
+			success = true;
+			SettingsDialog.this.setVisible(false);
 		});
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setMnemonic('C');
-		cancelButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				success = false;
-				SettingsDialog.this.setVisible(false);
-			}
+		cancelButton.addActionListener(e -> {
+			success = false;
+			SettingsDialog.this.setVisible(false);
 		});
 
 		final String CLOSE_WINDOW_ACTION = "com.digero.maestro.view.SettingsDialog:CLOSE_WINDOW_ACTION";
@@ -160,7 +151,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		JPanel instrumentsPanel = new JPanel(instrumentsLayout);
 		instrumentsPanel.setBorder(BorderFactory.createEmptyBorder(0, PAD, 0, 0));
 
-		final List<InstrumentSpinner> instrumentSpinners = new ArrayList<InstrumentSpinner>();
+		final List<InstrumentSpinner> instrumentSpinners = new ArrayList<>();
 		LotroInstrument[] instruments = LotroInstrument.values();
 		for (int i = 0; i < instruments.length; i++)
 		{
@@ -188,37 +179,33 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				+ "<b>1</b>: number Lute parts as 10, 11, 12, etc.<br>"
 				+ "<b>10</b>: number Lute parts as 1, 11, 21, etc.</html>");
 
-		final JComboBox<Integer> incrementComboBox = new JComboBox<Integer>(new Integer[] { 1, 10 });
+		final JComboBox<Integer> incrementComboBox = new JComboBox<>(new Integer[]{1, 10});
 		incrementComboBox.setSelectedItem(numSettings.getIncrement());
-		incrementComboBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		incrementComboBox.addActionListener(e -> {
+			int oldInc = numSettings.getIncrement();
+			int newInc = (Integer) incrementComboBox.getSelectedItem();
+			if (oldInc == newInc)
+				return;
+
+			numbererSettingsChanged = true;
+			for (InstrumentSpinner spinner : instrumentSpinners)
 			{
-				int oldInc = numSettings.getIncrement();
-				int newInc = (Integer) incrementComboBox.getSelectedItem();
-				if (oldInc == newInc)
-					return;
+				int firstNumber = numSettings.getFirstNumber(spinner.instrument);
+				firstNumber = (firstNumber * oldInc) / newInc;
+				numSettings.setFirstNumber(spinner.instrument, firstNumber);
+				spinner.setValue(firstNumber);
 
-				numbererSettingsChanged = true;
-				for (InstrumentSpinner spinner : instrumentSpinners)
+				if (newInc == 1)
 				{
-					int firstNumber = numSettings.getFirstNumber(spinner.instrument);
-					firstNumber = (firstNumber * oldInc) / newInc;
-					numSettings.setFirstNumber(spinner.instrument, firstNumber);
-					spinner.setValue(firstNumber);
-
-					if (newInc == 1)
-					{
-						spinner.getModel().setMaximum(999);
-					}
-					else
-					{
-						spinner.getModel().setMaximum(10);
-					}
+					spinner.getModel().setMaximum(999);
 				}
-
-				numSettings.setIncrementByTen(newInc == 10);
+				else
+				{
+					spinner.getModel().setMaximum(10);
+				}
 			}
+
+			numSettings.setIncrementByTen(newInc == 10);
 		});
 
 		TableLayout incrementPanelLayout = new TableLayout(//
@@ -380,26 +367,14 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				+ AbcSong.MSX_FILE_DESCRIPTION_PLURAL + "<br>"
 				+ "when opening a new file or closing the application.</html>");
 		promptSaveCheckBox.setSelected(saveSettings.promptSaveNewSong);
-		promptSaveCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				saveSettings.promptSaveNewSong = promptSaveCheckBox.isSelected();
-			}
-		});
+		promptSaveCheckBox.addActionListener(e -> saveSettings.promptSaveNewSong = promptSaveCheckBox.isSelected());
 
 		final JCheckBox showExportFileChooserCheckBox = new JCheckBox(
 				"Always prompt for the ABC file name when exporting");
 		showExportFileChooserCheckBox.setToolTipText("<html>Select to have the <b>Export ABC</b> button always<br>"
 				+ "prompt for the name of the file.</html>");
 		showExportFileChooserCheckBox.setSelected(saveSettings.showExportFileChooser);
-		showExportFileChooserCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				saveSettings.showExportFileChooser = showExportFileChooserCheckBox.isSelected();
-			}
-		});
+		showExportFileChooserCheckBox.addActionListener(e -> saveSettings.showExportFileChooser = showExportFileChooserCheckBox.isSelected());
 
 		final JCheckBox skipSilenceAtStartCheckBox = new JCheckBox("Remove silence from start of exported ABC");
 		skipSilenceAtStartCheckBox.setToolTipText("<html>" //
@@ -410,13 +385,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				+ "MIDI file that will be played together and need to line up." //
 				+ "</html>");
 		skipSilenceAtStartCheckBox.setSelected(saveSettings.skipSilenceAtStart);
-		skipSilenceAtStartCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				saveSettings.skipSilenceAtStart = skipSilenceAtStartCheckBox.isSelected();
-			}
-		});
+		skipSilenceAtStartCheckBox.addActionListener(e -> saveSettings.skipSilenceAtStart = skipSilenceAtStartCheckBox.isSelected());
 		
 		final JCheckBox convertABCStringsToBasicAsciiCheckBox = new JCheckBox("Convert unicode, most ext. ascii and diacritical marks in ABC");
 		convertABCStringsToBasicAsciiCheckBox.setToolTipText("<html>" //
@@ -426,13 +395,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				+ "Most songbooks cannot handle such chars, it's recommended to have this enabled." //
 				+ "</html>");
 		convertABCStringsToBasicAsciiCheckBox.setSelected(saveSettings.convertABCStringsToBasicAscii);
-		convertABCStringsToBasicAsciiCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				saveSettings.convertABCStringsToBasicAscii = convertABCStringsToBasicAsciiCheckBox.isSelected();
-			}
-		});
+		convertABCStringsToBasicAsciiCheckBox.addActionListener(e -> saveSettings.convertABCStringsToBasicAscii = convertABCStringsToBasicAsciiCheckBox.isSelected());
 
 		TableLayout layout = new TableLayout();
 		layout.insertColumn(0, FILL);
@@ -489,24 +452,12 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				+ "Stopped notes that are in release phase also counts.<br>"
 				+ "Enabling this might impact preview playback performance.</html>");
 		showMaxPolyphonyCheckBox.setSelected(saveSettings.showMaxPolyphony);
-		showMaxPolyphonyCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				saveSettings.showMaxPolyphony = showMaxPolyphonyCheckBox.isSelected();
-			}
-		});
+		showMaxPolyphonyCheckBox.addActionListener(e -> saveSettings.showMaxPolyphony = showMaxPolyphonyCheckBox.isSelected());
 		
 		final JCheckBox allBadgerCheckBox = new JCheckBox("Output all playable parts per default");
 		allBadgerCheckBox.setToolTipText("<html>Output max playable parts for extended songbooks.</html>");
 		allBadgerCheckBox.setSelected(saveSettings.allBadger);
-		allBadgerCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				saveSettings.allBadger = allBadgerCheckBox.isSelected();
-			}
-		});
+		allBadgerCheckBox.addActionListener(e -> saveSettings.allBadger = allBadgerCheckBox.isSelected());
 		allBadgerCheckBox.setEnabled(saveSettings.showBadger);
 		
 		final JCheckBox showBadgerCheckBox = new JCheckBox("Support extended songbook");
@@ -514,19 +465,15 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				+ "that are used in extended songbooks:<br>"
 				+ "Badger Chapter, White Badger and Zedrock Chapter.</html>");
 		showBadgerCheckBox.setSelected(saveSettings.showBadger);
-		showBadgerCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				saveSettings.showBadger = showBadgerCheckBox.isSelected();
-				allBadgerCheckBox.setEnabled(saveSettings.showBadger);
-			}
+		showBadgerCheckBox.addActionListener(e -> {
+			saveSettings.showBadger = showBadgerCheckBox.isSelected();
+			allBadgerCheckBox.setEnabled(saveSettings.showBadger);
 		});
 		
 		final String defaultStr = "Default";
 		String preferredDevice = NoteFilterSequencerWrapper.prefs.get(NoteFilterSequencerWrapper.prefMIDISelect, null);
 		final JLabel deviceText = new JLabel("Preferred MIDI out device:");
-		final JComboBox<String> deviceBox = new JComboBox<String>();
+		final JComboBox<String> deviceBox = new JComboBox<>();
 		deviceBox.setToolTipText("<html>Select preferred MIDI Device<br>"
 				+ "Will take effect next time a midi is loaded as source.</html>");
 		deviceBox.addItem(defaultStr);
@@ -546,28 +493,24 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			deviceBox.setSelectedItem(defaultStr);
 		}
 		deviceBox.setEditable(false);
-		deviceBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				String s = (String) deviceBox.getSelectedItem();
-				if ("Default".equals(s)) {
-					NoteFilterSequencerWrapper.prefs.remove(NoteFilterSequencerWrapper.prefMIDISelect);
-				} else {
-					NoteFilterSequencerWrapper.prefs.put(NoteFilterSequencerWrapper.prefMIDISelect, s);
-				}
-				try {
-					NoteFilterSequencerWrapper.prefs.flush();
-				} catch (BackingStoreException e1) {
-					//e1.printStackTrace();
-				}
+		deviceBox.addActionListener(e -> {
+			String s = (String) deviceBox.getSelectedItem();
+			if ("Default".equals(s)) {
+				NoteFilterSequencerWrapper.prefs.remove(NoteFilterSequencerWrapper.prefMIDISelect);
+			} else {
+				NoteFilterSequencerWrapper.prefs.put(NoteFilterSequencerWrapper.prefMIDISelect, s);
+			}
+			try {
+				NoteFilterSequencerWrapper.prefs.flush();
+			} catch (BackingStoreException e1) {
+				//e1.printStackTrace();
 			}
 		});
 		
 		final JLabel themeText = new JLabel("Theme (Requires restart):");
-		final JComboBox<String> themeBox = new JComboBox<String>();
+		final JComboBox<String> themeBox = new JComboBox<>();
 		final JLabel fontSizeLabel = new JLabel("Font size (Requires restart):");
-		final JComboBox<String> fontBox = new JComboBox<String>();
+		final JComboBox<String> fontBox = new JComboBox<>();
 		
 		themeBox.setToolTipText("<html>Select the theme for Maestro. Must restart Maestro for it to take effect.</html>");
 		themeBox.addItem(defaultStr);
@@ -576,13 +519,9 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			themeBox.addItem(theme);
 		}
 		themeBox.setEditable(false);
-		themeBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				saveSettings.theme = (String) themeBox.getSelectedItem();
-				fontBox.setEnabled(saveSettings.theme.equals(defaultStr) == false);
-			}
+		themeBox.addActionListener(e -> {
+			saveSettings.theme = (String) themeBox.getSelectedItem();
+			fontBox.setEnabled(!saveSettings.theme.equals(defaultStr));
 		});
 		themeBox.setSelectedItem(saveSettings.theme);
 		
@@ -592,21 +531,17 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			fontBox.addItem(Integer.toString(i));
 		}
 		fontBox.setEditable(false);
-		fontBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		fontBox.addActionListener(e -> {
+			try
 			{
-				try
-				{
-					saveSettings.fontSize = Integer.parseInt((String) fontBox.getSelectedItem());
-				}
-				catch(Exception ex)
-				{
-				}
+				saveSettings.fontSize = Integer.parseInt((String) fontBox.getSelectedItem());
+			}
+			catch(Exception ex)
+			{
 			}
 		});
 		fontBox.setSelectedItem(Integer.toString(saveSettings.fontSize));
-		fontBox.setEnabled(saveSettings.theme.equals(defaultStr) == false);
+		fontBox.setEnabled(!saveSettings.theme.equals(defaultStr));
 
 		TableLayout layout = new TableLayout();
 		layout.insertColumn(0, FILL);

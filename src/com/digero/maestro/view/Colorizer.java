@@ -4,15 +4,12 @@ import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.digero.common.view.ColorTable;
@@ -30,33 +27,23 @@ public class Colorizer extends JPanel
 	{
 		super(new BorderLayout());
 		this.refresher = coloredPanel;
-		picker = new JComboBox<ColorTable>(ColorTable.values());
+		picker = new JComboBox<>(ColorTable.values());
 
-		picker.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				updateSpinners();
-			}
-		});
+		picker.addActionListener(e -> updateSpinners());
 
 		hue = new SpinnerNumberModel(0.0, 0.0, 1.0, 0.01);
 		sat = new SpinnerNumberModel(0.0, 0.0, 1.0, 0.05);
 		brt = new SpinnerNumberModel(0.0, 0.0, 1.0, 0.05);
 
-		ChangeListener cl = new ChangeListener()
-		{
-			@Override public void stateChanged(ChangeEvent e)
+		ChangeListener cl = e -> {
+			if (!updating)
 			{
-				if (!updating)
-				{
-					float h = hue.getNumber().floatValue();
-					float s = sat.getNumber().floatValue();
-					float b = brt.getNumber().floatValue();
+				float h = hue.getNumber().floatValue();
+				float s = sat.getNumber().floatValue();
+				float b = brt.getNumber().floatValue();
 
-					((ColorTable) picker.getSelectedItem()).set(new Color(Color.HSBtoRGB(h, s, b)));
-					refresher.repaint();
-				}
+				((ColorTable) picker.getSelectedItem()).set(new Color(Color.HSBtoRGB(h, s, b)));
+				refresher.repaint();
 			}
 		};
 

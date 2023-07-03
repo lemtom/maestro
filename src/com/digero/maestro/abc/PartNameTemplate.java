@@ -88,15 +88,9 @@ public class PartNameTemplate
 		this.prefsNode = prefsNode;
 		this.settings = new Settings(prefsNode);
 
-		Comparator<String> caseInsensitiveStringComparator = new Comparator<String>()
-		{
-			@Override public int compare(String a, String b)
-			{
-				return a.compareToIgnoreCase(b);
-			}
-		};
+		Comparator<String> caseInsensitiveStringComparator = String::compareToIgnoreCase;
 
-		variables = new TreeMap<String, Variable>(caseInsensitiveStringComparator);
+		variables = new TreeMap<>(caseInsensitiveStringComparator);
 
 		variables.put("$SongTitle", new Variable("The title of the song, as entered in the \"T:\" field")
 		{
@@ -252,10 +246,10 @@ public class PartNameTemplate
 		Pattern regex = Pattern.compile("\\$[A-Za-z]+");
 		Matcher matcher = regex.matcher(name);
 
-		ArrayList<Pair<Integer, Integer>> matches = new ArrayList<Pair<Integer, Integer>>();
+		ArrayList<Pair<Integer, Integer>> matches = new ArrayList<>();
 		while (matcher.find())
 		{
-			matches.add(new Pair<Integer, Integer>(matcher.start(), matcher.end()));
+			matches.add(new Pair<>(matcher.start(), matcher.end()));
 		}
 
 		ListIterator<Pair<Integer, Integer>> reverseIter = matches.listIterator(matches.size());

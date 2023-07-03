@@ -52,7 +52,7 @@ public class AbcToMidi
 
 		public Params(File file) throws IOException
 		{
-			this.filesData = new ArrayList<FileAndData>();
+			this.filesData = new ArrayList<>();
 			this.filesData.add(new FileAndData(file, readLines(file)));
 		}
 
@@ -92,31 +92,14 @@ public class AbcToMidi
 
 	public static List<String> readLines(File inputFile) throws IOException
 	{
-		FileInputStream fileInputStream = null;
-		InputStreamReader inputStreamReader = null;
-		BufferedReader bufferedReader = null;
-		try
-		{
-			fileInputStream = new FileInputStream(inputFile);
-			inputStreamReader = new InputStreamReader(fileInputStream);
-			bufferedReader = new BufferedReader(inputStreamReader);
+		try (FileInputStream fileInputStream = new FileInputStream(inputFile); InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream); BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 
 			String line;
-			ArrayList<String> lines = new ArrayList<String>();
-			while ((line = bufferedReader.readLine()) != null)
-			{
+			ArrayList<String> lines = new ArrayList<>();
+			while ((line = bufferedReader.readLine()) != null) {
 				lines.add(line);
 			}
 			return lines;
-		}
-		finally
-		{
-			if (fileInputStream != null)
-				fileInputStream.close();
-			if (inputStreamReader != null)
-				inputStreamReader.close();
-			if (bufferedReader != null)
-				bufferedReader.close();
 		}
 	}
 
@@ -148,12 +131,12 @@ public class AbcToMidi
 		double chordStartTick = 0;
 		double chordEndTick = 0;
 		long PPQN = 0;
-		Map<Integer, AbcRegion> tiedRegions = new HashMap<Integer, AbcRegion>();
+		Map<Integer, AbcRegion> tiedRegions = new HashMap<>();
 
-		Map<Integer, Integer> tiedNotes = new HashMap<Integer, Integer>(); // noteId => (line << 16) | column
-		Map<Integer, Integer> accidentals = new HashMap<Integer, Integer>(); // noteId => deltaNoteId
+		Map<Integer, Integer> tiedNotes = new HashMap<>(); // noteId => (line << 16) | column
+		Map<Integer, Integer> accidentals = new HashMap<>(); // noteId => deltaNoteId
 
-		List<MidiEvent> noteOffEvents = new ArrayList<MidiEvent>();
+		List<MidiEvent> noteOffEvents = new ArrayList<>();
 		int lineNumberForRegions = -1;
 		for (FileAndData fileAndData : filesData)
 		{

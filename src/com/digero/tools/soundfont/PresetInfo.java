@@ -17,7 +17,7 @@ public class PresetInfo implements Comparable<PresetInfo>
 	public PresetInfo(InstrumentInfo... instruments)
 	{
 		this.lotroInstrument = instruments[0].lotroInstrument;
-		this.instruments = Collections.unmodifiableSortedSet(new TreeSet<InstrumentInfo>(Arrays.asList(instruments)));
+		this.instruments = Collections.unmodifiableSortedSet(new TreeSet<>(Arrays.asList(instruments)));
 	}
 
 	public void print(PrintStream out)

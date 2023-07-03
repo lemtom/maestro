@@ -24,7 +24,7 @@ public enum AbcField
 	
 	private static class MetaData
 	{
-		private static Map<String, Integer> longestByPrefix = new HashMap<String, Integer>();
+		private static Map<String, Integer> longestByPrefix = new HashMap<>();
 	}
 
 	private final String formattedName;

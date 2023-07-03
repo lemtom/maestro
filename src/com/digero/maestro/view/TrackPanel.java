@@ -12,12 +12,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,8 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.MidiConstants;
@@ -169,18 +163,14 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		checkBox.setOpaque(false);
 		checkBox.setSelected(abcPart.isTrackEnabled(trackInfo.getTrackNumber()));
 
-		checkBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				int track = trackInfo.getTrackNumber();
-				boolean enabled = checkBox.isSelected();
-				abcPart.setTrackEnabled(track, enabled);
-				if (MUTE_DISABLED_TRACKS)
-					seq.setTrackMute(track, !enabled);
-				updateBadTooltipText();
-				updateTitleText();
-			}
+		checkBox.addActionListener(e -> {
+			int track = trackInfo.getTrackNumber();
+			boolean enabled = checkBox.isSelected();
+			abcPart.setTrackEnabled(track, enabled);
+			if (MUTE_DISABLED_TRACKS)
+				seq.setTrackMute(track, !enabled);
+			updateBadTooltipText();
+			updateTitleText();
 		});
 		/*Font[] fonts;
 		Font ms = null;
@@ -267,24 +257,20 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 			transposeSpinner = new JSpinner(new TrackTransposeModel(currentTranspose, -48, 48, 12));
 			transposeSpinner.setToolTipText("Transpose this track by octaves (12 semitones)");
 
-			transposeSpinner.addChangeListener(new ChangeListener()
-			{
-				@Override public void stateChanged(ChangeEvent e)
+			transposeSpinner.addChangeListener(e -> {
+				int track = trackInfo.getTrackNumber();
+				int value = (Integer) transposeSpinner.getValue();
+				if (value % 12 != 0)
 				{
-					int track = trackInfo.getTrackNumber();
-					int value = (Integer) transposeSpinner.getValue();
-					if (value % 12 != 0)
-					{
-						value = (abcPart.getTrackTranspose(track) / 12) * 12;
-						transposeSpinner.setValue(value);
-					}
-					else
-					{
-						abcPart.setTrackTranspose(trackInfo.getTrackNumber(), value);
-					}
-					updateBadTooltipText();
-					updateTitleText();
+					value = (abcPart.getTrackTranspose(track) / 12) * 12;
+					transposeSpinner.setValue(value);
 				}
+				else
+				{
+					abcPart.setTrackTranspose(trackInfo.getTrackNumber(), value);
+				}
+				updateBadTooltipText();
+				updateTitleText();
 			});
 			
 			
@@ -295,43 +281,29 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		sectionButton.setMargin( new Insets(5, 5, 5, 5) );
 		sectionButton.setText("s");
 		sectionButton.setToolTipText("<html><b> Edit sections of this track </b><br> Use the bar counter in lower right corner to find your sections. </html>");
-		sectionButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int track = trackInfo.getTrackNumber();
-				SectionEditor.show((JFrame)sectionButton.getTopLevelAncestor(), noteGraph, abcPart, track, abcPart.getInstrument().isPercussion, dPanels);// super hack! :(
-			}
-			
+		sectionButton.addActionListener(e -> {
+			int track = trackInfo.getTrackNumber();
+			SectionEditor.show((JFrame)sectionButton.getTopLevelAncestor(), noteGraph, abcPart, track, abcPart.getInstrument().isPercussion, dPanels);// super hack! :(
 		});
 		
 		priorityBox = new JCheckBox();
 		priorityBox.setOpaque(false);
 		priorityBox.setToolTipText("Prioritize this tracks rhythm when combining tracks with Mix Timings enabled");
-		priorityBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int track = trackInfo.getTrackNumber();
-				boolean prio = priorityBox.isSelected();
-				abcPart.setTrackPriority(track, prio);
-			}
-			
+		priorityBox.addActionListener(e -> {
+			int track = trackInfo.getTrackNumber();
+			boolean prio = priorityBox.isSelected();
+			abcPart.setTrackPriority(track, prio);
 		});
 
 		trackVolumeBar = new TrackVolumeBar(trackInfo.getMinVelocity(), trackInfo.getMaxVelocity());
 		trackVolumeBar.setToolTipText("Adjust this track's volume");
 		trackVolumeBar.setDeltaVolume(abcPart.getTrackVolumeAdjust(trackInfo.getTrackNumber()));
-		trackVolumeBar.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				// Only update the actual ABC part when the user stops dragging the trackVolumeBar
-				if (!trackVolumeBar.isDragging())
-					abcPart.setTrackVolumeAdjust(trackInfo.getTrackNumber(), trackVolumeBar.getDeltaVolume());
+		trackVolumeBar.addActionListener(e -> {
+			// Only update the actual ABC part when the user stops dragging the trackVolumeBar
+			if (!trackVolumeBar.isDragging())
+				abcPart.setTrackVolumeAdjust(trackInfo.getTrackNumber(), trackVolumeBar.getDeltaVolume());
 
-				updateState();
-			}
+			updateState();
 		});
 
 		JPanel controlPanel = new JPanel(new BorderLayout(0, 4));
@@ -355,51 +327,37 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		updateBadTooltipText();
 		updateTitleText();
 
-		abcPart.addAbcListener(abcListener = new Listener<AbcPartEvent>()
-		{
-			@Override public void onEvent(AbcPartEvent e)
+		abcPart.addAbcListener(abcListener = e -> {
+			if (e.isNoteGraphRelated())
 			{
-				if (e.isNoteGraphRelated())
-				{
-					updateState();
-					noteGraph.repaint();
-					updateBadTooltipText();
-					updateTitleText();
-				}
+				updateState();
+				noteGraph.repaint();
+				updateBadTooltipText();
+				updateTitleText();
+			}
 
-				if (e.getProperty() == AbcPartProperty.INSTRUMENT || e.getProperty() == AbcPartProperty.TRACK_ENABLED) {
-					updateColors();
-					updateBadTooltipText();
-					updateTitleText();
-				}
+			if (e.getProperty() == AbcPartProperty.INSTRUMENT || e.getProperty() == AbcPartProperty.TRACK_ENABLED) {
+				updateColors();
+				updateBadTooltipText();
+				updateTitleText();
 			}
 		});
 
-		seq.addChangeListener(seqListener = new Listener<SequencerEvent>()
-		{
-			@Override public void onEvent(SequencerEvent evt)
+		seq.addChangeListener(seqListener = evt -> {
+			if (evt.getProperty() == SequencerProperty.TRACK_ACTIVE)
 			{
-				if (evt.getProperty() == SequencerProperty.TRACK_ACTIVE)
-				{
-					updateColors();
-				}
-				else if (evt.getProperty() == SequencerProperty.IS_RUNNING)
-				{
-					noteGraph.repaint();
-				}
+				updateColors();
+			}
+			else if (evt.getProperty() == SequencerProperty.IS_RUNNING)
+			{
+				noteGraph.repaint();
 			}
 		});
 
 		if (abcSequencer != null)
 			abcSequencer.addChangeListener(seqListener);
 
-		addPropertyChangeListener("enabled", new PropertyChangeListener()
-		{
-			@Override public void propertyChange(PropertyChangeEvent evt)
-			{
-				updateState();
-			}
-		});
+		addPropertyChangeListener("enabled", evt -> updateState());
 
 		updateState(true);
 	}
@@ -445,13 +403,9 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 		LinkButton saveButton = new LinkButton("Export");
 		saveButton.setForeground(ColorTable.PANEL_LINK.get());
-		saveButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if(!abcPart.isFXPart()) {
-					saveDrumMapping();
-				}
+		saveButton.addActionListener(e -> {
+			if(!abcPart.isFXPart()) {
+				saveDrumMapping();
 			}
 		});
 
@@ -460,13 +414,9 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 
 		LinkButton loadButton = new LinkButton("Import");
 		loadButton.setForeground(ColorTable.PANEL_LINK.get());
-		loadButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if(!abcPart.isFXPart()) {
-					loadDrumMapping();
-				}
+		loadButton.addActionListener(e -> {
+			if(!abcPart.isFXPart()) {
+				loadDrumMapping();
 			}
 		});
 
@@ -775,7 +725,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 						layout.insertRow(row, PREFERRED);
 					add(panel, "0, " + row + ", " + NOTE_COLUMN + ", " + row);
 					if (dPanels == null)
-						dPanels = new ArrayList<DrumPanel>();
+						dPanels = new ArrayList<>();
 					dPanels.add(panel);
 				}
 			}
@@ -858,13 +808,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		{
 			abcPart.getDrumMap(trackInfo.getTrackNumber()).load(loadFile);
 		}
-		catch (IOException e)
-		{
-			JOptionPane.showMessageDialog(this, "Failed to load drum map:\n\n" + e.getMessage(),
-					"Failed to load drum map", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		catch (ParseException e)
+		catch (IOException | ParseException e)
 		{
 			JOptionPane.showMessageDialog(this, "Failed to load drum map:\n\n" + e.getMessage(),
 					"Failed to load drum map", JOptionPane.ERROR_MESSAGE);

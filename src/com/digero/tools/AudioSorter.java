@@ -122,7 +122,7 @@ public class AudioSorter
 
 	private static void sortFolder(File sourceFolder, File targetFolder) throws IOException
 	{
-		SortedSet<FileFft> sorted = new TreeSet<FileFft>();
+		SortedSet<FileFft> sorted = new TreeSet<>();
 
 		int compressionFactor = 1;
 		try

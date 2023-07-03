@@ -40,7 +40,6 @@ import com.digero.maestro.midi.SequenceDataCache;
 import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.midi.TrackInfo;
 
-@SuppressWarnings("serial")
 public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDiscardable
 {
 	protected final SequencerWrapper sequencer;
@@ -866,15 +865,12 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 			// Out of range notes are rendered with (d == dynamicsValues.length) and (d == -1)
 			for (int d = dynamicsValues.length; d >= -1; --d)
 			{
-				for (int i = 0; i < noteEvents.size(); i++)
-				{
-					NoteEvent ne = noteEvents.get(i);
-
+				for (NoteEvent ne : noteEvents) {
 					if (ne.getEndMicros() < clipPosStart || ne.getStartMicros() > clipPosEnd || !audibleNote(ne))
 						continue;
 
 					int[] sv = getSectionVelocity(ne);
-					int velocity = (int)((ne.velocity + deltaVolume + sv[0])*0.01f*(float)sv[1]);
+					int velocity = (int) ((ne.velocity + deltaVolume + sv[0]) * 0.01f * (float) sv[1]);
 
 					Dynamics dynamicsRenderedInThisPass = null;
 					if (d == dynamicsValues.length)
@@ -890,39 +886,28 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 					// Note that we're rendering the "above max" dynamics in the *second* pass 
 					// (the first is d == dynamicsValues.length). This lets us render those bad 
 					// notes on top and makes them more visible.
-					if (d == dynamicsValues.length - 1)
-					{
+					if (d == dynamicsValues.length - 1) {
 						// Only rendering notes where (velocity > Dynamics.MAXIMUM.midiVol) in this pass
 						if (!(velocity > Dynamics.MAXIMUM.midiVol))
 							continue;
-					}
-					else if (d == -1)
-					{
+					} else if (d == -1) {
 						// Only rendering notes where (velocity < Dynamics.MINIMUM.midiVol) in this pass
 						if (!(velocity < Dynamics.MINIMUM.midiVol))
 							continue;
-					}
-					else if (isOutOfRange || Dynamics.fromMidiVelocity(velocity) != dynamicsRenderedInThisPass)
-					{
+					} else if (isOutOfRange || Dynamics.fromMidiVelocity(velocity) != dynamicsRenderedInThisPass) {
 						// Only rendering notes that have the particular velocity in this pass
 						continue;
 					}
 
-					if (isNoteVisible(ne))
-					{
+					if (isNoteVisible(ne)) {
 						if (showNotesOn && songPos >= ne.getStartMicros() && minSongPos <= ne.getEndMicros()
-								&& sequencer.isNoteActive(ne.note.id))
-						{
+								&& sequencer.isNoteActive(ne.note.id)) {
 							g2.setColor(noteOnColor.get());
 							fillNoteVelocity(g2, ne, dynamicsRenderedInThisPass);
-						}
-						else if (isOutOfRange)
-						{
+						} else if (isOutOfRange) {
 							g2.setColor(badNoteColor.get());
 							fillNoteVelocity(g2, ne, dynamicsRenderedInThisPass);
-						}
-						else
-						{
+						} else {
 							g2.setColor(getNoteVColor(ne));
 							fillNoteVelocity(g2, ne, dynamicsRenderedInThisPass);
 						}

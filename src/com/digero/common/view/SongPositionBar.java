@@ -43,7 +43,6 @@ import com.digero.common.midi.SequencerWrapper;
 import com.digero.common.util.Listener;
 import com.digero.common.util.Util;
 
-@SuppressWarnings("serial")
 public class SongPositionBar extends JPanel implements Listener<SequencerEvent>
 {
 	private static final int PTR_WIDTH = 12;

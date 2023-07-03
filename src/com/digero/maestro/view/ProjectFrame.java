@@ -18,8 +18,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -66,8 +64,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.xml.transform.TransformerException;
@@ -115,7 +111,6 @@ import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.util.FileResolver;
 import com.digero.maestro.util.XmlUtil;
 
-@SuppressWarnings("serial")
 public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompileConstants
 {
 	private static final int HGAP = 4, VGAP = 4;
@@ -283,7 +278,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		
 		try
 		{
-			List<Image> icons = new ArrayList<Image>();
+			List<Image> icons = new ArrayList<>();
 			icons.add(ImageIO.read(IconLoader.class.getResourceAsStream("maestro_16.png")));
 			icons.add(ImageIO.read(IconLoader.class.getResourceAsStream("maestro_32.png")));
 			setIconImages(icons);
@@ -320,13 +315,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		Icon stopIconDisabled = IconLoader.getDisabledIcon("stop.png");
 
 		partPanel = new PartPanel(sequencer, partAutoNumberer, abcSequencer);
-		partPanel.addSettingsActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				doSettingsDialog(SettingsDialog.NUMBERING_TAB);
-			}
-		});
+		partPanel.addSettingsActionListener(e -> doSettingsDialog(SettingsDialog.NUMBERING_TAB));
 
 		//TableLayout tableLayout = new TableLayout(LAYOUT_COLS, LAYOUT_ROWS);
 		tableLayout.setHGap(HGAP);
@@ -398,14 +387,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				+ "Examples: C maj, Eb maj, F# min</html>");
 		if (SHOW_KEY_FIELD)
 		{
-			keySignatureField.addPropertyChangeListener("value", new PropertyChangeListener()
-			{
-				@Override public void propertyChange(PropertyChangeEvent evt)
-				{
-					if (abcSong != null)
-						abcSong.setKeySignature((KeySignature) keySignatureField.getValue());
+			keySignatureField.addPropertyChangeListener("value", evt -> {
+				if (abcSong != null)
+					abcSong.setKeySignature((KeySignature) keySignatureField.getValue());
 
-				}
 			});
 		}
 
@@ -413,25 +398,17 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		timeSignatureField.setToolTipText("<html>Adjust the time signature of the ABC file.<br><br>"
 				+ "This only affects the display, not the sound of the exported file.<br>"
 				+ "Examples: 4/4, 3/8, 2/2</html>");
-		timeSignatureField.addPropertyChangeListener("value", new PropertyChangeListener()
-		{
-			@Override public void propertyChange(PropertyChangeEvent evt)
-			{
-				if (abcSong != null)
-					abcSong.setTimeSignature((TimeSignature) timeSignatureField.getValue());
-			}
+		timeSignatureField.addPropertyChangeListener("value", evt -> {
+			if (abcSong != null)
+				abcSong.setTimeSignature((TimeSignature) timeSignatureField.getValue());
 		});
 
 		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -48, 48, 1));
 		transposeSpinner.setToolTipText("<html>Transpose the entire song by semitones.<br>"
 				+ "12 semitones = 1 octave</html>");
-		transposeSpinner.addChangeListener(new ChangeListener()
-		{
-			@Override public void stateChanged(ChangeEvent e)
-			{
-				if (abcSong != null)
-					abcSong.setTranspose(getTranspose());
-			}
+		transposeSpinner.addChangeListener(e -> {
+			if (abcSong != null)
+				abcSong.setTranspose(getTranspose());
 		});
 
 		tempoSpinner = new JSpinner(new SpinnerNumberModel(MidiConstants.DEFAULT_TEMPO_BPM /* value */, 8 /* min */,
@@ -440,66 +417,54 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				+ "This number represents the <b>Main Tempo</b>, which is the tempo that covers<br>"
 				+ "the largest portion of the song. If parts of the song play at a different tempo,<br>"
 				+ "they will all be adjusted proportionally.</html>");
-		tempoSpinner.addChangeListener(new ChangeListener()
-		{
-			@Override public void stateChanged(ChangeEvent e)
+		tempoSpinner.addChangeListener(e -> {
+			if (abcSong != null)
 			{
-				if (abcSong != null)
-				{
-					abcSong.setTempoBPM((Integer) tempoSpinner.getValue());
+				abcSong.setTempoBPM((Integer) tempoSpinner.getValue());
 
-					abcSequencer.setTempoFactor(abcSong.getTempoFactor());
+				abcSequencer.setTempoFactor(abcSong.getTempoFactor());
 
-					if (abcSequencer.isRunning())
-					{
-						float delta = abcPreviewTempoFactor / abcSequencer.getTempoFactor();
-						if (Math.max(delta, 1 / delta) > 1.5f)
-							refreshPreviewSequence(false);
-					}
-				}
-				else
+				if (abcSequencer.isRunning())
 				{
-					abcSequencer.setTempoFactor(1.0f);
+					float delta = abcPreviewTempoFactor / abcSequencer.getTempoFactor();
+					if (Math.max(delta, 1 / delta) > 1.5f)
+						refreshPreviewSequence(false);
 				}
+			}
+			else
+			{
+				abcSequencer.setTempoFactor(1.0f);
 			}
 		});
 
 		resetTempoButton = new JButton("Reset");
 		resetTempoButton.setMargin(new Insets(2, 8, 2, 8));
 		resetTempoButton.setToolTipText("Set the tempo back to the source file's tempo");
-		resetTempoButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		resetTempoButton.addActionListener(e -> {
+			if (abcSong == null)
 			{
-				if (abcSong == null)
-				{
-					tempoSpinner.setValue(MidiConstants.DEFAULT_TEMPO_BPM);
-				}
-				else
-				{
-					float tempoFactor = abcSequencer.getTempoFactor();
-					tempoSpinner.setValue(abcSong.getSequenceInfo().getPrimaryTempoBPM());
-					if (tempoFactor != 1.0f)
-						refreshPreviewSequence(false);
-				}
-				tempoSpinner.requestFocus();
+				tempoSpinner.setValue(MidiConstants.DEFAULT_TEMPO_BPM);
 			}
+			else
+			{
+				float tempoFactor = abcSequencer.getTempoFactor();
+				tempoSpinner.setValue(abcSong.getSequenceInfo().getPrimaryTempoBPM());
+				if (tempoFactor != 1.0f)
+					refreshPreviewSequence(false);
+			}
+			tempoSpinner.requestFocus();
 		});
 
 		tripletCheckBox = new JCheckBox("Triplets/swing rhythm");
 		tripletCheckBox.setToolTipText("<html>Tweak the timing to allow for triplets or a swing rhythm.<br><br>"
 				+ "This can cause short/fast notes to incorrectly be detected as triplets.<br>"
 				+ "Leave it unchecked unless the song has triplets or a swing rhythm.</html>");
-		tripletCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if (abcSong != null)
-					abcSong.setTripletTiming(tripletCheckBox.isSelected());
+		tripletCheckBox.addActionListener(e -> {
+			if (abcSong != null)
+				abcSong.setTripletTiming(tripletCheckBox.isSelected());
 
-				if (abcSequencer.isRunning())
-					refreshPreviewSequence(false);
-			}
+			if (abcSequencer.isRunning())
+				refreshPreviewSequence(false);
 		});
 		
 		mixCheckBox = new JCheckBox("Mix Timings");
@@ -507,16 +472,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				+ "that differs from the above triplet/swing setting.<br><br>"
 				+ "It is done per part, so some notes in a parts might export as swing/tuplets<br>"
 				+ "while other parts at same time export even notes.</html>");
-		mixCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if (abcSong != null)
-					abcSong.setMixTiming(mixCheckBox.isSelected());
+		mixCheckBox.addActionListener(e -> {
+			if (abcSong != null)
+				abcSong.setMixTiming(mixCheckBox.isSelected());
 
-				if (abcSequencer.isRunning())
-					refreshPreviewSequence(false);
-			}
+			if (abcSequencer.isRunning())
+				refreshPreviewSequence(false);
 		});
 		
 		prioCheckBox = new JCheckBox("Combine Priorities");
@@ -524,16 +485,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				+ "Checkboxes will appear when combining tracks,<br>"
 				+ "those enabled will prioritize the timings of those"
 				+ "tracks over non-prioritized tracks.</html>");
-		prioCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if (abcSong != null)
-					abcSong.setPriorityActive(prioCheckBox.isSelected());
+		prioCheckBox.addActionListener(e -> {
+			if (abcSong != null)
+				abcSong.setPriorityActive(prioCheckBox.isSelected());
 
-				if (abcSequencer.isRunning())
-					refreshPreviewSequence(false);
-			}
+			if (abcSequencer.isRunning())
+				refreshPreviewSequence(false);
 		});
 
 		exportButton = new JButton(); // Label set in onSaveAndExportSettingsChanged()
@@ -555,37 +512,27 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				}
 			}
 		});
-		exportButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				exportAbc();
-			}
-		});
+		exportButton.addActionListener(e -> exportAbc());
 
 		exportSuccessfulLabel = new JLabel("Exported");
 		exportSuccessfulLabel.setIcon(IconLoader.getImageIcon("check_16.png"));
 		exportSuccessfulLabel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		exportSuccessfulLabel.setVisible(false);
 
-		partsList = new JList<AbcPartMetadataSource>();
+		partsList = new JList<>();
 		partsList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		partsList.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-		{
-			@Override public void valueChanged(ListSelectionEvent e)
-			{
-				AbcPart abcPart = (AbcPart) partsList.getSelectedValue();
-				sequencer.getFilter().onAbcPartChanged(abcPart != null);
-				abcSequencer.getFilter().onAbcPartChanged(abcPart != null);
-				partPanel.setAbcPart(abcPart);
-				if (abcPart != null) {
-					updateButtons(false);
-				} else {
-					updateDelayButton();
-					if (partsList.getModel().getSize() > 0) {
-						// If ctrl-clicking to deselect this will ensure something is selected
-						partsList.setSelectedIndex(0);
-					}
+		partsList.getSelectionModel().addListSelectionListener(e -> {
+			AbcPart abcPart = (AbcPart) partsList.getSelectedValue();
+			sequencer.getFilter().onAbcPartChanged(abcPart != null);
+			abcSequencer.getFilter().onAbcPartChanged(abcPart != null);
+			partPanel.setAbcPart(abcPart);
+			if (abcPart != null) {
+				updateButtons(false);
+			} else {
+				updateDelayButton();
+				if (partsList.getModel().getSize() > 0) {
+					// If ctrl-clicking to deselect this will ensure something is selected
+					partsList.setSelectedIndex(0);
 				}
 			}
 		});
@@ -622,52 +569,36 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		newPartButton = new JButton("New Part");
-		newPartButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if (abcSong != null)
-					abcSong.createNewPart();
-			}
+		newPartButton.addActionListener(e -> {
+			if (abcSong != null)
+				abcSong.createNewPart();
 		});
 
 		deletePartButton = new JButton("Delete");
-		deletePartButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if (abcSong != null) {
-					if (abcSong.getParts().size() == 1) {
-						// When deleting last past, make sure a new part is replacing it, so something is selected
-						AbcPart deleteMe = (AbcPart) partsList.getSelectedValue();
-						abcSong.createNewPart();
-						abcSong.deletePart(deleteMe);
-					} else if (abcSong.getParts().size() > 1) {
-						abcSong.deletePart((AbcPart) partsList.getSelectedValue());
-					}
+		deletePartButton.addActionListener(e -> {
+			if (abcSong != null) {
+				if (abcSong.getParts().size() == 1) {
+					// When deleting last past, make sure a new part is replacing it, so something is selected
+					AbcPart deleteMe = (AbcPart) partsList.getSelectedValue();
+					abcSong.createNewPart();
+					abcSong.deletePart(deleteMe);
+				} else if (abcSong.getParts().size() > 1) {
+					abcSong.deletePart((AbcPart) partsList.getSelectedValue());
 				}
 			}
 		});
 		
 		delayButton = new JButton("Delay Part");
-		delayButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if (partsList.getSelectedValue() != null) {
-					DelayDialog.show(ProjectFrame.this, (AbcPart) partsList.getSelectedValue());
-				}
+		delayButton.addActionListener(e -> {
+			if (partsList.getSelectedValue() != null) {
+				DelayDialog.show(ProjectFrame.this, (AbcPart) partsList.getSelectedValue());
 			}
 		});
 		delayButton.setToolTipText("Open a small dialog to edit delay on part.");
 		
 		numerateButton = new JButton("Numerate");
-		numerateButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if (abcSong != null) abcSong.assignNumbersToSimilarPartTypes();
-			}
+		numerateButton.addActionListener(e -> {
+			if (abcSong != null) abcSong.assignNumbersToSimilarPartTypes();
 		});
 		numerateButton.setToolTipText("Auto assign numbers to identical instrument part titles.");
 		
@@ -794,14 +725,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		stereoPanel.add(new JLabel("Stereo"), "0, 0, c, c");
 		stereoPanel.add(stereoBar, "0, 1, f, c");
 
-		ActionListener modeButtonListener = new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				updatePreviewMode(abcModeRadioButton.isSelected());
-				if (partPanel != null) {
-					partPanel.repaint();
-				}
+		ActionListener modeButtonListener = e -> {
+			updatePreviewMode(abcModeRadioButton.isSelected());
+			if (partPanel != null) {
+				partPanel.repaint();
 			}
 		};
 
@@ -825,52 +752,38 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		playButton = new JButton(playIcon);
 		playButton.setDisabledIcon(playIconDisabled);
 		playButton.setMargin(playControlButtonMargin);
-		playButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		playButton.addActionListener(e -> {
+			SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
+
+			boolean running = !curSequencer.isRunning();
+			if (abcPreviewMode && running)
 			{
-				SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
-
-				boolean running = !curSequencer.isRunning();
-				if (abcPreviewMode && running)
-				{
-					if (!refreshPreviewSequence(true))
-						running = false;
-				}
-
-				curSequencer.setRunning(running);
-				updateButtons(false);
+				if (!refreshPreviewSequence(true))
+					running = false;
 			}
+
+			curSequencer.setRunning(running);
+			updateButtons(false);
 		});
 
 		stopButton = new JButton(stopIcon);
 		stopButton.setDisabledIcon(stopIconDisabled);
 		stopButton.setToolTipText("Stop");
 		stopButton.setMargin(playControlButtonMargin);
-		stopButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				abcSequencer.stop();
-				sequencer.stop();
-				abcSequencer.reset(false);
-				sequencer.reset(false);
-				maxNoteCountTotal = 0;
-				maxNoteCount = 0;
-				updateNoteCountLabel();
-			}
+		stopButton.addActionListener(e -> {
+			abcSequencer.stop();
+			sequencer.stop();
+			abcSequencer.reset(false);
+			sequencer.reset(false);
+			maxNoteCountTotal = 0;
+			maxNoteCount = 0;
+			updateNoteCountLabel();
 		});
 		
 		tuneEditorButton = new JButton();
 		tuneEditorButton.setText("T");
 		tuneEditorButton.setToolTipText("<html><b> Tune Editor </b><br> Edit the tempo or key in specific sections </html>");
-		tuneEditorButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				TuneEditor.show(ProjectFrame.this, abcSong);
-			}
-		});		
+		tuneEditorButton.addActionListener(e -> TuneEditor.show(ProjectFrame.this, abcSong));
 
 		JPanel modeButtonPanel = new JPanel(new BorderLayout());
 		modeButtonPanel.add(midiModeRadioButton, BorderLayout.NORTH);
@@ -910,24 +823,12 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		
 		
 		JPanel flowP = new JPanel(new FlowLayout());
-		noteButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				partPanel.noteToggle();
-			}
-		});
+		noteButton.addActionListener(e -> partPanel.noteToggle());
 		noteButton.setToolTipText("<html>Show notepad where custom notes can be entered.<br>"
 				+ "Will be saved in msx project file.</html>");
 		//playControlPanel.add(noteButton, "6, 2, C, C");
 		
-		zoom.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				partPanel.zoom();
-			}
-		});
+		zoom.addActionListener(e -> partPanel.zoom());
 		//playControlPanel.add(zoom, "7, 2, C, C");
 		
 		flowP.add(zoom);
@@ -963,19 +864,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		
 		final FileFilterDropListener dropListener = new FileFilterDropListener(false, "mid", "midi", "kar", "abc", "txt",
 				AbcSong.MSX_FILE_EXTENSION_NO_DOT);
-		dropListener.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				final File file = dropListener.getDroppedFile();
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					@Override public void run()
-					{
-						openFile(file);
-					}
-				});
-			}
+		dropListener.addActionListener(e -> {
+			final File file = dropListener.getDroppedFile();
+			SwingUtilities.invokeLater(() -> openFile(file));
 		});
 		new DropTarget(this, dropListener);
 
@@ -1060,25 +951,13 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		saveMenuItem.setDisabledIcon(IconLoader.getDisabledIcon("msxfile_16.png"));
 		saveMenuItem.setMnemonic('S');
 		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
-		saveMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				save();
-			}
-		});
+		saveMenuItem.addActionListener(e -> save());
 
 		saveAsMenuItem = fileMenu.add(new JMenuItem("Save " + AbcSong.MSX_FILE_DESCRIPTION + " As..."));
 		saveAsMenuItem.setMnemonic('A');
 		saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK
 				| KeyEvent.SHIFT_DOWN_MASK));
-		saveAsMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				saveAs();
-			}
-		});
+		saveAsMenuItem.addActionListener(e -> saveAs());
 
 		fileMenu.addSeparator();
 
@@ -1087,49 +966,27 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		exportMenuItem.setDisabledIcon(IconLoader.getDisabledIcon("abcfile_16.png"));
 		exportMenuItem.setMnemonic('E');
 		exportMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
-		exportMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				exportAbc();
-			}
-		});
+		exportMenuItem.addActionListener(e -> exportAbc());
 
 		exportAsMenuItem = fileMenu.add(new JMenuItem("Export ABC As..."));
 		exportAsMenuItem.setMnemonic('p');
 		exportAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK
 				| KeyEvent.SHIFT_DOWN_MASK));
-		exportAsMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				exportAbcAs();
-			}
-		});
+		exportAsMenuItem.addActionListener(e -> exportAbcAs());
 
 		fileMenu.addSeparator();
 		
 		closeProject = fileMenu.add(new JMenuItem("Close Project"));
-		closeProject.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				closeSong();
-			}
-		});
+		closeProject.addActionListener(e -> closeSong());
 
 		JMenuItem exitItem = fileMenu.add(new JMenuItem("Exit"));
 		exitItem.setMnemonic('x');
 		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK));
-		exitItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		exitItem.addActionListener(e -> {
+			if (closeSong())
 			{
-				if (closeSong())
-				{
-					setVisible(false);
-					dispose();
-				}
+				setVisible(false);
+				dispose();
 			}
 		});
 
@@ -1141,27 +998,15 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		settingsItem.setDisabledIcon(IconLoader.getDisabledIcon("gear_16.png"));
 		settingsItem.setMnemonic('O');
 		settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK));
-		settingsItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				doSettingsDialog();
-			}
-		});
+		settingsItem.addActionListener(e -> doSettingsDialog());
 
 		toolsMenu.addSeparator();
 
 		JMenuItem aboutItem = toolsMenu.add(new JMenuItem("About " + MaestroMain.APP_NAME + "..."));
 		aboutItem.setMnemonic('A');
 		aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-		aboutItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				AboutDialog.show(ProjectFrame.this, MaestroMain.APP_NAME, MaestroMain.APP_VERSION, MaestroMain.APP_URL,
-						"maestro_64.png");
-			}
-		});
+		aboutItem.addActionListener(e -> AboutDialog.show(ProjectFrame.this, MaestroMain.APP_NAME, MaestroMain.APP_VERSION, MaestroMain.APP_URL,
+				"maestro_64.png"));
 	}
 
 	private int currentSettingsDialogTab = 0;
@@ -1618,30 +1463,26 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		if (!updateTitlePending)
 		{
 			updateTitlePending = true;
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				@Override public void run()
+			SwingUtilities.invokeLater(() -> {
+				updateTitlePending = false;
+				String title = MaestroMain.APP_NAME;
+				if (abcSong != null)
 				{
-					updateTitlePending = false;
-					String title = MaestroMain.APP_NAME;
-					if (abcSong != null)
+					if (abcSong.getSaveFile() != null)
 					{
-						if (abcSong.getSaveFile() != null)
-						{
-							title += " - " + abcSong.getSaveFile().getName();
-							if (abcSong.getSourceFile() != null)
-								title += " [" + abcSong.getSourceFile().getName() + "]";
-						}
-						else if (abcSong.getSourceFile() != null)
-						{
-							title += " - " + abcSong.getSourceFile().getName();
-						}
-
-						if (isAbcSongModified())
-							title += "*";
+						title += " - " + abcSong.getSaveFile().getName();
+						if (abcSong.getSourceFile() != null)
+							title += " [" + abcSong.getSourceFile().getName() + "]";
 					}
-					setTitle(title);
+					else if (abcSong.getSourceFile() != null)
+					{
+						title += " - " + abcSong.getSourceFile().getName();
+					}
+
+					if (isAbcSongModified())
+						title += "*";
 				}
+				setTitle(title);
 			});
 		}
 	}
@@ -2250,15 +2091,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			abcSequencer.setTickPosition(tick);
 			abcSequencer.setRunning(running);
 		}
-		catch (InvalidMidiDataException e)
-		{
-			sequencer.stop();
-			abcSequencer.stop();
-			JOptionPane.showMessageDialog(ProjectFrame.this, e.getMessage(), "Error previewing ABC",
-					JOptionPane.WARNING_MESSAGE);
-			return false;
-		}
-		catch (AbcConversionException e)
+		catch (InvalidMidiDataException | AbcConversionException e)
 		{
 			sequencer.stop();
 			abcSequencer.stop();
@@ -2402,28 +2235,18 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			StringCleaner.cleanABC = saveSettings.convertABCStringsToBasicAscii;
 			abcSong.exportAbc(abcSong.getExportFile());
 
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				@Override public void run()
+			SwingUtilities.invokeLater(() -> {
+				exportSuccessfulLabel.setText(abcSong.getExportFile().getName());
+				exportSuccessfulLabel.setToolTipText("Exported " + abcSong.getExportFile().getName());
+				exportSuccessfulLabel.setVisible(true);
+				if (exportLabelHideTimer == null)
 				{
-					exportSuccessfulLabel.setText(abcSong.getExportFile().getName());
-					exportSuccessfulLabel.setToolTipText("Exported " + abcSong.getExportFile().getName());
-					exportSuccessfulLabel.setVisible(true);
-					if (exportLabelHideTimer == null)
-					{
-						exportLabelHideTimer = new Timer(8000, new ActionListener()
-						{
-							@Override public void actionPerformed(ActionEvent e)
-							{
-								exportSuccessfulLabel.setVisible(false);
-							}
-						});
-						exportLabelHideTimer.setRepeats(false);
-					}
-					exportLabelHideTimer.stop();
-					exportLabelHideTimer.start();
-					onSaveAndExportSettingsChanged();
+					exportLabelHideTimer = new Timer(8000, e -> exportSuccessfulLabel.setVisible(false));
+					exportLabelHideTimer.setRepeats(false);
 				}
+				exportLabelHideTimer.stop();
+				exportLabelHideTimer.start();
+				onSaveAndExportSettingsChanged();
 			});
 			return true;
 		}

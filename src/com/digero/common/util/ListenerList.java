@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ListenerList<E extends EventObject> implements IDiscardable
 {
-	private List<Listener<E>> listeners = new ArrayList<Listener<E>>();
+	private List<Listener<E>> listeners = new ArrayList<>();
 
 	private int firing = 0;
 	private int lastModifiedFiring = 0;
@@ -81,7 +81,7 @@ public class ListenerList<E extends EventObject> implements IDiscardable
 		// listener list for this firing iteration, do so now.
 		if (firing > lastModifiedFiring)
 		{
-			listeners = new ArrayList<Listener<E>>(listeners);
+			listeners = new ArrayList<>(listeners);
 			lastModifiedFiring = firing;
 		}
 	}

@@ -378,13 +378,9 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 			return;
 
 		updatePending = true;
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override public void run()
-			{
-				updatePending = false;
-				updateCore();
-			}
+		SwingUtilities.invokeLater(() -> {
+			updatePending = false;
+			updateCore();
 		});
 	}
 
@@ -401,7 +397,7 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 
 			if (info.tickToLineNumber == null)
 			{
-				info.tickToLineNumber = new TreeMap<Long, Integer>();
+				info.tickToLineNumber = new TreeMap<>();
 				int prevLine = -1;
 				for (AbcRegion region : abcInfo.getRegions())
 				{

@@ -16,7 +16,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -32,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -82,13 +82,11 @@ import com.digero.common.abctomidi.FileAndData;
 import com.digero.common.icons.IconLoader;
 import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.LotroSequencerWrapper;
-import com.digero.common.midi.SequencerEvent;
 import com.digero.common.midi.SequencerEvent.SequencerProperty;
 import com.digero.common.midi.SequencerWrapper;
 import com.digero.common.midi.VolumeTransceiver;
 import com.digero.common.util.ExtensionFileFilter;
 import com.digero.common.util.FileFilterDropListener;
-import com.digero.common.util.Listener;
 import com.digero.common.util.LotroParseException;
 import com.digero.common.util.ParseException;
 import com.digero.common.util.Util;
@@ -100,7 +98,6 @@ import com.digero.common.view.SongPositionBar;
 import com.digero.common.view.SongPositionLabel;
 import com.digero.common.view.TempoBar;
 
-@SuppressWarnings("serial")
 public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConstants, TrackListPanelCallback
 {
 	private static final ExtensionFileFilter ABC_FILE_FILTER = new ExtensionFileFilter("ABC Files", "abc", "txt");
@@ -246,7 +243,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
 	private HighlightAbcNotesFrame abcViewFrame;
 
-	private final Map<Integer, LotroInstrument> instrumentOverrideMap = new HashMap<Integer, LotroInstrument>();
+	private final Map<Integer, LotroInstrument> instrumentOverrideMap = new HashMap<>();
 	private List<FileAndData> abcData;
 	private AbcInfo abcInfo = new AbcInfo();
 
@@ -269,7 +266,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
 		try
 		{
-			List<Image> icons = new ArrayList<Image>();
+			List<Image> icons = new ArrayList<>();
 			icons.add(ImageIO.read(IconLoader.class.getResourceAsStream("abcplayer_16.png")));
 			icons.add(ImageIO.read(IconLoader.class.getResourceAsStream("abcplayer_32.png")));
 			setIconImages(icons);
@@ -280,14 +277,10 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		}
 
 		dropListener = new FileFilterDropListener(true, "abc", "txt");
-		dropListener.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				FileFilterDropListener l = (FileFilterDropListener) e.getSource();
-				boolean append = (l.getDropEvent().getDropAction() == DnDConstants.ACTION_COPY);
-				SwingUtilities.invokeLater(new OpenSongRunnable(append, l.getDroppedFiles().toArray(new File[0])));
-			}
+		dropListener.addActionListener(e -> {
+			FileFilterDropListener l = (FileFilterDropListener) e.getSource();
+			boolean append = (l.getDropEvent().getDropAction() == DnDConstants.ACTION_COPY);
+			SwingUtilities.invokeLater(new OpenSongRunnable(append, l.getDroppedFiles().toArray(new File[0])));
 		});
 		new DropTarget(this, dropListener);
 
@@ -424,24 +417,12 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		playButton = new JButton(playIcon);
 		playButton.setDisabledIcon(playIconDisabled);
 		playButton.setEnabled(false);
-		playButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				playPause();
-			}
-		});
+		playButton.addActionListener(e -> playPause());
 
 		stopButton = new JButton(stopIcon);
 		stopButton.setDisabledIcon(stopIconDisabled);
 		stopButton.setEnabled(false);
-		stopButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				stop();
-			}
-		});
+		stopButton.addActionListener(e -> stop());
 
 		tempoBar = new TempoBar(sequencer);
 
@@ -466,20 +447,16 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		controlPanel.add(volumePanel, "8, 3, c, c");
 		controlPanel.add(barNumberLabel, "9, 3, 11, 3, r, t");
 
-		sequencer.addChangeListener(new Listener<SequencerEvent>()
-		{
-			@Override public void onEvent(SequencerEvent evt)
+		sequencer.addChangeListener(evt -> {
+			SequencerProperty p = evt.getProperty();
+			if (!p.isInMask(SequencerProperty.THUMB_POSITION_MASK))
 			{
-				SequencerProperty p = evt.getProperty();
-				if (!p.isInMask(SequencerProperty.THUMB_POSITION_MASK))
-				{
-					updateButtonStates();
-				}
+				updateButtonStates();
+			}
 
-				if (p.isInMask(SequencerProperty.TEMPO.mask | SequencerProperty.SEQUENCE.mask))
-				{
-					updateTempoLabel();
-				}
+			if (p.isInMask(SequencerProperty.TEMPO.mask | SequencerProperty.SEQUENCE.mask))
+			{
+				updateTempoLabel();
 			}
 		});
 
@@ -556,7 +533,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		}
 		else
 		{
-			List<String> lines = new ArrayList<String>();
+			List<String> lines = new ArrayList<>();
 			for (FileAndData entry : abcData)
 				lines.addAll(entry.lines);
 
@@ -615,79 +592,59 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		JMenuItem open = fileMenu.add(new JMenuItem("Open ABC file(s)..."));
 		open.setMnemonic(KeyEvent.VK_O);
 		open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
-		open.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				openSongDialog();
-			}
-		});
+		open.addActionListener(e -> openSongDialog());
 
 		JMenuItem openAppend = fileMenu.add(new JMenuItem("Append ABC file(s)..."));
 		openAppend.setMnemonic(KeyEvent.VK_D);
 		openAppend.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK
 				| InputEvent.SHIFT_DOWN_MASK));
-		openAppend.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				appendSongDialog();
-			}
-		});
+		openAppend.addActionListener(e -> appendSongDialog());
 
 		final JMenuItem pasteMenuItem = fileMenu.add(new JMenuItem("Open from clipboard"));
 		pasteMenuItem.setMnemonic(KeyEvent.VK_P);
 		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
-		pasteMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		pasteMenuItem.addActionListener(e -> {
+			ArrayList<File> files = new ArrayList<>();
+			if (getFileListFromClipboard(files))
 			{
-				ArrayList<File> files = new ArrayList<File>();
-				if (getFileListFromClipboard(files))
-				{
-					openSong(files.toArray(new File[files.size()]));
-					return;
-				}
-
-				ArrayList<String> lines = new ArrayList<String>();
-				if (getAbcDataFromClipboard(lines, false))
-				{
-					List<FileAndData> filesData = new ArrayList<FileAndData>();
-					filesData.add(new FileAndData(new File("[Clipboard]"), lines));
-					openSong(filesData);
-					return;
-				}
-
-				Toolkit.getDefaultToolkit().beep();
+				openSong(files.toArray(new File[0]));
+				return;
 			}
+
+			ArrayList<String> lines = new ArrayList<>();
+			if (getAbcDataFromClipboard(lines, false))
+			{
+				List<FileAndData> filesData = new ArrayList<>();
+				filesData.add(new FileAndData(new File("[Clipboard]"), lines));
+				openSong(filesData);
+				return;
+			}
+
+			Toolkit.getDefaultToolkit().beep();
 		});
 
 		final JMenuItem pasteAppendMenuItem = fileMenu.add(new JMenuItem("Append from clipboard"));
 		pasteAppendMenuItem.setMnemonic(KeyEvent.VK_N);
 		pasteAppendMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK
 				| InputEvent.SHIFT_DOWN_MASK));
-		pasteAppendMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		pasteAppendMenuItem.addActionListener(e -> {
+			ArrayList<File> files = new ArrayList<>();
+			if (getFileListFromClipboard(files))
 			{
-				ArrayList<File> files = new ArrayList<File>();
-				if (getFileListFromClipboard(files))
-				{
-					appendSong(files.toArray(new File[files.size()]));
-					return;
-				}
-
-				ArrayList<String> lines = new ArrayList<String>();
-				if (getAbcDataFromClipboard(lines, true))
-				{
-					List<FileAndData> data = new ArrayList<FileAndData>();
-					data.add(new FileAndData(new File("[Clipboard]"), lines));
-					appendSong(data);
-					return;
-				}
-
-				Toolkit.getDefaultToolkit().beep();
+				appendSong(files.toArray(new File[0]));
+				return;
 			}
+
+			ArrayList<String> lines = new ArrayList<>();
+			if (getAbcDataFromClipboard(lines, true))
+			{
+				List<FileAndData> data = new ArrayList<>();
+				data.add(new FileAndData(new File("[Clipboard]"), lines));
+				appendSong(data);
+				return;
+			}
+
+			Toolkit.getDefaultToolkit().beep();
 		});
 		
 		recentQueue=new LinkedList<>();
@@ -702,66 +659,50 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		saveMenuItem.setMnemonic(KeyEvent.VK_S);
 		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK
 				| InputEvent.SHIFT_DOWN_MASK));
-		saveMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		saveMenuItem.addActionListener(e -> {
+			if (!sequencer.isLoaded())
 			{
-				if (!sequencer.isLoaded())
-				{
-					Toolkit.getDefaultToolkit().beep();
-					return;
-				}
-				saveSongDialog();
+				Toolkit.getDefaultToolkit().beep();
+				return;
 			}
+			saveSongDialog();
 		});
 
 		final JMenuItem exportMp3MenuItem = fileMenu.add(new JMenuItem("Save as MP3 file (LAME)..."));
 		exportMp3MenuItem.setMnemonic(KeyEvent.VK_M);
 		exportMp3MenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
-		exportMp3MenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		exportMp3MenuItem.addActionListener(e -> {
+			if (!sequencer.isLoaded() || isExporting)
 			{
-				if (!sequencer.isLoaded() || isExporting)
-				{
-					Toolkit.getDefaultToolkit().beep();
-					return;
-				}
-				exportMp3();
+				Toolkit.getDefaultToolkit().beep();
+				return;
 			}
+			exportMp3();
 		});
 		
 		final JMenuItem exportMp3MenuItemNew = fileMenu.add(new JMenuItem("Save as MP3 file (FFmpeg)..."));
 		//exportMp3MenuItemNew.setMnemonic(KeyEvent.VK_M);
 		//exportMp3MenuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
-		exportMp3MenuItemNew.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		exportMp3MenuItemNew.addActionListener(e -> {
+			if (!sequencer.isLoaded() || isExporting)
 			{
-				if (!sequencer.isLoaded() || isExporting)
-				{
-					Toolkit.getDefaultToolkit().beep();
-					return;
-				}
-				exportMp3New();
+				Toolkit.getDefaultToolkit().beep();
+				return;
 			}
+			exportMp3New();
 		});
 
 		final JMenuItem exportWavMenuItem = fileMenu.add(new JMenuItem("Save as Wave file..."));
 		exportWavMenuItem.setMnemonic(KeyEvent.VK_E);
 		exportWavMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK
 				| InputEvent.SHIFT_DOWN_MASK));
-		exportWavMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		exportWavMenuItem.addActionListener(e -> {
+			if (!sequencer.isLoaded() || isExporting)
 			{
-				if (!sequencer.isLoaded() || isExporting)
-				{
-					Toolkit.getDefaultToolkit().beep();
-					return;
-				}
-				exportWav();
+				Toolkit.getDefaultToolkit().beep();
+				return;
 			}
+			exportWav();
 		});
 
 		fileMenu.addSeparator();
@@ -769,13 +710,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		JMenuItem exit = fileMenu.add(new JMenuItem("Exit"));
 		exit.setMnemonic(KeyEvent.VK_X);
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
-		exit.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				System.exit(0);
-			}
-		});
+		exit.addActionListener(e -> System.exit(0));
 
 		fileMenu.addMenuListener(new MenuListener()
 		{
@@ -815,45 +750,23 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		JMenuItem deselect = new JMenuItem("Deselect all");
 		editMenu.add(select);
 		editMenu.add(deselect);
-		select.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				trackListPanel.selectAll();
-			}
-		});
-		deselect.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				trackListPanel.deselectAll();
-			}
-		});
+		select.addActionListener(e -> trackListPanel.selectAll());
+		deselect.addActionListener(e -> trackListPanel.deselectAll());
 
 		JMenu toolsMenu = mainMenu.add(new JMenu(" Tools "));
 		toolsMenu.setMnemonic(KeyEvent.VK_T);
 
 		toolsMenu.add(lotroErrorsMenuItem = new JCheckBoxMenuItem("Ignore LOTRO-specific errors"));
 		lotroErrorsMenuItem.setSelected(prefs.getBoolean("ignoreLotroErrors", false));
-		lotroErrorsMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				prefs.putBoolean("ignoreLotroErrors", lotroErrorsMenuItem.isSelected());
-			}
-		});
+		lotroErrorsMenuItem.addActionListener(e -> prefs.putBoolean("ignoreLotroErrors", lotroErrorsMenuItem.isSelected()));
 
 		toolsMenu.add(stereoMenuItem = new JCheckBoxMenuItem("Stereo pan in multi-part songs"));
 		stereoMenuItem.setToolTipText("<html>Separates the parts of a multi-part song by <br>"
 				+ "panning them towards the left or right speaker.</html>");
 		stereoMenuItem.setSelected(prefs.getBoolean("stereoMenuItem", true));
-		stereoMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				prefs.putBoolean("stereoMenuItem", stereoMenuItem.isSelected());
-				refreshSequence();
-			}
+		stereoMenuItem.addActionListener(e -> {
+			prefs.putBoolean("stereoMenuItem", stereoMenuItem.isSelected());
+			refreshSequence();
 		});
 
 		toolsMenu.addSeparator();
@@ -863,84 +776,58 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		trackListPanel.setShowFullPartName(showFullPartNameMenuItem.isSelected());
 		if (abcViewFrame != null)
 			abcViewFrame.setShowFullPartName(showFullPartNameMenuItem.isSelected());
-		showFullPartNameMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				prefs.putBoolean("showFullPartNameMenuItem", showFullPartNameMenuItem.isSelected());
-				trackListPanel.setShowFullPartName(showFullPartNameMenuItem.isSelected());
-				if (abcViewFrame != null)
-					abcViewFrame.setShowFullPartName(showFullPartNameMenuItem.isSelected());
-			}
+		showFullPartNameMenuItem.addActionListener(e -> {
+			prefs.putBoolean("showFullPartNameMenuItem", showFullPartNameMenuItem.isSelected());
+			trackListPanel.setShowFullPartName(showFullPartNameMenuItem.isSelected());
+			if (abcViewFrame != null)
+				abcViewFrame.setShowFullPartName(showFullPartNameMenuItem.isSelected());
 		});
 
 		final JCheckBoxMenuItem showLineNumbersMenuItem = new JCheckBoxMenuItem("Show line numbers");
 		toolsMenu.add(showLineNumbersMenuItem);
 		showLineNumbersMenuItem.setSelected(prefs.getBoolean("showLineNumbersMenuItem", true));
 		trackListPanel.setShowLineNumbers(showLineNumbersMenuItem.isSelected());
-		showLineNumbersMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				prefs.putBoolean("showLineNumbersMenuItem", showLineNumbersMenuItem.isSelected());
-				trackListPanel.setShowLineNumbers(showLineNumbersMenuItem.isSelected());
-			}
+		showLineNumbersMenuItem.addActionListener(e -> {
+			prefs.putBoolean("showLineNumbersMenuItem", showLineNumbersMenuItem.isSelected());
+			trackListPanel.setShowLineNumbers(showLineNumbersMenuItem.isSelected());
 		});
 
 		final JCheckBoxMenuItem showSoloButtonsMenuItem = new JCheckBoxMenuItem("Show track solo buttons");
 		toolsMenu.add(showSoloButtonsMenuItem);
 		showSoloButtonsMenuItem.setSelected(prefs.getBoolean("showSoloButtonsMenuItem", true));
 		trackListPanel.setShowSoloButtons(showSoloButtonsMenuItem.isSelected());
-		showSoloButtonsMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				prefs.putBoolean("showSoloButtonsMenuItem", showSoloButtonsMenuItem.isSelected());
-				trackListPanel.setShowSoloButtons(showSoloButtonsMenuItem.isSelected());
-			}
+		showSoloButtonsMenuItem.addActionListener(e -> {
+			prefs.putBoolean("showSoloButtonsMenuItem", showSoloButtonsMenuItem.isSelected());
+			trackListPanel.setShowSoloButtons(showSoloButtonsMenuItem.isSelected());
 		});
 
 		final JCheckBoxMenuItem showInstrumentComboBoxesMenuItem = new JCheckBoxMenuItem("Show instrument pickers");
 		toolsMenu.add(showInstrumentComboBoxesMenuItem);
 		showInstrumentComboBoxesMenuItem.setSelected(prefs.getBoolean("showInstrumentComboBoxesMenuItem", true));
 		trackListPanel.setShowInstrumentComboBoxes(showInstrumentComboBoxesMenuItem.isSelected());
-		showInstrumentComboBoxesMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				prefs.putBoolean("showInstrumentComboBoxesMenuItem", showInstrumentComboBoxesMenuItem.isSelected());
-				trackListPanel.setShowInstrumentComboBoxes(showInstrumentComboBoxesMenuItem.isSelected());
-			}
+		showInstrumentComboBoxesMenuItem.addActionListener(e -> {
+			prefs.putBoolean("showInstrumentComboBoxesMenuItem", showInstrumentComboBoxesMenuItem.isSelected());
+			trackListPanel.setShowInstrumentComboBoxes(showInstrumentComboBoxesMenuItem.isSelected());
 		});
 
 		toolsMenu.addSeparator();
 
 		JMenuItem about = toolsMenu.add(new JMenuItem("About " + APP_NAME + "..."));
 		about.setMnemonic(KeyEvent.VK_A);
-		about.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				AboutDialog.show(AbcPlayer.this, APP_NAME_LONG, APP_VERSION, APP_URL, "abcplayer_64.png");
-			}
-		});
+		about.addActionListener(e -> AboutDialog.show(AbcPlayer.this, APP_NAME_LONG, APP_VERSION, APP_URL, "abcplayer_64.png"));
 
 		JMenu abcViewMenu = mainMenu.add(new JMenu(" ABC View "));
 		abcViewMenu.setMnemonic(KeyEvent.VK_A);
 
 		abcViewMenu.add(showAbcViewMenuItem = new JCheckBoxMenuItem("Show ABC text"));
-		showAbcViewMenuItem.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		showAbcViewMenuItem.addActionListener(e -> {
+			if (showAbcViewMenuItem.isSelected())
 			{
-				if (showAbcViewMenuItem.isSelected())
-				{
-					updateAbcView(/* showIfHidden = */true, /* retainScrollPosition = */false);
-				}
-				else if (abcViewFrame != null)
-				{
-					abcViewFrame.setVisible(false);
-				}
+				updateAbcView(/* showIfHidden = */true, /* retainScrollPosition = */false);
+			}
+			else if (abcViewFrame != null)
+			{
+				abcViewFrame.setVisible(false);
 			}
 		});
 	}
@@ -962,20 +849,12 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
             for (final String string : recentQueue) {
                 JMenuItem item = new JMenuItem(recentFilenameFromPath(string));
-                item.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        recentActionPerformed(evt, string);
-                    }               
-                });
+                item.addActionListener(evt -> recentActionPerformed(evt, string));
                 recentItems.add(item);
             }
         } else {
         	JMenuItem newRecent = new JMenuItem(recentFilenameFromPath(fileNameToAdd));
-            newRecent.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    recentActionPerformed(evt, fileNameToAdd);
-                }               
-            });
+            newRecent.addActionListener(evt -> recentActionPerformed(evt, fileNameToAdd));
             recentItems.add(newRecent);
         }
         recentPrefsWrite();
@@ -986,11 +865,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 			recentItems.removeAll();
             for (final String string : recentQueue) {
                 JMenuItem item = new JMenuItem(recentFilenameFromPath(string));
-                item.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        recentActionPerformed(evt, string);
-                    }
-                });
+                item.addActionListener(evt -> recentActionPerformed(evt, string));
                 recentItems.add(item);
             }
 		}
@@ -1017,11 +892,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
         for (final String string : recentQueue) {
             JMenuItem item = new JMenuItem(recentFilenameFromPath(string));
-            item.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    recentActionPerformed(evt, string);
-                }
-            });
+            item.addActionListener(evt -> recentActionPerformed(evt, string));
             recentItems.add(item);
         }
 	}
@@ -1264,7 +1135,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
 	private boolean openSong(File[] abcFiles)
 	{
-		List<FileAndData> data = new ArrayList<FileAndData>();
+		List<FileAndData> data = new ArrayList<>();
 
 		try
 		{
@@ -1284,7 +1155,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
 	private boolean appendSong(File[] abcFiles)
 	{
-		List<FileAndData> data = new ArrayList<FileAndData>();
+		List<FileAndData> data = new ArrayList<>();
 
 		try
 		{
@@ -1423,7 +1294,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		long position = sequencer.getPosition();
 		sequencer.stop(); // pause
 
-		List<FileAndData> data = new ArrayList<FileAndData>(abcData);
+		List<FileAndData> data = new ArrayList<>(abcData);
 		data.addAll(appendData);
 
 		Sequence song = null;
@@ -1514,25 +1385,25 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
 	private void updateWindowTitle()
 	{
-		String fileNames = "";
+		StringBuilder fileNames = new StringBuilder();
 		int c = 0;
 		for (FileAndData fd : abcData)
 		{
 			File f = fd.file;
 			if (++c > 1)
-				fileNames += ", ";
+				fileNames.append(", ");
 
 			if (c > 2)
 			{
-				fileNames += "...";
+				fileNames.append("...");
 				break;
 			}
 
-			fileNames += f.getName();
+			fileNames.append(f.getName());
 		}
 
 		String title = APP_NAME;
-		if (fileNames != "")
+		if (fileNames.toString() != "")
 			title += " - " + fileNames;
 
 		setTitle(title);
@@ -1542,29 +1413,18 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
 	private boolean saveSong(File file)
 	{
-		PrintStream out = null;
-		try
-		{
-			out = new PrintStream(file);
+		try (PrintStream out = new PrintStream(file)) {
 			int i = 0;
-			for (FileAndData fileData : abcData)
-			{
+			for (FileAndData fileData : abcData) {
 				for (String line : fileData.lines)
 					out.println(line);
 
 				if (++i < abcData.size())
 					out.println();
 			}
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage(), "Failed to save file", JOptionPane.ERROR_MESSAGE);
 			return false;
-		}
-		finally
-		{
-			if (out != null)
-				out.close();
 		}
 		return true;
 	}
@@ -1677,14 +1537,8 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 			Exception error = null;
 			try
 			{
-				FileOutputStream fos = new FileOutputStream(file);
-				try
-				{
+				try (FileOutputStream fos = new FileOutputStream(file)) {
 					MidiToWav.render(sequence, fos);
-				}
-				finally
-				{
-					fos.close();
 				}
 			}
 			catch (Exception e)
@@ -1865,7 +1719,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				{
 					for (File file : dir.listFiles())
 					{
-						if (file.getName().toLowerCase().equals("lame.exe"))
+						if (file.getName().equalsIgnoreCase("lame.exe"))
 						{
 							lameExe = file;
 							break outerLoop;
@@ -1898,7 +1752,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				{
 					@Override public boolean accept(File f)
 					{
-						return f.isDirectory() || f.getName().toLowerCase().equals("lame.exe");
+						return f.isDirectory() || f.getName().equalsIgnoreCase("lame.exe");
 					}
 
 					@Override public String getDescription()
@@ -1961,15 +1815,11 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		ExportMp3Dialog mp3Dialog = new ExportMp3Dialog(this, lameExe, mp3Prefs, openedFile, abcInfo.getTitle(),
 				abcInfo.getComposer());
 		mp3Dialog.setIconImages(AbcPlayer.this.getIconImages());
-		mp3Dialog.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				ExportMp3Dialog dialog = (ExportMp3Dialog) e.getSource();
-				JDialog waitFrame = new WaitDialog(AbcPlayer.this, dialog.getSaveFile());
-				waitFrame.setVisible(true);
-				new Thread(new ExportMp3Task(sequencer.getSequence(), dialog, waitFrame)).start();
-			}
+		mp3Dialog.addActionListener(e -> {
+			ExportMp3Dialog dialog = (ExportMp3Dialog) e.getSource();
+			JDialog waitFrame = new WaitDialog(AbcPlayer.this, dialog.getSaveFile());
+			waitFrame.setVisible(true);
+			new Thread(new ExportMp3Task(sequencer.getSequence(), dialog, waitFrame)).start();
 		});
 		mp3Dialog.setVisible(true);
 	}
@@ -1998,18 +1848,13 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				lameExeSav = mp3Prefs.get("lameExe", null);
 				mp3Prefs.put("lameExe", "");
 				File wavFile = File.createTempFile("AbcPlayer-", ".wav");
-				FileOutputStream fos = new FileOutputStream(wavFile);
-				try
-				{
+				try (FileOutputStream fos = new FileOutputStream(wavFile)) {
 					MidiToWav.render(sequence, fos);
 					fos.close();
 					Process p = Runtime.getRuntime().exec(mp3Dialog.getCommandLine(wavFile));
 					if (p.waitFor() != 0)
 						throw new Exception("LAME failed");
-				}
-				finally
-				{
-					fos.close();
+				} finally {
 					wavFile.delete();
 				}
 			}
@@ -2045,7 +1890,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				{
 					for (File file : dir.listFiles())
 					{
-						if (file.getName().toLowerCase().equals("ffmpeg.exe"))
+						if (file.getName().equalsIgnoreCase("ffmpeg.exe"))
 						{
 							ffExe = file;
 							break outerLoop;
@@ -2078,7 +1923,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				{
 					@Override public boolean accept(File f)
 					{
-						return f.isDirectory() || f.getName().toLowerCase().equals("ffmpeg.exe");
+						return f.isDirectory() || f.getName().equalsIgnoreCase("ffmpeg.exe");
 					}
 
 					@Override public String getDescription()
@@ -2141,15 +1986,11 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		ExportMp3Dialog mp3Dialog = new ExportMp3Dialog(this, ffExe, mp3Prefs, openedFile, abcInfo.getTitle(),
 				abcInfo.getComposer());
 		mp3Dialog.setIconImages(AbcPlayer.this.getIconImages());
-		mp3Dialog.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				ExportMp3Dialog dialog = (ExportMp3Dialog) e.getSource();
-				JDialog waitFrame = new WaitDialog(AbcPlayer.this, dialog.getSaveFile());
-				waitFrame.setVisible(true);
-				new Thread(new ExportMp3TaskNew(sequencer.getSequence(), dialog, waitFrame)).start();
-			}
+		mp3Dialog.addActionListener(e -> {
+			ExportMp3Dialog dialog = (ExportMp3Dialog) e.getSource();
+			JDialog waitFrame = new WaitDialog(AbcPlayer.this, dialog.getSaveFile());
+			waitFrame.setVisible(true);
+			new Thread(new ExportMp3TaskNew(sequencer.getSequence(), dialog, waitFrame)).start();
 		});
 		mp3Dialog.setVisible(true);
 	}
@@ -2178,9 +2019,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 				ffExeSav = mp3Prefs.get("ffExe", null);
 				mp3Prefs.put("ffExe", "");
 				File wavFile = File.createTempFile("AbcPlayer-", ".wav");
-				FileOutputStream fos = new FileOutputStream(wavFile);
-				try
-				{
+				try (FileOutputStream fos = new FileOutputStream(wavFile)) {
 					MidiToWav.render(sequence, fos);
 					fos.close();
 					String commando = mp3Dialog.getCommandLineNew(wavFile);
@@ -2188,10 +2027,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 					Process p = Runtime.getRuntime().exec(commando);
 					if (p.waitFor() != 0)
 						throw new Exception("FFmpeg failed");
-				}
-				finally
-				{
-					fos.close();
+				} finally {
 					wavFile.delete();
 				}
 			}
@@ -2286,32 +2122,30 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 			return false;
 		}
 		//System.out.println("Made port");
-		(new Thread() {
-			public void run() {
-				try {
-					while (true) {
-						Socket socket = serverSocket.accept();
-						//System.out.println("Accepted");
-						BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF16"));
-				        
-			        	//while (socket.isConnected()) {
-			        		String data = in.readLine();
-						
-			        		if (data != null && data.length() >= 4 && data.substring(data.length() - 4).equalsIgnoreCase(".abc")) {// && !data.substring(0,3).equalsIgnoreCase("GET") && 
-			        			//System.out.println("Receiving file path ("+data.length()+" chars) from port "+(9000+APP_VERSION.getBuild())+":\n"+data);
-			        			String[] datas = {data};
-			        			activate(datas);
-			        		} else {
-			        			//System.out.println("Received nothing");
-			        		}
-			        	//}
-			        	socket.close();
-				    }
-			    } catch (IOException e) {
-			    	//e.printStackTrace();
-			    }
+		(new Thread(() -> {
+			try {
+				while (true) {
+					Socket socket = serverSocket.accept();
+					//System.out.println("Accepted");
+					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_16));
+
+					//while (socket.isConnected()) {
+						String data = in.readLine();
+
+						if (data != null && data.length() >= 4 && data.substring(data.length() - 4).equalsIgnoreCase(".abc")) {// && !data.substring(0,3).equalsIgnoreCase("GET") &&
+							//System.out.println("Receiving file path ("+data.length()+" chars) from port "+(9000+APP_VERSION.getBuild())+":\n"+data);
+							String[] datas = {data};
+							activate(datas);
+						} else {
+							//System.out.println("Received nothing");
+						}
+					//}
+					socket.close();
+				}
+			} catch (IOException e) {
+				//e.printStackTrace();
 			}
-		}).start();
+		})).start();
 	    return true;
 	}
 	
@@ -2322,7 +2156,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		}
 		try {			
 			Socket clientSocket = new Socket("localhost", 9000+APP_VERSION.getBuild());
-			OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream(), "UTF16");//NTFS uses UTF16 for filenames
+			OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_16);//NTFS uses UTF16 for filenames
 			//for (String arg : args) {
 				os.write(args[0]);
 				os.close();//Must be here to flush to stream
