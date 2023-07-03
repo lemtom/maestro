@@ -14,7 +14,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
 import com.digero.common.midi.SynthesizerFactory;
-import com.sun.media.sound.AudioSynthesizer;
+import com.digero.common.midiutils.AudioSynthesizer;
 
 public class MidiToWav
 {

@@ -21,9 +21,9 @@ import com.digero.common.midi.IBarNumberCache;
 import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.TimeSignature;
+import com.digero.common.midiutils.MidiUtils;
 import com.digero.common.util.Util;
 import com.digero.maestro.abc.TimingInfo;
-import com.sun.media.sound.MidiUtils;
 
 public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumberCache
 {

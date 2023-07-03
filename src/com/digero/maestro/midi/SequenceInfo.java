@@ -25,13 +25,13 @@ import com.digero.common.midi.ExtensionMidiInstrument;
 import com.digero.common.midi.KeySignature;
 import com.digero.common.midi.MidiFactory;
 import com.digero.common.midi.TimeSignature;
+import com.digero.common.midiutils.MidiUtils;
 import com.digero.common.util.Pair;
 import com.digero.common.util.ParseException;
 import com.digero.maestro.abc.AbcConversionException;
 import com.digero.maestro.abc.AbcExporter;
 import com.digero.maestro.abc.AbcExporter.ExportTrackInfo;
 import com.digero.maestro.abc.AbcMetadataSource;
-import com.sun.media.sound.MidiUtils;
 
 /**
  * Container for a MIDI sequence. If necessary, converts type 0 MIDI files to type 1.
@@ -119,7 +119,7 @@ public class SequenceInfo implements MidiConstants
 		if (dot > 0)
 			title = title.substring(0, dot);
 		title = title.replace('_', ' ');
-		title = title.replaceAll("—", "-");//replace long dash with normal ascii dash
+		title = title.replaceAll("ï¿½", "-");//replace long dash with normal ascii dash
 		
 		String[] array = title.split("-", 2);
 		if (array.length > 1 && array[0].length() > 0 && array[1].length() > 0) {

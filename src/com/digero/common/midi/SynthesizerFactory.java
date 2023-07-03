@@ -6,12 +6,13 @@ import java.io.IOException;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
+
+import com.digero.common.midiutils.AudioSynthesizer;
+
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
-
-import com.sun.media.sound.AudioSynthesizer;
 
 public class SynthesizerFactory
 {

@@ -28,9 +28,9 @@ import com.digero.common.midi.MidiFactory;
 import com.digero.common.midi.Note;
 import com.digero.common.midi.PanGenerator;
 import com.digero.common.midi.SequencerWrapper;
+import com.digero.common.midiutils.MidiUtils;
 import com.digero.common.util.LotroParseException;
 import com.digero.common.util.ParseException;
-import com.sun.media.sound.MidiUtils;
 
 public class AbcToMidi
 {

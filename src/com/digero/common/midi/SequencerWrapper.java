@@ -19,10 +19,11 @@ import javax.sound.midi.Transmitter;
 import javax.swing.Timer;
 
 import com.digero.common.midi.SequencerEvent.SequencerProperty;
+import com.digero.common.midiutils.MidiUtils;
+import com.digero.common.midiutils.TempoCache;
 import com.digero.common.util.IDiscardable;
 import com.digero.common.util.Listener;
 import com.digero.common.util.ListenerList;
-import com.sun.media.sound.MidiUtils;
 
 public class SequencerWrapper implements MidiConstants, ITempoCache, IDiscardable
 {
@@ -35,7 +36,7 @@ public class SequencerWrapper implements MidiConstants, ITempoCache, IDiscardabl
 	private List<Transceiver> transceivers = new ArrayList<Transceiver>();
 	private long dragTick;
 	private boolean isDragging;
-	private MidiUtils.TempoCache tempoCache = new MidiUtils.TempoCache();
+	private TempoCache tempoCache = new TempoCache();
 	private boolean[] trackActiveCache = null;
 
 	private Timer updateTimer = new Timer(UPDATE_FREQUENCY_MILLIS, new TimerActionListener());

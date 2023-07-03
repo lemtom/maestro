@@ -16,12 +16,12 @@ import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.IBarNumberCache;
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.TimeSignature;
+import com.digero.common.midiutils.MidiUtils;
 import com.digero.common.util.Util;
 import com.digero.maestro.midi.NoteEvent;
 import com.digero.maestro.midi.SequenceDataCache;
 import com.digero.maestro.midi.SequenceDataCache.TempoEvent;
 import com.digero.maestro.midi.SequenceInfo;
-import com.sun.media.sound.MidiUtils;
 import com.digero.common.midi.MidiConstants;
 
 public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache

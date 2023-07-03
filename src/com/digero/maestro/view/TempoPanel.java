@@ -15,6 +15,7 @@ import javax.swing.UIManager;
 import com.digero.common.midi.Note;
 import com.digero.common.midi.SequencerEvent;
 import com.digero.common.midi.SequencerEvent.SequencerProperty;
+import com.digero.common.midiutils.MidiUtils;
 import com.digero.common.midi.SequencerWrapper;
 import com.digero.common.util.IDiscardable;
 import com.digero.common.util.Listener;
@@ -25,7 +26,6 @@ import com.digero.maestro.midi.SequenceDataCache;
 import com.digero.maestro.midi.SequenceDataCache.TempoEvent;
 import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.view.TrackPanel.TrackDimensions;
-import com.sun.media.sound.MidiUtils;
 
 @SuppressWarnings("serial")
 public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConstants
