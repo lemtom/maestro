@@ -10,7 +10,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import com.digero.common.midi.Note;
 import com.digero.common.midi.SequencerEvent;

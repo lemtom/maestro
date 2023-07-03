@@ -30,7 +30,6 @@ import com.digero.maestro.abc.AbcPart;
 import com.digero.maestro.abc.PartSection;
 
 import info.clearthought.layout.TableLayout;
-import info.clearthought.layout.TableLayoutConstants;
 
 public class SectionEditor {
 	

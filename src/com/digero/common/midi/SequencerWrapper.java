@@ -20,7 +20,7 @@ import javax.swing.Timer;
 
 import com.digero.common.midi.SequencerEvent.SequencerProperty;
 import com.digero.common.midiutils.MidiUtils;
-import com.digero.common.midiutils.TempoCache;
+import com.digero.common.midiutils.MidiUtils.TempoCache;
 import com.digero.common.util.IDiscardable;
 import com.digero.common.util.Listener;
 import com.digero.common.util.ListenerList;
