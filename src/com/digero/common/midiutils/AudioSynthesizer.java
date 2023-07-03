@@ -38,7 +38,6 @@ import javax.sound.sampled.SourceDataLine;
  * which renders it's output audio into {@code SourceDataLine}
  * or {@code AudioInputStream}.
  *
- * @see MidiSystem#getSynthesizer
  * @see Synthesizer
  *
  * @author Karl Helgason
@@ -72,7 +71,7 @@ public interface AudioSynthesizer extends Synthesizer {
      * {@code SourceDataLine}.
      *
      * <p>An application opening a synthesizer explicitly with this call
-     * has to close the synthesizer by calling {@link #close}. This is
+     * has to close the synthesizer by calling . This is
      * necessary to release system resources and allow applications to
      * exit cleanly.
      *
@@ -91,8 +90,6 @@ public interface AudioSynthesizer extends Synthesizer {
      * @throws SecurityException thrown if the synthesizer cannot be
      * opened due to security restrictions.
      *
-     * @see #close
-     * @see #isOpen
      */
     void open(SourceDataLine line, Map<String, Object> info)
             throws MidiUnavailableException;

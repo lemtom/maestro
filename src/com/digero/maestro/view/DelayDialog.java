@@ -76,8 +76,8 @@ public class DelayDialog {
 		        this.setLocation(DelayDialog.lastLocation);
 		        this.setVisible(true);
 		    }
-		};
-		
+		}
+
 		new DelayDialogWindow(jf, abcPart);
 	}
 	

@@ -85,7 +85,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private File exportFile; // The ABC export file
 	private File saveFile; // The XML Maestro song file
 
-	private final ListModelWrapper<AbcPart> parts = new ListModelWrapper<AbcPart>(new DefaultListModel<AbcPart>());
+	private final ListModelWrapper<AbcPart> parts = new ListModelWrapper<>(new DefaultListModel<AbcPart>());
 
 	private final ListenerList<AbcSongEvent> listeners = new ListenerList<AbcSongEvent>();
 	boolean mixDirty = true;

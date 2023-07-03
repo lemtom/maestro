@@ -143,7 +143,7 @@ public class PartNameTemplate
 				if (currentAbcPart == null)
 					return "0";
 
-				return "" + currentAbcPart.getPartNumber();
+				return String.valueOf(currentAbcPart.getPartNumber());
 			}
 		});
 		variables.put("$PartInstrument", new Variable("The instrument for the individual ABC part")
@@ -169,7 +169,7 @@ public class PartNameTemplate
 				File root = Util.getLotroMusicPath(false);
 				String saveFileName = Util.fileNameWithoutExtension(getMetadataSource().getExportFile());
 
-				String path = saveFileName;
+				StringBuilder path = new StringBuilder(saveFileName);
 				boolean foundRoot = false;
 				for (File file = getMetadataSource().getExportFile().getParentFile(); file != null; file = file
 						.getParentFile())
@@ -179,11 +179,11 @@ public class PartNameTemplate
 						foundRoot = true;
 						break;
 					}
-					path = file.getName() + "/" + path;
+					path.insert(0, file.getName() + "/");
 				}
 
 				if (foundRoot)
-					return path;
+					return path.toString();
 
 				return saveFileName;
 			}

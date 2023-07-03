@@ -130,7 +130,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					int ch = m.getChannel();
 					
 					if (cmd == ShortMessage.NOTE_ON) {
-						if (rolandDrumChannels != null && rolandDrumChannels[ch] == true && standard == "GS") {
+						if (rolandDrumChannels != null && rolandDrumChannels[ch] && standard == "GS") {
 							brandDrumBanks[iTrack] = 2;// GS Drums
 						} else if (brandDrumBanks[iTrack] != 1 && standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(ch).floorEntry(tick) != null && yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == true) {
 							brandDrumBanks[iTrack] = 1;// XG drums
@@ -143,7 +143,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					{
 						if ((
 								(ch != DRUM_CHANNEL && rolandDrumChannels == null && yamahaDrumChannels == null)
-								|| ((rolandDrumChannels == null || standard != "GS" || rolandDrumChannels[ch] == false) && (yamahaDrumChannels == null || standard != "XG" || yamahaDrumChannels[ch] == false))
+								|| ((rolandDrumChannels == null || standard != "GS" || !rolandDrumChannels[ch]) && (yamahaDrumChannels == null || standard != "XG" || !yamahaDrumChannels[ch]))
 								)
 								&& (standard != "XG" || yamahaDrumSwitches == null || yamahaDrumSwitches.get(ch).floorEntry(tick) == null || yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == false)
 								&& (standard != "GM2" || mmaDrumSwitches == null || mmaDrumSwitches.get(ch).floorEntry(tick) == null || mmaDrumSwitches.get(ch).floorEntry(tick).getValue() == false))
@@ -190,7 +190,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					}
 				} else if (msg instanceof SysexMessage) {
 					SysexMessage sysex = (SysexMessage) msg;
-					byte message[] = sysex.getMessage();
+					byte[] message = sysex.getMessage();
 					if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
 						&& (message[4] & 0xFF) == 0x08 && (message[8] & 0xFF) == 0xF7) {
 				    	String bank = message[6]==1?"MSB":(message[6]==2?"LSB":(message[6]==3?"Patch":""));

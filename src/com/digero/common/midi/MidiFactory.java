@@ -43,15 +43,11 @@ public class MidiFactory implements MidiConstants
 			msg.setMessage(META_TRACK_NAME, data, data.length);
 			return new MidiEvent(msg, 0);
 		}
-		catch (UnsupportedEncodingException e)
+		catch (UnsupportedEncodingException | InvalidMidiDataException e)
 		{
 			throw new RuntimeException(e);
 		}
-		catch (InvalidMidiDataException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
+    }
 
 	public static MidiEvent createProgramChangeEvent(int patch, int channel, long ticks)
 	{

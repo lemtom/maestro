@@ -33,7 +33,7 @@ public class InstrumentPicker
 			pickString += ", ";
 			if (i == 8)
 				pickString += "\n";
-			pickString += "[" + i + "] " + instrument.toString();
+			pickString += "[" + i + "] " + instrument;
 		}
 
 		i++;

@@ -179,12 +179,12 @@ public class SectionEditor {
 		        			System.err.println("Too many sections in treemap in section-editor, or line numbers was badly edited in .msx file.");
 		        		} else {
 			        		sectionInputs.get(number).enable.setSelected(true);
-			        		sectionInputs.get(number).barA.setText(""+ps.startBar);
-			        		sectionInputs.get(number).barB.setText(""+ps.endBar);
-			        		sectionInputs.get(number).transpose.setText(""+ps.octaveStep);
-			        		sectionInputs.get(number).velo.setText(""+ps.volumeStep);
+			        		sectionInputs.get(number).barA.setText(String.valueOf(ps.startBar));
+			        		sectionInputs.get(number).barB.setText(String.valueOf(ps.endBar));
+			        		sectionInputs.get(number).transpose.setText(String.valueOf(ps.octaveStep));
+			        		sectionInputs.get(number).velo.setText(String.valueOf(ps.volumeStep));
 			        		sectionInputs.get(number).silent.setSelected(ps.silence);
-			        		sectionInputs.get(number).fade.setText(""+ps.fade);
+			        		sectionInputs.get(number).fade.setText(String.valueOf(ps.fade));
 			        		sectionInputs.get(number).doubling0.setSelected(ps.doubling[0]);
 			        		sectionInputs.get(number).doubling1.setSelected(ps.doubling[1]);
 			        		sectionInputs.get(number).doubling2.setSelected(ps.doubling[2]);
@@ -441,8 +441,8 @@ public class SectionEditor {
 		        this.setVisible(true);
 		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }
-		};
-		
+		}
+
 		new SectionDialog(jf, noteGraph, "Section editor", true, abcPart, track);
 	}
 	

@@ -283,7 +283,7 @@ public class AbcExporter
 				}
 			}
 			//System.out.println("Preview done");
-			return new Pair<List<ExportTrackInfo>, Sequence>(infoList, sequence);
+			return new Pair<>(infoList, sequence);
 		}
 		catch (RuntimeException e)
 		{
@@ -445,7 +445,7 @@ public class AbcExporter
 	/**
 	 * Use brute force to check which parts can share a preview midi channel.
 	 * Two conditions for that to happen:
-	 * 
+	 * <p>
 	 * 1 - Must be the same lotro instrument
 	 * 2 - Must not have any notes with same pitch playing at the same time.
 	 * 
@@ -460,7 +460,7 @@ public class AbcExporter
 		Map<AbcPart, Integer> shareMap = new HashMap<AbcPart, Integer>();
 		int channel = 0;// We create the midi tracks for this method first, so we start at channel 0
 		// evaluate fiddles first as they are most likely to use only single notes.
-		LotroInstrument orderToEvaluate[] ={LotroInstrument.LONELY_MOUNTAIN_FIDDLE,
+		LotroInstrument[] orderToEvaluate ={LotroInstrument.LONELY_MOUNTAIN_FIDDLE,
 											LotroInstrument.BASIC_FIDDLE,
 											LotroInstrument.BARDIC_FIDDLE,
 											LotroInstrument.SPRIGHTLY_FIDDLE,

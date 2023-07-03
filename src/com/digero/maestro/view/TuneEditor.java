@@ -129,10 +129,10 @@ public class TuneEditor {
 		        			System.err.println("Too many sections in treemap in tune-editor, or line numbers was badly edited in .msx file.");
 		        		} else {
 			        		tuneInputs.get(number).enable.setSelected(true);
-			        		tuneInputs.get(number).barA.setText(""+ps.startBar);
-			        		tuneInputs.get(number).barB.setText(""+ps.endBar);
-			        		tuneInputs.get(number).transpose.setText(""+ps.seminoteStep);
-			        		tuneInputs.get(number).tempo.setText(""+ps.tempo);
+			        		tuneInputs.get(number).barA.setText(String.valueOf(ps.startBar));
+			        		tuneInputs.get(number).barB.setText(String.valueOf(ps.endBar));
+			        		tuneInputs.get(number).transpose.setText(String.valueOf(ps.seminoteStep));
+			        		tuneInputs.get(number).tempo.setText(String.valueOf(ps.tempo));
 			        		//tuneInputs.get(number).remove.setSelected(ps.remove);
 			        	}
 			        	number ++;
@@ -305,8 +305,8 @@ public class TuneEditor {
 		        //this.setResizable(true);
 		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }
-		};
-		
+		}
+
 		new TuneDialog(jf, "Tune editor", true, abcSong);
 	}
 }

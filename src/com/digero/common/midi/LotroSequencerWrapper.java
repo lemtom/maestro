@@ -20,19 +20,11 @@ public class LotroSequencerWrapper extends NoteFilterSequencerWrapper
 		{
 			lotroSynth = SynthesizerFactory.getLotroSynthesizer();
 		}
-		catch (InvalidMidiDataException e)
+		catch (InvalidMidiDataException | MidiUnavailableException | IOException e)
 		{
 			loadLotroSynthError = e.getMessage();
 		}
-		catch (IOException e)
-		{
-			loadLotroSynthError = e.getMessage();
-		}
-		catch (MidiUnavailableException e)
-		{
-			loadLotroSynthError = e.getMessage();
-		}
-	}
+    }
 
 	public static String getLoadLotroSynthError()
 	{
@@ -56,7 +48,7 @@ public class LotroSequencerWrapper extends NoteFilterSequencerWrapper
 	public static int getNoteCount () {
 		if (lotroSynth == null) return 0;
 		
-		VoiceStatus voices[] = lotroSynth.getVoiceStatus();
+		VoiceStatus[] voices = lotroSynth.getVoiceStatus();
 		if (voices != null && voices.length != 0) {
 			int notes = 0;
 			for (VoiceStatus voice : voices) {

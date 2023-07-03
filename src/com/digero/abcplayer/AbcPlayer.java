@@ -1054,11 +1054,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		{
 			text = (String) xfer.getTransferData(DataFlavor.stringFlavor);
 		}
-		catch (UnsupportedFlavorException e)
-		{
-			return false;
-		}
-		catch (IOException e)
+		catch (UnsupportedFlavorException | IOException e)
 		{
 			return false;
 		}
@@ -1123,11 +1119,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		{
 			fileList = (List<File>) xfer.getTransferData(DataFlavor.javaFileListFlavor);
 		}
-		catch (UnsupportedFlavorException e)
-		{
-			return false;
-		}
-		catch (IOException e)
+		catch (UnsupportedFlavorException | IOException e)
 		{
 			return false;
 		}

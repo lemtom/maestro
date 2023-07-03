@@ -241,10 +241,9 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 
 			if (trackControls != null)
 			{
-				for (int i = 0; i < trackControls.length; i++)
-				{
-					if (trackControls[i] != null)
-						trackControls[i].lineNumberLabel.setVisible(showLineNumbers);
+				for (TrackControls trackControl : trackControls) {
+					if (trackControl != null)
+						trackControl.lineNumberLabel.setVisible(showLineNumbers);
 				}
 			}
 		}
@@ -261,10 +260,9 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 
 			if (trackControls != null)
 			{
-				for (int i = 0; i < trackControls.length; i++)
-				{
-					if (trackControls[i] != null)
-						trackControls[i].soloButton.setVisible(showSoloButtons);
+				for (TrackControls trackControl : trackControls) {
+					if (trackControl != null)
+						trackControl.soloButton.setVisible(showSoloButtons);
 				}
 			}
 		}
@@ -273,11 +271,10 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 	public void deselectAll () {
 		if (trackControls != null)
 		{
-			for (int i = 0; i < trackControls.length; i++)
-			{
-				if (trackControls[i] != null) {
-					trackControls[i].checkBox.setSelected(false);
-					int j = (Integer) trackControls[i].checkBox.getClientProperty(TRACK_INDEX_KEY);
+			for (TrackControls trackControl : trackControls) {
+				if (trackControl != null) {
+					trackControl.checkBox.setSelected(false);
+					int j = (Integer) trackControl.checkBox.getClientProperty(TRACK_INDEX_KEY);
 					sequencer.setTrackMute(j, true);
 				}
 			}
@@ -287,11 +284,10 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 	public void selectAll () {
 		if (trackControls != null)
 		{
-			for (int i = 0; i < trackControls.length; i++)
-			{
-				if (trackControls[i] != null) {
-					trackControls[i].checkBox.setSelected(true);
-					int j = (Integer) trackControls[i].checkBox.getClientProperty(TRACK_INDEX_KEY);
+			for (TrackControls trackControl : trackControls) {
+				if (trackControl != null) {
+					trackControl.checkBox.setSelected(true);
+					int j = (Integer) trackControl.checkBox.getClientProperty(TRACK_INDEX_KEY);
 					sequencer.setTrackMute(j, false);
 				}
 			}
@@ -309,10 +305,9 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 
 			if (trackControls != null)
 			{
-				for (int i = 0; i < trackControls.length; i++)
-				{
-					if (trackControls[i] != null)
-						trackControls[i].instrumentComboBox.setVisible(showInstrumentComboBoxes);
+				for (TrackControls trackControl : trackControls) {
+					if (trackControl != null)
+						trackControl.instrumentComboBox.setVisible(showInstrumentComboBoxes);
 				}
 			}
 		}

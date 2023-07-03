@@ -611,10 +611,10 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			@Override
 			public String toString()
 			{
-				return "00. " + LotroInstrument.LONELY_MOUNTAIN_BASSOON.toString() + "*";
+				return "00. " + LotroInstrument.LONELY_MOUNTAIN_BASSOON + "*";
 			}
 			
-		};
+		}
 		partsList.setPrototypeCellValue(new ProtoClass());// This call is attempt of fix for no delete button on MacOS part 1
 		partsList.setVisibleRowCount(8);
 
