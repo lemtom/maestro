@@ -1,15 +1,7 @@
 package com.digero.maestro.midi;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -172,18 +164,10 @@ public class TrackInfo implements MidiConstants
 							instrumentExtensions.add(sequenceCache.getInstrumentExt(c, tick, isDrumTrack));
 						} else if (isXGDrumTrack || isGSDrumTrack || isGM2DrumTrack) {
 							String ins = sequenceCache.getInstrumentExt(c, tick, isDrumTrack);
-							if (ins != null) {
-								instrumentExtensions.add(ins);
-							} else {
-								instrumentExtensions.add(isXGDrumTrack?"XG Drum Kit":(isGM2DrumTrack?"GM2 Drum Kit":"GS Drum Kit"));
-							}
+							instrumentExtensions.add(Objects.requireNonNullElse(ins, isXGDrumTrack ? "XG Drum Kit" : (isGM2DrumTrack ? "GM2 Drum Kit" : "GS Drum Kit")));
 						} else {
 							String ins = sequenceCache.getInstrumentExt(c, tick, isDrumTrack);
-							if (ins != null) {
-								instrumentExtensions.add(ins);
-							} else {
-								instrumentExtensions.add("Standard Drum Kit");
-							}
+							instrumentExtensions.add(Objects.requireNonNullElse(ins, "Standard Drum Kit"));
 						}
 						noteEvents.add(ne);
 						notesInUse.add(ne.note.id);

@@ -173,9 +173,8 @@ public class NoteEvent implements Comparable<NoteEvent>
 
 	@Override public boolean equals(Object obj)
 	{
-		if (obj instanceof NoteEvent)
+		if (obj instanceof NoteEvent that)
 		{
-			NoteEvent that = (NoteEvent) obj;
 			return (this.startTick == that.startTick) && (this.endTick == that.endTick)
 					&& (this.note.id == that.note.id);
 		}

@@ -2,7 +2,6 @@ package com.digero.maestro.abc;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -91,7 +90,7 @@ public class LotroDrumInfo implements Comparable<LotroDrumInfo>
 			}
 		}
 
-		ALL_DRUMS = Collections.unmodifiableList(new ArrayList<>(new AbstractCollection<LotroDrumInfo>() {
+		ALL_DRUMS = List.copyOf(new AbstractCollection<>() {
 			@Override
 			public Iterator<LotroDrumInfo> iterator() {
 				return new DrumInfoIterator();
@@ -101,7 +100,7 @@ public class LotroDrumInfo implements Comparable<LotroDrumInfo>
 			public int size() {
 				return byId.size();
 			}
-		}));
+		});
 	}
 
 //	private static final Comparator<Note> noteComparator = new Comparator<Note>() {

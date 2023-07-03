@@ -1123,9 +1123,8 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	{
 		@Override public void stateChanged(ChangeEvent e)
 		{
-			if (e.getSource() instanceof DrumNoteMap)
+			if (e.getSource() instanceof DrumNoteMap map)
 			{
-				DrumNoteMap map = (DrumNoteMap) e.getSource();
 
 				// Don't write pass-through drum maps to the prefs node 
 				// these are used for non-drum tracks and their mapping 

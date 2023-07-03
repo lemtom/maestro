@@ -256,25 +256,16 @@ public class HighlightAbcNotesFrame extends JFrame
 		}
 	}
 
-	/** For use in followTrackComboBox */
-	private static class PartInfo
-	{
-		public final String name;
-		public final int trackNumber;
-		public final int trackStartLine;
+	/**
+	 * For use in followTrackComboBox
+	 */
+		private record PartInfo(String name, int trackNumber, int trackStartLine) {
 
-		public PartInfo(String name, int trackNumber, int trackStartLine)
-		{
-			this.name = name;
-			this.trackNumber = trackNumber;
-			this.trackStartLine = trackStartLine;
+		@Override
+		public String toString() {
+				return name;
+			}
 		}
-
-		@Override public String toString()
-		{
-			return name;
-		}
-	}
 
 	public void addDropListener(DropTargetListener listener)
 	{
@@ -421,23 +412,14 @@ public class HighlightAbcNotesFrame extends JFrame
 		@Override public void keyPressed(KeyEvent e)
 		{
 			int key = e.getKeyCode();
-			switch (key)
-			{
-				case KeyEvent.VK_ESCAPE:
-					endDrag(false);
-					break;
-
-				case KeyEvent.VK_UP:
-				case KeyEvent.VK_DOWN:
-				case KeyEvent.VK_LEFT:
-				case KeyEvent.VK_RIGHT:
-				case KeyEvent.VK_PAGE_UP:
-				case KeyEvent.VK_PAGE_DOWN:
+			switch (key) {
+				case KeyEvent.VK_ESCAPE -> endDrag(false);
+				case KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_PAGE_UP, KeyEvent.VK_PAGE_DOWN -> {
 					boolean horz = (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT);
 					boolean back = (key == KeyEvent.VK_UP || key == KeyEvent.VK_LEFT || key == KeyEvent.VK_PAGE_UP);
 					boolean page = (key == KeyEvent.VK_PAGE_UP || key == KeyEvent.VK_PAGE_DOWN);
 					scroll(horz, back, page);
-					break;
+				}
 			}
 		}
 

@@ -1487,182 +1487,171 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		}
 	}
 
-	private Listener<AbcPartEvent> abcPartListener = new Listener<AbcPartEvent>()
-	{
-		@Override public void onEvent(AbcPartEvent e)
-		{
+	private Listener<AbcPartEvent> abcPartListener = new Listener<>() {
+		@Override
+		public void onEvent(AbcPartEvent e) {
 			if (e.getProperty() == AbcPartProperty.TRACK_ENABLED)
 				updateButtons(false);
-			
+
 			if (e.getProperty() == AbcPartProperty.TITLE && partPanel != null)
 				partPanel.setNewTitle(e.getSource());
 
 			partsList.repaint();
-			
+
 			setAbcSongModified(true);
 
 			if (e.isAbcPreviewRelated() && abcSequencer.isRunning())
 				refreshPreviewSequence(false);
 			else if (e.isAbcPreviewRelated() && abcPreviewMode)
 				refreshPreviewSequence(false);
-			
+
 			if (e.isAbcPreviewRelated() && partPanel != null) {
 				partPanel.repaint();
 			}
 		}
 	};
 
-	private Listener<AbcSongEvent> abcSongListener = new Listener<AbcSongEvent>()
-	{
-		@Override public void onEvent(AbcSongEvent e)
-		{
+	private Listener<AbcSongEvent> abcSongListener = new Listener<>() {
+		@Override
+		public void onEvent(AbcSongEvent e) {
 			if (abcSong == null || abcSong != e.getSource())
 				return;
 
 			int idx;
 
-			switch (e.getProperty())
-			{
-			case TITLE:
-				if (!songTitleField.getText().equals(abcSong.getTitle()))
-				{
-					songTitleField.setText(abcSong.getTitle());
-					songTitleField.select(0, 0);
-				}
-				break;
-			case COMPOSER:
-				if (!composerField.getText().equals(abcSong.getComposer()))
-				{
-					composerField.setText(abcSong.getComposer());
-					composerField.select(0, 0);
-				}
-				break;
-			case TRANSCRIBER:
-				if (!transcriberField.getText().equals(abcSong.getTranscriber()))
-				{
-					transcriberFieldListener.setIgnoreChanges(true);
-					transcriberField.setText(abcSong.getTranscriber());
-					transcriberField.select(0, 0);
-					transcriberFieldListener.setIgnoreChanges(false);
-				}
-				break;
+			switch (e.getProperty()) {
+				case TITLE:
+					if (!songTitleField.getText().equals(abcSong.getTitle())) {
+						songTitleField.setText(abcSong.getTitle());
+						songTitleField.select(0, 0);
+					}
+					break;
+				case COMPOSER:
+					if (!composerField.getText().equals(abcSong.getComposer())) {
+						composerField.setText(abcSong.getComposer());
+						composerField.select(0, 0);
+					}
+					break;
+				case TRANSCRIBER:
+					if (!transcriberField.getText().equals(abcSong.getTranscriber())) {
+						transcriberFieldListener.setIgnoreChanges(true);
+						transcriberField.setText(abcSong.getTranscriber());
+						transcriberField.select(0, 0);
+						transcriberFieldListener.setIgnoreChanges(false);
+					}
+					break;
 
-			case TEMPO_FACTOR:
-				if (getTempo() != abcSong.getTempoBPM())
-					tempoSpinner.setValue(abcSong.getTempoBPM());
-				break;
-			case TRANSPOSE:
-				if (getTranspose() != abcSong.getTranspose())
-					transposeSpinner.setValue(abcSong.getTranspose());
-				break;
-			case KEY_SIGNATURE:
-				if (SHOW_KEY_FIELD)
-				{
-					if (!keySignatureField.getValue().equals(abcSong.getKeySignature()))
-						keySignatureField.setValue(abcSong.getKeySignature());
-				}
-				break;
-			case TIME_SIGNATURE:
-				if (!timeSignatureField.getValue().equals(abcSong.getTimeSignature()))
-					timeSignatureField.setValue(abcSong.getTimeSignature());
-				break;
-			case TRIPLET_TIMING:
-				if (tripletCheckBox.isSelected() != abcSong.isTripletTiming())
-					tripletCheckBox.setSelected(abcSong.isTripletTiming());
-				maxNoteCountTotal = 0;
-				maxNoteCount = 0;
-				break;
-			case MIX_TIMING:
-				if (mixCheckBox.isSelected() != abcSong.isMixTiming())
-					mixCheckBox.setSelected(abcSong.isMixTiming());
-				maxNoteCountTotal = 0;
-				maxNoteCount = 0;
-				break;
-			case MIX_TIMING_COMBINE_PRIORITIES:
-				if (prioCheckBox.isSelected() != abcSong.isPriorityActive())
-					prioCheckBox.setSelected(abcSong.isPriorityActive());
-				break;
-			case PART_ADDED:
-				e.getPart().addAbcListener(abcPartListener);
+				case TEMPO_FACTOR:
+					if (getTempo() != abcSong.getTempoBPM())
+						tempoSpinner.setValue(abcSong.getTempoBPM());
+					break;
+				case TRANSPOSE:
+					if (getTranspose() != abcSong.getTranspose())
+						transposeSpinner.setValue(abcSong.getTranspose());
+					break;
+				case KEY_SIGNATURE:
+					if (SHOW_KEY_FIELD) {
+						if (!keySignatureField.getValue().equals(abcSong.getKeySignature()))
+							keySignatureField.setValue(abcSong.getKeySignature());
+					}
+					break;
+				case TIME_SIGNATURE:
+					if (!timeSignatureField.getValue().equals(abcSong.getTimeSignature()))
+						timeSignatureField.setValue(abcSong.getTimeSignature());
+					break;
+				case TRIPLET_TIMING:
+					if (tripletCheckBox.isSelected() != abcSong.isTripletTiming())
+						tripletCheckBox.setSelected(abcSong.isTripletTiming());
+					maxNoteCountTotal = 0;
+					maxNoteCount = 0;
+					break;
+				case MIX_TIMING:
+					if (mixCheckBox.isSelected() != abcSong.isMixTiming())
+						mixCheckBox.setSelected(abcSong.isMixTiming());
+					maxNoteCountTotal = 0;
+					maxNoteCount = 0;
+					break;
+				case MIX_TIMING_COMBINE_PRIORITIES:
+					if (prioCheckBox.isSelected() != abcSong.isPriorityActive())
+						prioCheckBox.setSelected(abcSong.isPriorityActive());
+					break;
+				case PART_ADDED:
+					e.getPart().addAbcListener(abcPartListener);
 
-				idx = abcSong.getParts().indexOf(e.getPart());
-				partsList.setSelectedIndex(idx);
-				partsList.ensureIndexIsVisible(idx);
-				partsList.repaint();
-				updateButtons(false);
-				maxNoteCountTotal = 0;
-				maxNoteCount = 0;
-				break;
-				
-			case TUNE_EDIT:
-				updateButtons(false);
-				if (partsList.getSelectedValue() != null) {
-					// We do this to show the tempo panel if tune editor has changed something
-					partPanel.tuneUpdated((AbcPart) partsList.getSelectedValue());
-				}
-				if (abcSequencer.isRunning())
-					refreshPreviewSequence(false);
-				else if (abcPreviewMode)
-					refreshPreviewSequence(false);
-				break;
+					idx = abcSong.getParts().indexOf(e.getPart());
+					partsList.setSelectedIndex(idx);
+					partsList.ensureIndexIsVisible(idx);
+					partsList.repaint();
+					updateButtons(false);
+					maxNoteCountTotal = 0;
+					maxNoteCount = 0;
+					break;
 
-			case BEFORE_PART_REMOVED:
-				e.getPart().removeAbcListener(abcPartListener);
+				case TUNE_EDIT:
+					updateButtons(false);
+					if (partsList.getSelectedValue() != null) {
+						// We do this to show the tempo panel if tune editor has changed something
+						partPanel.tuneUpdated((AbcPart) partsList.getSelectedValue());
+					}
+					if (abcSequencer.isRunning())
+						refreshPreviewSequence(false);
+					else if (abcPreviewMode)
+						refreshPreviewSequence(false);
+					break;
 
-				idx = abcSong.getParts().indexOf(e.getPart());
-				if (idx > 0)
-					partsList.setSelectedIndex(idx - 1);
-				else if (abcSong.getParts().size() > 1) {
-					partsList.setSelectedIndex(1);
-				}
+				case BEFORE_PART_REMOVED:
+					e.getPart().removeAbcListener(abcPartListener);
 
-				if (abcSong.getParts().size() == 0)
-				{
-					sequencer.stop();
-					partPanel.showInfoMessage(formatInfoMessage("Add a part", "This ABC song has no parts.\n" + //
-							"Click the " + newPartButton.getText() + " button to add a new part."));
-				}
+					idx = abcSong.getParts().indexOf(e.getPart());
+					if (idx > 0)
+						partsList.setSelectedIndex(idx - 1);
+					else if (abcSong.getParts().size() > 1) {
+						partsList.setSelectedIndex(1);
+					}
 
-				if (abcSequencer.isRunning())
-					refreshPreviewSequence(false);
+					if (abcSong.getParts().size() == 0) {
+						sequencer.stop();
+						partPanel.showInfoMessage(formatInfoMessage("Add a part", "This ABC song has no parts.\n" + //
+								"Click the " + newPartButton.getText() + " button to add a new part."));
+					}
 
-				partsList.repaint();
-				updateButtons(false);
-				maxNoteCountTotal = 0;
-				maxNoteCount = 0;
-				break;
+					if (abcSequencer.isRunning())
+						refreshPreviewSequence(false);
 
-			case PART_LIST_ORDER:
-				partsList.setSelectedIndex(abcSong.getParts().indexOf(partPanel.getAbcPart()));
-				partsList.repaint();
-				updateButtons(false);
-				break;
+					partsList.repaint();
+					updateButtons(false);
+					maxNoteCountTotal = 0;
+					maxNoteCount = 0;
+					break;
 
-			case SKIP_SILENCE_AT_START:
-				if (saveSettings.skipSilenceAtStart != abcSong.isSkipSilenceAtStart())
-				{
-					saveSettings.skipSilenceAtStart = abcSong.isSkipSilenceAtStart();
-					saveSettings.saveToPrefs();
-				}
-				break;
-			case GENRE:
-				if (!genreField.getText().equals(abcSong.getGenre()))
-				{
-					genreField.setText(abcSong.getGenre());
-					genreField.select(0, 0);
-				}
-				break;
-			case MOOD:
-				if (!moodField.getText().equals(abcSong.getMood()))
-				{
-					moodField.setText(abcSong.getMood());
-					moodField.select(0, 0);
-				}
-				break;
-				
-			case EXPORT_FILE:
-				// Don't care
-				break;
+				case PART_LIST_ORDER:
+					partsList.setSelectedIndex(abcSong.getParts().indexOf(partPanel.getAbcPart()));
+					partsList.repaint();
+					updateButtons(false);
+					break;
+
+				case SKIP_SILENCE_AT_START:
+					if (saveSettings.skipSilenceAtStart != abcSong.isSkipSilenceAtStart()) {
+						saveSettings.skipSilenceAtStart = abcSong.isSkipSilenceAtStart();
+						saveSettings.saveToPrefs();
+					}
+					break;
+				case GENRE:
+					if (!genreField.getText().equals(abcSong.getGenre())) {
+						genreField.setText(abcSong.getGenre());
+						genreField.select(0, 0);
+					}
+					break;
+				case MOOD:
+					if (!moodField.getText().equals(abcSong.getMood())) {
+						moodField.setText(abcSong.getMood());
+						moodField.select(0, 0);
+					}
+					break;
+
+				case EXPORT_FILE:
+					// Don't care
+					break;
 			}
 
 			setAbcSongModified(true);

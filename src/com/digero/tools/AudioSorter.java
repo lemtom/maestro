@@ -69,21 +69,17 @@ public class AudioSorter
 	private static void copyToFinalNames(final String sourceRoot, final String targetRoot, final String instrumentName,
 			final boolean checkEquals) throws IOException
 	{
-		Files.walkFileTree(Paths.get(sourceRoot, instrumentName), new SimpleFileVisitor<Path>()
-		{
+		Files.walkFileTree(Paths.get(sourceRoot, instrumentName), new SimpleFileVisitor<>() {
 			private int i = 35;
 			private Path previous = null;
 
-			@Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-			{
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				boolean equals = false;
-				if (checkEquals)
-				{
-					if (previous != null)
-					{
+				if (checkEquals) {
+					if (previous != null) {
 						String line = "";
-						while (line.length() == 0)
-						{
+						while (line.length() == 0) {
 							System.out.print("Equal? (Y/N): ");
 							AudioPlayer.playAudioFile(previous.toFile(), 400);
 							AudioPlayer.playAudioFile(file.toFile(), 400);
@@ -94,13 +90,10 @@ public class AudioSorter
 					}
 				}
 
-				if (!equals)
-				{
+				if (!equals) {
 					i++;
 					previous = file;
-				}
-				else
-				{
+				} else {
 					previous = null;
 				}
 

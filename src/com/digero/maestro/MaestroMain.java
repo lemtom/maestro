@@ -43,7 +43,8 @@ public class MaestroMain {
 
 		if (!openPort()) {
 			sendArgsToPort(args);
-			return;
+			//TODO figure out
+			//return;
 		}
 
 		System.setProperty("sun.sound.useNewAudioEngine", "true");

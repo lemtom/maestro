@@ -151,10 +151,9 @@ public class TempoPanel extends JPanel implements IDiscardable, TableLayoutConst
 		}
 	}
 
-	private Listener<SequencerEvent> sequencerListener = new Listener<SequencerEvent>()
-	{
-		@Override public void onEvent(SequencerEvent e)
-		{
+	private Listener<SequencerEvent> sequencerListener = new Listener<>() {
+		@Override
+		public void onEvent(SequencerEvent e) {
 			if (e.getProperty().isInMask(SequencerProperty.THUMB_POSITION_MASK | SequencerProperty.TEMPO.mask))
 				updateTempoLabel();
 

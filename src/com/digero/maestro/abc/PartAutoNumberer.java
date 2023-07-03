@@ -65,36 +65,11 @@ public class PartAutoNumberer
 		public String prefsKey(LotroInstrument instrument)
 		{
 			// @formatter:off
-			switch (instrument)
-			{
-				case LUTE_OF_AGES:             return "Lute of Ages";
-				case BASIC_LUTE:               return "Basic Lute";
-				case BASIC_HARP:               return "Harp";
-				case MISTY_MOUNTAIN_HARP:      return "Misty Mountain Harp";
-				case BARDIC_FIDDLE:            return "Bardic Fiddle";
-				case BASIC_FIDDLE:             return "Basic Fiddle";
-				case LONELY_MOUNTAIN_FIDDLE:   return "Lonely Mountain Fiddle";
-				case SPRIGHTLY_FIDDLE:         return "Sprightly Fiddle";
-				case STUDENT_FIDDLE:           return "Student's Fiddle";
-				case STUDENT_FX_FIDDLE:        return "Student's FX Fiddle";
-				case TRAVELLERS_TRUSTY_FIDDLE: return "Traveller's Trusty Fiddle";
-				case BASIC_THEORBO:            return "Theorbo";
-				case BASIC_FLUTE:              return "Flute";
-				case BASIC_CLARINET:           return "Clarinet";
-				case BASIC_HORN:               return "Horn";
-				case BASIC_BASSOON:            return "Basic Bassoon";
-				case BRUSQUE_BASSOON:          return "Brusque Bassoon";
-				case LONELY_MOUNTAIN_BASSOON:  return "Lonely Mountain Bassoon";
-				case BASIC_BAGPIPE:            return "Bagpipe";
-				case BASIC_PIBGORN:            return "Pibgorn";
-				case BASIC_DRUM:               return "Drums";
-				case BASIC_COWBELL:            return "Cowbell";
-				case MOOR_COWBELL:             return "Moor Cowbell";
-			}
+			// Missing case statement
+			return switch (instrument)
+			{case LUTE_OF_AGES->"Lute of Ages";case BASIC_LUTE->"Basic Lute";case BASIC_HARP->"Harp";case MISTY_MOUNTAIN_HARP->"Misty Mountain Harp";case BARDIC_FIDDLE->"Bardic Fiddle";case BASIC_FIDDLE->"Basic Fiddle";case LONELY_MOUNTAIN_FIDDLE->"Lonely Mountain Fiddle";case SPRIGHTLY_FIDDLE->"Sprightly Fiddle";case STUDENT_FIDDLE->"Student's Fiddle";case STUDENT_FX_FIDDLE->"Student's FX Fiddle";case TRAVELLERS_TRUSTY_FIDDLE->"Traveller's Trusty Fiddle";case BASIC_THEORBO->"Theorbo";case BASIC_FLUTE->"Flute";case BASIC_CLARINET->"Clarinet";case BASIC_HORN->"Horn";case BASIC_BASSOON->"Basic Bassoon";case BRUSQUE_BASSOON->"Brusque Bassoon";case LONELY_MOUNTAIN_BASSOON->"Lonely Mountain Bassoon";case BASIC_BAGPIPE->"Bagpipe";case BASIC_PIBGORN->"Pibgorn";case BASIC_DRUM->"Drums";case BASIC_COWBELL->"Cowbell";case MOOR_COWBELL->"Moor Cowbell";};
 			// @formatter:on
 
-			assert false; // Missing case statement
-			return instrument.toString();
 		}
 
 		private void init(Preferences prefs, LotroInstrument instrument, int defaultValue)

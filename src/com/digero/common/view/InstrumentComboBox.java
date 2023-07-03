@@ -33,7 +33,7 @@ public class InstrumentComboBox extends JComboBox<LotroInstrument>
 		ArrayList<Object> items = new ArrayList<>(Arrays.asList(LotroInstrument.values()));
 
 		items.addAll(Arrays.asList(LotroInstrumentGroup.values()));
-		items.sort(new Comparator<Object>() {
+		items.sort(new Comparator<>() {
 			@Override
 			public int compare(Object a, Object b) {
 				if (a == b)

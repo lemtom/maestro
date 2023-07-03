@@ -167,9 +167,8 @@ public class KeySignature implements MidiConstants
 
 	@Override public boolean equals(Object obj)
 	{
-		if (obj instanceof KeySignature)
+		if (obj instanceof KeySignature that)
 		{
-			KeySignature that = (KeySignature) obj;
 			return this.mode == that.mode && this.sharpsFlats == that.sharpsFlats;
 		}
 		return false;
@@ -216,27 +215,16 @@ public class KeySignature implements MidiConstants
 
 	private static final String[] modeToKeys(KeyMode mode)
 	{
-		switch (mode)
-		{
-		case MAJOR:
-		case IONIAN:
-			return MAJOR_KEYS;
-		case MINOR:
-		case AEOLIAN:
-			return MINOR_KEYS;
-		case DORIAN:
-			return DORIAN_KEYS;
-		case PHRYGIAN:
-			return PHRYGIAN_KEYS;
-		case LYDIAN:
-			return LYDIAN_KEYS;
-		case MIXOLYDIAN:
-			return MIXOLYDIAN_KEYS;
-		case LOCRIAN:
-			return LOCRIAN_KEYS;
-		default:
-			return null;
-		}
+		return switch (mode) {
+			case MAJOR, IONIAN -> MAJOR_KEYS;
+			case MINOR, AEOLIAN -> MINOR_KEYS;
+			case DORIAN -> DORIAN_KEYS;
+			case PHRYGIAN -> PHRYGIAN_KEYS;
+			case LYDIAN -> LYDIAN_KEYS;
+			case MIXOLYDIAN -> MIXOLYDIAN_KEYS;
+			case LOCRIAN -> LOCRIAN_KEYS;
+			default -> null;
+		};
 	}
 
 	public static void main(String[] args)

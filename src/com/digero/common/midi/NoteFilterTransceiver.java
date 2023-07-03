@@ -107,9 +107,8 @@ public class NoteFilterTransceiver implements Transceiver, MidiConstants, ICompi
 		if (receiver == null)
 			return;
 
-		if (hasAbcPart && message instanceof ShortMessage)
+		if (hasAbcPart && message instanceof ShortMessage m)
 		{
-			ShortMessage m = (ShortMessage) message;
 			int c = m.getChannel();
 			int cmd = m.getCommand();
 			int noteId = m.getData1();

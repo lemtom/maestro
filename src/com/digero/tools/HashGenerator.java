@@ -79,44 +79,38 @@ public class HashGenerator
 		{
 			String action = args[0].toUpperCase();
 			switch (action) {
-				case "GENERATE_HASHES":
+				case "GENERATE_HASHES" -> {
 					if (args.length != 3) {
 						System.err.println("Incorrect number of args to GENERATE_HASHES");
 						return -1;
 					}
-
 					outputHashListToFile(generateHashes(new File(args[1]), true), new File(args[2]), true);
-					break;
-				case "MOVE_EXCLUDE_DIR":
-				case "MOVE_INCLUDE_DIR":
+				}
+				case "MOVE_EXCLUDE_DIR", "MOVE_INCLUDE_DIR" -> {
 					if (args.length != 4) {
 						System.err.println("Incorrect number of args to " + args[0]);
 						return -1;
 					}
-
 					moveDir(action.equals("MOVE_INCLUDE_DIR"), new File(args[1]), new File(args[2]), new File(args[3]));
-					break;
-				case "MOVE_EXCLUDE":
-				case "MOVE_INCLUDE":
+				}
+				case "MOVE_EXCLUDE", "MOVE_INCLUDE" -> {
 					if (args.length != 4) {
 						System.err.println("Incorrect number of args to " + args[0]);
 						return -1;
 					}
-
 					move(action.equals("MOVE_INCLUDE"), new File(args[1]), new File(args[2]), new File(args[3]));
-					break;
-				case "LIST_EXCLUDE":
-				case "LIST_INCLUDE":
+				}
+				case "LIST_EXCLUDE", "LIST_INCLUDE" -> {
 					if (args.length != 3) {
 						System.err.println("Incorrect number of args to " + args[0]);
 						return -1;
 					}
-
 					list(action.equals("LIST_INCLUDE"), new File(args[1]), new File(args[2]));
-					break;
-				default:
+				}
+				default -> {
 					System.err.println("Unknown mode: " + args[0]);
 					return -1;
+				}
 			}
 		}
 		catch (IOException e)

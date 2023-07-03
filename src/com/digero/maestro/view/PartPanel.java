@@ -192,12 +192,10 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		numberSettingsButton.setVisible(true);
 	}
 
-	private Listener<AbcPartEvent> abcPartListener = new Listener<AbcPartEvent>()
-	{
-		@Override public void onEvent(AbcPartEvent e)
-		{
-			if (e.getProperty() == AbcPartProperty.PART_NUMBER)
-			{
+	private Listener<AbcPartEvent> abcPartListener = new Listener<>() {
+		@Override
+		public void onEvent(AbcPartEvent e) {
+			if (e.getProperty() == AbcPartProperty.PART_NUMBER) {
 				numberSpinner.setValue(abcPart.getPartNumber());
 			}
 		}
@@ -434,9 +432,8 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 
 		for (Component child : trackListPanel.getComponents())
 		{
-			if (child instanceof TrackPanel)
+			if (child instanceof TrackPanel trackPanel)
 			{
-				TrackPanel trackPanel = (TrackPanel) child;
 				child.setEnabled(percussion || trackPanel.getTrackInfo().hasEvents());
 				if (!setHeight && !percussion)
 				{

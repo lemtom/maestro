@@ -230,15 +230,12 @@ public class ExportMp3Dialog extends JDialog implements TableLayoutConstants
 	
 	public String getQualityNew()
 	{
-		switch (getQualityIndex()) {
-		case 0:
-			return "192k";
-		case 1:
-			return "256k";
-		case 2:
-			return "320k";
-		}
-		return "128k";
+		return switch (getQualityIndex()) {
+			case 0 -> "192k";
+			case 1 -> "256k";
+			case 2 -> "320k";
+			default -> "128k";
+		};
 	}
 
 	public File getSaveFile()

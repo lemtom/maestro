@@ -94,10 +94,9 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 				MidiEvent evt = track.get(jj);
 				MidiMessage msg = evt.getMessage();
 				long tick = evt.getTick();
-				if (msg instanceof MetaMessage)
+				if (msg instanceof MetaMessage m)
 				{
-					MetaMessage m = (MetaMessage) msg;
-					if (m.getType() == META_PORT_CHANGE)	{						
+					if (m.getType() == META_PORT_CHANGE)	{
 						byte[] portChange = m.getData();
 						if (portChange.length == 1 && tick == 0) {
 							// Support for (non-midi-standard) port assignments used by Cakewalk and Musescore. 
@@ -154,58 +153,46 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					}
 					else if (cmd == ShortMessage.CONTROL_CHANGE)
 					{
-						switch (m.getData1())
-						{
-						case CHANNEL_VOLUME_CONTROLLER_COARSE:
-							volume.put(ch, tick, m.getData2());
-							break;
-						case REGISTERED_PARAMETER_NUMBER_MSB:
-							rpn[ch] = (rpn[ch] & 0x7F) | ((m.getData2() & 0x7F) << 7);
-							break;
-						case REGISTERED_PARAMETER_NUMBER_LSB:
-							rpn[ch] = (rpn[ch] & (0x7F << 7)) | (m.getData2() & 0x7F);
-							break;
-						case DATA_ENTRY_COARSE:
-							if (rpn[ch] == REGISTERED_PARAM_PITCH_BEND_RANGE)
-								pitchBendCoarse.put(ch, tick, m.getData2());
-							break;
-						case DATA_ENTRY_FINE:
-							if (rpn[ch] == REGISTERED_PARAM_PITCH_BEND_RANGE)
-								pitchBendFine.put(ch, tick, m.getData2());
-							break;
-						case BANK_SELECT_MSB:
-							if (ch != DRUM_CHANNEL || standard != "XG" || m.getData2() == 126 || m.getData2() == 127) {
-								// Due to XG drum part protect mode being ON, drum channel 9 only can switch between MSB 126 & 127.
-								mapMSB.put(ch, tick, m.getData2());
-							} else if (ch == DRUM_CHANNEL && standard == "XG" && m.getData2() != 126 && m.getData2() != 127) {
-								System.err.println("XG Drum Part Protect Mode prevented bank select MSB.");
+						switch (m.getData1()) {
+							case CHANNEL_VOLUME_CONTROLLER_COARSE -> volume.put(ch, tick, m.getData2());
+							case REGISTERED_PARAMETER_NUMBER_MSB ->
+									rpn[ch] = (rpn[ch] & 0x7F) | ((m.getData2() & 0x7F) << 7);
+							case REGISTERED_PARAMETER_NUMBER_LSB ->
+									rpn[ch] = (rpn[ch] & (0x7F << 7)) | (m.getData2() & 0x7F);
+							case DATA_ENTRY_COARSE -> {
+								if (rpn[ch] == REGISTERED_PARAM_PITCH_BEND_RANGE)
+									pitchBendCoarse.put(ch, tick, m.getData2());
+							}
+							case DATA_ENTRY_FINE -> {
+								if (rpn[ch] == REGISTERED_PARAM_PITCH_BEND_RANGE)
+									pitchBendFine.put(ch, tick, m.getData2());
+							}
+							case BANK_SELECT_MSB -> {
+								if (ch != DRUM_CHANNEL || standard != "XG" || m.getData2() == 126 || m.getData2() == 127) {
+									// Due to XG drum part protect mode being ON, drum channel 9 only can switch between MSB 126 & 127.
+									mapMSB.put(ch, tick, m.getData2());
+								} else if (ch == DRUM_CHANNEL && standard == "XG" && m.getData2() != 126 && m.getData2() != 127) {
+									System.err.println("XG Drum Part Protect Mode prevented bank select MSB.");
+								}
 							}
 							//if(ch==DRUM_CHANNEL) System.err.println("Bank select MSB "+m.getData2()+"  "+tick);
-							break;
-						case BANK_SELECT_LSB:
-							mapLSB.put(ch, tick, m.getData2());
+							case BANK_SELECT_LSB -> mapLSB.put(ch, tick, m.getData2());
+
 							//if(ch==DRUM_CHANNEL) System.err.println("Bank select LSB "+m.getData2()+"  "+tick);
-							break;
 						}
 					}
-				} else if (msg instanceof SysexMessage) {
-					SysexMessage sysex = (SysexMessage) msg;
+				} else if (msg instanceof SysexMessage sysex) {
 					byte[] message = sysex.getMessage();
 					if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
 						&& (message[4] & 0xFF) == 0x08 && (message[8] & 0xFF) == 0xF7) {
 				    	String bank = message[6]==1?"MSB":(message[6]==2?"LSB":(message[6]==3?"Patch":""));
 				    	if (standard == "XG" && bank != "" && message[5] < 16 && message[5] > -1 && message[7] < 128 && message[7] > -1) {
 							switch (bank) {
-								case "MSB":
+								case "MSB" ->
 									// XG Drum Part Protect Mode does not apply to sysex bank changes.
-									mapMSB.put((int) message[5], tick, (int) message[7]);
-									break;
-								case "Patch":
-									mapPatch.put((int) message[5], tick, (int) message[7]);
-									break;
-								case "LSB":
-									mapLSB.put((int) message[5], tick, (int) message[7]);
-									break;
+										mapMSB.put((int) message[5], tick, (int) message[7]);
+								case "Patch" -> mapPatch.put((int) message[5], tick, (int) message[7]);
+								case "LSB" -> mapLSB.put((int) message[5], tick, (int) message[7]);
 							}
 				    	}
 					}
@@ -222,9 +209,8 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					if (te.tempoMPQ > maxTempoMPQ)
 						maxTempoMPQ = te.tempoMPQ;
 				}
-				else if (msg instanceof MetaMessage)
+				else if (msg instanceof MetaMessage m)
 				{
-					MetaMessage m = (MetaMessage) msg;
 					if (m.getType() == META_TIME_SIGNATURE && timeSignature == null)
 					{
 						timeSignature = new TimeSignature(m);

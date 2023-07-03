@@ -11,11 +11,12 @@ import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
-import sun.awt.shell.ShellFolder;
+import javax.swing.filechooser.FileSystemView;
 
 public final class Util {
 	private Util() {
@@ -222,16 +223,14 @@ public final class Util {
 		return false;
 	}
 
-	public static File resolveShortcut(File file)
-	{
-		if (file.getName().toLowerCase().endsWith(".lnk"))
-		{
-			try
-			{
-				return ShellFolder.getShellFolder(file).getLinkLocation();
-			}
-			catch (Exception e)
-			{
+	public static File resolveShortcut(File file) {
+		// TODO Verify that there is no regression
+		// This requires Java 9
+		if (file.getName().toLowerCase().endsWith(".lnk")) {
+			try {
+				return FileSystemView.getFileSystemView().getLinkLocation(file);
+			} catch (FileNotFoundException e) {
+				// Do nothing
 			}
 		}
 		return file;

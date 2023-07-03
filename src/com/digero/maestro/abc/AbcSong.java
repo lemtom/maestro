@@ -842,10 +842,9 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		return abcExporter;
 	}
 
-	private Comparator<AbcPart> partNumberComparator = new Comparator<AbcPart>()
-	{
-		@Override public int compare(AbcPart p1, AbcPart p2)
-		{
+	private Comparator<AbcPart> partNumberComparator = new Comparator<>() {
+		@Override
+		public int compare(AbcPart p1, AbcPart p2) {
 			int base1 = partAutoNumberer.getFirstNumber(p1.getInstrument());
 			int base2 = partAutoNumberer.getFirstNumber(p2.getInstrument());
 

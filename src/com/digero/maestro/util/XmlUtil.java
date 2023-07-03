@@ -272,9 +272,8 @@ public class XmlUtil
 	public static String formatException(SAXException e)
 	{
 		String msg = e.getMessage();
-		if (e instanceof SAXParseException)
+		if (e instanceof SAXParseException e2)
 		{
-			SAXParseException e2 = (SAXParseException) e;
 			if (e2.getLineNumber() >= 0)
 			{
 				msg += " (line " + e2.getLineNumber();

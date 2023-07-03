@@ -165,9 +165,8 @@ public class TimeSignature implements MidiConstants
 
 	@Override public boolean equals(Object obj)
 	{
-		if (obj instanceof TimeSignature)
+		if (obj instanceof TimeSignature that)
 		{
-			TimeSignature that = (TimeSignature) obj;
 			return this.numerator == that.numerator && this.denominator == that.denominator
 					&& this.metronome == that.metronome && this.thirtySecondNotes == that.thirtySecondNotes;
 		}

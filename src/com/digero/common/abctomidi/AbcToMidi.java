@@ -216,21 +216,16 @@ public class AbcToMidi
 
 					try
 					{
-						switch (type)
-						{
-							case 'X':
-								for (int lineAndColumn : tiedNotes.values())
-								{
+						switch (type) {
+							case 'X' -> {
+								for (int lineAndColumn : tiedNotes.values()) {
 									throw new ParseException("Tied note does not connect to another note", fileName,
 											lineAndColumn >>> 16, lineAndColumn & 0xFFFF);
 								}
-
 								accidentals.clear();
 								noteOffEvents.clear();
-
 								if (trackNumber > 0)
 									abcInfo.setPartEndLine(trackNumber, lineNumberForRegions - 1);
-
 								info.newPart(Integer.parseInt(value));
 								trackNumber++;
 								partStartLine = lineNumber;
@@ -238,51 +233,41 @@ public class AbcToMidi
 								abcInfo.setPartNumber(trackNumber, info.getPartNumber());
 								abcInfo.setPartStartLine(trackNumber, lineNumberForRegions);
 								track = null; // Will create a new track after the header is done
-								if (instrumentOverrideMap != null && instrumentOverrideMap.containsKey(trackNumber))
-								{
+								if (instrumentOverrideMap != null && instrumentOverrideMap.containsKey(trackNumber)) {
 									info.setInstrument(instrumentOverrideMap.get(trackNumber), false);
 								}
-								break;
-							case 'T':
-								if (track != null)
-								{
+							}
+							case 'T' -> {
+								if (track != null) {
 									throw new ParseException("Can't specify the title in the middle of a part",
 											fileName, lineNumber, 0);
 								}
-
 								info.setTitle(value, false);
 								abcInfo.setPartName(trackNumber, value, false);
-								if (instrumentOverrideMap == null || !instrumentOverrideMap.containsKey(trackNumber))
-								{
-									if (!info.isInstrumentSet())
-									{
+								if (instrumentOverrideMap == null || !instrumentOverrideMap.containsKey(trackNumber)) {
+									if (!info.isInstrumentSet()) {
 										LotroInstrument instrument = LotroInstrument.findInstrumentName(value, null);
 										if (instrument != null)
 											info.setInstrument(instrument, false);
 									}
 								}
-								break;
-							case 'K':
-								info.setKey(value);
-								break;
-							case 'L':
+							}
+							case 'K' -> info.setKey(value);
+							case 'L' -> {
 								info.setNoteDivisor(value);
 								noteDivisorChangeLine = lineNumber;
-								break;
-							case 'M':
+							}
+							case 'M' -> {
 								info.setMeter(value);
 								noteDivisorChangeLine = lineNumber;
-								break;
-							case 'Q':
-							{
+							}
+							case 'Q' -> {
 								int tempo = info.getPrimaryTempoBPM();
 								info.setPrimaryTempoBPM(value);
-								if (seq != null && (info.getPrimaryTempoBPM() != tempo))
-								{
+								if (seq != null && (info.getPrimaryTempoBPM() != tempo)) {
 									throw new ParseException("The tempo must be the same for all parts of the song",
 											fileName, lineNumber);
 								}
-								break;
 							}
 						}
 					}
@@ -927,9 +912,8 @@ public class AbcToMidi
 		for (int j = 0; j < track.size(); j++)
 		{
 			MidiEvent evt = track.get(j);
-			if (evt.getMessage() instanceof ShortMessage)
+			if (evt.getMessage() instanceof ShortMessage m)
 			{
-				ShortMessage m = (ShortMessage) evt.getMessage();
 				if (m.getCommand() == ShortMessage.PROGRAM_CHANGE)
 				{
 					programChange = m;

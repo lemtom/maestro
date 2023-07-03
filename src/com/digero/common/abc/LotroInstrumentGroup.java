@@ -21,39 +21,13 @@ public enum LotroInstrumentGroup
 
 	public static LotroInstrumentGroup groupOf(LotroInstrument instrument)
 	{
-		switch (instrument)
-		{
-			case LUTE_OF_AGES:
-			case BASIC_LUTE:
-			case BASIC_HARP:
-			case MISTY_MOUNTAIN_HARP:
-			case BASIC_THEORBO:
-			case TRAVELLERS_TRUSTY_FIDDLE:
-			default:
-				return LotroInstrumentGroup.PLUCKED_STRINGS;
-
-			case BARDIC_FIDDLE:
-			case BASIC_FIDDLE:
-			case LONELY_MOUNTAIN_FIDDLE:
-			case SPRIGHTLY_FIDDLE:
-			case STUDENT_FIDDLE:
-				return LotroInstrumentGroup.BOWED_STRINGS;
-
-			case BASIC_FLUTE:
-			case BASIC_CLARINET:
-			case BASIC_HORN:
-			case BASIC_BASSOON:
-			case BRUSQUE_BASSOON:
-			case LONELY_MOUNTAIN_BASSOON:
-			case BASIC_BAGPIPE:
-			case BASIC_PIBGORN:
-				return LotroInstrumentGroup.WOODWINDS;
-
-			case BASIC_DRUM:
-			case BASIC_COWBELL:
-			case MOOR_COWBELL:
-			case STUDENT_FX_FIDDLE:
-				return LotroInstrumentGroup.PERCUSSION;
-		}
+        return switch (instrument) {
+            default -> LotroInstrumentGroup.PLUCKED_STRINGS;
+            case BARDIC_FIDDLE, BASIC_FIDDLE, LONELY_MOUNTAIN_FIDDLE, SPRIGHTLY_FIDDLE, STUDENT_FIDDLE ->
+                    LotroInstrumentGroup.BOWED_STRINGS;
+            case BASIC_FLUTE, BASIC_CLARINET, BASIC_HORN, BASIC_BASSOON, BRUSQUE_BASSOON, LONELY_MOUNTAIN_BASSOON, BASIC_BAGPIPE, BASIC_PIBGORN ->
+                    LotroInstrumentGroup.WOODWINDS;
+            case BASIC_DRUM, BASIC_COWBELL, MOOR_COWBELL, STUDENT_FX_FIDDLE -> LotroInstrumentGroup.PERCUSSION;
+        };
 	}
 }

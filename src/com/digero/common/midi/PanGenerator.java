@@ -104,59 +104,27 @@ public class PanGenerator
 		int sign;
 		int c = count[instrument.ordinal()]++;
 
-		switch (c % 3)
-		{
-			case 0:
-				sign = 1;
-				break;
-			case 1:
-				sign = -1;
-				break;
-			default:
-				sign = 0;
-				break;
-		}
+		sign = switch (c % 3) {
+			case 0 -> 1;
+			case 1 -> -1;
+			default -> 0;
+		};
 
-		switch (instrument)
-		{
-			case BARDIC_FIDDLE:
-			case BASIC_FIDDLE:
-			case LONELY_MOUNTAIN_FIDDLE:
-			case STUDENT_FIDDLE:
-				return CENTER + sign * -50;
-			case STUDENT_FX_FIDDLE:
-				return CENTER + sign * -50;
-			case BASIC_HARP:
-			case MISTY_MOUNTAIN_HARP:
-			case SPRIGHTLY_FIDDLE:
-				return CENTER + sign * -45;
-			case BASIC_FLUTE:
-				return CENTER + sign * -40;
-			case BASIC_BAGPIPE:
-				return CENTER + sign * -30;
-			case BASIC_THEORBO:
-				return CENTER + sign * -25;
-			case BASIC_COWBELL:
-			case MOOR_COWBELL:
-				return CENTER + sign * -15;
-			case BASIC_DRUM:
-				return CENTER + sign * 15;
-			case BASIC_PIBGORN:
-				return CENTER + sign * 20;
-			case BASIC_HORN:
-				return CENTER + sign * 25;
-			case BASIC_LUTE:
-			case LUTE_OF_AGES:
-			case TRAVELLERS_TRUSTY_FIDDLE:
-				return CENTER + sign * 35;
-			case BASIC_CLARINET:
-				return CENTER + sign * 45;
-			case BASIC_BASSOON:
-			case LONELY_MOUNTAIN_BASSOON:
-			case BRUSQUE_BASSOON:
-				return CENTER + sign * 50;
-		}
+		return switch (instrument) {
+			case BARDIC_FIDDLE, BASIC_FIDDLE, LONELY_MOUNTAIN_FIDDLE, STUDENT_FIDDLE -> CENTER + sign * -50;
+			case STUDENT_FX_FIDDLE -> CENTER + sign * -50;
+			case BASIC_HARP, MISTY_MOUNTAIN_HARP, SPRIGHTLY_FIDDLE -> CENTER + sign * -45;
+			case BASIC_FLUTE -> CENTER + sign * -40;
+			case BASIC_BAGPIPE -> CENTER + sign * -30;
+			case BASIC_THEORBO -> CENTER + sign * -25;
+			case BASIC_COWBELL, MOOR_COWBELL -> CENTER + sign * -15;
+			case BASIC_DRUM -> CENTER + sign * 15;
+			case BASIC_PIBGORN -> CENTER + sign * 20;
+			case BASIC_HORN -> CENTER + sign * 25;
+			case BASIC_LUTE, LUTE_OF_AGES, TRAVELLERS_TRUSTY_FIDDLE -> CENTER + sign * 35;
+			case BASIC_CLARINET -> CENTER + sign * 45;
+			case BASIC_BASSOON, LONELY_MOUNTAIN_BASSOON, BRUSQUE_BASSOON -> CENTER + sign * 50;
+		};
 
-		return CENTER;
 	}
 }

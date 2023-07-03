@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -487,11 +488,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		for (String key : keys) {
 			deviceBox.addItem(key);
 		}
-		if (preferredDevice != null) {
-			deviceBox.setSelectedItem(preferredDevice);
-		} else {
-			deviceBox.setSelectedItem(defaultStr);
-		}
+		deviceBox.setSelectedItem(Objects.requireNonNullElse(preferredDevice, defaultStr));
 		deviceBox.setEditable(false);
 		deviceBox.addActionListener(e -> {
 			String s = (String) deviceBox.getSelectedItem();

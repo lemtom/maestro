@@ -144,9 +144,8 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 			for (int j = 0; j < track.size(); j++)
 			{
 				MidiEvent evt = track.get(j);
-				if (evt.getMessage() instanceof ShortMessage)
+				if (evt.getMessage() instanceof ShortMessage m)
 				{
-					ShortMessage m = (ShortMessage) evt.getMessage();
 					if (m.getCommand() == ShortMessage.NOTE_ON)
 					{
 						hasNotes = true;

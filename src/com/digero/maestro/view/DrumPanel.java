@@ -222,12 +222,10 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 			trackVolumeBar.removeActionListener(trackVolumeBarListener);
 	}
 
-	private Listener<AbcPartEvent> abcPartListener = new Listener<AbcPartEvent>()
-	{
-		@Override public void onEvent(AbcPartEvent e)
-		{
-			if (e.isNoteGraphRelated())
-			{
+	private Listener<AbcPartEvent> abcPartListener = new Listener<>() {
+		@Override
+		public void onEvent(AbcPartEvent e) {
+			if (e.isNoteGraphRelated()) {
 				checkBox.setEnabled(abcPart.isTrackEnabled(trackInfo.getTrackNumber()));
 				checkBox.setSelected(abcPart.isDrumEnabled(trackInfo.getTrackNumber(), drumId));
 				if (abcPart.isFXPart()) {

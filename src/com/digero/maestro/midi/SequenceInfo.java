@@ -243,9 +243,8 @@ public class SequenceInfo implements MidiConstants
 			{
 				MidiEvent evt = t.get(j);
 				MidiMessage msg = evt.getMessage();
-				if (msg instanceof ShortMessage)
+				if (msg instanceof ShortMessage m)
 				{
-					ShortMessage m = (ShortMessage) msg;
 					if (m.getCommand() == ShortMessage.NOTE_ON)
 					{
 						if (evt.getTick() < firstNoteTick)
@@ -271,9 +270,8 @@ public class SequenceInfo implements MidiConstants
 			{
 				MidiEvent evt = t.get(j);
 				MidiMessage msg = evt.getMessage();
-				if (msg instanceof ShortMessage)
+				if (msg instanceof ShortMessage m)
 				{
-					ShortMessage m = (ShortMessage) msg;
 					if (m.getCommand() == ShortMessage.NOTE_OFF)
 					{
 						if (evt.getTick() > lastNoteTick)
@@ -348,8 +346,7 @@ public class SequenceInfo implements MidiConstants
 			for (int j = 0; j < track.size(); j++) {
 				MidiEvent evt = track.get(j);
 				MidiMessage msg = evt.getMessage();
-				if (msg instanceof SysexMessage) {
-					SysexMessage sysex = (SysexMessage) msg;
+				if (msg instanceof SysexMessage sysex) {
 					byte[] message = sysex.getMessage();
 
 					/*
@@ -463,8 +460,7 @@ public class SequenceInfo implements MidiConstants
 							entry.sysex.add(evt);
 						}
 					}
-				} else if (msg instanceof ShortMessage) {
-					ShortMessage m = (ShortMessage) msg;
+				} else if (msg instanceof ShortMessage m) {
 					int cmd = m.getCommand();
 
 					if (cmd == ShortMessage.PROGRAM_CHANGE) {
@@ -533,8 +529,7 @@ public class SequenceInfo implements MidiConstants
 			
 			for (MidiEvent evt : masterList) {
 				MidiMessage msg = evt.getMessage();
-				if (msg instanceof SysexMessage) {
-					SysexMessage sysex = (SysexMessage) msg;
+				if (msg instanceof SysexMessage sysex) {
 					byte[] message = sysex.getMessage();
 					// we already know that this sysex is a XG bank/patch change, so no need for if statement.
 				   	String bank = message[6]==1?"MSB":(message[6]==2?"LSB":(message[6]==3?"Patch":""));
@@ -558,8 +553,7 @@ public class SequenceInfo implements MidiConstants
 							}
 			    		}
 			    	}
-				} else if (msg instanceof ShortMessage) {
-					ShortMessage m = (ShortMessage) msg;
+				} else if (msg instanceof ShortMessage m) {
 					int cmd = m.getCommand();
 					int ch = m.getChannel();
 					
@@ -704,9 +698,8 @@ public class SequenceInfo implements MidiConstants
 			{
 				MidiEvent evt = track.get(j);
 				MidiMessage msg = evt.getMessage();
-				if (msg instanceof ShortMessage)
+				if (msg instanceof ShortMessage m)
 				{
-					ShortMessage m = (ShortMessage) msg;
 					int chan = m.getChannel();
 					if (m.getCommand() == ShortMessage.NOTE_ON)
 					{
@@ -801,8 +794,7 @@ public class SequenceInfo implements MidiConstants
 				{
 					MidiEvent evt = track.get(j);
 					MidiMessage msg = evt.getMessage();
-					if (msg instanceof ShortMessage) {
-						ShortMessage smsg = (ShortMessage) msg;
+					if (msg instanceof ShortMessage smsg) {
 						int chan = smsg.getChannel();
 						if (drumTrack != null && drums == 1 && chan == DRUM_CHANNEL)
 						{

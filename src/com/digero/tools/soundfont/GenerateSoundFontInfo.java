@@ -30,50 +30,34 @@ public class GenerateSoundFontInfo
 
 	private static int getNotesPerSample(LotroInstrument lotroInstrument)
 	{
-		switch (lotroInstrument)
-		{
-			case BASIC_DRUM:
-				return 1;
+		return switch (lotroInstrument) {
+			case BASIC_DRUM -> 1;
 
 			// A larger return mean smaller .sf2 file footprint
 			// A larger return mean more CPU usage
 			// A smaller return means more accurate preview of different note timbres
 			// It is a balancing act..
-				
-			case BRUSQUE_BASSOON://short notes
-			case BASIC_LUTE://short notes, differ semi-alot
-			case BASIC_HARP://short notes
-			case MISTY_MOUNTAIN_HARP://short notes
-			case LUTE_OF_AGES://short notes, differ alot
-			case TRAVELLERS_TRUSTY_FIDDLE://short notes, differ alot
-			case BASIC_THEORBO://short notes
-			case BASIC_HORN:// The notes in high octave differs a bit
-			case BASIC_BAGPIPE:
-				return 1;
 
-			case BASIC_FLUTE:// differ medium
-			case BARDIC_FIDDLE:
-			case LONELY_MOUNTAIN_FIDDLE:// differ medium
-			case SPRIGHTLY_FIDDLE://short notes
-				return 2;
-
-			case BASIC_FIDDLE:
-			case LONELY_MOUNTAIN_BASSOON:// does not differ alot
-				return 4;
-			
-			case BASIC_BASSOON:
-				return 6;
-
-			case BASIC_CLARINET://long notes but differ alot plus bad notes
-			case BASIC_PIBGORN://long notes but differ alot plus bad notes
-				return 1;
-				
-			case STUDENT_FIDDLE:
-			case BASIC_COWBELL:
-			case MOOR_COWBELL:
-			default:
-				throw new RuntimeException();
-		}
+			//short notes
+			//short notes, differ semi-alot
+			//short notes
+			//short notes
+			//short notes, differ alot
+			//short notes, differ alot
+			//short notes
+			// The notes in high octave differs a bit
+			case BRUSQUE_BASSOON, BASIC_LUTE, BASIC_HARP, MISTY_MOUNTAIN_HARP, LUTE_OF_AGES, TRAVELLERS_TRUSTY_FIDDLE, BASIC_THEORBO, BASIC_HORN, BASIC_BAGPIPE ->
+					1;// differ medium
+			// differ medium
+			case BASIC_FLUTE, BARDIC_FIDDLE, LONELY_MOUNTAIN_FIDDLE, SPRIGHTLY_FIDDLE ->//short notes
+					2;
+			case BASIC_FIDDLE, LONELY_MOUNTAIN_BASSOON ->// does not differ alot
+					4;
+			case BASIC_BASSOON -> 6;//long notes but differ alot plus bad notes
+			case BASIC_CLARINET, BASIC_PIBGORN ->//long notes but differ alot plus bad notes
+					1;
+			default -> throw new RuntimeException();
+		};
 	}
 
 	private static int run(String[] args) throws Exception
