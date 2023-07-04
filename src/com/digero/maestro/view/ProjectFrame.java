@@ -1,8 +1,5 @@
 package com.digero.maestro.view;
 
-import info.clearthought.layout.TableLayout;
-import info.clearthought.layout.TableLayoutConstants;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -34,8 +33,10 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -78,9 +79,9 @@ import org.xml.sax.SAXParseException;
 import com.digero.common.abc.LotroInstrument;
 import com.digero.common.abc.StringCleaner;
 import com.digero.common.icons.IconLoader;
-import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.KeySignature;
 import com.digero.common.midi.LotroSequencerWrapper;
+import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.NoteFilterSequencerWrapper;
 import com.digero.common.midi.SequencerEvent;
 import com.digero.common.midi.SequencerEvent.SequencerProperty;
@@ -114,6 +115,9 @@ import com.digero.maestro.abc.PartNameTemplate;
 import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.util.FileResolver;
 import com.digero.maestro.util.XmlUtil;
+
+import info.clearthought.layout.TableLayout;
+import info.clearthought.layout.TableLayoutConstants;
 
 @SuppressWarnings("serial")
 public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompileConstants
@@ -228,6 +232,21 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		Util.initWinBounds(this, prefs.node("window"), 800, 600);
 
 		ToolTipManager.sharedInstance().setDismissDelay(8000);
+		
+		InputMap im = (InputMap)UIManager.get("Button.focusInputMap");
+		if (im != null)
+		{
+			im.put(KeyStroke.getKeyStroke("pressed SPACE"), "none");
+			im.put(KeyStroke.getKeyStroke("released SPACE"), "none");
+		}
+		
+		im = (InputMap)UIManager.get("CheckBox.focusInputMap");
+		if (im != null)
+		{
+			im.put(KeyStroke.getKeyStroke("pressed SPACE"), "none");
+			im.put(KeyStroke.getKeyStroke("released SPACE"), "none");
+		}
+		
 
 		String welcomeMessage = formatInfoMessage("Hello Maestro", "Drag and drop a MIDI or ABC file to open it.\n"
 				+ "Or use File > Open.");
@@ -570,7 +589,20 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		partsList.setPrototypeCellValue(new ProtoClass());// This call is attempt of fix for no delete button on MacOS part 1
 		partsList.setVisibleRowCount(8);
 
-		JScrollPane partsListScrollPane = new JScrollPane(partsList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		// Wrap the part list in a panel that forces the list to the top
+		// Fixes a swing bug where clicking after the end of the list will select the last element
+		JPanel partListWrapperPanel = new JPanel(new BorderLayout());
+		partListWrapperPanel.add(partsList, BorderLayout.NORTH);
+		partListWrapperPanel.setBackground(partsList.getBackground());
+		
+		// Remove focus from text boxes if area under parts is clicked
+		partListWrapperPanel.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e)
+			{
+				getRootPane().requestFocus();
+			}
+		});
+		JScrollPane partsListScrollPane = new JScrollPane(partListWrapperPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		newPartButton = new JButton("New Part");
@@ -885,6 +917,40 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		onSaveAndExportSettingsChanged();
 		partPanel.showInfoMessage(welcomeMessage);
 		updateButtons(true);
+		
+		// Add support for using spacebar for pause/play.
+		ActionListener spaceBarListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent ae)
+			{
+				if (!sequencer.isLoaded())
+				{
+					return;
+				}
+				SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
+
+				boolean running = !curSequencer.isRunning();
+				if (abcPreviewMode && running)
+				{
+					if (!refreshPreviewSequence(true))
+						running = false;
+				}
+
+				curSequencer.setRunning(running);
+				updateButtons(false);
+			}
+		};
+		this.getRootPane().registerKeyboardAction(spaceBarListener, KeyStroke.getKeyStroke(' '), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		
+		// Add a listener to remove focus from current component when somewhere else is clicked.
+		MouseAdapter listenForFocus = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e)
+			{
+				getRootPane().requestFocus();
+			}
+		};
+		addMouseListener(listenForFocus);
+
 	}
 
 	private static void discardObject(IDiscardable object)

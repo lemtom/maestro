@@ -68,8 +68,10 @@ public class MaestroMain
 		}
 		
 		mainWindow = new ProjectFrame();
+
 		SwingUtilities.invokeAndWait(() -> {
             mainWindow.setVisible(true);
+            mainWindow.getRootPane().requestFocus();
             openSongFromCommandLine(args);
         });
 		try

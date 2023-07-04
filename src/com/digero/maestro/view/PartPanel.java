@@ -11,6 +11,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.ParseException;
 
 import javax.swing.BorderFactory;
@@ -44,6 +46,7 @@ import com.digero.maestro.abc.AbcPartEvent;
 import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
 import com.digero.maestro.abc.PartAutoNumberer;
 import com.digero.maestro.midi.TrackInfo;
+import com.digero.maestro.view.TrackPanel.TrackDimensions;
 
 @SuppressWarnings("serial")
 public class PartPanel extends JPanel implements ICompileConstants, TableLayoutConstants
@@ -162,6 +165,13 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 
 		trackScrollPane = new JScrollPane(trackListPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		// Remove focus from text boxes if area under midi tracks is clicked
+		trackScrollPane.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e)
+			{
+				getRootPane().requestFocus();
+			}
+		});
 
 		messageLabel = new JLabel();
 		messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -178,6 +188,16 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		add(dataPanel, "0, 0");
 		add(messageLabel, "0, 1, C, C");
 		add(trackScrollPane, "0, 1");
+		
+		
+		// Remove focus if any empty space in the window is clicked
+		MouseAdapter listenForFocus = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e)
+			{
+				getRootPane().requestFocus();
+			}
+		};
+		addMouseListener(listenForFocus);
 
 		setAbcPart(null);
 		initialized = true;
@@ -506,19 +526,24 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		} catch (java.awt.HeadlessException e) {
 			
 		}
+		
+		TrackDimensions dims = TrackPanel.calculateTrackDims();
+		
+
+		int scaledHeight = (int)(dims.rowHeight * 1.25);
+		
 		for (Component child : trackListPanel.getComponents())
 		{
 			if (child instanceof TrackPanel)
 			{
-				if (!zoomed && child.getHeight() == 49) {
-					((TrackPanel)child).setVerticalSize(60);
-					child.setPreferredSize(new Dimension(horiz, 61));
-					child.validate();
+				if (!zoomed && child.getHeight() == dims.rowHeight + 1) {
+					((TrackPanel)child).setVerticalSize(scaledHeight);
+					child.setPreferredSize(new Dimension(horiz, scaledHeight + 1));
 				} else {
-					((TrackPanel)child).setVerticalSize(48);
+					((TrackPanel)child).setVerticalSize(dims.rowHeight);
 					child.setPreferredSize(null);
-					child.validate();
 				}
+				child.validate();
 				child.invalidate();
 			}
 		}
