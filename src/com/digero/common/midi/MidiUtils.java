@@ -31,6 +31,10 @@ import javax.sound.midi.Track;
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+
+/** 
+ * A minimal copy of all used MidiUtils features.
+ * */
 public class MidiUtils {
     public final static int DEFAULT_TEMPO_MPQ = 500000; // 120bpm
     public final static int META_END_OF_TRACK_TYPE = 0x2F;
