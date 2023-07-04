@@ -46,6 +46,7 @@ import com.digero.maestro.abc.AbcPartEvent;
 import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
 import com.digero.maestro.abc.PartAutoNumberer;
 import com.digero.maestro.midi.TrackInfo;
+import com.digero.maestro.view.TrackPanel.TrackDimensions;
 
 @SuppressWarnings("serial")
 public class PartPanel extends JPanel implements ICompileConstants, TableLayoutConstants
@@ -533,19 +534,24 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		} catch (java.awt.HeadlessException e) {
 			
 		}
+		
+		TrackDimensions dims = TrackPanel.calculateTrackDims();
+		
+
+		int scaledHeight = (int)(dims.rowHeight * 1.25);
+		
 		for (Component child : trackListPanel.getComponents())
 		{
 			if (child instanceof TrackPanel)
 			{
-				if (!zoomed && child.getHeight() == 49) {
-					((TrackPanel)child).setVerticalSize(60);
-					child.setPreferredSize(new Dimension(horiz, 61));
-					child.validate();
+				if (!zoomed && child.getHeight() == dims.rowHeight + 1) {
+					((TrackPanel)child).setVerticalSize(scaledHeight);
+					child.setPreferredSize(new Dimension(horiz, scaledHeight + 1));
 				} else {
-					((TrackPanel)child).setVerticalSize(48);
+					((TrackPanel)child).setVerticalSize(dims.rowHeight);
 					child.setPreferredSize(null);
-					child.validate();
 				}
+				child.validate();
 				child.invalidate();
 			}
 		}

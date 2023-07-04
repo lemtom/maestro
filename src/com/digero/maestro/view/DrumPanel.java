@@ -68,7 +68,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 	private ActionListener trackVolumeBarListener;
 	private boolean showVolume = false;
 	
-	private TrackDimensions dims = new TrackDimensions(TITLE_WIDTH, 0, COMBO_WIDTH);
+	private TrackDimensions dims = new TrackDimensions(TITLE_WIDTH, 0, COMBO_WIDTH, -1);
 
 	public DrumPanel(TrackInfo info, NoteFilterSequencerWrapper sequencer, AbcPart part, int drumNoteId,
 			SequencerWrapper abcSequencer_, TrackVolumeBar trackVolumeBar_)

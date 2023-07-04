@@ -104,16 +104,18 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	public static class TrackDimensions
 	{
 		public TrackDimensions() {}
-		public TrackDimensions(int titleW, int priW, int controlW)
+		public TrackDimensions(int titleW, int priW, int controlW, int rowH)
 		{
 			titleWidth = titleW;
 			priorityWidth = priW;
 			controlWidth = controlW;
+			rowHeight = rowH;
 		}
 		
 		public int titleWidth = TITLE_WIDTH_DEFAULT;
 		public int priorityWidth = PRIORITY_WIDTH_DEFAULT;
 		public int controlWidth = CONTROL_WIDTH_DEFAULT;
+		public int rowHeight = ROW_HEIGHT_DEFAULT;
 	}
 
 	private final TrackInfo trackInfo;
@@ -141,7 +143,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 	private boolean wasDrumPart;
 	private boolean isAbcPreviewMode = false;
 	
-	public TrackDimensions dims = new TrackDimensions(TITLE_WIDTH_DEFAULT, PRIORITY_WIDTH_DEFAULT, CONTROL_WIDTH_DEFAULT);
+	public TrackDimensions dims = new TrackDimensions(TITLE_WIDTH_DEFAULT, PRIORITY_WIDTH_DEFAULT, CONTROL_WIDTH_DEFAULT, ROW_HEIGHT_DEFAULT);
 	
 	private String badString = ""; 
 
@@ -162,7 +164,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		dims = calculateTrackDims();
 		
 		tableLayout.setColumn(new double[] {GUTTER_WIDTH, dims.titleWidth, dims.priorityWidth, dims.controlWidth, FILL});
-		tableLayout.setRow(LAYOUT_ROWS);
+		tableLayout.setRow(new double[] { dims.rowHeight, PREFERRED });
 
 		gutter = new JPanel((LayoutManager) null);
 		gutter.setOpaque(false);
@@ -414,30 +416,29 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		Font font = UIManager.getFont("defaultFont");
 		if (font != null) // Using a flat theme - resize panel based on text size
 		{
-			//System.err.println("Font height for size: " + font.getSize());
 			int sizeDiff = font.getSize() - 10;
 			final double divider = 18.0 - 10.0; // Used for lerp
 
 			final int widthAt18Pt = 414;
-			final int widthAt10Pt = 214;
+			final int widthAt10Pt = 234;
 			
 			int widthAtThisFont = (int)(widthAt10Pt + (widthAt18Pt - widthAt10Pt) * (sizeDiff / divider));
 			TrackDimensions dims = new TrackDimensions();
-			dims.titleWidth = (int)(widthAtThisFont * .60);
+			dims.titleWidth = (int)(widthAtThisFont * .58);
 			dims.priorityWidth = (int)(widthAtThisFont * .10);
-			dims.controlWidth = (int)(widthAtThisFont * .30);
-			
-			// Lerp section button width between 10pt (22) and 18pt (34)
-			SECTIONBUTTON_WIDTH = (int)(22 + (34 - 22) * (sizeDiff / divider));
+			dims.controlWidth = (int)(widthAtThisFont * .32);
 			
 			// Lerp track height between 10pt (48) and 18pt (72)
-			LAYOUT_ROWS[0] = (int)(48 + (72 - 48) * (sizeDiff / divider));
+			dims.rowHeight = (int)(48 + (72 - 48) * (sizeDiff / divider));
 			
+			// Lerp section button width between 10pt (22) and 18pt (36)
+			SECTIONBUTTON_WIDTH = (int)(22 + (36 - 22) * (sizeDiff / divider));
+
 			return dims;
 		}
 		else
 		{
-			return new TrackDimensions(TITLE_WIDTH_DEFAULT, PRIORITY_WIDTH_DEFAULT, CONTROL_WIDTH_DEFAULT);
+			return new TrackDimensions(TITLE_WIDTH_DEFAULT, PRIORITY_WIDTH_DEFAULT, CONTROL_WIDTH_DEFAULT, ROW_HEIGHT_DEFAULT);
 		}
 	}
 
