@@ -1,6 +1,7 @@
 package com.digero.maestro.midi;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -73,10 +74,10 @@ public class TrackInfo implements MidiConstants
 			}
 		}		
 		
-		instruments = new HashSet<Integer>();
-		instrumentExtensions = new HashSet<String>();
-		noteEvents = new ArrayList<NoteEvent>();
-		notesInUse = new TreeSet<Integer>();
+		instruments = new HashSet<>();
+		instrumentExtensions = new HashSet<>();
+		noteEvents = new ArrayList<>();
+		notesInUse = new TreeSet<>();
 		List<NoteEvent>[] notesOn = new List[16];
 		int notesNotTurnedOff = 0;
 
@@ -105,7 +106,7 @@ public class TrackInfo implements MidiConstants
 					System.err.println("Track "+trackNumber+" contains both notes and drums.."+(name!=null?name:""));
 				*/
 				if (notesOn[c] == null)
-					notesOn[c] = new ArrayList<NoteEvent>();
+					notesOn[c] = new ArrayList<>();
 
 				long tick = evt.getTick();
 				if (cmd == ShortMessage.NOTE_ON || cmd == ShortMessage.NOTE_OFF)
@@ -197,7 +198,7 @@ public class TrackInfo implements MidiConstants
 
 					if (bend != pitchBend[c])
 					{
-						List<NoteEvent> bentNotes = new ArrayList<NoteEvent>();
+						List<NoteEvent> bentNotes = new ArrayList<>();
 						for (NoteEvent ne : notesOn[c])
 						{
 							ne.setEndTick(tick);
@@ -232,25 +233,18 @@ public class TrackInfo implements MidiConstants
 
 				if (type == META_TRACK_NAME && name == null)
 				{
-					try
-					{
-						byte[] data = m.getData();// Text that starts with any of these indicate charset: "@LATIN", "@JP", "@UTF-16LE", or "@UTF-16BE"
-						String tmp = new String(data, 0, data.length, "US-ASCII").trim();//"UTF-8"
-						if (tmp.length() > 0 && !tmp.equalsIgnoreCase("untitled")
-								&& !tmp.equalsIgnoreCase("WinJammer Demo")) {
-							//System.out.println("Starts with @ "+data[0]+" "+(data[0] & 0xFF));
-							
-							/*String pattern = "\u000B";// Vertical tab in unicode
-							Pattern r = Pattern.compile(pattern);
-						    Matcher match = r.matcher(tmp);
-						    tmp = match.replaceAll(" ");*/
-							
-							name = tmp;
-						}
-					}
-					catch (UnsupportedEncodingException ex)
-					{
-						// Ignore.  This should never happen...
+					byte[] data = m.getData();// Text that starts with any of these indicate charset: "@LATIN", "@JP", "@UTF-16LE", or "@UTF-16BE"
+					String tmp = new String(data, 0, data.length, StandardCharsets.US_ASCII).trim();//"UTF-8"
+					if (tmp.length() > 0 && !tmp.equalsIgnoreCase("untitled")
+							&& !tmp.equalsIgnoreCase("WinJammer Demo")) {
+						//System.out.println("Starts with @ "+data[0]+" "+(data[0] & 0xFF));
+
+						/*String pattern = "\u000B";// Vertical tab in unicode
+						Pattern r = Pattern.compile(pattern);
+						Matcher match = r.matcher(tmp);
+						tmp = match.replaceAll(" ");*/
+
+						name = tmp;
 					}
 				}
 				else if (type == META_KEY_SIGNATURE && keySignature == null)
@@ -303,10 +297,10 @@ public class TrackInfo implements MidiConstants
 		this.name = name;
 		this.timeSignature = timeSignature;
 		this.keySignature = keySignature;
-		this.instruments = new HashSet<Integer>();
+		this.instruments = new HashSet<>();
 		this.instruments.add(instrument.midi.id());
 		this.noteEvents = noteEvents;
-		this.notesInUse = new TreeSet<Integer>();
+		this.notesInUse = new TreeSet<>();
 
 		int minVelocity = Integer.MAX_VALUE;
 		int maxVelocity = Integer.MIN_VALUE;
@@ -410,22 +404,22 @@ public class TrackInfo implements MidiConstants
 	{
 		if (isDrumTrack) {
 						
-			String names = "";
+			StringBuilder names = new StringBuilder();
 			boolean first = true;
 			
 			for (String i : instrumentExtensions)
 			{
 				if (i == null) break;
 				if (!first)
-					names += ", ";
+					names.append(", ");
 				else
 					first = false;
 
-				names += i;
+				names.append(i);
 			}
-			if (first || names.isEmpty()) return isXGDrumTrack?"XG Drum Kit":(isGM2DrumTrack?"GM2 Drum Kit":(isGSDrumTrack?"GS Drum Kit":"Standard Drum Kit"));			
+			if (first || (names.length() == 0)) return isXGDrumTrack?"XG Drum Kit":(isGM2DrumTrack?"GM2 Drum Kit":(isGSDrumTrack?"GS Drum Kit":"Standard Drum Kit"));
 			
-			return names;
+			return names.toString();
 		}
 		
 		if (instruments.size() == 0)
@@ -436,7 +430,7 @@ public class TrackInfo implements MidiConstants
 				return "<None>";
 		}
 
-		String names = "";
+		StringBuilder names = new StringBuilder();
 		boolean first = true;
 		
 		if (!isGM()) {// Due to Maestro only supporting port assignments for GM, we make sure to use the GM instr. names for GM. 
@@ -444,27 +438,27 @@ public class TrackInfo implements MidiConstants
 			{
 				if (i == null) break;
 				if (!first)
-					names += ", ";
+					names.append(", ");
 				else
 					first = false;
 	
-				names += i;
+				names.append(i);
 			}
 		}
-		if (names.isEmpty()) {
+		if (names.length() == 0) {
 			first = true;		
 			for (int i : instruments)
 			{
 				if (!first)
-					names += ", ";
+					names.append(", ");
 				else
 					first = false;
 	
-				names += MidiInstrument.fromId(i).name;
+				names.append(MidiInstrument.fromId(i).name);
 			}
 		}
 
-		return names;
+		return names.toString();
 	}
 	
 	private boolean isGM() {

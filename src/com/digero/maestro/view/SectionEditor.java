@@ -51,7 +51,7 @@ public class SectionEditor {
 			private int track;
 			
 			
-			private List<SectionEditorLine> sectionInputs = new ArrayList<SectionEditorLine>(numberOfSections);
+			private List<SectionEditorLine> sectionInputs = new ArrayList<>(numberOfSections);
 			private SectionEditorLine nonSectionInput = new SectionEditorLine();
 			     
 	        JButton showVolume = new JButton("Show volume");
@@ -180,12 +180,12 @@ public class SectionEditor {
 		        			System.err.println("Too many sections in treemap in section-editor, or line numbers was badly edited in .msx file.");
 		        		} else {
 			        		sectionInputs.get(number).enable.setSelected(true);
-			        		sectionInputs.get(number).barA.setText(""+ps.startBar);
-			        		sectionInputs.get(number).barB.setText(""+ps.endBar);
-			        		sectionInputs.get(number).transpose.setText(""+ps.octaveStep);
-			        		sectionInputs.get(number).velo.setText(""+ps.volumeStep);
+			        		sectionInputs.get(number).barA.setText(String.valueOf(ps.startBar));
+			        		sectionInputs.get(number).barB.setText(String.valueOf(ps.endBar));
+			        		sectionInputs.get(number).transpose.setText(String.valueOf(ps.octaveStep));
+			        		sectionInputs.get(number).velo.setText(String.valueOf(ps.volumeStep));
 			        		sectionInputs.get(number).silent.setSelected(ps.silence);
-			        		sectionInputs.get(number).fade.setText(""+ps.fade);
+			        		sectionInputs.get(number).fade.setText(String.valueOf(ps.fade));
 			        		sectionInputs.get(number).doubling0.setSelected(ps.doubling[0]);
 			        		sectionInputs.get(number).doubling1.setSelected(ps.doubling[1]);
 			        		sectionInputs.get(number).doubling2.setSelected(ps.doubling[2]);
@@ -262,57 +262,48 @@ public class SectionEditor {
 		        panel.add(nonSectionInput.doubling2, "9,"+(firstRowIndex+numberOfSections)+",c,f");
 		        panel.add(nonSectionInput.doubling3, "10,"+(firstRowIndex+numberOfSections)+",c,f");
 		        
-		        copySections.getModel().addActionListener(new ActionListener() {
-	                @Override
-	                public void actionPerformed(ActionEvent e) {
-	                	for (int i = 0; i < numberOfSections; i++) {
-	                		clipboardStart[i] = sectionInputs.get(i).barA.getText();
-	                		clipboardEnd[i] = sectionInputs.get(i).barB.getText();
-	                		clipboardEnabled[i] = sectionInputs.get(i).enable.isSelected();
-	                	}
-	                	clipboardArmed = true;
-	                	pasteSections.setEnabled(clipboardArmed);
-	                }
-	            });
+		        copySections.getModel().addActionListener(e -> {
+					for (int i = 0; i < numberOfSections; i++) {
+						clipboardStart[i] = sectionInputs.get(i).barA.getText();
+						clipboardEnd[i] = sectionInputs.get(i).barB.getText();
+						clipboardEnabled[i] = sectionInputs.get(i).enable.isSelected();
+					}
+					clipboardArmed = true;
+					pasteSections.setEnabled(clipboardArmed);
+				});
 		        copySections.setToolTipText("<html><b> Copy the section starts and ends.</html>");
 		        panel.add(copySections, "1,"+(firstRowIndex + 1 + numberOfSections)+",2,"+(firstRowIndex + 1 + numberOfSections)+",f,f");
 		        
-		        pasteSections.getModel().addActionListener(new ActionListener() {
-	                @Override
-	                public void actionPerformed(ActionEvent e) {
-	                	if (!clipboardArmed) return; 
-	                	for (int i = 0; i < numberOfSections; i++) {
-	                		sectionInputs.get(i).barA.setText(clipboardStart[i]);
-	                		sectionInputs.get(i).barB.setText(clipboardEnd[i]);
-	                		sectionInputs.get(i).enable.setSelected(clipboardEnabled[i]);
-	                	}
-	                }
-	            });
+		        pasteSections.getModel().addActionListener(e -> {
+					if (!clipboardArmed) return;
+					for (int i = 0; i < numberOfSections; i++) {
+						sectionInputs.get(i).barA.setText(clipboardStart[i]);
+						sectionInputs.get(i).barB.setText(clipboardEnd[i]);
+						sectionInputs.get(i).enable.setSelected(clipboardEnabled[i]);
+					}
+				});
 		        pasteSections.setToolTipText("<html><b> Paste the section starts and ends.</html>");
 		        panel.add(pasteSections, "3,"+(firstRowIndex + 1 + numberOfSections)+",4,"+(firstRowIndex + 1 + numberOfSections)+",f,f");
 		        pasteSections.setEnabled(clipboardArmed);
 		        
-		        showVolume.getModel().addChangeListener(new ChangeListener() {
-	                @Override
-	                public void stateChanged(ChangeEvent e) {
-	                    ButtonModel model = showVolume.getModel();
-	                    if (model.isArmed()) {
-	                    	noteGraph.setShowingNoteVelocity(true);
-	                    	if (dPanels != null) {
-	                    		for (DrumPanel drum : dPanels) {
-	                    			drum.updateVolume(true);
-	                    		}
-	                    	}
-	                    } else {
-	                    	noteGraph.setShowingNoteVelocity(false);
-	                    	if (dPanels != null) {
-	                    		for (DrumPanel drum : dPanels) {
-	                    			drum.updateVolume(false);
-	                    		}
-	                    	}
-	                    }
-	                }
-	            });
+		        showVolume.getModel().addChangeListener(e -> {
+					ButtonModel model = showVolume.getModel();
+					if (model.isArmed()) {
+						noteGraph.setShowingNoteVelocity(true);
+						if (dPanels != null) {
+							for (DrumPanel drum : dPanels) {
+								drum.updateVolume(true);
+							}
+						}
+					} else {
+						noteGraph.setShowingNoteVelocity(false);
+						if (dPanels != null) {
+							for (DrumPanel drum : dPanels) {
+								drum.updateVolume(false);
+							}
+						}
+					}
+				});
 		        showVolume.setToolTipText("<html><b> Press and hold to see the note volumes on the track. </b><br> Only edits after clicking APPLY will show. </html>");
 		        panel.add(showVolume, "5,"+(firstRowIndex + 1 + numberOfSections)+",6,"+(firstRowIndex + 1 +numberOfSections)+",f,f");
 		        
@@ -328,77 +319,73 @@ public class SectionEditor {
 		        panel.add(help, "7,"+(firstRowIndex + 1 + numberOfSections)+", 7, "+(firstRowIndex + 1 + numberOfSections)+",f,f");
 		        
 		        JButton okButton = new JButton("APPLY");
-		        okButton.addActionListener(new ActionListener() {
-		        	
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						TreeMap<Integer, PartSection> tm = new TreeMap<Integer, PartSection>();
-						
-						int lastEnd = 0;
-						for (int k = 0;k<numberOfSections;k++) {
-							if (SectionDialog.this.sectionInputs.get(k).enable.isSelected()) {
-								PartSection ps = new PartSection();
-								try {
-										ps.octaveStep =  Integer.parseInt(sectionInputs.get(k).transpose.getText());
-										ps.volumeStep =  Integer.parseInt(sectionInputs.get(k).velo.getText());
-										ps.startBar = Integer.parseInt(sectionInputs.get(k).barA.getText());
-										ps.endBar = Integer.parseInt(sectionInputs.get(k).barB.getText());
-										ps.silence = sectionInputs.get(k).silent.isSelected();
-										ps.fade = Integer.parseInt(sectionInputs.get(k).fade.getText());
-										ps.doubling[0] = sectionInputs.get(k).doubling0.isSelected();
-										ps.doubling[1] = sectionInputs.get(k).doubling1.isSelected();
-										ps.doubling[2] = sectionInputs.get(k).doubling2.isSelected();
-										ps.doubling[3] = sectionInputs.get(k).doubling3.isSelected();
-										boolean soFarSoGood = true;
-										for (PartSection psC : tm.values()) {
-											if (!(ps.startBar > psC.endBar || ps.endBar < psC.startBar)) {
-												soFarSoGood = false;
-											}
+		        okButton.addActionListener(e -> {
+					TreeMap<Integer, PartSection> tm = new TreeMap<>();
+
+					int lastEnd = 0;
+					for (int k = 0;k<numberOfSections;k++) {
+						if (SectionDialog.this.sectionInputs.get(k).enable.isSelected()) {
+							PartSection ps1 = new PartSection();
+							try {
+									ps1.octaveStep =  Integer.parseInt(sectionInputs.get(k).transpose.getText());
+									ps1.volumeStep =  Integer.parseInt(sectionInputs.get(k).velo.getText());
+									ps1.startBar = Integer.parseInt(sectionInputs.get(k).barA.getText());
+									ps1.endBar = Integer.parseInt(sectionInputs.get(k).barB.getText());
+									ps1.silence = sectionInputs.get(k).silent.isSelected();
+									ps1.fade = Integer.parseInt(sectionInputs.get(k).fade.getText());
+									ps1.doubling[0] = sectionInputs.get(k).doubling0.isSelected();
+									ps1.doubling[1] = sectionInputs.get(k).doubling1.isSelected();
+									ps1.doubling[2] = sectionInputs.get(k).doubling2.isSelected();
+									ps1.doubling[3] = sectionInputs.get(k).doubling3.isSelected();
+									boolean soFarSoGood = true;
+									for (PartSection psC : tm.values()) {
+										if (!(ps1.startBar > psC.endBar || ps1.endBar < psC.startBar)) {
+											soFarSoGood = false;
 										}
-										if (ps.startBar > 0 && ps.startBar <= ps.endBar && soFarSoGood) {
-											tm.put(ps.startBar, ps);
-											if (ps.endBar > lastEnd) lastEnd = ps.endBar;
-											ps.dialogLine = k;
-										} else {
-											SectionDialog.this.sectionInputs.get(k).enable.setSelected(false);
-										}
-								} catch (NumberFormatException nfe) {
-									SectionDialog.this.sectionInputs.get(k).enable.setSelected(false);
-								}
+									}
+									if (ps1.startBar > 0 && ps1.startBar <= ps1.endBar && soFarSoGood) {
+										tm.put(ps1.startBar, ps1);
+										if (ps1.endBar > lastEnd) lastEnd = ps1.endBar;
+										ps1.dialogLine = k;
+									} else {
+										SectionDialog.this.sectionInputs.get(k).enable.setSelected(false);
+									}
+							} catch (NumberFormatException nfe) {
+								SectionDialog.this.sectionInputs.get(k).enable.setSelected(false);
 							}
 						}
-						PartSection ps = new PartSection();
-						try {
-								ps.silence = nonSectionInput.silent.isSelected();
-								ps.doubling[0] = nonSectionInput.doubling0.isSelected();
-								ps.doubling[1] = nonSectionInput.doubling1.isSelected();
-								ps.doubling[2] = nonSectionInput.doubling2.isSelected();
-								ps.doubling[3] = nonSectionInput.doubling3.isSelected();
-								if (ps.silence || ps.doubling[0] || ps.doubling[1] || ps.doubling[2] || ps.doubling[3]) {
-									SectionDialog.this.abcPart.nonSection.set(SectionDialog.this.track, ps);
-								} else {
-									SectionDialog.this.abcPart.nonSection.set(SectionDialog.this.track, null);
-								}
-						} catch (NumberFormatException nfe) {
-						}
-						
-						if (lastEnd == 0) {
-							SectionDialog.this.abcPart.sections.set(SectionDialog.this.track, null);
-							SectionDialog.this.abcPart.sectionsModified.set(SectionDialog.this.track, null);
-						} else {
-							SectionDialog.this.abcPart.sections.set(SectionDialog.this.track, tm);
-							boolean[] booleanArray = new boolean[lastEnd+1];
-							for(int m = 0; m<lastEnd+1;m++) {
-								Entry<Integer, PartSection> entry = tm.floorEntry(m+1);
-								booleanArray[m] = entry != null && entry.getValue().startBar <= m+1 && entry.getValue().endBar >= m+1;
-							}
-							
-							SectionDialog.this.abcPart.sectionsModified.set(SectionDialog.this.track, booleanArray);
-						}
-						SectionDialog.this.abcPart.sectionEdited(SectionDialog.this.track);
-						//SectionDialog.this.noteGraph.repaint();
-						//System.err.println(Thread.currentThread().getName());
 					}
+					PartSection ps1 = new PartSection();
+					try {
+							ps1.silence = nonSectionInput.silent.isSelected();
+							ps1.doubling[0] = nonSectionInput.doubling0.isSelected();
+							ps1.doubling[1] = nonSectionInput.doubling1.isSelected();
+							ps1.doubling[2] = nonSectionInput.doubling2.isSelected();
+							ps1.doubling[3] = nonSectionInput.doubling3.isSelected();
+							if (ps1.silence || ps1.doubling[0] || ps1.doubling[1] || ps1.doubling[2] || ps1.doubling[3]) {
+								SectionDialog.this.abcPart.nonSection.set(SectionDialog.this.track, ps1);
+							} else {
+								SectionDialog.this.abcPart.nonSection.set(SectionDialog.this.track, null);
+							}
+					} catch (NumberFormatException nfe) {
+					}
+
+					if (lastEnd == 0) {
+						SectionDialog.this.abcPart.sections.set(SectionDialog.this.track, null);
+						SectionDialog.this.abcPart.sectionsModified.set(SectionDialog.this.track, null);
+					} else {
+						SectionDialog.this.abcPart.sections.set(SectionDialog.this.track, tm);
+						boolean[] booleanArray = new boolean[lastEnd+1];
+						for(int m = 0; m<lastEnd+1;m++) {
+							Entry<Integer, PartSection> entry = tm.floorEntry(m+1);
+							booleanArray[m] = entry != null && entry.getValue().startBar <= m+1 && entry.getValue().endBar >= m+1;
+						}
+
+						SectionDialog.this.abcPart.sectionsModified.set(SectionDialog.this.track, booleanArray);
+					}
+					SectionDialog.this.abcPart.sectionEdited(SectionDialog.this.track);
+					//SectionDialog.this.noteGraph.repaint();
+					//System.err.println(Thread.currentThread().getName());
 				});
 		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
 		        panel.add(okButton, "8,"+(firstRowIndex + 1 + numberOfSections)+", 9, "+(firstRowIndex + 1 + numberOfSections)+",f,f");
@@ -442,8 +429,8 @@ public class SectionEditor {
 		        this.setVisible(true);
 		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }
-		};
-		
+		}
+
 		new SectionDialog(jf, noteGraph, "Section editor", true, abcPart, track);
 	}
 	

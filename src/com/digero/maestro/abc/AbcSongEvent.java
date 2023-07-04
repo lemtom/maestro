@@ -28,7 +28,6 @@ public class AbcSongEvent extends EventObject
 		MIX_TIMING_COMBINE_PRIORITIES,
 		//SHOW_PRUNED, //
 		TUNE_EDIT
-		;
 	}
 
 	private final AbcSongProperty property;

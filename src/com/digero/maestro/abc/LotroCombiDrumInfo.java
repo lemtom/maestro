@@ -9,8 +9,8 @@ import com.digero.maestro.midi.NoteEvent;
 public class LotroCombiDrumInfo {
 	
 	public static Note maxCombi = Note.Gs5;
-	public static Map<Note, Note> firstNotes = new HashMap<Note, Note>();
-	public static Map<Note, Note> secondNotes = new HashMap<Note, Note>();
+	public static Map<Note, Note> firstNotes = new HashMap<>();
+	public static Map<Note, Note> secondNotes = new HashMap<>();
 	public static int combiNoteCount = 0;
 		
 	static {

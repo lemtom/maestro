@@ -129,11 +129,8 @@ public class TimeSignature implements MidiConstants
 	
 	private static boolean verifyDenom(int numerator, int denominator)
 	{
-		if (((numerator / (double) denominator < 0.75) ? 16 : 8) * 4 / denominator < 4) {
-			// This will produce a divide by zero in TimingInfo if allowed, so return false.
-			return false;
-		}
-		return true;
+		// This will produce a divide by zero in TimingInfo if allowed, so return false.
+		return ((numerator / (double) denominator < 0.75) ? 16 : 8) * 4 / denominator >= 4;
 	}
 
 	public MetaMessage toMidiMessage()

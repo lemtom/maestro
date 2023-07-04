@@ -64,7 +64,7 @@ public class ExportMp3Dialog extends JDialog implements TableLayoutConstants
 
 		this.prefs = prefs;
 		this.theExe = theExe;
-		this.actionListeners = new ArrayList<ActionListener>();
+		this.actionListeners = new ArrayList<>();
 
 		Border outerBorder = BorderFactory.createEmptyBorder(8, 8, 8, 8);
 
@@ -89,20 +89,16 @@ public class ExportMp3Dialog extends JDialog implements TableLayoutConstants
 
 		JButton browseButton = new JButton("Browse...");
 		browseButton.setMnemonic(KeyEvent.VK_B);
-		browseButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		browseButton.addActionListener(e -> {
+			JFileChooser fc = new JFileChooser();
+			fc.setSelectedFile(new File(saveAsField.getText()));
+			int result = fc.showSaveDialog(ExportMp3Dialog.this);
+			if (result == JFileChooser.APPROVE_OPTION)
 			{
-				JFileChooser fc = new JFileChooser();
-				fc.setSelectedFile(new File(saveAsField.getText()));
-				int result = fc.showSaveDialog(ExportMp3Dialog.this);
-				if (result == JFileChooser.APPROVE_OPTION)
-				{
-					File f = fc.getSelectedFile();
-					if (f.getName().indexOf('.') < 0)
-						f = new File(f.getParentFile(), f + ".mp3");
-					saveAsField.setText(fc.getSelectedFile().getAbsolutePath());
-				}
+				File f = fc.getSelectedFile();
+				if (f.getName().indexOf('.') < 0)
+					f = new File(f.getParentFile(), f + ".mp3");
+				saveAsField.setText(fc.getSelectedFile().getAbsolutePath());
 			}
 		});
 
@@ -133,27 +129,17 @@ public class ExportMp3Dialog extends JDialog implements TableLayoutConstants
 		JButton okButton = new JButton("Convert");
 		okButton.setMnemonic(KeyEvent.VK_O);
 		okButton.setFont(okButton.getFont().deriveFont(Font.BOLD));
-		okButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
+		okButton.addActionListener(e -> {
+			if (validateFile())
 			{
-				if (validateFile())
-				{
-					saveSettings();
-					setVisible(false);
-					fireActionPerformed();
-				}
+				saveSettings();
+				setVisible(false);
+				fireActionPerformed();
 			}
 		});
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setMnemonic(KeyEvent.VK_C);
-		cancelButton.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				setVisible(false);
-			}
-		});
+		cancelButton.addActionListener(e -> setVisible(false));
 		JPanel spacer = new JPanel();
 		spacer.setPreferredSize(new Dimension(5, 5));
 		okCancelPanel.add(okButton);

@@ -29,7 +29,7 @@ public class SequencerEvent extends EventObject
 			return (mask & this.mask) != 0;
 		}
 
-		private SequencerProperty()
+		SequencerProperty()
 		{
 			mask = MaskMaker.getNextMask();
 		}

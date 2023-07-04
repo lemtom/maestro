@@ -6,15 +6,15 @@ public class LotroInstrumentTest
 {
 	public static boolean run()
 	{
-		String allInstruments = "";
+		StringBuilder allInstruments = new StringBuilder();
 		for (LotroInstrument instrument : LotroInstrument.values())
-			allInstruments += instrument + " ";
+			allInstruments.append(instrument).append(" ");
 
 		for (LotroInstrument instrument : LotroInstrument.values())
 		{
 			test(instrument, instrument.name());
 			test(instrument, instrument.toString());
-			test(instrument, allInstruments + instrument); // Last match wins
+			test(instrument, allInstruments.toString() + instrument); // Last match wins
 		}
 
 		test(LotroInstrument.LUTE_OF_AGES, "Lute");

@@ -4,23 +4,23 @@ import java.io.File;
 
 public interface AbcMetadataSource
 {
-	public String getSongTitle();
+	String getSongTitle();
 
-	public String getComposer();
+	String getComposer();
 
-	public String getTranscriber();
+	String getTranscriber();
 
-	public long getSongLengthMicros();
+	long getSongLengthMicros();
 
-	public File getExportFile();
+	File getExportFile();
 
-	public String getPartName(AbcPartMetadataSource abcPart);
+	String getPartName(AbcPartMetadataSource abcPart);
 	
-	public String getGenre();
+	String getGenre();
 	
-	public String getMood();
+	String getMood();
 	
-	public String getAllParts();
+	String getAllParts();
 	
-	public String getBadgerTitle();	
+	String getBadgerTitle();
 }

@@ -241,11 +241,10 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 
 			if (trackControls != null)
 			{
-				for (int i = 0; i < trackControls.length; i++)
-				{
-					if (trackControls[i] != null)
-						trackControls[i].lineNumberLabel.setVisible(showLineNumbers);
-				}
+                for (TrackControls trackControl : trackControls) {
+                    if (trackControl != null)
+                        trackControl.lineNumberLabel.setVisible(showLineNumbers);
+                }
 			}
 		}
 	}
@@ -261,11 +260,10 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 
 			if (trackControls != null)
 			{
-				for (int i = 0; i < trackControls.length; i++)
-				{
-					if (trackControls[i] != null)
-						trackControls[i].soloButton.setVisible(showSoloButtons);
-				}
+                for (TrackControls trackControl : trackControls) {
+                    if (trackControl != null)
+                        trackControl.soloButton.setVisible(showSoloButtons);
+                }
 			}
 		}
 	}
@@ -273,28 +271,26 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 	public void deselectAll () {
 		if (trackControls != null)
 		{
-			for (int i = 0; i < trackControls.length; i++)
-			{
-				if (trackControls[i] != null) {
-					trackControls[i].checkBox.setSelected(false);
-					int j = (Integer) trackControls[i].checkBox.getClientProperty(TRACK_INDEX_KEY);
-					sequencer.setTrackMute(j, true);
-				}
-			}
+            for (TrackControls trackControl : trackControls) {
+                if (trackControl != null) {
+                    trackControl.checkBox.setSelected(false);
+                    int j = (Integer) trackControl.checkBox.getClientProperty(TRACK_INDEX_KEY);
+                    sequencer.setTrackMute(j, true);
+                }
+            }
 		}
 	}
 	
 	public void selectAll () {
 		if (trackControls != null)
 		{
-			for (int i = 0; i < trackControls.length; i++)
-			{
-				if (trackControls[i] != null) {
-					trackControls[i].checkBox.setSelected(true);
-					int j = (Integer) trackControls[i].checkBox.getClientProperty(TRACK_INDEX_KEY);
-					sequencer.setTrackMute(j, false);
-				}
-			}
+            for (TrackControls trackControl : trackControls) {
+                if (trackControl != null) {
+                    trackControl.checkBox.setSelected(true);
+                    int j = (Integer) trackControl.checkBox.getClientProperty(TRACK_INDEX_KEY);
+                    sequencer.setTrackMute(j, false);
+                }
+            }
 		}
 	}
 
@@ -309,11 +305,10 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 
 			if (trackControls != null)
 			{
-				for (int i = 0; i < trackControls.length; i++)
-				{
-					if (trackControls[i] != null)
-						trackControls[i].instrumentComboBox.setVisible(showInstrumentComboBoxes);
-				}
+                for (TrackControls trackControl : trackControls) {
+                    if (trackControl != null)
+                        trackControl.instrumentComboBox.setVisible(showInstrumentComboBoxes);
+                }
 			}
 		}
 	}
@@ -383,13 +378,9 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 			return;
 
 		updatePending = true;
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override public void run()
-			{
-				updatePending = false;
-				updateCore();
-			}
+		SwingUtilities.invokeLater(() -> {
+			updatePending = false;
+			updateCore();
 		});
 	}
 
@@ -406,7 +397,7 @@ public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, 
 
 			if (info.tickToLineNumber == null)
 			{
-				info.tickToLineNumber = new TreeMap<Long, Integer>();
+				info.tickToLineNumber = new TreeMap<>();
 				int prevLine = -1;
 				for (AbcRegion region : abcInfo.getRegions())
 				{

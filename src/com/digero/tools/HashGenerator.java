@@ -78,50 +78,45 @@ public class HashGenerator
 		try
 		{
 			String action = args[0].toUpperCase();
-			if (action.equals("GENERATE_HASHES"))
-			{
-				if (args.length != 3)
-				{
-					System.err.println("Incorrect number of args to GENERATE_HASHES");
-					return -1;
-				}
+			switch (action) {
+				case "GENERATE_HASHES":
+					if (args.length != 3) {
+						System.err.println("Incorrect number of args to GENERATE_HASHES");
+						return -1;
+					}
 
-				outputHashListToFile(generateHashes(new File(args[1]), true), new File(args[2]), true);
-			}
-			else if (action.equals("MOVE_EXCLUDE_DIR") || action.equals("MOVE_INCLUDE_DIR"))
-			{
-				if (args.length != 4)
-				{
-					System.err.println("Incorrect number of args to " + args[0]);
-					return -1;
-				}
+					outputHashListToFile(generateHashes(new File(args[1]), true), new File(args[2]), true);
+					break;
+				case "MOVE_EXCLUDE_DIR":
+				case "MOVE_INCLUDE_DIR":
+					if (args.length != 4) {
+						System.err.println("Incorrect number of args to " + args[0]);
+						return -1;
+					}
 
-				moveDir(action.equals("MOVE_INCLUDE_DIR"), new File(args[1]), new File(args[2]), new File(args[3]));
-			}
-			else if (action.equals("MOVE_EXCLUDE") || action.equals("MOVE_INCLUDE"))
-			{
-				if (args.length != 4)
-				{
-					System.err.println("Incorrect number of args to " + args[0]);
-					return -1;
-				}
+					moveDir(action.equals("MOVE_INCLUDE_DIR"), new File(args[1]), new File(args[2]), new File(args[3]));
+					break;
+				case "MOVE_EXCLUDE":
+				case "MOVE_INCLUDE":
+					if (args.length != 4) {
+						System.err.println("Incorrect number of args to " + args[0]);
+						return -1;
+					}
 
-				move(action.equals("MOVE_INCLUDE"), new File(args[1]), new File(args[2]), new File(args[3]));
-			}
-			else if (action.equals("LIST_EXCLUDE") || action.equals("LIST_INCLUDE"))
-			{
-				if (args.length != 3)
-				{
-					System.err.println("Incorrect number of args to " + args[0]);
-					return -1;
-				}
+					move(action.equals("MOVE_INCLUDE"), new File(args[1]), new File(args[2]), new File(args[3]));
+					break;
+				case "LIST_EXCLUDE":
+				case "LIST_INCLUDE":
+					if (args.length != 3) {
+						System.err.println("Incorrect number of args to " + args[0]);
+						return -1;
+					}
 
-				list(action.equals("LIST_INCLUDE"), new File(args[1]), new File(args[2]));
-			}
-			else
-			{
-				System.err.println("Unknown mode: " + args[0]);
-				return -1;
+					list(action.equals("LIST_INCLUDE"), new File(args[1]), new File(args[2]));
+					break;
+				default:
+					System.err.println("Unknown mode: " + args[0]);
+					return -1;
 			}
 		}
 		catch (IOException e)
@@ -135,7 +130,7 @@ public class HashGenerator
 
 	private static <K, V> HashMap<V, K> valueToKey(Map<K, V> source)
 	{
-		HashMap<V, K> target = new HashMap<V, K>(source.size());
+		HashMap<V, K> target = new HashMap<>(source.size());
 		for (Map.Entry<K, V> entry : source.entrySet())
 		{
 			target.put(entry.getValue(), entry.getKey());
@@ -161,7 +156,7 @@ public class HashGenerator
 			return;
 
 		Map<File, Hash> sourceHashes = generateHashes(sourceDirectory, /* recursive = */true);
-		Map<File, Hash> targetHashes = new HashMap<File, Hash>();
+		Map<File, Hash> targetHashes = new HashMap<>();
 
 		System.out.println("Moving from \"" + sourceDirectory.getAbsolutePath() + "\" to \""
 				+ targetDirectory.getAbsolutePath() + "\" if they " + (include ? "exist" : "don't exist") + " in \""
@@ -221,9 +216,9 @@ public class HashGenerator
 	private static void move(boolean include, File existingHashFile, File sourceDirectory, File targetDirectory)
 			throws IOException
 	{
-		Set<Hash> existingHashes = new HashSet<Hash>(inputHashListFromFile(existingHashFile, true).values());
+		Set<Hash> existingHashes = new HashSet<>(inputHashListFromFile(existingHashFile, true).values());
 		Map<File, Hash> sourceHashes = generateHashes(sourceDirectory, /* recursive = */true);
-		Map<File, Hash> targetHashes = new HashMap<File, Hash>();
+		Map<File, Hash> targetHashes = new HashMap<>();
 
 		for (Map.Entry<File, Hash> entry : sourceHashes.entrySet())
 		{
@@ -243,7 +238,7 @@ public class HashGenerator
 
 	private static void list(boolean include, File existingHashFile, File sourceDirectory) throws IOException
 	{
-		Set<Hash> existingHashes = new HashSet<Hash>(inputHashListFromFile(existingHashFile, true).values());
+		Set<Hash> existingHashes = new HashSet<>(inputHashListFromFile(existingHashFile, true).values());
 		Map<File, Hash> sourceHashes = generateHashes(sourceDirectory, true);
 
 		System.out.println("Listing files " + (include ? "included" : "not included") + " in hash file: ");
@@ -261,7 +256,7 @@ public class HashGenerator
 	{
 		FileFilter filter = new ExtensionFileFilter("", recursive, "ogg", "wav");
 
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList<>();
 		files.add(directory);
 
 		for (int i = 0; i < files.size(); i++)
@@ -283,13 +278,13 @@ public class HashGenerator
 	{
 		List<File> allFiles = listFiles(directory, recursive);
 
-		ConcurrentHashMap<File, Hash> hashes = new ConcurrentHashMap<File, Hash>();
+		ConcurrentHashMap<File, Hash> hashes = new ConcurrentHashMap<>();
 		File cachedHashesFile = new File(directory, cachedHashesFileName);
 		if (cachedHashesFile.exists())
 			hashes.putAll(inputHashListFromFile(cachedHashesFile, false));
 
 		// Only hash the files we don't have a cached hash for
-		List<File> filesToHash = new ArrayList<File>(allFiles);
+		List<File> filesToHash = new ArrayList<>(allFiles);
 		filesToHash.removeAll(hashes.keySet());
 
 		HashTask.State state = new HashTask.State(directory, filesToHash, hashes);
@@ -323,7 +318,7 @@ public class HashGenerator
 
 		// Remove any extra hashes that were read from cachedHashesFile
 		// but aren't for the files we care about
-		hashes.keySet().retainAll(new HashSet<File>(allFiles));
+		hashes.keySet().retainAll(new HashSet<>(allFiles));
 
 		return hashes;
 	}
@@ -429,7 +424,7 @@ public class HashGenerator
 
 	private static HashMap<File, Hash> inputHashListFromFile(File hashListFile, boolean verbose) throws IOException
 	{
-		HashMap<File, Hash> hashes = new HashMap<File, Hash>();
+		HashMap<File, Hash> hashes = new HashMap<>();
 		try (BufferedReader reader = new BufferedReader(new FileReader(hashListFile)))
 		{
 			String line;

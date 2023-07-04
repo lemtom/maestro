@@ -1,6 +1,7 @@
 package com.digero.common.abc;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 
 public class StringCleaner {
@@ -53,12 +54,8 @@ public class StringCleaner {
 	    String regex = "[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+";
 	    //String regex = "[\\P{InBasicLatin}]+";
 	    String after = new String(s1);
-	    try {
-	    	after = new String(s1.replaceAll(regex, "").getBytes("ascii"), "ascii");
-		} catch (UnsupportedEncodingException e) {
-			//e.printStackTrace();
-		}
-	    after = after.replace('?', ' ');
+		after = new String(s1.replaceAll(regex, "").getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII);
+		after = after.replace('?', ' ');
 	    return after;
 	}
 	

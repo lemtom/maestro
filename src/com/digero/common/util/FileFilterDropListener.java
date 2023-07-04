@@ -36,7 +36,7 @@ public class FileFilterDropListener implements DropTargetListener
 	public void addActionListener(ActionListener l)
 	{
 		if (listeners == null)
-			listeners = new ArrayList<ActionListener>(1);
+			listeners = new ArrayList<>(1);
 
 		listeners.add(l);
 	}

@@ -49,7 +49,7 @@ public enum Dynamics
 		return Util.clamp(abc ? abcVol : midiVol, 0, MidiConstants.MAX_VOLUME);
 	}
 
-	private Dynamics(int midiVol, int abcVol)
+	Dynamics(int midiVol, int abcVol)
 	{
 		this.midiVol = midiVol;
 		this.abcVol = abcVol;

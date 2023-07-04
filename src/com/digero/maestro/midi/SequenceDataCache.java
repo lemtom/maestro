@@ -19,11 +19,11 @@ import javax.sound.midi.Track;
 import com.digero.common.midi.ExtensionMidiInstrument;
 import com.digero.common.midi.IBarNumberCache;
 import com.digero.common.midi.MidiConstants;
+import com.digero.common.midi.MidiUtils;
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.TimeSignature;
 import com.digero.common.util.Util;
 import com.digero.maestro.abc.TimingInfo;
-import com.sun.media.sound.MidiUtils;
 
 public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumberCache
 {
@@ -33,7 +33,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private final int minTempoMPQ;
 	private final int maxTempoMPQ;
 	private final TimeSignature timeSignature;
-	private NavigableMap<Long, TempoEvent> tempo = new TreeMap<Long, TempoEvent>();
+	private NavigableMap<Long, TempoEvent> tempo = new TreeMap<>();
 
 	private final long songLengthTicks;
 	private final static int NO_RESULT = -250;
@@ -52,7 +52,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 
 	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean[] yamahaDrumChannels, ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches, TreeMap<Integer, Integer> portMap)
 	{
-		Map<Integer, Long> tempoLengths = new HashMap<Integer, Long>();
+		Map<Integer, Long> tempoLengths = new HashMap<>();
 		
 		this.standard = standard;
 		this.rolandDrumChannels = rolandDrumChannels;
@@ -130,11 +130,11 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					int ch = m.getChannel();
 					
 					if (cmd == ShortMessage.NOTE_ON) {
-						if (rolandDrumChannels != null && rolandDrumChannels[ch] == true && standard == "GS") {
+						if (rolandDrumChannels != null && rolandDrumChannels[ch] && standard == "GS") {
 							brandDrumBanks[iTrack] = 2;// GS Drums
-						} else if (brandDrumBanks[iTrack] != 1 && standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(ch).floorEntry(tick) != null && yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == true) {
+						} else if (brandDrumBanks[iTrack] != 1 && standard == "XG" && yamahaDrumSwitches != null && yamahaDrumSwitches.get(ch).floorEntry(tick) != null && yamahaDrumSwitches.get(ch).floorEntry(tick).getValue()) {
 							brandDrumBanks[iTrack] = 1;// XG drums
-						} else if (brandDrumBanks[iTrack] != 4 && standard == "GM2" && mmaDrumSwitches != null && mmaDrumSwitches.get(ch).floorEntry(tick) != null && mmaDrumSwitches.get(ch).floorEntry(tick).getValue() == true) {
+						} else if (brandDrumBanks[iTrack] != 4 && standard == "GM2" && mmaDrumSwitches != null && mmaDrumSwitches.get(ch).floorEntry(tick) != null && mmaDrumSwitches.get(ch).floorEntry(tick).getValue()) {
 							brandDrumBanks[iTrack] = 4;// GM2 drums
 						} else if (ch == DRUM_CHANNEL && (standard == "GM" || standard == "ABC")) {
 							brandDrumBanks[iTrack] = 3;// GM drums on channel #10
@@ -143,10 +143,10 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					{
 						if ((
 								(ch != DRUM_CHANNEL && rolandDrumChannels == null && yamahaDrumChannels == null)
-								|| ((rolandDrumChannels == null || standard != "GS" || rolandDrumChannels[ch] == false) && (yamahaDrumChannels == null || standard != "XG" || yamahaDrumChannels[ch] == false))
+								|| ((rolandDrumChannels == null || standard != "GS" || !rolandDrumChannels[ch]) && (yamahaDrumChannels == null || standard != "XG" || !yamahaDrumChannels[ch]))
 								)
-								&& (standard != "XG" || yamahaDrumSwitches == null || yamahaDrumSwitches.get(ch).floorEntry(tick) == null || yamahaDrumSwitches.get(ch).floorEntry(tick).getValue() == false)
-								&& (standard != "GM2" || mmaDrumSwitches == null || mmaDrumSwitches.get(ch).floorEntry(tick) == null || mmaDrumSwitches.get(ch).floorEntry(tick).getValue() == false))
+								&& (standard != "XG" || yamahaDrumSwitches == null || yamahaDrumSwitches.get(ch).floorEntry(tick) == null || !yamahaDrumSwitches.get(ch).floorEntry(tick).getValue())
+								&& (standard != "GM2" || mmaDrumSwitches == null || mmaDrumSwitches.get(ch).floorEntry(tick) == null || !mmaDrumSwitches.get(ch).floorEntry(tick).getValue()))
 						{
 							instruments.put(portMap.get(iTrack), ch, tick, m.getData1());
 						}
@@ -190,19 +190,23 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 					}
 				} else if (msg instanceof SysexMessage) {
 					SysexMessage sysex = (SysexMessage) msg;
-					byte message[] = sysex.getMessage();
+					byte[] message = sysex.getMessage();
 					if (message.length == 9 && (message[0] & 0xFF) == 0xF0 && (message[1] & 0xFF) == 0x43
 						&& (message[4] & 0xFF) == 0x08 && (message[8] & 0xFF) == 0xF7) {
 				    	String bank = message[6]==1?"MSB":(message[6]==2?"LSB":(message[6]==3?"Patch":""));
 				    	if (standard == "XG" && bank != "" && message[5] < 16 && message[5] > -1 && message[7] < 128 && message[7] > -1) {
-				    		if (bank == "MSB") {
-				    			// XG Drum Part Protect Mode does not apply to sysex bank changes.
-					    		mapMSB.put((int)message[5], tick, (int)message[7]);
-				    		} else if (bank == "Patch") {
-				    			mapPatch.put((int)message[5], tick, (int)message[7]);
-				    		} else if (bank == "LSB") {
-				    			mapLSB.put((int)message[5], tick, (int)message[7]);
-				    		}
+							switch (bank) {
+								case "MSB":
+									// XG Drum Part Protect Mode does not apply to sysex bank changes.
+									mapMSB.put((int) message[5], tick, (int) message[7]);
+									break;
+								case "Patch":
+									mapPatch.put((int) message[5], tick, (int) message[7]);
+									break;
+								case "LSB":
+									mapLSB.put((int) message[5], tick, (int) message[7]);
+									break;
+							}
 				    	}
 					}
 			    }
@@ -286,16 +290,16 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	}
 	
 	private String formatBytes(byte[] portChange) {
-		String str = "";
+		StringBuilder str = new StringBuilder();
 		for (byte by : portChange) {
-			str += (int)by + " ";
+			str.append((int) by).append(" ");
 		}
 		StringBuilder sb = new StringBuilder();
 	    for (byte b : portChange) {
 	        sb.append(String.format("%02X ", b));
 	    }				    				    
-	    str += "[ "+sb.toString()+"]";
-		return str;
+	    str.append("[ ").append(sb).append("]");
+		return str.toString();
 	}
 
 	public boolean isXGDrumsTrack (int track) {
@@ -516,7 +520,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		public void put(int channel, long tick, Integer value)
 		{
 			if (map[channel] == null)
-				map[channel] = new TreeMap<Long, Integer>();
+				map[channel] = new TreeMap<>();
 
 			map[channel].put(tick, value);
 		}
@@ -564,7 +568,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		public void put(int port, int channel, long tick, Integer value)
 		{
 			if (map[port][channel] == null)
-				map[port][channel] = new TreeMap<Long, Integer>();
+				map[port][channel] = new TreeMap<>();
 
 			map[port][channel].put(tick, value);
 		}

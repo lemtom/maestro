@@ -84,11 +84,12 @@ public class StudentFXNoteMap extends DrumNoteMap
 	{
 		if (map == null)
 			map = getFailsafeDefault();
-	}
+	}
+
 	public void addChangeListener(ChangeListener listener)
 	{
 		if (listeners == null)
-			listeners = new ArrayList<ChangeListener>(2);
+			listeners = new ArrayList<>(2);
 
 		if (!listeners.contains(listener))
 			listeners.add(listener);
@@ -160,7 +161,8 @@ public class StudentFXNoteMap extends DrumNoteMap
 			}
 		}
 	}
-
+
+
 
 
 

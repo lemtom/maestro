@@ -1,7 +1,7 @@
 package com.digero.maestro.abc;
 
+import com.digero.common.midi.MidiUtils;
 import com.digero.common.midi.TimeSignature;
-import com.sun.media.sound.MidiUtils;
 
 public class TimingInfo
 {

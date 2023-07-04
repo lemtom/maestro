@@ -22,7 +22,6 @@ import com.digero.common.midi.SequencerEvent.SequencerProperty;
 import com.digero.common.util.IDiscardable;
 import com.digero.common.util.Listener;
 import com.digero.common.util.ListenerList;
-import com.sun.media.sound.MidiUtils;
 
 public class SequencerWrapper implements MidiConstants, ITempoCache, IDiscardable
 {
@@ -32,7 +31,7 @@ public class SequencerWrapper implements MidiConstants, ITempoCache, IDiscardabl
 	protected Sequencer sequencer;
 	private Receiver receiver;
 	private Transmitter transmitter;
-	private List<Transceiver> transceivers = new ArrayList<Transceiver>();
+	private List<Transceiver> transceivers = new ArrayList<>();
 	private long dragTick;
 	private boolean isDragging;
 	private MidiUtils.TempoCache tempoCache = new MidiUtils.TempoCache();
@@ -415,8 +414,7 @@ public class SequencerWrapper implements MidiConstants, ITempoCache, IDiscardabl
 	
 	/**
      * Given a tick, convert to microsecond
-     * @param cache tempo info and current tempo
-     */
+	 */
     private long tick2microsecondSlow(Sequence seq, long tick) {
         if (seq.getDivisionType() != Sequence.PPQ ) {
             double seconds = ((double)tick / (double)(seq.getDivisionType() * seq.getResolution()));
@@ -696,7 +694,7 @@ public class SequencerWrapper implements MidiConstants, ITempoCache, IDiscardabl
 	public void addChangeListener(Listener<SequencerEvent> l)
 	{
 		if (listeners == null)
-			listeners = new ListenerList<SequencerEvent>();
+			listeners = new ListenerList<>();
 
 		listeners.add(l);
 	}

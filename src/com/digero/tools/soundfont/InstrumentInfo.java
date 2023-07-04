@@ -40,7 +40,7 @@ public abstract class InstrumentInfo implements Comparable<InstrumentInfo>
 
 	@Override public boolean equals(Object obj)
 	{
-		if (obj == null || !(obj instanceof InstrumentInfo))
+		if (!(obj instanceof InstrumentInfo))
 			return false;
 
 		return compareTo((InstrumentInfo) obj) == 0;

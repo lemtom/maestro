@@ -9,7 +9,7 @@ public enum LotroInstrumentGroup
 
 	private final String label;
 
-	private LotroInstrumentGroup(String label)
+	LotroInstrumentGroup(String label)
 	{
 		this.label = label;
 	}

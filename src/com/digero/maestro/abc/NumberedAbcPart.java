@@ -4,11 +4,11 @@ import com.digero.common.abc.LotroInstrument;
 
 public interface NumberedAbcPart
 {
-	public LotroInstrument getInstrument();
+	LotroInstrument getInstrument();
 
-	public void setInstrument(LotroInstrument instrument);
+	void setInstrument(LotroInstrument instrument);
 
-	public int getPartNumber();
+	int getPartNumber();
 
-	public void setPartNumber(int partNumber);
+	void setPartNumber(int partNumber);
 }

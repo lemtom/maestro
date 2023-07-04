@@ -88,15 +88,9 @@ public class PartNameTemplate
 		this.prefsNode = prefsNode;
 		this.settings = new Settings(prefsNode);
 
-		Comparator<String> caseInsensitiveStringComparator = new Comparator<String>()
-		{
-			@Override public int compare(String a, String b)
-			{
-				return a.compareToIgnoreCase(b);
-			}
-		};
+		Comparator<String> caseInsensitiveStringComparator = String::compareToIgnoreCase;
 
-		variables = new TreeMap<String, Variable>(caseInsensitiveStringComparator);
+		variables = new TreeMap<>(caseInsensitiveStringComparator);
 
 		variables.put("$SongTitle", new Variable("The title of the song, as entered in the \"T:\" field")
 		{
@@ -143,7 +137,7 @@ public class PartNameTemplate
 				if (currentAbcPart == null)
 					return "0";
 
-				return "" + currentAbcPart.getPartNumber();
+				return String.valueOf(currentAbcPart.getPartNumber());
 			}
 		});
 		variables.put("$PartInstrument", new Variable("The instrument for the individual ABC part")
@@ -169,7 +163,7 @@ public class PartNameTemplate
 				File root = Util.getLotroMusicPath(false);
 				String saveFileName = Util.fileNameWithoutExtension(getMetadataSource().getExportFile());
 
-				String path = saveFileName;
+				StringBuilder path = new StringBuilder(saveFileName);
 				boolean foundRoot = false;
 				for (File file = getMetadataSource().getExportFile().getParentFile(); file != null; file = file
 						.getParentFile())
@@ -179,11 +173,11 @@ public class PartNameTemplate
 						foundRoot = true;
 						break;
 					}
-					path = file.getName() + "/" + path;
+					path.insert(0, file.getName() + "/");
 				}
 
 				if (foundRoot)
-					return path;
+					return path.toString();
 
 				return saveFileName;
 			}
@@ -252,10 +246,10 @@ public class PartNameTemplate
 		Pattern regex = Pattern.compile("\\$[A-Za-z]+");
 		Matcher matcher = regex.matcher(name);
 
-		ArrayList<Pair<Integer, Integer>> matches = new ArrayList<Pair<Integer, Integer>>();
+		ArrayList<Pair<Integer, Integer>> matches = new ArrayList<>();
 		while (matcher.find())
 		{
-			matches.add(new Pair<Integer, Integer>(matcher.start(), matcher.end()));
+			matches.add(new Pair<>(matcher.start(), matcher.end()));
 		}
 
 		ListIterator<Pair<Integer, Integer>> reverseIter = matches.listIterator(matches.size());

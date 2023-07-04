@@ -41,7 +41,7 @@ public class TuneEditor {
 			private double[] LAYOUT_ROWS;
 			private AbcSong abcSong;			
 			
-			private List<TuneEditorLine> tuneInputs = new ArrayList<TuneEditorLine>(SectionEditor.numberOfSections);
+			private List<TuneEditorLine> tuneInputs = new ArrayList<>(SectionEditor.numberOfSections);
 			     
 	        JButton copySections = new JButton("Copy");
 	        JButton pasteSections = new JButton("Paste");
@@ -129,10 +129,10 @@ public class TuneEditor {
 		        			System.err.println("Too many sections in treemap in tune-editor, or line numbers was badly edited in .msx file.");
 		        		} else {
 			        		tuneInputs.get(number).enable.setSelected(true);
-			        		tuneInputs.get(number).barA.setText(""+ps.startBar);
-			        		tuneInputs.get(number).barB.setText(""+ps.endBar);
-			        		tuneInputs.get(number).transpose.setText(""+ps.seminoteStep);
-			        		tuneInputs.get(number).tempo.setText(""+ps.tempo);
+			        		tuneInputs.get(number).barA.setText(String.valueOf(ps.startBar));
+			        		tuneInputs.get(number).barB.setText(String.valueOf(ps.endBar));
+			        		tuneInputs.get(number).transpose.setText(String.valueOf(ps.seminoteStep));
+			        		tuneInputs.get(number).tempo.setText(String.valueOf(ps.tempo));
 			        		//tuneInputs.get(number).remove.setSelected(ps.remove);
 			        	}
 			        	number ++;
@@ -169,32 +169,26 @@ public class TuneEditor {
 			        //panel.add(tuneInputs.get(i).remove, "5,"+(3+i)+",c,f");
 		        }
 		        		        
-		        copySections.getModel().addActionListener(new ActionListener() {
-	                @Override
-	                public void actionPerformed(ActionEvent e) {
-	                	for (int i = 0; i < SectionEditor.numberOfSections; i++) {
-	                		SectionEditor.clipboardStart[i] = tuneInputs.get(i).barA.getText();
-	                		SectionEditor.clipboardEnd[i] = tuneInputs.get(i).barB.getText();
-	                		SectionEditor.clipboardEnabled[i] = tuneInputs.get(i).enable.isSelected();
-	                	}
-	                	SectionEditor.clipboardArmed = true;
-	                	pasteSections.setEnabled(SectionEditor.clipboardArmed);
-	                }
-	            });
+		        copySections.getModel().addActionListener(e -> {
+					for (int i = 0; i < SectionEditor.numberOfSections; i++) {
+						SectionEditor.clipboardStart[i] = tuneInputs.get(i).barA.getText();
+						SectionEditor.clipboardEnd[i] = tuneInputs.get(i).barB.getText();
+						SectionEditor.clipboardEnabled[i] = tuneInputs.get(i).enable.isSelected();
+					}
+					SectionEditor.clipboardArmed = true;
+					pasteSections.setEnabled(SectionEditor.clipboardArmed);
+				});
 		        copySections.setToolTipText("<html><b> Copy the section starts and ends.</html>");
 		        panel.add(copySections, "1,"+(3+SectionEditor.numberOfSections)+",1,"+(3+SectionEditor.numberOfSections)+",f,f");
 		        
-		        pasteSections.getModel().addActionListener(new ActionListener() {
-	                @Override
-	                public void actionPerformed(ActionEvent e) {
-	                	if (!SectionEditor.clipboardArmed) return; 
-	                	for (int i = 0; i < SectionEditor.numberOfSections; i++) {
-	                		tuneInputs.get(i).barA.setText(SectionEditor.clipboardStart[i]);
-	                		tuneInputs.get(i).barB.setText(SectionEditor.clipboardEnd[i]);
-	                		tuneInputs.get(i).enable.setSelected(SectionEditor.clipboardEnabled[i]);
-	                	}
-	                }
-	            });
+		        pasteSections.getModel().addActionListener(e -> {
+					if (!SectionEditor.clipboardArmed) return;
+					for (int i = 0; i < SectionEditor.numberOfSections; i++) {
+						tuneInputs.get(i).barA.setText(SectionEditor.clipboardStart[i]);
+						tuneInputs.get(i).barB.setText(SectionEditor.clipboardEnd[i]);
+						tuneInputs.get(i).enable.setSelected(SectionEditor.clipboardEnabled[i]);
+					}
+				});
 		        pasteSections.setToolTipText("<html><b> Paste the section starts and ends.</html>");
 		        panel.add(pasteSections, "2,"+(3+SectionEditor.numberOfSections)+",2,"+(3+SectionEditor.numberOfSections)+",f,f");
 		        pasteSections.setEnabled(SectionEditor.clipboardArmed);
@@ -209,66 +203,62 @@ public class TuneEditor {
 		        panel.add(help, "3,"+(3+SectionEditor.numberOfSections)+", 3, "+(3+SectionEditor.numberOfSections)+",f,f");
 		        
 		        JButton okButton = new JButton("APPLY");
-		        okButton.addActionListener(new ActionListener() {
-		        	
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						TreeMap<Integer, TuneLine> tm = new TreeMap<Integer, TuneLine>();
-						
-						int lastEnd = 0;
-						for (int k = 0;k<SectionEditor.numberOfSections;k++) {
-							if (TuneDialog.this.tuneInputs.get(k).enable.isSelected()) {
-								TuneLine ps = new TuneLine();
-								try {
-										ps.seminoteStep =  Integer.parseInt(tuneInputs.get(k).transpose.getText());
-										if (ps.seminoteStep > 36) {
-											ps.seminoteStep = 36;
-											tuneInputs.get(k).transpose.setText("36");
+		        okButton.addActionListener(e -> {
+					TreeMap<Integer, TuneLine> tm = new TreeMap<>();
+
+					int lastEnd = 0;
+					for (int k = 0;k<SectionEditor.numberOfSections;k++) {
+						if (TuneDialog.this.tuneInputs.get(k).enable.isSelected()) {
+							TuneLine ps = new TuneLine();
+							try {
+									ps.seminoteStep =  Integer.parseInt(tuneInputs.get(k).transpose.getText());
+									if (ps.seminoteStep > 36) {
+										ps.seminoteStep = 36;
+										tuneInputs.get(k).transpose.setText("36");
+									}
+									if (ps.seminoteStep < -36) {
+										ps.seminoteStep = -36;
+										tuneInputs.get(k).transpose.setText("-36");
+									}
+									ps.startBar = Integer.parseInt(tuneInputs.get(k).barA.getText());
+									ps.endBar = Integer.parseInt(tuneInputs.get(k).barB.getText());
+									ps.tempo = Integer.parseInt(tuneInputs.get(k).tempo.getText());
+									//ps.remove = tuneInputs.get(k).remove.isSelected();
+									boolean soFarSoGood = true;
+									for (TuneLine psC : tm.values()) {
+										if (!(ps.startBar > psC.endBar || ps.endBar < psC.startBar)) {
+											soFarSoGood = false;
 										}
-										if (ps.seminoteStep < -36) {
-											ps.seminoteStep = -36;
-											tuneInputs.get(k).transpose.setText("-36");
-										}
-										ps.startBar = Integer.parseInt(tuneInputs.get(k).barA.getText());
-										ps.endBar = Integer.parseInt(tuneInputs.get(k).barB.getText());
-										ps.tempo = Integer.parseInt(tuneInputs.get(k).tempo.getText());
-										//ps.remove = tuneInputs.get(k).remove.isSelected();
-										boolean soFarSoGood = true;
-										for (TuneLine psC : tm.values()) {
-											if (!(ps.startBar > psC.endBar || ps.endBar < psC.startBar)) {
-												soFarSoGood = false;
-											}
-										}
-										if (ps.startBar > 0 && ps.startBar <= ps.endBar && soFarSoGood) {
-											tm.put(ps.startBar, ps);
-											if (ps.endBar > lastEnd) lastEnd = ps.endBar;
-											ps.dialogLine = k;
-										} else {
-											TuneDialog.this.tuneInputs.get(k).enable.setSelected(false);
-										}
-								} catch (NumberFormatException nfe) {
-									TuneDialog.this.tuneInputs.get(k).enable.setSelected(false);
-								}
+									}
+									if (ps.startBar > 0 && ps.startBar <= ps.endBar && soFarSoGood) {
+										tm.put(ps.startBar, ps);
+										if (ps.endBar > lastEnd) lastEnd = ps.endBar;
+										ps.dialogLine = k;
+									} else {
+										TuneDialog.this.tuneInputs.get(k).enable.setSelected(false);
+									}
+							} catch (NumberFormatException nfe) {
+								TuneDialog.this.tuneInputs.get(k).enable.setSelected(false);
 							}
 						}
-						
-						if (lastEnd == 0) {
-							TuneDialog.this.abcSong.tuneBars = null;
-							TuneDialog.this.abcSong.tuneBarsModified = null;
-						} else {
-							TuneDialog.this.abcSong.tuneBars = tm;
-							
-							boolean[] booleanArray = new boolean[lastEnd+1];
-							for(int m = 0; m<lastEnd+1;m++) {
-								Entry<Integer, TuneLine> entry = tm.floorEntry(m+1);
-								booleanArray[m] = entry != null && entry.getValue().startBar <= m+1 && entry.getValue().endBar >= m+1;
-							}
-														
-							TuneDialog.this.abcSong.tuneBarsModified = booleanArray;
-						}
-						TuneDialog.this.abcSong.tuneEdited();
-						//System.err.println(Thread.currentThread().getName());
 					}
+
+					if (lastEnd == 0) {
+						TuneDialog.this.abcSong.tuneBars = null;
+						TuneDialog.this.abcSong.tuneBarsModified = null;
+					} else {
+						TuneDialog.this.abcSong.tuneBars = tm;
+
+						boolean[] booleanArray = new boolean[lastEnd+1];
+						for(int m = 0; m<lastEnd+1;m++) {
+							Entry<Integer, TuneLine> entry = tm.floorEntry(m+1);
+							booleanArray[m] = entry != null && entry.getValue().startBar <= m+1 && entry.getValue().endBar >= m+1;
+						}
+
+						TuneDialog.this.abcSong.tuneBarsModified = booleanArray;
+					}
+					TuneDialog.this.abcSong.tuneEdited();
+					//System.err.println(Thread.currentThread().getName());
 				});
 		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
 		        panel.add(okButton, "4,"+(3+SectionEditor.numberOfSections)+", 4, "+(3+SectionEditor.numberOfSections)+",f,f");
@@ -305,8 +295,8 @@ public class TuneEditor {
 		        //this.setResizable(true);
 		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }
-		};
-		
+		}
+
 		new TuneDialog(jf, "Tune editor", true, abcSong);
 	}
 }

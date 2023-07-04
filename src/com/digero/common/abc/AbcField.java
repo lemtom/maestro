@@ -24,17 +24,17 @@ public enum AbcField
 	
 	private static class MetaData
 	{
-		private static Map<String, Integer> longestByPrefix = new HashMap<String, Integer>();
+		private static Map<String, Integer> longestByPrefix = new HashMap<>();
 	}
 
 	private final String formattedName;
 
-	private AbcField()
+	AbcField()
 	{
 		this(null);
 	}
 
-	private AbcField(String formattedName)
+	AbcField(String formattedName)
 	{
 		this.formattedName = formattedName;
 		String name = getFormattedName();

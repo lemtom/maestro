@@ -116,7 +116,7 @@ public enum Note
 	{
 		if (lookupAbc == null)
 		{
-			lookupAbc = new HashMap<String, Note>(values().length * 4 / 3 + 1);
+			lookupAbc = new HashMap<>(values().length * 4 / 3 + 1);
 			for (Note n : values())
 			{
 				lookupAbc.put(n.abc, n);
@@ -139,17 +139,17 @@ public enum Note
 		private static int next = 0;
 	}
 
-	private Note()
+	Note()
 	{
 		this(IdGenerator.next);
 	}
 
-	private Note(Note copyFrom)
+	Note(Note copyFrom)
 	{
 		this(copyFrom.id);
 	}
 
-	private Note(int id)
+	Note(int id)
 	{
 		this.id = id;
 		IdGenerator.next = id + 1;

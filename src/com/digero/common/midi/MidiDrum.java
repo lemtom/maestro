@@ -79,7 +79,7 @@ public enum MidiDrum
 
 	public final String name;
 
-	private MidiDrum(String name)
+	MidiDrum(String name)
 	{
 		this.name = name;
 	}
