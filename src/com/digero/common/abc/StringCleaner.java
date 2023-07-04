@@ -44,7 +44,7 @@ public class StringCleaner {
 		before = before.replaceAll("Ä", "AE");
 		before = before.replaceAll("ö", "oe");
 		before = before.replaceAll("Ö", "OE");
-		before = before.replaceAll("", "-");
+		before = before.replaceAll("—", "-");
 	    return before;
 	}
 	
