@@ -64,7 +64,8 @@
 									<mainClass>com.digero.maestro.MaestroMain</mainClass>
 								</manifest>
 							</archive>
-							<finalName>${project.artifactId}-Maestro</finalName>
+							<finalName>Maestro</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
 					<execution>
@@ -81,7 +82,8 @@
 									<mainClass>com.digero.abcplayer.AbcPlayer</mainClass>
 								</manifest>
 							</archive>
-							<finalName>${project.artifactId}-AbcPlayer</finalName>
+							<finalName>AbcPlayer</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
 				</executions>
@@ -93,33 +95,6 @@
 					<execution>
 						<id>default-jar</id>
 						<phase>none</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.3.1</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/distribute</directory>
-								</resource>
-								<resource>
-									<directory>${basedir}</directory>
-									<includes>
-										<include>LotroInstruments.sf2</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

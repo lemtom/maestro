@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="Executables" name="Build and Distribute Maestro and ABC Player">
 	<property name="src" value="../src" />
-	<property name="bin" value="../bin" />
+	<property name="target" value="../target" />
 	<property name="audio" value="../audio" />
 	<property name="audio_backslash" value="..\audio" />
 	<property name="output" value="output" />
@@ -9,68 +9,60 @@
 	<property name="tools" location="tools" />
 	<property name="basename.AbcPlayer" value="AbcPlayer" />
 	<property name="basename.Maestro" value="Maestro" />
-	<property name="basename.Common" value="MaestroCommon" />
-	<property file="${src}/com/digero/abcplayer/version.txt" /> <!-- For version.AbcPlayer -->
-	<property file="${src}/com/digero/maestro/version.txt" /> <!-- For version.Maestro -->
+	<property file="${src}/com/digero/abcplayer/version.txt" />
+	<!-- For version.AbcPlayer -->
+	<property file="${src}/com/digero/maestro/version.txt" />
+	<!-- For version.Maestro -->
+	<condition property="isWindows">
+		<os family="windows" />
+	</condition>
+
+	<condition property="isUnix">
+		<os family="unix" />
+	</condition>
+
+	<target name="mvn_windows" if="isWindows">
+		<exec dir=".." executable="cmd">
+			<arg line="/c mvn clean install" />
+		</exec>
+	</target>
+
+	<target name="mvn_unix" if="isUnix">
+		<exec dir=".." executable="sh">
+			<arg line="-c 'mvn clean install'" />
+		</exec>
+	</target>
 
 	<target name="Clean">
 		<delete dir="${build}" />
 	</target>
 
-	<target name="RunTests">
-		<java classname="com.digero.test.TestMain" classpath="${bin}" fork="yes" failonerror="yes">
-			<jvmarg value="-ea" /> <!-- Enable Asserts -->
-		</java>
-	</target>
-
-	<target name="PreBuild" depends="RunTests">
+	<target name="CopyThings" depends="mvn_windows, mvn_unix">
 		<mkdir dir="${build}" />
 		<delete>
-		    <fileset dir="${build}" includes="*.log" />
+			<fileset dir="${build}" includes="*.log" />
 		</delete>
-		<copy file="../TableLayout.jar" todir="${build}" />
-		<copy file="../flatlaf-3.1.1.jar" todir="${build}" />
-		<!--copy file="../WinRun4J.jar" todir="${build}" /-->
 		<copy file="abcfile.ico" todir="${build}" />
 		<copy file="midifile.ico" todir="${build}" />
 		<copy file="msxfile.ico" todir="${build}" />
 		<copy file="Start Maestro.bat" todir="${build}" />
 		<copy file="Start AbcPlayer.bat" todir="${build}" />
 		<copy file="Changes since Maestro 2.5.0.txt" todir="${build}" />
-		<copy todir="${bin}/com/digero/maestro">
-			<fileset dir="${src}/com/digero/maestro" includes="*.txt"/>
+		<copy todir="${build}">
+			<fileset dir="${target}"  includes="*.jar" />
 		</copy>
-		<copy todir="${bin}/com/digero/common/midi">
-			<fileset dir="${src}/com/digero/common/midi" includes="*.txt"/>
+		<!--		<copy todir="${target}/com/digero/maestro">
+			<fileset dir="${src}/com/digero/maestro" includes="*.txt" />
 		</copy>
-		<copy todir="${bin}/com/digero/abcplayer">
-			<fileset dir="${src}/com/digero/abcplayer" includes="*.txt"/>
+		<copy todir="${target}/com/digero/common/midi">
+			<fileset dir="${src}/com/digero/common/midi" includes="*.txt" />
 		</copy>
-		<copy todir="${bin}/com/digero/common/icons">
-			<fileset dir="${src}/com/digero/common/icons" includes="*.png"/>
+		<copy todir="${target}/com/digero/abcplayer">
+			<fileset dir="${src}/com/digero/abcplayer" includes="*.txt" />
 		</copy>
-	</target>
-
-	<target name="CommonJar" depends="PreBuild">
-		<jar destfile="${build}/${basename.Common}.jar" basedir="${bin}" includes="com/digero/common/**" />
-	</target>
-
-	<target name="MaestroJar" depends="CommonJar">
-		<jar destfile="${build}/${basename.Maestro}.jar" basedir="${bin}" includes="com/digero/maestro/**">
-			<manifest>
-				<attribute name="Main-Class" value="com.digero.maestro.MaestroMain" />
-				<attribute name="Class-Path" value=". TableLayout.jar flatlaf-3.1.1.jar ${basename.Common}.jar" />
-			</manifest>
-		</jar>
-	</target>
-
-	<target name="AbcPlayerJar" depends="CommonJar">
-		<jar destfile="${build}/${basename.AbcPlayer}.jar" basedir="${bin}" includes="com/digero/abcplayer/**">
-			<manifest>
-				<attribute name="Main-Class" value="com.digero.abcplayer.AbcPlayer" />
-				<attribute name="Class-Path" value=". TableLayout.jar ${basename.Common}.jar" />
-			</manifest>
-		</jar>
+		<copy todir="${target}/com/digero/common/icons">
+			<fileset dir="${src}/com/digero/common/icons" includes="*.png" />
+		</copy>-->
 	</target>
 
 	<target name="Exe.CheckUpToDate">
@@ -88,7 +80,7 @@
 		</uptodate>
 	</target>
 
-	<target name="MaestroExe" depends="MaestroJar,Exe.CheckUpToDate" unless="MaestroExe.uptodate">
+	<target name="MaestroExe" depends="CopyThings,Exe.CheckUpToDate" unless="MaestroExe.uptodate">
 		<copy file="${tools}/WinRun4J.exe" tofile="${build}/${basename.Maestro}.exe" overwrite="true" />
 		<echo>Running rcedit.exe for Maestro</echo>
 		<exec executable="${tools}/rcedit.exe" failonerror="true">
@@ -97,8 +89,8 @@
 			<arg value="${basename.Maestro}.rcedit.ini" />
 		</exec>
 	</target>
-	
-	<target name="MaestroExe64" depends="MaestroJar,Exe.CheckUpToDate" unless="MaestroExe64.uptodate">
+
+	<target name="MaestroExe64" depends="CopyThings,Exe.CheckUpToDate" unless="MaestroExe64.uptodate">
 		<copy file="${tools}/WinRun4J64.exe" tofile="${build}/${basename.Maestro}64.exe" overwrite="true" />
 		<echo>Running rcedit64.exe for Maestro</echo>
 		<exec executable="${tools}/rcedit64.exe" failonerror="true">
@@ -108,7 +100,7 @@
 		</exec>
 	</target>
 
-	<target name="AbcPlayerExe" depends="AbcPlayerJar,Exe.CheckUpToDate" unless="AbcPlayerExe.uptodate">
+	<target name="AbcPlayerExe" depends="CopyThings,Exe.CheckUpToDate" unless="AbcPlayerExe.uptodate">
 		<copy file="${tools}/WinRun4J.exe" tofile="${build}/${basename.AbcPlayer}.exe" overwrite="true" />
 		<echo>Running rcedit.exe for Player</echo>
 		<exec executable="${tools}/rcedit.exe" failonerror="true">
@@ -118,7 +110,7 @@
 		</exec>
 	</target>
 
-	<target name="AbcPlayerExe64" depends="AbcPlayerJar,Exe.CheckUpToDate" unless="AbcPlayerExe64.uptodate">
+	<target name="AbcPlayerExe64" depends="CopyThings,Exe.CheckUpToDate" unless="AbcPlayerExe64.uptodate">
 		<copy file="${tools}/WinRun4J64.exe" tofile="${build}/${basename.AbcPlayer}64.exe" overwrite="true" />
 		<echo>Running rcedit64.exe for Player</echo>
 		<exec executable="${tools}/rcedit64.exe" failonerror="true">
@@ -127,15 +119,16 @@
 			<arg value="AbcPlayer.rcedit64.ini" />
 		</exec>
 	</target>
-	
+
 	<target name="GenerateSoundFontInfo.CheckUpToDate">
 		<uptodate property="GenerateSoundFontInfo.uptodate" targetfile="${basedir}/${audio}/LotroInstruments/LotroInstruments.txt">
-			<srcfiles dir="${bin}/com/digero/tools/soundfont/" />
+			<srcfiles dir="${target}/com/digero/tools/soundfont/" />
 		</uptodate>
 	</target>
 
-	<target name="GenerateSoundFontInfo" depends="GenerateSoundFontInfo.CheckUpToDate" ><!--unless="GenerateSoundFontInfo.uptodate"-->
-		<java classname="com.digero.tools.soundfont.GenerateSoundFontInfo" classpath="${bin}" fork="yes" failonerror="yes">
+	<target name="GenerateSoundFontInfo" depends="GenerateSoundFontInfo.CheckUpToDate">
+		<!--unless="GenerateSoundFontInfo.uptodate"-->
+		<java classname="com.digero.tools.soundfont.GenerateSoundFontInfo" classpath="${target}" fork="yes" failonerror="yes">
 			<arg value="${basedir}/${audio}/LotroInstruments" />
 			<arg value="${basedir}/${audio}/LotroInstruments/LotroInstruments.txt" />
 		</java>
@@ -146,7 +139,7 @@
 			<srcfiles dir="${basedir}/${audio}/LotroInstruments" />
 		</uptodate>
 	</target>
-	
+
 	<target name="LotroInstruments" depends="GenerateSoundFontInfo,LotroInstruments.CheckUpToDate" unless="LotroInstruments.uptodate">
 		<exec executable="${tools}/sf2comp.exe" failonerror="true">
 			<arg value="c" />
@@ -156,7 +149,7 @@
 			<arg value="${build}\LotroInstruments.sf2" />
 		</exec>
 	</target>
-	
+
 	<target name="Executables" depends="MaestroExe,MaestroExe64,AbcPlayerExe,AbcPlayerExe64,LotroInstruments" />
 
 	<target name="Installer" depends="Executables">
@@ -167,16 +160,22 @@
 			<arg value="-nologo" />
 			<arg value="-dMaestroVersion=${version.Maestro}" />
 			<arg value="-dAbcPlayerVersion=${version.AbcPlayer}" />
-			<arg value="-o" /> <arg value="${build}/MaestroInstaller.wixobj" />
+			<arg value="-o" />
+			<arg value="${build}/MaestroInstaller.wixobj" />
 			<arg value="MaestroInstaller.wix" />
 		</exec>
 		<exec executable="${tools}/wix/light.exe" failonerror="true">
 			<arg value="-nologo" />
-			<arg value="-sw1076" /> <!-- Installer removes version numbers equal to itself -->
-			<arg value="-ext" /> <arg value="WixUIExtension" />
-			<arg value="-loc" /> <arg value="MaestroInstallerStrings.wxl" />
-			<arg value="-pdbout" /> <arg value="${build}/MaestroInstaller.wixobj" />
-			<arg value="-o" /> <arg value="${output}/${basename.Maestro}_v${version.Maestro}.msi" />
+			<arg value="-sw1076" />
+			<!-- Installer removes version numbers equal to itself -->
+			<arg value="-ext" />
+			<arg value="WixUIExtension" />
+			<arg value="-loc" />
+			<arg value="MaestroInstallerStrings.wxl" />
+			<arg value="-pdbout" />
+			<arg value="${build}/MaestroInstaller.wixobj" />
+			<arg value="-o" />
+			<arg value="${output}/${basename.Maestro}_v${version.Maestro}.msi" />
 			<arg value="${build}/MaestroInstaller.wixobj" />
 		</exec>
 	</target>
@@ -188,9 +187,6 @@
 			<include name="${basename.Maestro}.jar" />
 			<!--include name="${basename.AbcPlayer}64.exe" /-->
 			<include name="${basename.AbcPlayer}.jar" />
-			<include name="${basename.Common}.jar" />
-			<include name="TableLayout.jar" />
-			<include name="flatlaf-3.1.1.jar" />
 			<!--include name="WinRun4J.jar" /-->
 			<include name="LotroInstruments.sf2" />
 			<include name="midifile.ico" />
