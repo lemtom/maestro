@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="com/digero/common/icons/unused/" including="**/*.java" kind="src" output="bin" path="src">
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
@@ -17,5 +17,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

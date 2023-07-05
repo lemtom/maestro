@@ -36,6 +36,93 @@
 					</includes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<!-- get all project dependencies -->
+					<descriptorRefs>
+						<descriptorRef>
+                        jar-with-dependencies
+                    </descriptorRef>
+					</descriptorRefs>
+					<!-- MainClass in mainfest make a executable jar -->
+				</configuration>
+				<executions>
+					<execution>
+						<id>MaestroJar</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<classifier>maestro</classifier>
+							<archive>
+								<index>true</index>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<mainClass>com.digero.maestro.MaestroMain</mainClass>
+								</manifest>
+							</archive>
+							<finalName>${project.artifactId}-Maestro</finalName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>AbcPlayerJar</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<classifier>abcplayer</classifier>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<mainClass>com.digero.abcplayer.AbcPlayer</mainClass>
+								</manifest>
+							</archive>
+							<finalName>${project.artifactId}-AbcPlayer</finalName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/distribute</directory>
+								</resource>
+								<resource>
+									<directory>${basedir}</directory>
+									<includes>
+										<include>LotroInstruments.sf2</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>
