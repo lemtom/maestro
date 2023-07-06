@@ -49,7 +49,7 @@
 		<copy file="Start AbcPlayer.bat" todir="${build}" />
 		<copy file="Changes since Maestro 2.5.0.txt" todir="${build}" />
 		<copy todir="${build}">
-			<fileset dir="${target}"  includes="*.jar" />
+			<fileset dir="${target}" includes="*.jar" />
 		</copy>
 		<!--		<copy todir="${target}/com/digero/maestro">
 			<fileset dir="${src}/com/digero/maestro" includes="*.txt" />
@@ -122,13 +122,13 @@
 
 	<target name="GenerateSoundFontInfo.CheckUpToDate">
 		<uptodate property="GenerateSoundFontInfo.uptodate" targetfile="${basedir}/${audio}/LotroInstruments/LotroInstruments.txt">
-			<srcfiles dir="${target}/com/digero/tools/soundfont/" />
+			<srcfiles dir="${target}/classes/com/digero/tools/soundfont/" />
 		</uptodate>
 	</target>
 
-	<target name="GenerateSoundFontInfo" depends="GenerateSoundFontInfo.CheckUpToDate">
+	<target name="GenerateSoundFontInfo">
 		<!--unless="GenerateSoundFontInfo.uptodate"-->
-		<java classname="com.digero.tools.soundfont.GenerateSoundFontInfo" classpath="${target}" fork="yes" failonerror="yes">
+		<java classname="com.digero.tools.soundfont.GenerateSoundFontInfo" classpath="${target}/classes" fork="yes" failonerror="yes">
 			<arg value="${basedir}/${audio}/LotroInstruments" />
 			<arg value="${basedir}/${audio}/LotroInstruments/LotroInstruments.txt" />
 		</java>
