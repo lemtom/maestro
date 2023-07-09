@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="Build" name="Custom build steps for building the Eclipse workspace">
+<project default="Build" name="Build Soundfont">
 	<property name="audio" value="." />
 	<property name="audio_backslash" value="." />
 	<property name="tools" location="../distribute/tools" />
