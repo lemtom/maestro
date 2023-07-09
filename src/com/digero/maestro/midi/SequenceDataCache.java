@@ -83,6 +83,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		 * 
 		 */		
 		Track[] tracks = song.getTracks();
+		SequenceInfo.hasPorts = false;
 		for (int iiTrack = 0; iiTrack < tracks.length; iiTrack++)
 		{
 			Track track = tracks[iiTrack];
@@ -105,6 +106,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 							port = (int) portChange[0];
 							//System.out.println("Port change on track "+iiTrack+"  tick "+tick+"  port "+formatBytes(portChange));
 							portMap.put(iiTrack, port);
+							SequenceInfo.hasPorts = "GM".equals(standard);
 						}
 					}
 				}

@@ -44,6 +44,7 @@ public class SequenceInfo implements MidiConstants
 	private String title;
 	private String composer;
 	public static String standard = "GM";
+	public static boolean hasPorts = false;
 	public static int midiType = -1;// -1 = abc, 0 = type 0, 1 = type 1, 2 = type 2
 	private static boolean[] rolandDrumChannels = new boolean[16];//Which of the channels GS designates as drums
 	private static boolean[] yamahaDrumChannels = new boolean[16];//Which of the channels XG designates as drums

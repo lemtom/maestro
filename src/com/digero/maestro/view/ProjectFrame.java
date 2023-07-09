@@ -1488,7 +1488,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			zoom.setEnabled(midiLoaded);
 			noteButton.setEnabled(midiLoaded);
 			if (midiLoaded) {
-				midiModeRadioButton.setText("Original ("+SequenceInfo.standard+")");
+				midiModeRadioButton.setText("Original ("+SequenceInfo.standard+(SequenceInfo.hasPorts?"+)":")"));
 			} else {
 				midiModeRadioButton.setText("Original");
 			}
