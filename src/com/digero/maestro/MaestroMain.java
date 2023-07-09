@@ -49,7 +49,7 @@ public class MaestroMain
 		{
 		}
 		
-		if(!openPort()) {
+		if(!openPort() && args != null && args.length > 0 && args[0].length() > 3) {
 			sendArgsToPort(args);
 			return;
 		}

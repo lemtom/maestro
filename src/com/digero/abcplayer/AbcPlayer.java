@@ -127,7 +127,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		} catch (IOException ex) {
 		}
 
-		if (!openPort()) {
+		if(!openPort() && args != null && args.length > 0 && args[0].length() > 3) {
 			sendArgsToPort(args);
 			return;
 		}
