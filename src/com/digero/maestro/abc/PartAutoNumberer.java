@@ -17,7 +17,7 @@ public class PartAutoNumberer
 {
 	public static class Settings
 	{
-		private Map<LotroInstrument, Integer> firstNumber = new HashMap<LotroInstrument, Integer>();
+		private Map<LotroInstrument, Integer> firstNumber = new HashMap<>();
 		private boolean incrementByTen;
 
 		private Settings(Preferences prefs)
@@ -124,7 +124,7 @@ public class PartAutoNumberer
 
 		public void copyFrom(Settings source)
 		{
-			firstNumber = new HashMap<LotroInstrument, Integer>(source.firstNumber);
+			firstNumber = new HashMap<>(source.firstNumber);
 			incrementByTen = source.incrementByTen;
 		}
 
@@ -201,7 +201,7 @@ public class PartAutoNumberer
 		if (parts == null)
 			return;
 
-		Set<Integer> numbersInUse = new HashSet<Integer>(parts.size());
+		Set<Integer> numbersInUse = new HashSet<>(parts.size());
 		
 		List<? extends NumberedAbcPart> partsCopy = new ArrayList<NumberedAbcPart>(parts);// This is to prevent a reordering of parts while iterating through it.
 		
@@ -349,16 +349,12 @@ public class PartAutoNumberer
 	public LotroInstrument[] getSortedInstrumentList()
 	{
 		LotroInstrument[] instruments = LotroInstrument.values();
-		Arrays.sort(instruments, new Comparator<LotroInstrument>()
-		{
-			@Override public int compare(LotroInstrument a, LotroInstrument b)
-			{
-				int diff = getFirstNumber(a) - getFirstNumber(b);
-				if (diff != 0)
-					return diff;
+		Arrays.sort(instruments, (a, b) -> {
+			int diff = getFirstNumber(a) - getFirstNumber(b);
+			if (diff != 0)
+				return diff;
 
-				return a.toString().compareTo(b.toString());
-			}
+			return a.toString().compareTo(b.toString());
 		});
 		return instruments;
 	}

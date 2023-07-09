@@ -70,13 +70,13 @@ public class HighlightAbcNotesFrame extends JFrame
 {
 	private SequencerWrapper sequencer;
 
-	private NavigableSet<AbcRegion> regions = new TreeSet<AbcRegion>();
+	private NavigableSet<AbcRegion> regions = new TreeSet<>();
 	private int lineOffset = 0;
 	private boolean showFullPartName = false;
 	private Integer scrollToIndexNextUpdate = null;
 	private NavigableMap<Integer, AbcRegion> indexToRegion = null;
-	private Map<AbcRegion, Object> highlightedRegions = new HashMap<AbcRegion, Object>();
-	private Map<AbcRegion, Object> highlightedTiedRegions = new HashMap<AbcRegion, Object>();
+	private Map<AbcRegion, Object> highlightedRegions = new HashMap<>();
+	private Map<AbcRegion, Object> highlightedTiedRegions = new HashMap<>();
 	private int[] lineStartIndex;
 
 	private Highlighter highlighter;
@@ -115,21 +115,17 @@ public class HighlightAbcNotesFrame extends JFrame
 		});
 
 		this.sequencer = seq;
-		sequencer.addChangeListener(new Listener<SequencerEvent>()
-		{
-			@Override public void onEvent(SequencerEvent evt)
+		sequencer.addChangeListener(evt -> {
+			SequencerProperty p = evt.getProperty();
+			if (p.isInMask(SequencerProperty.TRACK_ACTIVE.mask | SequencerProperty.IS_RUNNING.mask
+					| SequencerProperty.IS_DRAGGING.mask))
 			{
-				SequencerProperty p = evt.getProperty();
-				if (p.isInMask(SequencerProperty.TRACK_ACTIVE.mask | SequencerProperty.IS_RUNNING.mask
-						| SequencerProperty.IS_DRAGGING.mask))
-				{
-					resetAllHighlightsNextUpdate = true;
-					update();
-				}
-				else if (p.isInMask(SequencerProperty.THUMB_POSITION_MASK))
-				{
-					update();
-				}
+				resetAllHighlightsNextUpdate = true;
+				update();
+			}
+			else if (p.isInMask(SequencerProperty.THUMB_POSITION_MASK))
+			{
+				update();
 			}
 		});
 
@@ -188,30 +184,22 @@ public class HighlightAbcNotesFrame extends JFrame
 
 		toolBar.add(new JLabel("Part: "));
 
-		followTrackComboBox = new JComboBox<PartInfo>();
+		followTrackComboBox = new JComboBox<>();
 		followTrackComboBox.setEnabled(false);
-		followTrackComboBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				PartInfo part = (PartInfo) followTrackComboBox.getSelectedItem();
-				if (part != null)
-					scrollToLineNumber(part.trackStartLine);
+		followTrackComboBox.addActionListener(e -> {
+			PartInfo part = (PartInfo) followTrackComboBox.getSelectedItem();
+			if (part != null)
+				scrollToLineNumber(part.trackStartLine);
 
-				update();
-			}
+			update();
 		});
 		toolBar.add(followTrackComboBox);
 
 		autoScrollCheckBox = new JCheckBox("Auto scroll");
 		autoScrollCheckBox.setSelected(true);
-		autoScrollCheckBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				lastAutoScrollY = -1;
-				update();
-			}
+		autoScrollCheckBox.addActionListener(e -> {
+			lastAutoScrollY = -1;
+			update();
 		});
 		toolBar.add(autoScrollCheckBox);
 
@@ -498,7 +486,7 @@ public class HighlightAbcNotesFrame extends JFrame
 
 			if (indexToRegion == null)
 			{
-				indexToRegion = new TreeMap<Integer, AbcRegion>();
+				indexToRegion = new TreeMap<>();
 				for (AbcRegion region : regions)
 				{
 					indexToRegion.put(lineStartIndex[getLine(region)] + region.getEndIndex(), region);
@@ -541,10 +529,7 @@ public class HighlightAbcNotesFrame extends JFrame
 						return false;
 
 					// Check if it's past the end of the line
-					if (pt.x > lineEndX + DRAG_THRESHOLD)
-						return false;
-
-					return true;
+					return pt.x <= lineEndX + DRAG_THRESHOLD;
 				}
 			}
 			catch (BadLocationException e1)
@@ -606,7 +591,7 @@ public class HighlightAbcNotesFrame extends JFrame
 		{
 			NavigableSet<AbcRegion> regions = (abcInfo != null) ? abcInfo.getRegions() : null;
 			if (regions == null)
-				regions = new TreeSet<AbcRegion>();
+				regions = new TreeSet<>();
 
 			// Filter out regions that are not in the view
 			boolean hasRegionsOutOfRange = false;
@@ -622,7 +607,7 @@ public class HighlightAbcNotesFrame extends JFrame
 
 			if (hasRegionsOutOfRange)
 			{
-				TreeSet<AbcRegion> regionsInRange = new TreeSet<AbcRegion>();
+				TreeSet<AbcRegion> regionsInRange = new TreeSet<>();
 				for (AbcRegion region : regions)
 				{
 					int line = region.getLine() - lineOffset;
@@ -642,7 +627,7 @@ public class HighlightAbcNotesFrame extends JFrame
 			followTrackComboBox.removeAllItems();
 			if (abcInfo != null)
 			{
-				SortedSet<Integer> tracksInView = new TreeSet<Integer>();
+				SortedSet<Integer> tracksInView = new TreeSet<>();
 				for (AbcRegion region : regions)
 					tracksInView.add(region.getTrackNumber());
 
@@ -729,13 +714,9 @@ public class HighlightAbcNotesFrame extends JFrame
 			return;
 
 		updatePending = true;
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override public void run()
-			{
-				updatePending = false;
-				updateCore();
-			}
+		SwingUtilities.invokeLater(() -> {
+			updatePending = false;
+			updateCore();
 		});
 	}
 

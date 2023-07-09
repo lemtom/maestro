@@ -4,9 +4,9 @@ import com.digero.common.abc.LotroInstrument;
 
 public interface AbcPartMetadataSource
 {
-	public String getTitle();
+	String getTitle();
 
-	public int getPartNumber();
+	int getPartNumber();
 
-	public LotroInstrument getInstrument();
+	LotroInstrument getInstrument();
 }

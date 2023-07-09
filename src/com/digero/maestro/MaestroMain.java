@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -67,15 +68,12 @@ public class MaestroMain
 		}
 		
 		mainWindow = new ProjectFrame();
-		SwingUtilities.invokeAndWait(new Runnable()
-		{
-			@Override public void run()
-			{
-				mainWindow.setVisible(true);
-				mainWindow.getRootPane().requestFocus();
-				openSongFromCommandLine(args);
-			}
-		});
+
+		SwingUtilities.invokeAndWait(() -> {
+            mainWindow.setVisible(true);
+            mainWindow.getRootPane().requestFocus();
+            openSongFromCommandLine(args);
+        });
 		try
 		{
 			//DDE.addActivationListener(mainWindow);
@@ -102,25 +100,13 @@ public class MaestroMain
 	/** A new activation from WinRun4J 32bit (a.k.a. a file was opened) */
 	public static void activate(final String[] args)
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override public void run()
-			{
-				openSongFromCommandLine(args);
-			}
-		});
+		SwingUtilities.invokeLater(() -> openSongFromCommandLine(args));
 	}
 	
 	/** A new activation from WinRun4J 64bit (a.k.a. a file was opened) */
 	public static void activate(String arg0) {
 		final String[] args = {arg0.substring(1, arg0.length()-1)};
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override public void run()
-			{
-				MaestroMain.openSongFromCommandLine(args);
-			}
-		});
+		SwingUtilities.invokeLater(() -> MaestroMain.openSongFromCommandLine(args));
 	}
 	
 	public static void execute(String cmdLine)
@@ -189,31 +175,29 @@ public class MaestroMain
 			return false;
 		}
 		//System.out.println("Made port");
-		(new Thread() {
-			public void run() {
-				try {
-					while (true) {
-						Socket socket = serverSocket.accept();
-						//System.out.println("Accepted");
-				        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF16"));
-			        	//while (socket.isConnected()) {
-			        		String data = in.readLine();
-						
-			        		if (data != null && data.length() >= 5 && (data.substring(data.length() - 4).equalsIgnoreCase(".mid") || data.substring(data.length() - 5).equalsIgnoreCase(".midi") || data.substring(data.length() - 4).equalsIgnoreCase(".abc") || data.substring(data.length() - 4).equalsIgnoreCase(".msx") || data.substring(data.length() - 4).equalsIgnoreCase(".kar"))) {
-			        			//System.out.println("Received "+data);
-			        			String[] datas = {data};
-			        			activate(datas);
-			        		} else {
-			        			//System.out.println("Received nothing: "+data);
-			        		}
-			        	//}
-			        	socket.close();
-				    }
-			    } catch (IOException e) {
-			    	//e.printStackTrace();
-			    }
+		(new Thread(() -> {
+			try {
+				while (true) {
+					Socket socket = serverSocket.accept();
+					//System.out.println("Accepted");
+					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_16));
+					//while (socket.isConnected()) {
+						String data = in.readLine();
+
+						if (data != null && data.length() >= 5 && (data.substring(data.length() - 4).equalsIgnoreCase(".mid") || data.substring(data.length() - 5).equalsIgnoreCase(".midi") || data.substring(data.length() - 4).equalsIgnoreCase(".abc") || data.substring(data.length() - 4).equalsIgnoreCase(".msx") || data.substring(data.length() - 4).equalsIgnoreCase(".kar"))) {
+							//System.out.println("Received "+data);
+							String[] datas = {data};
+							activate(datas);
+						} else {
+							//System.out.println("Received nothing: "+data);
+						}
+					//}
+					socket.close();
+				}
+			} catch (IOException e) {
+				//e.printStackTrace();
 			}
-		}).start();
+		})).start();
 	    return true;
 	}
 	
@@ -223,7 +207,7 @@ public class MaestroMain
 		}
 		try {
 			Socket clientSocket = new Socket("localhost", 8000+APP_VERSION.getBuild());
-			OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream(), "UTF16");//NTFS uses UTF16 for filenames
+			OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_16);//NTFS uses UTF16 for filenames
 			//for (String arg : args) {
 				os.write(args[0]);
 				os.close();//Must be here to flush to stream

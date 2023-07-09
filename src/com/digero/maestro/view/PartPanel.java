@@ -100,14 +100,10 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 
 		numberSpinnerModel = new SpinnerNumberModel(0, 0, 999, partAutoNumberer.getIncrement());
 		numberSpinner = new JSpinner(numberSpinnerModel);
-		numberSpinner.addChangeListener(new ChangeListener()
-		{
-			@Override public void stateChanged(ChangeEvent e)
-			{
-				if (abcPart != null)
-					PartPanel.this.partAutoNumberer.setPartNumber(abcPart, (Integer) numberSpinner.getValue());
-			}
-		});
+		numberSpinner.addChangeListener(e -> {
+            if (abcPart != null)
+                PartPanel.this.partAutoNumberer.setPartNumber(abcPart, (Integer) numberSpinner.getValue());
+        });
 
 		numberSettingsButton = new JButton(IconLoader.getImageIcon("gear_16.png"));
 		numberSettingsButton.setMargin(new Insets(0, 0, 0, 0));
@@ -137,20 +133,16 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
 		});
 
 		instrumentComboBox = new InstrumentComboBox();
-		instrumentComboBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				if (abcPart != null)
-				{
-					LotroInstrument newInstrument = (LotroInstrument) instrumentComboBox.getSelectedItem();
-					PartPanel.this.partAutoNumberer.setInstrument(abcPart, newInstrument);
-					abcPart.replaceTitleInstrument(newInstrument);
-					nameTextField.setText(abcPart.getTitle());
-					updateTracksVisible();
-				}
-			}
-		});
+		instrumentComboBox.addActionListener(e -> {
+            if (abcPart != null)
+            {
+                LotroInstrument newInstrument = (LotroInstrument) instrumentComboBox.getSelectedItem();
+                PartPanel.this.partAutoNumberer.setInstrument(abcPart, newInstrument);
+                abcPart.replaceTitleInstrument(newInstrument);
+                nameTextField.setText(abcPart.getTitle());
+                updateTracksVisible();
+            }
+        });
 
 		JPanel dataPanel = new JPanel(new BorderLayout(0, VGAP));
 		JPanel dataPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, 0));

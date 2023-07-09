@@ -85,9 +85,9 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private File exportFile; // The ABC export file
 	private File saveFile; // The XML Maestro song file
 
-	private final ListModelWrapper<AbcPart> parts = new ListModelWrapper<AbcPart>(new DefaultListModel<AbcPart>());
+	private final ListModelWrapper<AbcPart> parts = new ListModelWrapper<>(new DefaultListModel<>());
 
-	private final ListenerList<AbcSongEvent> listeners = new ListenerList<AbcSongEvent>();
+	private final ListenerList<AbcSongEvent> listeners = new ListenerList<>();
 	boolean mixDirty = true;
 
 	public AbcSong(File file, PartAutoNumberer partAutoNumberer, PartNameTemplate partNameTemplate,
@@ -315,7 +315,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 				tl.dialogLine = SaveUtil.parseValue(tuneEle, "dialogLine", -1);
 				if (tl.startBar > 0 && tl.endBar >= tl.startBar) {
 					if (tuneBars == null) {
-						tuneBars = new TreeMap<Integer, TuneLine>();
+						tuneBars = new TreeMap<>();
 					}
 					if (tl.endBar > lastEnd) {
 						lastEnd = tl.endBar;
@@ -532,13 +532,13 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			return null;
 		}
 		String str = "N: TS  ";
-		String str2 = "";
+		StringBuilder str2 = new StringBuilder();
 		ListModelWrapper<AbcPart> prts = getParts();
 		int count = 0;
 		for (AbcPart prt : prts) {
 			if (prt.getEnabledTrackCount() > 0) {
 				count += 1;
-				str2 += "  "+prt.getPartNumber();
+				str2.append("  ").append(prt.getPartNumber());
 			}
 		}
 		if (count == 0) return null;
@@ -855,15 +855,11 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		}
 	};
 
-	private Listener<AbcPartEvent> abcPartListener = new Listener<AbcPartEvent>()
-	{
-		@Override public void onEvent(AbcPartEvent e)
+	private Listener<AbcPartEvent> abcPartListener = e -> {
+		if (e.getProperty() == AbcPartProperty.PART_NUMBER)
 		{
-			if (e.getProperty() == AbcPartProperty.PART_NUMBER)
-			{
-				Collections.sort(parts, partNumberComparator);
-				fireChangeEvent(AbcSongProperty.PART_LIST_ORDER, e.getSource());
-			}
+			parts.sort(partNumberComparator);
+			fireChangeEvent(AbcSongProperty.PART_LIST_ORDER, e.getSource());
 		}
 	};
 
@@ -877,7 +873,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		//System.out.println();
 		//System.out.println("=== assignNumbersToSimilarPartTypes ===");
 		for (LotroInstrument instr : LotroInstrument.values()) {
-			List<AbcPart> instrParts = new ArrayList<AbcPart>();
+			List<AbcPart> instrParts = new ArrayList<>();
 			for (AbcPart part : parts) {
 				if(part.getInstrument().equals(instr)) {
 					instrParts.add(part);
@@ -962,7 +958,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	public TreeMap<Long, Integer> getTuneTempoChanges() {
 		SequenceInfo se = getSequenceInfo();
 		TreeMap<Integer, TuneLine> tree = tuneBars;
-		TreeMap<Long, Integer> treeChanges = new TreeMap<Long, Integer>();
+		TreeMap<Long, Integer> treeChanges = new TreeMap<>();
 		if (se != null && tree != null) {
 			SequenceDataCache data = se.getDataCache();
 			Collection<TuneLine> lines = tree.values();

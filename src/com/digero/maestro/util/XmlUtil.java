@@ -115,14 +115,7 @@ public class XmlUtil
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 			transformer.transform(new DOMSource(document), new StreamResult(stream));
 		}
-		catch (TransformerConfigurationException e)
-		{
-			// How can a vanilla instance throw a configuration exception?
-			e.printStackTrace();
-			assert false : e.getMessage();
-			throw new RuntimeException(e);
-		}
-		catch (TransformerFactoryConfigurationError e)
+		catch (TransformerConfigurationException | TransformerFactoryConfigurationError e)
 		{
 			// How can a vanilla instance throw a configuration exception?
 			e.printStackTrace();
@@ -137,7 +130,7 @@ public class XmlUtil
 	private static class LineNumberHandler extends DefaultHandler
 	{
 		private Document doc = null;
-		private Stack<Node> stack = new Stack<Node>();
+		private Stack<Node> stack = new Stack<>();
 		private StringBuilder text = new StringBuilder();
 		private Locator locator = null;
 
@@ -263,13 +256,13 @@ public class XmlUtil
 
 	public static NodeListWrapper<Node> selectNodes(Node fromNode, String xpathString) throws XPathExpressionException
 	{
-		return new NodeListWrapper<Node>((NodeList) xpath.evaluate(xpathString, fromNode, XPathConstants.NODESET));
+		return new NodeListWrapper<>((NodeList) xpath.evaluate(xpathString, fromNode, XPathConstants.NODESET));
 	}
 
 	public static NodeListWrapper<Element> selectElements(Node fromNode, String xpathString)
 			throws XPathExpressionException
 	{
-		return new NodeListWrapper<Element>((NodeList) xpath.evaluate(xpathString, fromNode, XPathConstants.NODESET));
+		return new NodeListWrapper<>((NodeList) xpath.evaluate(xpathString, fromNode, XPathConstants.NODESET));
 	}
 
 	//

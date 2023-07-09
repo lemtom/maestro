@@ -16,15 +16,15 @@ import com.digero.common.midi.Note;
 
 public class LotroDrumInfo implements Comparable<LotroDrumInfo>
 {
-	private static Map<Integer, LotroDrumInfo> byId = new HashMap<Integer, LotroDrumInfo>();
-	private static SortedMap<String, SortedSet<LotroDrumInfo>> byCategory = new TreeMap<String, SortedSet<LotroDrumInfo>>();
+	private static Map<Integer, LotroDrumInfo> byId = new HashMap<>();
+	private static SortedMap<String, SortedSet<LotroDrumInfo>> byCategory = new TreeMap<>();
 
 	public static final LotroDrumInfo DISABLED = new LotroDrumInfo(Note.REST, "None", "#None");
 	public static final List<LotroDrumInfo> ALL_DRUMS;
 
 	static
 	{
-		byCategory.put(DISABLED.category, new TreeSet<LotroDrumInfo>());
+		byCategory.put(DISABLED.category, new TreeSet<>());
 		byCategory.get(DISABLED.category).add(DISABLED);
 		byId.put(DISABLED.note.id, DISABLED);
 
@@ -79,7 +79,7 @@ public class LotroDrumInfo implements Comparable<LotroDrumInfo>
 		int noteCount = Note.MAX_PLAYABLE.id - Note.MIN_PLAYABLE.id + 1 + LotroCombiDrumInfo.combiNoteCount;
 		if (byId.keySet().size() < noteCount)
 		{
-			List<Integer> unassigned = new ArrayList<Integer>(noteCount);
+			List<Integer> unassigned = new ArrayList<>(noteCount);
 			for (int id = Note.MIN_PLAYABLE.id; id <= Note.MAX_PLAYABLE.id; id++)
 			{
 				unassigned.add(id);
@@ -91,18 +91,17 @@ public class LotroDrumInfo implements Comparable<LotroDrumInfo>
 			}
 		}
 
-		ALL_DRUMS = Collections.unmodifiableList(new ArrayList<LotroDrumInfo>(new AbstractCollection<LotroDrumInfo>()
-		{
-			@Override public Iterator<LotroDrumInfo> iterator()
-			{
-				return new DrumInfoIterator();
-			}
+		ALL_DRUMS = Collections.unmodifiableList(new ArrayList<>(new AbstractCollection<LotroDrumInfo>() {
+            @Override
+            public Iterator<LotroDrumInfo> iterator() {
+                return new DrumInfoIterator();
+            }
 
-			@Override public int size()
-			{
-				return byId.size();
-			}
-		}));
+            @Override
+            public int size() {
+                return byId.size();
+            }
+        }));
 	}
 
 //	private static final Comparator<Note> noteComparator = new Comparator<Note>() {
@@ -123,7 +122,7 @@ public class LotroDrumInfo implements Comparable<LotroDrumInfo>
 		SortedSet<LotroDrumInfo> categorySet = byCategory.get(category);
 		if (categorySet == null)
 		{
-			byCategory.put(category, categorySet = new TreeSet<LotroDrumInfo>());
+			byCategory.put(category, categorySet = new TreeSet<>());
 		}
 		else if (categorySet.size() == 1)
 		{

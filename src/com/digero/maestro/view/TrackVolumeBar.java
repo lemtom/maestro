@@ -95,7 +95,7 @@ public class TrackVolumeBar extends JPanel implements IDiscardable
 	public void addActionListener(ActionListener trackVolumeListener)
 	{
 		if (actionListeners == null)
-			actionListeners = new ArrayList<ActionListener>();
+			actionListeners = new ArrayList<>();
 
 		if (!actionListeners.contains(trackVolumeListener))
 			actionListeners.add(trackVolumeListener);

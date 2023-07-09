@@ -22,12 +22,12 @@ public class AbcPartEvent extends EventObject
 
 		private final boolean renderRelated;
 
-		private AbcPartProperty()
+		AbcPartProperty()
 		{
 			this.renderRelated = true;
 		}
 
-		private AbcPartProperty(boolean renderRelated)
+		AbcPartProperty(boolean renderRelated)
 		{
 			this.renderRelated = renderRelated;
 		}

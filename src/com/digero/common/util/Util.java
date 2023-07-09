@@ -139,40 +139,32 @@ public final class Util
 		assert min <= max;
 		if (value < min)
 			return min;
-		if (value > max)
-			return max;
-		return value;
-	}
+        return Math.min(value, max);
+    }
 
 	public static long clamp(long value, long min, long max)
 	{
 		assert min <= max;
 		if (value < min)
 			return min;
-		if (value > max)
-			return max;
-		return value;
-	}
+        return Math.min(value, max);
+    }
 
 	public static double clamp(double value, double min, double max)
 	{
 		assert min <= max;
 		if (value < min)
 			return min;
-		if (value > max)
-			return max;
-		return value;
-	}
+        return Math.min(value, max);
+    }
 
 	public static float clamp(float value, float min, float max)
 	{
 		assert min <= max;
 		if (value < min)
 			return min;
-		if (value > max)
-			return max;
-		return value;
-	}
+        return Math.min(value, max);
+    }
 
 	public static int valueOf(Integer val, int defaultIfNull)
 	{
@@ -357,13 +349,7 @@ public final class Util
 			}
 		});
 
-		frame.addWindowStateListener(new WindowStateListener()
-		{
-			@Override public void windowStateChanged(WindowEvent e)
-			{
-				prefs.putInt("maximized", e.getNewState() & JFrame.MAXIMIZED_BOTH);
-			}
-		});
+		frame.addWindowStateListener(e -> prefs.putInt("maximized", e.getNewState() & JFrame.MAXIMIZED_BOTH));
 	}
 
 	public static String formatDuration(long micros)

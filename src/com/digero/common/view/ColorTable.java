@@ -70,12 +70,12 @@ public enum ColorTable
 
 	private Color value;
 
-	private ColorTable(Color value)
+	ColorTable(Color value)
 	{
 		this.value = value;
 	}
 
-	private ColorTable(ColorTable copyFrom)
+	ColorTable(ColorTable copyFrom)
 	{
 		this.value = copyFrom.value;
 	}

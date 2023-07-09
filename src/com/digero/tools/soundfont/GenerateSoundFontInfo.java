@@ -83,7 +83,7 @@ public class GenerateSoundFontInfo
 
 		System.out.println("Sample Directory: " + sampleDir.getCanonicalPath());
 
-		Map<SampleInfo.Key, SampleInfo> samples = new HashMap<SampleInfo.Key, SampleInfo>();
+		Map<SampleInfo.Key, SampleInfo> samples = new HashMap<>();
 
 		SampleInfo cowbellSample = null;
 		SampleInfo moorCowbellSample = null;
@@ -102,9 +102,9 @@ public class GenerateSoundFontInfo
 				moorCowbellSample = sample;
 		}
 
-		SortedSet<SampleInfo> usedSamples = new TreeSet<SampleInfo>();
-		SortedSet<InstrumentInfo> instruments = new TreeSet<InstrumentInfo>();
-		SortedSet<PresetInfo> presets = new TreeSet<PresetInfo>();
+		SortedSet<SampleInfo> usedSamples = new TreeSet<>();
+		SortedSet<InstrumentInfo> instruments = new TreeSet<>();
+		SortedSet<PresetInfo> presets = new TreeSet<>();
 		InstrumentInfo basicFiddleInfo = null;
 
 		for (LotroInstrument li : LotroInstrument.values())

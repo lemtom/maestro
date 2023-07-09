@@ -17,9 +17,9 @@ public class InstrumentPicker
 		File notInstruments = new File(root, "not_instruments");
 		File maybe = new File(root, "maybe_instruments");
 
-		Map<LotroInstrument, File> dirs = new HashMap<LotroInstrument, File>();
+		Map<LotroInstrument, File> dirs = new HashMap<>();
 
-		String pickString = "[0] Replay";
+		StringBuilder pickString = new StringBuilder("[0] Replay");
 		final int REPLAY = 0;
 		int i = 0;
 		LotroInstrument[] instruments = LotroInstrument.values();
@@ -30,18 +30,18 @@ public class InstrumentPicker
 			dirs.put(instrument, dir);
 
 			i++;
-			pickString += ", ";
+			pickString.append(", ");
 			if (i == 8)
-				pickString += "\n";
-			pickString += "[" + i + "] " + instrument.toString();
+				pickString.append("\n");
+			pickString.append("[").append(i).append("] ").append(instrument);
 		}
 
 		i++;
-		pickString += ", [" + i + "] Nothing";
+		pickString.append(", [").append(i).append("] Nothing");
 		final int NOT_INSTRUMENT = i;
 
 		i++;
-		pickString += ", [" + i + "] Maybe";
+		pickString.append(", [").append(i).append("] Maybe");
 		final int MAYBE_INSTRUMENT = i;
 
 		for (File file : sourceRoot.listFiles())

@@ -145,7 +145,7 @@ public enum MidiInstrument
 
 	public final String name;
 
-	private MidiInstrument(String name)
+	MidiInstrument(String name)
 	{
 		this.name = name;
 	}

@@ -48,22 +48,18 @@ public class DelayDialog {
 		        delayField.setHorizontalAlignment(JTextField.CENTER);
 		        
 		        JButton okButton = new JButton("APPLY");
-		        okButton.addActionListener(new ActionListener() {
-		        	
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						try {
-							float delay = Float.parseFloat(delayField.getText().replace(',', '.'));
-							if (delay >= 0.000f && delay <= 1.00f) {
-								abcPart.delay = (int)(delay*1000);
-								abcPart.delayEdited();
-							}
-						} catch (NumberFormatException nfe) {
-							
-						}
-						delayField.setText(String.format("%.3f",abcPart.delay*0.001f));
-					}
-				});
+		        okButton.addActionListener(e -> {
+                    try {
+                        float delay = Float.parseFloat(delayField.getText().replace(',', '.'));
+                        if (delay >= 0.000f && delay <= 1.00f) {
+                            abcPart.delay = (int)(delay*1000);
+                            abcPart.delayEdited();
+                        }
+                    } catch (NumberFormatException nfe) {
+
+                    }
+                    delayField.setText(String.format("%.3f",abcPart.delay*0.001f));
+                });
 		        panel.add(new JLabel("<html><b> Delay on " + abcPart.getTitle() + " </html>"), "0, 0, 3, 0, C, C");
 		        panel.add(delayField, "1, 1, f, f");
 		        panel.add(new JLabel("Seconds"), "2, 1, C, C");
@@ -76,8 +72,8 @@ public class DelayDialog {
 		        this.setLocation(DelayDialog.lastLocation);
 		        this.setVisible(true);
 		    }
-		};
-		
+		}
+
 		new DelayDialogWindow(jf, abcPart);
 	}
 	

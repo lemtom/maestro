@@ -16,15 +16,15 @@ import com.digero.common.midi.Note;
 
 public class LotroStudentFXInfo implements Comparable<LotroStudentFXInfo>
 {
-	private static Map<Integer, LotroStudentFXInfo> byId = new HashMap<Integer, LotroStudentFXInfo>();
-	private static SortedMap<String, SortedSet<LotroStudentFXInfo>> byCategory = new TreeMap<String, SortedSet<LotroStudentFXInfo>>();
+	private static Map<Integer, LotroStudentFXInfo> byId = new HashMap<>();
+	private static SortedMap<String, SortedSet<LotroStudentFXInfo>> byCategory = new TreeMap<>();
 
 	public static final LotroStudentFXInfo DISABLED = new LotroStudentFXInfo(Note.REST, "None", "#None");
 	public static final List<LotroStudentFXInfo> ALL_FX;
 
 	static
 	{
-		byCategory.put(DISABLED.category, new TreeSet<LotroStudentFXInfo>());
+		byCategory.put(DISABLED.category, new TreeSet<>());
 		byCategory.get(DISABLED.category).add(DISABLED);
 		byId.put(DISABLED.note.id, DISABLED);
 
@@ -35,7 +35,7 @@ public class LotroStudentFXInfo implements Comparable<LotroStudentFXInfo>
 		int noteCount = 3 + 1;
 		if (byId.keySet().size() < noteCount)
 		{
-			List<Integer> unassigned = new ArrayList<Integer>(noteCount);
+			List<Integer> unassigned = new ArrayList<>(noteCount);
 			for (int id = Note.MIN_PLAYABLE.id; id <= Note.MAX_PLAYABLE.id; id++)
 			{
 				unassigned.add(id);
@@ -47,18 +47,17 @@ public class LotroStudentFXInfo implements Comparable<LotroStudentFXInfo>
 			}
 		}
 
-		ALL_FX = Collections.unmodifiableList(new ArrayList<LotroStudentFXInfo>(new AbstractCollection<LotroStudentFXInfo>()
-		{
-			@Override public Iterator<LotroStudentFXInfo> iterator()
-			{
-				return new FXInfoIterator();
-			}
+		ALL_FX = Collections.unmodifiableList(new ArrayList<>(new AbstractCollection<LotroStudentFXInfo>() {
+            @Override
+            public Iterator<LotroStudentFXInfo> iterator() {
+                return new FXInfoIterator();
+            }
 
-			@Override public int size()
-			{
-				return byId.size();
-			}
-		}));
+            @Override
+            public int size() {
+                return byId.size();
+            }
+        }));
 	}
 
 //	private static final Comparator<Note> noteComparator = new Comparator<Note>() {
@@ -79,7 +78,7 @@ public class LotroStudentFXInfo implements Comparable<LotroStudentFXInfo>
 		SortedSet<LotroStudentFXInfo> categorySet = byCategory.get(category);
 		if (categorySet == null)
 		{
-			byCategory.put(category, categorySet = new TreeSet<LotroStudentFXInfo>());
+			byCategory.put(category, categorySet = new TreeSet<>());
 		}
 		else if (categorySet.size() == 1)
 		{

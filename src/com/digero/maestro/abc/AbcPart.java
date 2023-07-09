@@ -57,7 +57,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	private final AbcSong abcSong;
 	private int enabledTrackCount = 0;
 	private int previewSequenceTrackNumber = -1;
-	private final ListenerList<AbcPartEvent> listeners = new ListenerList<AbcPartEvent>();
+	private final ListenerList<AbcPartEvent> listeners = new ListenerList<>();
 	private Preferences drumPrefs = Preferences.userNodeForPackage(AbcPart.class).node("drums");
 	
 	public ArrayList<TreeMap<Integer, PartSection>> sections;
@@ -80,9 +80,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		this.trackVolumeAdjust = new int[t];
 		this.drumNoteMap = new DrumNoteMap[t];
 		this.fxNoteMap = new StudentFXNoteMap[t];
-		this.sections = new ArrayList<TreeMap<Integer, PartSection>>();
-		this.nonSection = new ArrayList<PartSection>();
-		this.sectionsModified = new ArrayList<boolean[]>();
+		this.sections = new ArrayList<>();
+		this.nonSection = new ArrayList<>();
+		this.sectionsModified = new ArrayList<>();
 		for (int i = 0; i < t; i++) {
 			this.sections.add(null);
 			this.nonSection.add(null);
@@ -311,7 +311,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					ps.dialogLine = SaveUtil.parseValue(sectionEle, "dialogLine", -1);
 					if (ps.startBar > 0 && ps.endBar >= ps.startBar) {//  && (ps.volumeStep != 0 || ps.octaveStep != 0 || ps.silence || ps.fadeout)
 						if (tree == null) {
-							tree = new TreeMap<Integer, PartSection>();
+							tree = new TreeMap<>();
 							sections.set(t, tree);
 						}
 						if (ps.endBar > lastEnd) {
@@ -437,17 +437,13 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		return namedTrackNumber;
 	}
 
-	private Listener<AbcSongEvent> songListener = new Listener<AbcSongEvent>()
-	{
-		@Override public void onEvent(AbcSongEvent e)
+	private Listener<AbcSongEvent> songListener = e -> {
+		if (e.getProperty() == AbcSongProperty.TRANSPOSE)
 		{
-			if (e.getProperty() == AbcSongProperty.TRANSPOSE)
-			{
-				fireChangeEvent(AbcPartProperty.BASE_TRANSPOSE, !isDrumPart() /* affectsAbcPreview */);
-			}
-			if (e.getProperty() == AbcSongProperty.MIX_TIMING_COMBINE_PRIORITIES || e.getProperty() == AbcSongProperty.MIX_TIMING) {
-				fireChangeEvent(AbcPartProperty.TRACK_PRIORITY);
-			}
+			fireChangeEvent(AbcPartProperty.BASE_TRANSPOSE, !isDrumPart() /* affectsAbcPreview */);
+		}
+		if (e.getProperty() == AbcSongProperty.MIX_TIMING_COMBINE_PRIORITIES || e.getProperty() == AbcSongProperty.MIX_TIMING) {
+			fireChangeEvent(AbcPartProperty.TRACK_PRIORITY);
 		}
 	};
 

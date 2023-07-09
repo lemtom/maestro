@@ -167,12 +167,12 @@ public class AbcExporter
 			exportEndTick = startEndTick.second;
 
 			
-			Map<AbcPart, List<Chord>> chordsMade = new HashMap<AbcPart, List<Chord>>();//abcexported chords ready to be previewed
+			Map<AbcPart, List<Chord>> chordsMade = new HashMap<>();//abcexported chords ready to be previewed
 			Map<AbcPart, TreeMap<Long, Boolean>> toneMap = null;//Tree is when notes are active.
 			List<Set<AbcPart>> shareChannelWithPatchChangesMap = null;//abcpart 1 can borrow channel from abcpart 2, but need to switch voice all the time. 
 			Map<AbcPart, Integer> shareChannelSameVoiceMap = null;// abcpart can use a certain channel (together with another abcpart), no need for voice switching.
-			Set<AbcPart> assignedSharingPartsSwitchers = new HashSet<AbcPart>();//Set of all parts that will share using switching.
-			Set<AbcPart> assignedSharingPartsSameVoice = new HashSet<AbcPart>();//Set of all parts that will share without using switching.
+			Set<AbcPart> assignedSharingPartsSwitchers = new HashSet<>();//Set of all parts that will share using switching.
+			Set<AbcPart> assignedSharingPartsSameVoice = new HashSet<>();//Set of all parts that will share without using switching.
 			
 			int partsCount = 0;// Number of parts that has assigned tracks to them.
 			for (AbcPart p : parts) {
@@ -210,7 +210,7 @@ public class AbcExporter
 					//System.out.println("\nThat did not free up enough channels, trying the methods in opposite order.");
 					target = partsCount - MAX_PARTS;// How many channels we need to free up.
 					shareChannelSameVoiceMap = null;
-					assignedSharingPartsSameVoice = new HashSet<AbcPart>();
+					assignedSharingPartsSameVoice = new HashSet<>();
 					Triplet<List<Set<AbcPart>>, Set<AbcPart>, Integer> switchResult = null;
 					switchResult = findSharableChannelSwitchers(toneMap, target, assignedSharingPartsSameVoice);
 					shareChannelWithPatchChangesMap = switchResult.first;
@@ -232,7 +232,7 @@ public class AbcExporter
 				}
 			}
 			
-			Set<Integer> assignedChannels = new HashSet<Integer>();//channels that has been assigned one or two parts onto it.
+			Set<Integer> assignedChannels = new HashSet<>();//channels that has been assigned one or two parts onto it.
 			
 			
 			Sequence sequence = new Sequence(Sequence.PPQ, qtm.getMidiResolution());
@@ -244,7 +244,7 @@ public class AbcExporter
 
 			PanGenerator panner = new PanGenerator();
 			lastChannelUsedInPreview = -1;
-			List<ExportTrackInfo> infoList = new ArrayList<ExportTrackInfo>();
+			List<ExportTrackInfo> infoList = new ArrayList<>();
 			for (AbcPart part : assignedSharingPartsSameVoice)
 			{
 				// Do the parts that is sharing channel first, as they will use the lower (already designated) numbered channels
@@ -283,7 +283,7 @@ public class AbcExporter
 				}
 			}
 			//System.out.println("Preview done");
-			return new Pair<List<ExportTrackInfo>, Sequence>(infoList, sequence);
+			return new Pair<>(infoList, sequence);
 		}
 		catch (RuntimeException e)
 		{
@@ -305,11 +305,10 @@ public class AbcExporter
 	 */
 	private Triplet<List<Set<AbcPart>>, Set<AbcPart>, Integer> findSharableChannelSwitchers(Map<AbcPart, TreeMap<Long, Boolean>> toneMap, int target, Set<AbcPart> assignedSharingPartsChannel) {
 		//System.out.println("Attempting to free "+target+" channels by finding pairs that can share channel with voice switching.");
-		List<Set<AbcPart>> shareChannelWithPatchChangesMap = new ArrayList<Set<AbcPart>>();
-		Set<AbcPart> assignedSharingPartsSwitchers = new HashSet<AbcPart>();
-		
-		List<AbcPart> keySet = new ArrayList<AbcPart>();
-		keySet.addAll(toneMap.keySet());
+		List<Set<AbcPart>> shareChannelWithPatchChangesMap = new ArrayList<>();
+		Set<AbcPart> assignedSharingPartsSwitchers = new HashSet<>();
+
+		List<AbcPart> keySet = new ArrayList<>(toneMap.keySet());
 		
 		outer:for (int iterC = 0; iterC < keySet.size()-1 && target > 0; iterC++) {
 			AbcPart partC = keySet.get(iterC);
@@ -331,8 +330,8 @@ public class AbcExporter
 							//System.out.println("Found channel switch matches:\n  "+partC.getTitle()+"\n  "+partD.getTitle());
 							assignedSharingPartsSwitchers.add(partC);
 							assignedSharingPartsSwitchers.add(partD);
-							Set<AbcPart> sharePartSet = new HashSet<AbcPart>();
-							Set<TreeMap<Long, Boolean>> shareTreeSet = new HashSet<TreeMap<Long, Boolean>>();
+							Set<AbcPart> sharePartSet = new HashSet<>();
+							Set<TreeMap<Long, Boolean>> shareTreeSet = new HashSet<>();
 							sharePartSet.add(partC);
 							sharePartSet.add(partD);
 							shareTreeSet.add(tonesCtree);
@@ -367,7 +366,7 @@ public class AbcExporter
 			}
 		}
 		//System.out.println("     "+target+" more freed channels needed.");
-		return new Triplet<List<Set<AbcPart>>, Set<AbcPart>, Integer>(shareChannelWithPatchChangesMap, assignedSharingPartsSwitchers, target);
+		return new Triplet<>(shareChannelWithPatchChangesMap, assignedSharingPartsSwitchers, target);
 	}
 	
 	private boolean toneComparator(TreeMap<Long, Boolean> tonesCtree, TreeMap<Long, Boolean> tonesDtree) {
@@ -403,12 +402,12 @@ public class AbcExporter
 	 * @return TreeMaps of tick to active note. 
 	 */
 	private Map<AbcPart, TreeMap<Long, Boolean>> findTones(Map<AbcPart, List<Chord>> chordsMade) {
-		Map<AbcPart, TreeMap<Long, Boolean>> toneMap = new HashMap<AbcPart, TreeMap<Long, Boolean>>();
+		Map<AbcPart, TreeMap<Long, Boolean>> toneMap = new HashMap<>();
 		for (Entry<AbcPart, List<Chord>> chordEntry : chordsMade.entrySet()) {
 			if (chordEntry.getValue() == null) {
 				//toneMap.put(chordEntry.getKey(), null);
 			} else {
-				TreeMap<Long, Boolean> tree = new TreeMap<Long, Boolean>();
+				TreeMap<Long, Boolean> tree = new TreeMap<>();
 				tree.put(PRE_TICK, false);
 				for (Chord chord : chordEntry.getValue()) {
 					if (!chord.isRest()) {
@@ -445,7 +444,7 @@ public class AbcExporter
 	/**
 	 * Use brute force to check which parts can share a preview midi channel.
 	 * Two conditions for that to happen:
-	 * 
+	 * <p>
 	 * 1 - Must be the same lotro instrument
 	 * 2 - Must not have any notes with same pitch playing at the same time.
 	 * 
@@ -457,10 +456,10 @@ public class AbcExporter
 	 */
 	private Pair<Map<AbcPart, Integer>, Integer> findSharableParts (int target, Map<AbcPart, List<Chord>> chordsMade, Set<AbcPart> assignedSharingPartsSwitchers) throws AbcConversionException {
 		//System.out.println("Attempting to find parts that can share channel and voice. Need to free "+target+" channels.");
-		Map<AbcPart, Integer> shareMap = new HashMap<AbcPart, Integer>();
+		Map<AbcPart, Integer> shareMap = new HashMap<>();
 		int channel = 0;// We create the midi tracks for this method first, so we start at channel 0
 		// evaluate fiddles first as they are most likely to use only single notes.
-		LotroInstrument orderToEvaluate[] ={LotroInstrument.LONELY_MOUNTAIN_FIDDLE,
+		LotroInstrument[] orderToEvaluate ={LotroInstrument.LONELY_MOUNTAIN_FIDDLE,
 											LotroInstrument.BASIC_FIDDLE,
 											LotroInstrument.BARDIC_FIDDLE,
 											LotroInstrument.SPRIGHTLY_FIDDLE,
@@ -486,7 +485,7 @@ public class AbcExporter
 		
 		for (LotroInstrument evalInstr : orderToEvaluate) {
 			if (target < 1) break;
-			List<AbcPart> partsToCompare = new ArrayList<AbcPart>();
+			List<AbcPart> partsToCompare = new ArrayList<>();
 			for (AbcPart part : parts) {
 				if (part.getInstrument().equals(evalInstr) && !assignedSharingPartsSwitchers.contains(part)) {
 					partsToCompare.add(part);
@@ -495,7 +494,7 @@ public class AbcExporter
 			int iterBParts = 0;
 			outer: for (int iterAParts = 0; iterAParts < partsToCompare.size()-1 && target > 0; iterAParts++) {
 				AbcPart partA = partsToCompare.get(iterAParts);
-				if (shareMap.keySet().contains(partA)) {
+				if (shareMap.containsKey(partA)) {
 					continue outer;
 				}
 				List<Chord> chordsA = chordsMade.get(partA);
@@ -503,11 +502,11 @@ public class AbcExporter
 					continue outer;
 				}
 				boolean matchFound = false;
-				Set<List<Chord>> chordsSet = new HashSet<List<Chord>>();
+				Set<List<Chord>> chordsSet = new HashSet<>();
 				chordsSet.add(chordsA);
 				inner: for (iterBParts = iterAParts+1; iterBParts < partsToCompare.size() && target > 0; iterBParts++) {
 					AbcPart partB = partsToCompare.get(iterBParts);
-					if (shareMap.keySet().contains(partB)) {
+					if (shareMap.containsKey(partB)) {
 						continue inner;
 					}
 					List<Chord> chordsB = chordsMade.get(partB);
@@ -543,7 +542,7 @@ public class AbcExporter
 			}
 		}
 		//System.out.println("     "+target+" channels still need to be freed.");
-		return new Pair<Map<AbcPart, Integer>, Integer> (shareMap, target);
+		return new Pair<>(shareMap, target);
 	}
 	
 	/**
@@ -636,7 +635,7 @@ public class AbcExporter
 
 		Pair<Integer, Integer> trackNumber = exportPartToMidi(part, sequence, chords, pan, useLotroInstruments, assignedChannels, chan, programChangeEveryChord);
 
-		List<NoteEvent> noteEvents = new ArrayList<NoteEvent>(chords.size());
+		List<NoteEvent> noteEvents = new ArrayList<>(chords.size());
 		for (Chord chord : chords)
 		{
 			for (int i = 0; i < chord.size(); i++)
@@ -697,7 +696,7 @@ public class AbcExporter
 			track.add(MidiFactory.createPanEvent(pan, channel));
 		}
 
-		List<NoteEvent> notesOn = new ArrayList<NoteEvent>();
+		List<NoteEvent> notesOn = new ArrayList<>();
 
 		int noteDelta = 0;
 		if (!useLotroInstruments)
@@ -767,7 +766,7 @@ public class AbcExporter
 			track.add(MidiFactory.createNoteOffEvent(on.note.id + noteDelta, channel, on.getEndTick()));
 		}
 
-		return new Pair<Integer, Integer>(trackNumber, channel);
+		return new Pair<>(trackNumber, channel);
 	}
 
 	public void exportToAbc(OutputStream os, boolean delayEnabled) throws AbcConversionException
@@ -872,30 +871,26 @@ public class AbcExporter
 
 		final StringBuilder bar = new StringBuilder();
 
-		Runnable addLineBreaks = new Runnable()
-		{
-			@Override public void run()
+		Runnable addLineBreaks = () -> {
+			// Trim end
+			int length = bar.length();
+			if (length == 0)
+				return;
+
+			while (Character.isWhitespace(bar.charAt(length - 1)))
+				length--;
+			bar.setLength(length);
+
+			// Insert line breaks inside very long bars
+			for (int i = BAR_LENGTH; i < bar.length(); i += BAR_LENGTH)
 			{
-				// Trim end
-				int length = bar.length();
-				if (length == 0)
-					return;
-
-				while (Character.isWhitespace(bar.charAt(length - 1)))
-					length--;
-				bar.setLength(length);
-
-				// Insert line breaks inside very long bars
-				for (int i = BAR_LENGTH; i < bar.length(); i += BAR_LENGTH)
+				for (int j = 0; j < BAR_LENGTH - 1; j++, i--)
 				{
-					for (int j = 0; j < BAR_LENGTH - 1; j++, i--)
+					if (bar.charAt(i) == ' ')
 					{
-						if (bar.charAt(i) == ' ')
-						{
-							bar.replace(i, i + 1, "\r\n\t");
-							i += "\r\n\t".length() - 1;
-							break;
-						}
+						bar.replace(i, i + 1, "\r\n\t");
+						i += "\r\n\t".length() - 1;
+						break;
 					}
 				}
 			}
@@ -1106,7 +1101,7 @@ public class AbcExporter
 			final long songEndTick) throws AbcConversionException
 	{
 		// Combine the events from the enabled tracks
-		List<NoteEvent> events = new ArrayList<NoteEvent>();
+		List<NoteEvent> events = new ArrayList<>();
 		for (int t = 0; t < part.getTrackCount(); t++)
 		{
 			if (part.isTrackEnabled(t))
@@ -1122,10 +1117,10 @@ public class AbcExporter
 						}
 					}
 				}
-				List<NoteEvent> listOfNotes = new ArrayList<NoteEvent>(part.getTrackEvents(t));
+				List<NoteEvent> listOfNotes = new ArrayList<>(part.getTrackEvents(t));
 				if (specialDrumNotes) {
-					List<NoteEvent> extraList = new ArrayList<NoteEvent>();
-					List<NoteEvent> removeList = new ArrayList<NoteEvent>();
+					List<NoteEvent> extraList = new ArrayList<>();
+					List<NoteEvent> removeList = new ArrayList<>();
 					for (NoteEvent ne : listOfNotes) {
 						Note possibleCombiNote = part.mapNote(t, ne.note.id, ne.getStartTick());
 						if (possibleCombiNote != null && possibleCombiNote.id > part.getInstrument().highestPlayable.id && possibleCombiNote.id <= LotroCombiDrumInfo.maxCombi.id) {
@@ -1280,7 +1275,7 @@ public class AbcExporter
 		}
 				
 		// Remove duplicate notes
-		List<NoteEvent> notesOn = new ArrayList<NoteEvent>();
+		List<NoteEvent> notesOn = new ArrayList<>();
 		neIter = events.iterator();
 		dupLoop: while (neIter.hasNext())
 		{
@@ -1333,8 +1328,8 @@ public class AbcExporter
 
 		breakLongNotes(part, events, addTies);
 
-		List<Chord> chords = new ArrayList<Chord>(events.size() / 2);
-		List<NoteEvent> tmpEvents = new ArrayList<NoteEvent>();
+		List<Chord> chords = new ArrayList<>(events.size() / 2);
+		List<NoteEvent> tmpEvents = new ArrayList<>();
 
 		// Combine notes that play at the same time into chords
 		Chord curChord = new Chord(events.get(0));
@@ -1690,7 +1685,7 @@ public class AbcExporter
 		if (endTick == Long.MIN_VALUE)
 			endTick = 0;
 
-		return new Pair<Long, Long>(startTick, endTick);
+		return new Pair<>(startTick, endTick);
 	}
 	
 	private class Triplet<T, U, V> {

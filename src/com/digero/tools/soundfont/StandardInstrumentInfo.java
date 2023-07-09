@@ -24,7 +24,7 @@ public class StandardInstrumentInfo extends InstrumentInfo
 	{
 		super(lotroInstrument, name, lowestNoteId, highestNoteId);
 
-		this.usedSamples = new TreeSet<SampleInfo>();
+		this.usedSamples = new TreeSet<>();
 		int startId = lowestNoteId + (notesPerSample - 1) / 2;
 
 		for (int id = startId; id <= highestNoteId; id++)

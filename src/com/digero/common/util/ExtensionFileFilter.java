@@ -19,11 +19,11 @@ public class ExtensionFileFilter extends javax.swing.filechooser.FileFilter impl
 		this.description = description;
 		this.matchDirectories = matchDirectories;
 
-		String regex = ".*\\.(" + fileTypes[0];
+		StringBuilder regex = new StringBuilder(".*\\.(" + fileTypes[0]);
 		for (int i = 1; i < fileTypes.length; i++)
-			regex += "|" + fileTypes[i];
-		regex += ")$";
-		fileNameRegex = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+			regex.append("|").append(fileTypes[i]);
+		regex.append(")$");
+		fileNameRegex = Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
 	}
 
 	@Override public boolean accept(File f)

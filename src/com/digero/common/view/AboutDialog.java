@@ -41,7 +41,7 @@ public final class AboutDialog
 		if (memoryMXBean != null) {
 			MemoryUsage usage = memoryMXBean.getHeapMemoryUsage();
 			if (usage != null) {
-				heapInUse = ""+(usage.getUsed()/(1024*1024))+"MB/"+(usage.getMax()/(1024*1024))+"MB";
+				heapInUse = (usage.getUsed()/(1024*1024))+"MB/"+(usage.getMax()/(1024*1024))+"MB";
 			}
 		}
 		

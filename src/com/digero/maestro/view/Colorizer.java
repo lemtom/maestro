@@ -30,33 +30,23 @@ public class Colorizer extends JPanel
 	{
 		super(new BorderLayout());
 		this.refresher = coloredPanel;
-		picker = new JComboBox<ColorTable>(ColorTable.values());
+		picker = new JComboBox<>(ColorTable.values());
 
-		picker.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				updateSpinners();
-			}
-		});
+		picker.addActionListener(e -> updateSpinners());
 
 		hue = new SpinnerNumberModel(0.0, 0.0, 1.0, 0.01);
 		sat = new SpinnerNumberModel(0.0, 0.0, 1.0, 0.05);
 		brt = new SpinnerNumberModel(0.0, 0.0, 1.0, 0.05);
 
-		ChangeListener cl = new ChangeListener()
-		{
-			@Override public void stateChanged(ChangeEvent e)
+		ChangeListener cl = e -> {
+			if (!updating)
 			{
-				if (!updating)
-				{
-					float h = hue.getNumber().floatValue();
-					float s = sat.getNumber().floatValue();
-					float b = brt.getNumber().floatValue();
+				float h = hue.getNumber().floatValue();
+				float s = sat.getNumber().floatValue();
+				float b = brt.getNumber().floatValue();
 
-					((ColorTable) picker.getSelectedItem()).set(new Color(Color.HSBtoRGB(h, s, b)));
-					refresher.repaint();
-				}
+				((ColorTable) picker.getSelectedItem()).set(new Color(Color.HSBtoRGB(h, s, b)));
+				refresher.repaint();
 			}
 		};
 

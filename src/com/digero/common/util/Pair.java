@@ -1,5 +1,7 @@
 package com.digero.common.util;
 
+import java.util.Objects;
+
 public class Pair<T1, T2>
 {
 	public T1 first;
@@ -23,8 +25,8 @@ public class Pair<T1, T2>
 			return false;
 
 		Pair<?, ?> that = (Pair<?, ?>) obj;
-		return ((this.first == null) ? (that.first == null) : this.first.equals(that.first))
-				&& ((this.second == null) ? (that.second == null) : this.second.equals(that.second));
+		return (Objects.equals(this.first, that.first))
+				&& (Objects.equals(this.second, that.second));
 	}
 
 	@Override public int hashCode()

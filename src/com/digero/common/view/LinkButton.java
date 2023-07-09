@@ -45,7 +45,7 @@ public class LinkButton extends JLabel
 	public void addActionListener(ActionListener listener)
 	{
 		if (listeners == null)
-			listeners = new ArrayList<ActionListener>(1);
+			listeners = new ArrayList<>(1);
 
 		listeners.add(listener);
 	}

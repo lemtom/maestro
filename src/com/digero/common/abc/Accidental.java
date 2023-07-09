@@ -7,7 +7,7 @@ public enum Accidental
 	public final String abc;
 	public final int deltaNoteId;
 
-	private Accidental(String abc, int deltaNoteId)
+	Accidental(String abc, int deltaNoteId)
 	{
 		this.abc = abc;
 		this.deltaNoteId = deltaNoteId;

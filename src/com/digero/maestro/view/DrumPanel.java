@@ -102,13 +102,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 
 		checkBox = new JCheckBox();
 		checkBox.setSelected(abcPart.isDrumEnabled(trackInfo.getTrackNumber(), drumId));
-		checkBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				abcPart.setDrumEnabled(trackInfo.getTrackNumber(), drumId, checkBox.isSelected());
-			}
-		});
+		checkBox.addActionListener(e -> abcPart.setDrumEnabled(trackInfo.getTrackNumber(), drumId, checkBox.isSelected()));
 
 		checkBox.setOpaque(false);
 
@@ -127,27 +121,19 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 		instr = Util.ellipsis(instr, dims.titleWidth, checkBox.getFont());
 		checkBox.setText(instr);
 
-		drumComboBoxFX = new JComboBox<LotroStudentFXInfo>(LotroStudentFXInfo.ALL_FX.toArray(new LotroStudentFXInfo[0]));
+		drumComboBoxFX = new JComboBox<>(LotroStudentFXInfo.ALL_FX.toArray(new LotroStudentFXInfo[0]));
 		drumComboBoxFX.setSelectedItem(getSelectedFX());
 		drumComboBoxFX.setMaximumRowCount(20);
-		drumComboBoxFX.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				LotroStudentFXInfo selected = (LotroStudentFXInfo) drumComboBoxFX.getSelectedItem();
-				abcPart.getFXMap(trackInfo.getTrackNumber()).set(drumId, selected.note.id);
-			}
+		drumComboBoxFX.addActionListener(e -> {
+			LotroStudentFXInfo selected = (LotroStudentFXInfo) drumComboBoxFX.getSelectedItem();
+			abcPart.getFXMap(trackInfo.getTrackNumber()).set(drumId, selected.note.id);
 		});
-		drumComboBox = new JComboBox<LotroDrumInfo>(LotroDrumInfo.ALL_DRUMS.toArray(new LotroDrumInfo[0]));
+		drumComboBox = new JComboBox<>(LotroDrumInfo.ALL_DRUMS.toArray(new LotroDrumInfo[0]));
 		drumComboBox.setSelectedItem(getSelectedDrum());
 		drumComboBox.setMaximumRowCount(20);
-		drumComboBox.addActionListener(new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				LotroDrumInfo selected = (LotroDrumInfo) drumComboBox.getSelectedItem();
-				abcPart.getDrumMap(trackInfo.getTrackNumber()).set(drumId, selected.note.id);
-			}
+		drumComboBox.addActionListener(e -> {
+			LotroDrumInfo selected = (LotroDrumInfo) drumComboBox.getSelectedItem();
+			abcPart.getDrumMap(trackInfo.getTrackNumber()).set(drumId, selected.note.id);
 		});
 
 		seq.addChangeListener(sequencerListener);
@@ -215,22 +201,10 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 
 		if (trackVolumeBar != null)
 		{
-			trackVolumeBar.addActionListener(trackVolumeBarListener = new ActionListener()
-			{
-				@Override public void actionPerformed(ActionEvent e)
-				{
-					updateState();
-				}
-			});
+			trackVolumeBar.addActionListener(trackVolumeBarListener = e -> updateState());
 		}
 
-		addPropertyChangeListener("enabled", new PropertyChangeListener()
-		{
-			@Override public void propertyChange(PropertyChangeEvent evt)
-			{
-				updateState();
-			}
-		});
+		addPropertyChangeListener("enabled", evt -> updateState());
 
 		add(gutter, "0, 0");
 		add(checkBox, "1, 0");
@@ -270,13 +244,9 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 		}
 	};
 
-	private Listener<SequencerEvent> sequencerListener = new Listener<SequencerEvent>()
-	{
-		@Override public void onEvent(SequencerEvent evt)
-		{
-			if (evt.getProperty() == SequencerProperty.TRACK_ACTIVE)
-				updateState();
-		}
+	private Listener<SequencerEvent> sequencerListener = evt -> {
+		if (evt.getProperty() == SequencerProperty.TRACK_ACTIVE)
+			updateState();
 	};
 	
 	public void updateVolume(boolean vol) {
