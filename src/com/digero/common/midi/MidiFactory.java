@@ -170,4 +170,23 @@ public class MidiFactory implements MidiConstants
 	{
 		return new MidiEvent(key.toMidiMessage(), ticks);
 	}
+
+	public static MidiEvent createPortEvent(int port) {
+		try
+		{
+			byte[] data = new byte[1];
+			data[0] = (byte) port;
+			if (port != (int) data[0]) {
+				System.out.println("Midi expansion cast to byte failed");
+				return null;
+			}
+			MetaMessage msg = new MetaMessage();
+			msg.setMessage(META_PORT_CHANGE, data, 1);
+			return new MidiEvent(msg, 0);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			return null;
+		}		
+	}
 }
