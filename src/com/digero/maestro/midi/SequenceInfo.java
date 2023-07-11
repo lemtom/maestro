@@ -84,13 +84,18 @@ public class SequenceInfo implements MidiConstants
 		SequenceInfo.midiType = type;
 		//System.err.println("MIDI Type = "+type);
 		
+		
+		
 		determineStandard(sequence, fileName);
 		
 		// Since the drum track separation is only applicable to type 1 midi sequences, 
 		// do it before we convert this sequence to type 1, to avoid doing unnecessary work
 		// Aifel: changed order so that XG drums in middle of a track from a type 0 gets separated out
 		boolean wasType0 = convertToType1(sequence);
+		
 		separateDrumTracks(sequence);
+		
+		
 		fixupTrackLength(sequence);
 
 		Track[] tracks = sequence.getTracks();
@@ -100,6 +105,7 @@ public class SequenceInfo implements MidiConstants
 		}
 
 		sequenceCache = new SequenceDataCache(sequence, standard, rolandDrumChannels, yamahaDrumSwitches, yamahaDrumChannels, mmaDrumSwitches, portMap);
+		hasPorts = sequenceCache.hasPorts;
 		primaryTempoMPQ = sequenceCache.getPrimaryTempoMPQ();
 
 		List<TrackInfo> trackInfoList = new ArrayList<>(tracks.length);
