@@ -21,6 +21,12 @@ import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.MidiFactory;
 import com.digero.common.midi.MidiInstrument;
 
+/**
+ *  Takes a midi input and expands each instrument to its own track.
+ *  Works with GM2, XG, GS, GM and GM+ 
+ * 
+ *  TODO: Has a bit of duplicate code in it from other classes. 
+ */
 public class TrackSplitter {
 	public static String standard = "GM";
 	public static boolean hasPorts = false;
@@ -127,7 +133,8 @@ public class TrackSplitter {
 						continue evtIter;
 					}
 					if (instr != null && !"".equals(instr)) {
-						Track newTrack = newTracks.get(Integer.toString(channel)+instr);
+						String trackID = hasPorts?(Integer.toString(channel)+instr):instr;// If its not a Cakewalk midi then we lumps all of same instr together, regardless of channel.
+						Track newTrack = newTracks.get(trackID);
 						if (newTrack == null) {
 							newTrack = expandedSequence.createTrack();
 							if (firstTrackUsingPorts == null) firstTrackUsingPorts = newTrack;
@@ -142,7 +149,7 @@ public class TrackSplitter {
 								}
 							}
 							trackCounter += 1;
-							newTracks.put(Integer.toString(channel)+instr, newTrack);
+							newTracks.put(trackID, newTrack);
 						}
 						newTrack.add(evt);
 					} else {
