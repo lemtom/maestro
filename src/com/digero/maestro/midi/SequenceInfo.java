@@ -95,7 +95,6 @@ public class SequenceInfo implements MidiConstants
 		
 		separateDrumTracks(sequence);
 		
-		// split(sequence, fileName);// uncomment me to test midi track splitting, it will write a new midi file to drive D: when opening a midi.
 		
 		fixupTrackLength(sequence);
 
@@ -906,26 +905,15 @@ public class SequenceInfo implements MidiConstants
 //		System.out.println("After: " + Util.formatDuration(song.getMicrosecondLength()));
 	}
 	
-	private void split (Sequence sequence, String fileName) {
+	public Sequence split () {
 		TrackSplitter splitter = new TrackSplitter();
-
+		Sequence sequence2 = null;
 		try {
-			Sequence sequence2 = splitter.split(sequence, fileName);
-			if (sequence2 == null) return;
-			int[] types = MidiSystem.getMidiFileTypes(sequence2);
-			if (types.length != 0) {
-				String newFileName = "D:"+File.separator+"expanded_"+fileName;
-				File expandedFile = new File(newFileName);
-				expandedFile.delete();
-				expandedFile.createNewFile();
-				System.out.println("Writing type "+types[types.length-1]+" expanded midi as '"+newFileName+"'");
-				MidiSystem.write(sequence2, types[types.length-1], expandedFile);
-			}
+			sequence2 = splitter.split(sequence);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
+		}
+		return sequence2;
 	}
 	
 	private class PatchEntry {

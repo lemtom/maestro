@@ -50,6 +50,8 @@ Version 2.5.0.115
 - It is now again possible to start multiple Maestro or AbcPlayers.
 - AbcPlayer can now export MP3 on Linux and MacOS also.
 - Internal refactoring and update java target to JRE 8.
+- New menu option to save a midi, which will expand tracks to only have 1 instrument per track.
+    After saving the new midi, it will ask if you would like to load the new expanded midi. 
 
 Version 2.5.0.114
 - Fix missing file in MSI install.

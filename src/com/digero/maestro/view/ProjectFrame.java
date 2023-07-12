@@ -22,13 +22,17 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequence;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -169,6 +173,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JMenuItem saveAsMenuItem;
 	private JMenuItem exportMenuItem;
 	private JMenuItem exportAsMenuItem;
+	private JMenuItem saveExpandedMidiMenuItem;
 	private JMenuItem closeProject;
 
 	private JList<AbcPartMetadataSource> partsList;
@@ -1047,6 +1052,11 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		fileMenu.addSeparator();
 		
+		saveExpandedMidiMenuItem = fileMenu.add(new JMenuItem("Export Expanded MIDI..."));
+		saveExpandedMidiMenuItem.addActionListener(e -> expandMidi());
+		
+		fileMenu.addSeparator();
+		
 		closeProject = fileMenu.add(new JMenuItem("Close Project"));
 		closeProject.addActionListener(e -> closeSong());
 
@@ -1451,6 +1461,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			exportAsMenuItem.setEnabled(hasAbcNotes);
 			saveMenuItem.setEnabled(abcSong != null);
 			saveAsMenuItem.setEnabled(abcSong != null);
+			saveExpandedMidiMenuItem.setEnabled(abcSong != null);
 			closeProject.setEnabled(midiLoaded);
 
 			songTitleField.setEnabled(midiLoaded);
@@ -2423,6 +2434,99 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		}
 
 		setAbcSongModified(false);
+		return true;
+	}
+	
+	private boolean expandMidi()
+	{
+		if (abcSong == null || abcSong.getSourceFile() == null) {
+			JOptionPane.showMessageDialog(this, "No midi loaded", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (SequenceInfo.standard.equals("ABC")) {
+			JOptionPane.showMessageDialog(this, "Cannot expand ABC song", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (abcSong.getSourceFile().getName().startsWith("expanded_")) {
+			JOptionPane.showMessageDialog(this, "This midi has already been expanded", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+
+		File saveFile = null;
+
+		if (saveFile == null) {
+			String defaultFolder;
+			
+			defaultFolder = Util.getLotroMusicPath(false).getAbsolutePath();
+
+			String folder = prefs.get("saveDialogFolder", defaultFolder);
+			if (!new File(folder).exists())
+				folder = defaultFolder;
+
+			saveFile = abcSong.getSourceFile();
+			String fileName = "expanded_"+saveFile.getName();
+			Path path = Paths.get(saveFile.getAbsolutePath());
+			String directory = path.getParent().toString();
+						
+			int dot = fileName.lastIndexOf('.');
+			if (dot > 0)
+				fileName = fileName.substring(0, dot);
+			fileName += ".mid";
+
+			saveFile = new File(directory, fileName);
+		}
+
+		saveFile = doSaveDialog(saveFile, saveFile, ".mid", new ExtensionFileFilter(
+				"MIDI songs (*.mid)", "mid"));
+
+		if (saveFile == null)
+			return false;
+
+		return finishExpand(saveFile);
+	}
+
+	private boolean finishExpand(File saveFile)
+	{
+		try {
+			Sequence sequence2 = abcSong.getSequenceInfo().split();
+			if (sequence2 == null) {
+				JOptionPane.showMessageDialog(this, "Something went wrong in the splitting process", "Error", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+			int[] types = MidiSystem.getMidiFileTypes(sequence2);
+			if (types.length != 0) {
+				//expandedFile.delete();
+				//expandedFile.createNewFile();
+				System.out.println("Writing type "+types[types.length-1]+" expanded midi as '"+saveFile.getAbsolutePath()+"'");
+				MidiSystem.write(sequence2, types[types.length-1], saveFile);
+			} else {
+				JOptionPane.showMessageDialog(this, "Something went wrong when in midi type handling", "Error", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "Failed to create file!\n" + e.getMessage(), "Failed to create file",
+					JOptionPane.ERROR_MESSAGE);
+
+			return false;
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		int result = JOptionPane.showConfirmDialog(this, "Would you also like to load the new expanded midi?", "Expanded MIDI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		switch (result) {
+			case JOptionPane.YES_OPTION:
+				openFile(saveFile);
+				break;
+			case JOptionPane.NO_OPTION:
+				break;
+			case JOptionPane.CANCEL_OPTION:
+				break;
+		}
+		
 		return true;
 	}
 

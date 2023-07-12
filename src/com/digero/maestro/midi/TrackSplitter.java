@@ -38,11 +38,8 @@ public class TrackSplitter {
 	private SequenceDataCache sequenceCache = null;
 	private boolean isGM = true;
 	
-	public Sequence split (Sequence sequence, String fileName) throws InvalidMidiDataException {
-		if (fileName.endsWith(".abc") || fileName.endsWith(".ABC") || fileName.endsWith(".txt") || fileName.endsWith(".TXT") || fileName.endsWith(".Abc") || fileName.endsWith(".Txt")) {
-			// We do not expand ABC songs
-			return sequence;
-		}
+	public Sequence split (Sequence sequence) throws InvalidMidiDataException {
+		
 		int resolution = sequence.getResolution();
 		float divisionType = sequence.getDivisionType();
 		Sequence expandedSequence = new Sequence(divisionType, resolution);
