@@ -49,7 +49,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 	private String standard = "GM";
 	private boolean[] rolandDrumChannels = null;
 	private boolean[] yamahaDrumChannels = null;
-	public static boolean hasPorts = false;
+	public boolean hasPorts = false;
 
 	public SequenceDataCache(Sequence song, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean[] yamahaDrumChannels, ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches, TreeMap<Integer, Integer> portMap)
 	{
