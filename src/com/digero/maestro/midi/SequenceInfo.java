@@ -909,7 +909,7 @@ public class SequenceInfo implements MidiConstants
 		TrackSplitter splitter = new TrackSplitter();
 		Sequence sequence2 = null;
 		try {
-			sequence2 = splitter.split(sequence);
+			sequence2 = splitter.split(sequence, sequenceCache, standard, rolandDrumChannels, yamahaDrumSwitches, yamahaDrumChannels, mmaDrumSwitches, portMap);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
