@@ -190,6 +190,7 @@ public class TrackSplitter {
 
 	private String fetchInstrName(long tick, int channel, int port, int track) {
 		if (isGM) {
+			if (channel == MidiConstants.DRUM_CHANNEL) return "Standard Drum Kit";
 			int instrumentNumber = sequenceCache.getInstrument(port, channel, tick);
 			String in = MidiInstrument.fromId(instrumentNumber).toString();
 			return in;
