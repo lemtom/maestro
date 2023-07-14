@@ -540,7 +540,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		final JCheckBox convertABCStringsToBasicAsciiCheckBox = new JCheckBox("Convert unicode, most ext. ascii and diacritical marks in ABC");
 		convertABCStringsToBasicAsciiCheckBox.setToolTipText("<html>" //
 				+ "If checked, exported ABC files will not include letters such as<br>" //
-				+ "<E6><F8><E5><F6><E4><DF> etc.<br>" //
+				+ "&aelig;&#248;&#229;&#246;&#228;&#223; etc.<br>" //
 				+ "<br>" //
 				+ "Most songbooks cannot handle such chars, it's recommended to have this enabled." //
 				+ "</html>");
