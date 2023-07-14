@@ -497,7 +497,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		MockMetadataSource mockMetadata = new MockMetadataSource(originalMetadataSource);
 		exportTemplate.setMetadataSource(mockMetadata);
 
-		String exampleText = exportTemplate.formatName(exportTemplateSettings) + ".abc";
+		String exampleText = exportTemplate.formatName(exportTemplateSettings);
 		String exampleTextEllipsis = Util.ellipsis(exampleText, exportTemplateExampleLabel.getWidth(),
 				exportTemplateExampleLabel.getFont());
 
