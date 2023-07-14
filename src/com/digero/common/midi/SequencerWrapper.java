@@ -25,7 +25,7 @@ import com.digero.common.util.ListenerList;
 
 public class SequencerWrapper implements MidiConstants, ITempoCache, IDiscardable
 {
-	public static final int UPDATE_FREQUENCY_MILLIS = 25;
+	public static final int UPDATE_FREQUENCY_MILLIS = 50;
 	public static final long UPDATE_FREQUENCY_MICROS = UPDATE_FREQUENCY_MILLIS * 1000;
 
 	protected Sequencer sequencer;
