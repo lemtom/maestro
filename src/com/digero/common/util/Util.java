@@ -356,8 +356,13 @@ public final class Util
 	{
 		return formatDuration(micros, 0);
 	}
-
+	
 	public static String formatDuration(long micros, long maxMicros)
+	{
+		return formatDuration(micros, maxMicros, ':');
+	}
+
+	public static String formatDuration(long micros, long maxMicros, char separator)
 	{
 		if (maxMicros < micros)
 			maxMicros = micros;
@@ -378,7 +383,7 @@ public final class Util
 
 		if (hrMax > 0)
 		{
-			s.append(hr).append(':');
+			s.append(hr).append(separator);
 			if (min < 10)
 			{
 				s.append('0');
@@ -388,7 +393,7 @@ public final class Util
 		{
 			s.append('0');
 		}
-		s.append(min).append(':');
+		s.append(min).append(separator);
 		if (sec < 10)
 		{
 			s.append('0');

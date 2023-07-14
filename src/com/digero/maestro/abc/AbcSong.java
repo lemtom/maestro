@@ -79,6 +79,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private SequenceInfo sequenceInfo;
 	private final PartAutoNumberer partAutoNumberer;
 	private final PartNameTemplate partNameTemplate;
+	private final ExportFilenameTemplate exportFilenameTemplate;
 	private QuantizedTimingInfo timingInfo;
 	private AbcExporter abcExporter;
 	private File sourceFile; // The MIDI or ABC file that this song was loaded from
@@ -91,7 +92,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	boolean mixDirty = true;
 
 	public AbcSong(File file, PartAutoNumberer partAutoNumberer, PartNameTemplate partNameTemplate,
-			FileResolver fileResolver) throws IOException, InvalidMidiDataException, ParseException, SAXException
+			ExportFilenameTemplate exportFilenameTemplate, FileResolver fileResolver)
+			throws IOException, InvalidMidiDataException, ParseException, SAXException
 	{
 		sourceFile = file;
 
@@ -100,6 +102,9 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 		this.partNameTemplate = partNameTemplate;
 		this.partNameTemplate.setMetadataSource(this);
+		
+		this.exportFilenameTemplate = exportFilenameTemplate;
+		this.exportFilenameTemplate.setMetadataSource(this);
 
 		String fileName = file.getName().toLowerCase();
 		fromXmlFile = fileName.endsWith(MSX_FILE_EXTENSION);
@@ -544,6 +549,11 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		if (count == 0) return null;
 		str += count+", ";
 		return str+str2;
+	}
+	
+	@Override public int getPartCount()
+	{
+		return getParts().size();
 	}
 
 	@Override public String getTranscriber()

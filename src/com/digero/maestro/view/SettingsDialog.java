@@ -41,6 +41,7 @@ import com.digero.common.util.Util;
 import com.digero.maestro.abc.AbcMetadataSource;
 import com.digero.maestro.abc.AbcPartMetadataSource;
 import com.digero.maestro.abc.AbcSong;
+import com.digero.maestro.abc.ExportFilenameTemplate;
 import com.digero.maestro.abc.PartAutoNumberer;
 import com.digero.maestro.abc.PartNameTemplate;
 
@@ -64,11 +65,15 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	private PartNameTemplate.Settings nameTemplateSettings;
 	private PartNameTemplate nameTemplate;
 	private JLabel nameTemplateExampleLabel;
+	
+	private ExportFilenameTemplate.Settings exportTemplateSettings;
+	private ExportFilenameTemplate exportTemplate;
+	private JLabel exportTemplateExampleLabel;
 
 	private SaveAndExportSettings saveSettings;
 
 	public SettingsDialog(JFrame owner, PartAutoNumberer.Settings numbererSettings, PartNameTemplate nameTemplate,
-			SaveAndExportSettings saveSettings)
+			ExportFilenameTemplate exportTemplate, SaveAndExportSettings saveSettings)
 	{
 		super(owner, "Options", true);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -77,6 +82,9 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 
 		this.nameTemplate = nameTemplate;
 		this.nameTemplateSettings = nameTemplate.getSettingsCopy();
+		
+		this.exportTemplate = exportTemplate;
+		this.exportTemplateSettings = exportTemplate.getSettingsCopy();
 
 		this.saveSettings = saveSettings;
 
@@ -138,6 +146,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 
 		// This must be done after layout is done: the call to pack() does layout
 		updateNameTemplateExample();
+		updateExportFilenameExample();
 	}
 
 	private JPanel createNumberingPanel()
@@ -341,7 +350,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 
 		return nameTemplatePanel;
 	}
-
+	
 	private void updateNameTemplateExample()
 	{
 		AbcMetadataSource originalMetadataSource = nameTemplate.getMetadataSource();
@@ -357,6 +366,23 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			nameTemplateExampleLabel.setToolTipText(exampleText);
 
 		nameTemplate.setMetadataSource(originalMetadataSource);
+	}
+	
+	private void updateExportFilenameExample()
+	{
+		AbcMetadataSource originalMetadataSource = exportTemplate.getMetadataSource();
+		MockMetadataSource mockMetadata = new MockMetadataSource(originalMetadataSource);
+		exportTemplate.setMetadataSource(mockMetadata);
+
+		String exampleText = exportTemplate.formatName(exportTemplateSettings);
+		String exampleTextEllipsis = Util.ellipsis(exampleText, exportTemplateExampleLabel.getWidth(),
+				exportTemplateExampleLabel.getFont());
+
+		exportTemplateExampleLabel.setText(exampleTextEllipsis);
+		if (!exampleText.equals(exampleTextEllipsis))
+			exportTemplateExampleLabel.setToolTipText(exampleText);
+
+		exportTemplate.setMetadataSource(originalMetadataSource);
 	}
 
 	private JPanel createSaveAndExportSettingsPanel()
@@ -397,10 +423,67 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				+ "</html>");
 		convertABCStringsToBasicAsciiCheckBox.setSelected(saveSettings.convertABCStringsToBasicAscii);
 		convertABCStringsToBasicAsciiCheckBox.addActionListener(e -> saveSettings.convertABCStringsToBasicAscii = convertABCStringsToBasicAsciiCheckBox.isSelected());
+		
+		JLabel patternLabel = new JLabel("<html><b><u>Pattern for ABC export filename</b></u></html>");
+		
+		JCheckBox enablePatternExportCheckBox = new JCheckBox("Enable pattern for ABC export filenames");
+		enablePatternExportCheckBox.setSelected(exportTemplateSettings.isExportFilenamePatternEnabled());
+		enablePatternExportCheckBox.addActionListener(e -> exportTemplateSettings.setExportFilenamePatternEnabled(enablePatternExportCheckBox.isSelected()));
+		
+		JLabel whitespaceLabel = new JLabel("<html><b>Replace spaces in variables with:</b></html>");
+		
+		JComboBox<String> replaceWhitespaceComboBox = new JComboBox<String>(ExportFilenameTemplate.spaceReplaceLabels);
+		String replaceText = exportTemplateSettings.getWhitespaceReplaceText();
+		int selectedIndex = 0;
+		exportTemplateSettings.setWhitespaceReplaceText(ExportFilenameTemplate.spaceReplaceChars[0]);
+		
+		for (int i = 0; i < ExportFilenameTemplate.spaceReplaceChars.length; i++)
+		{
+			if (replaceText.equals(ExportFilenameTemplate.spaceReplaceChars[i]))
+			{
+				exportTemplateSettings.setWhitespaceReplaceText(ExportFilenameTemplate.spaceReplaceChars[i]);
+				selectedIndex = i;
+			}
+		}
+		replaceWhitespaceComboBox.setSelectedIndex(selectedIndex);
+		replaceWhitespaceComboBox.addActionListener(e -> 
+		{
+			exportTemplateSettings.setWhitespaceReplaceText(ExportFilenameTemplate.spaceReplaceChars[replaceWhitespaceComboBox.getSelectedIndex()]);
+			updateExportFilenameExample();
+		});
 
+		final JTextField exportNameTextField = new JTextField(exportTemplateSettings.getExportFilenamePattern(), 40);
+		exportNameTextField.getDocument().addDocumentListener(new DocumentListener()
+		{
+			@Override public void removeUpdate(DocumentEvent e)
+			{
+				exportTemplateSettings.setExportFilenamePattern(exportNameTextField.getText());
+				updateExportFilenameExample();
+			}
+
+			@Override public void insertUpdate(DocumentEvent e)
+			{
+				exportTemplateSettings.setExportFilenamePattern(exportNameTextField.getText());
+				updateExportFilenameExample();
+			}
+
+			@Override public void changedUpdate(DocumentEvent e)
+			{
+				exportTemplateSettings.setExportFilenamePattern(exportNameTextField.getText());
+				updateExportFilenameExample();
+			}
+		});
+		
+		exportTemplateExampleLabel = new JLabel("");
+		JPanel examplePanel = new JPanel(new BorderLayout());
+		examplePanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
+		examplePanel.add(exportTemplateExampleLabel, BorderLayout.CENTER);
+		
 		TableLayout layout = new TableLayout();
-		layout.insertColumn(0, FILL);
+		layout.insertColumn(0, PREFERRED);
+		layout.insertColumn(1, FILL);
 		layout.setVGap(PAD);
+		layout.setHGap(10);
 
 		JPanel panel = new JPanel(layout);
 		panel.setBorder(BorderFactory.createEmptyBorder(PAD, PAD, PAD, PAD));
@@ -408,19 +491,64 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		int row = -1;
 
 		layout.insertRow(++row, PREFERRED);
-		panel.add(titleLabel, "0, " + row);
+		panel.add(titleLabel, "0, " + row + ", 1, " + row);
 
 		layout.insertRow(++row, PREFERRED);
-		panel.add(promptSaveCheckBox, "0, " + row);
+		panel.add(promptSaveCheckBox, "0, " + row + ", 1, " + row);
 
 		layout.insertRow(++row, PREFERRED);
-		panel.add(showExportFileChooserCheckBox, "0, " + row);
+		panel.add(showExportFileChooserCheckBox, "0, " + row + ", 1, " + row);
 
 		layout.insertRow(++row, PREFERRED);
-		panel.add(skipSilenceAtStartCheckBox, "0, " + row);
+		panel.add(skipSilenceAtStartCheckBox, "0, " + row + ", 1, " + row);
 		
 		layout.insertRow(++row, PREFERRED);
-		panel.add(convertABCStringsToBasicAsciiCheckBox, "0, " + row);
+		panel.add(convertABCStringsToBasicAsciiCheckBox, "0, " + row + ", 1, " + row);
+		
+		// export filename pattern settings
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(patternLabel, "0, " + row + ", 1, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(enablePatternExportCheckBox, "0, " + row + ", 1, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(whitespaceLabel, "0, " + row);
+		panel.add(replaceWhitespaceComboBox, "1, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(exportNameTextField, "0, " + row + ", 1, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(examplePanel, "0, " + row + ", 1, " + row);
+		
+		JLabel nameLabel = new JLabel("<html><u><b>Variable Name</b></u></html>");
+		JLabel exampleLabel = new JLabel("<html><u><b>Example</b></u></html>");
+
+		layout.insertRow(++row, PREFERRED);
+		panel.add(nameLabel, "0, " + row);
+		panel.add(exampleLabel, "1, " + row);
+
+		AbcMetadataSource originalMetadataSource = exportTemplate.getMetadataSource();
+
+		MockMetadataSource mockMetadata = new MockMetadataSource(originalMetadataSource);
+		exportTemplate.setMetadataSource(mockMetadata);
+		for (Entry<String, ExportFilenameTemplate.Variable> entry : exportTemplate.getVariables().entrySet())
+		{
+			String tooltipText = "<html><b>" + entry.getKey() + "</b><br>"
+					+ entry.getValue().getDescription().replace("\n", "<br>") + "</html>";
+
+			JLabel keyLabel = new JLabel(entry.getKey());
+			keyLabel.setToolTipText(tooltipText);
+			JLabel descriptionLabel = new JLabel(entry.getValue().getValue());
+			descriptionLabel.setToolTipText(tooltipText);
+
+			layout.insertRow(++row, PREFERRED);
+			panel.add(keyLabel, "0, " + row);
+			panel.add(descriptionLabel, "1, " + row);
+		}
+		exportTemplate.setMetadataSource(originalMetadataSource);
 		
 		return panel;
 	}
@@ -616,6 +744,11 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	{
 		return nameTemplateSettings;
 	}
+	
+	public ExportFilenameTemplate.Settings getExportFilenameTemplateSettings()
+	{
+		return exportTemplateSettings;
+	}
 
 	public SaveAndExportSettings getSaveAndExportSettings()
 	{
@@ -709,6 +842,11 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		@Override public String getAllParts()
 		{
 			return "N: TS  1,   4";
+		}
+		
+		@Override public int getPartCount()
+		{
+			return 5;
 		}
 
 		@Override

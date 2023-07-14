@@ -114,6 +114,7 @@ import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
 import com.digero.maestro.abc.AbcPartMetadataSource;
 import com.digero.maestro.abc.AbcSong;
 import com.digero.maestro.abc.AbcSongEvent;
+import com.digero.maestro.abc.ExportFilenameTemplate;
 import com.digero.maestro.abc.PartAutoNumberer;
 import com.digero.maestro.abc.PartNameTemplate;
 import com.digero.maestro.midi.SequenceInfo;
@@ -144,6 +145,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private VolumeTransceiver abcVolumeTransceiver;
 	private PartAutoNumberer partAutoNumberer;
 	private PartNameTemplate partNameTemplate;
+	private ExportFilenameTemplate exportFilenameTemplate;
 	private SaveAndExportSettings saveSettings;
 	private boolean usingNativeVolume;
 
@@ -258,6 +260,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		partAutoNumberer = new PartAutoNumberer(prefs.node("partAutoNumberer"));
 		partNameTemplate = new PartNameTemplate(prefs.node("partNameTemplate"));
+		exportFilenameTemplate = new ExportFilenameTemplate(prefs.node("exportFilenameTemplate"));
 		saveSettings = new SaveAndExportSettings(prefs.node("saveAndExportSettings"));
 
 		usingNativeVolume = MaestroMain.isNativeVolumeSupported();
@@ -1100,7 +1103,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private void doSettingsDialog(int tab)
 	{
 		SettingsDialog dialog = new SettingsDialog(ProjectFrame.this, partAutoNumberer.getSettingsCopy(),
-				partNameTemplate, saveSettings.getCopy());
+				partNameTemplate, exportFilenameTemplate, saveSettings.getCopy());
 		dialog.setActiveTab(tab);
 		dialog.setVisible(true);
 		if (dialog.isSuccess())
@@ -1111,6 +1114,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				partAutoNumberer.renumberAllParts();
 			}
 			partNameTemplate.setSettings(dialog.getNameTemplateSettings());
+			exportFilenameTemplate.setSettings(dialog.getExportFilenameTemplateSettings());
 			partPanel.settingsChanged();
 
 			saveSettings.copyFrom(dialog.getSaveAndExportSettings());
@@ -1889,7 +1893,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		try
 		{
-			abcSong = new AbcSong(file, partAutoNumberer, partNameTemplate, openFileResolver);
+			abcSong = new AbcSong(file, partAutoNumberer, partNameTemplate, exportFilenameTemplate, openFileResolver);
 			abcSong.setAllOut(saveSettings.showBadger && saveSettings.allBadger);
 			abcSong.setBadger(saveSettings.showBadger);
 			abcSong.addSongListener(abcSongListener);
@@ -2256,10 +2260,19 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			String folder = prefs.get("exportDialogFolder", defaultFolder);
 			if (!new File(folder).exists())
 				folder = defaultFolder;
-
-			exportFile = abcSong.getSourceFile();
-			if (exportFile == null)
-				exportFile = new File(folder, abcSong.getSequenceInfo().getFileName());
+			
+			if (exportFilenameTemplate.isEnabled())
+			{
+				exportFile = new File(folder, exportFilenameTemplate.formatName());
+			}
+			else
+			{
+				exportFile = abcSong.getSourceFile();
+				if (exportFile == null)
+				{
+					exportFile = new File(folder, abcSong.getSequenceInfo().getFileName());
+				}
+			}
 
 			String fileName = exportFile.getName();
 			int dot = fileName.lastIndexOf('.');
