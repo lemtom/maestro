@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Document;
@@ -45,6 +46,7 @@ import com.digero.maestro.util.FileResolver;
 import com.digero.maestro.util.ListModelWrapper;
 import com.digero.maestro.util.SaveUtil;
 import com.digero.maestro.util.XmlUtil;
+import com.digero.maestro.view.ProjectFrame;
 
 public class AbcSong implements IDiscardable, AbcMetadataSource
 {
@@ -230,6 +232,10 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 						sourceFile.getName());
 			}
 			Version fileVersion = SaveUtil.parseValue(songEle, "@fileVersion", SONG_FILE_VERSION);
+			
+			if (fileVersion.getRevision() > SONG_FILE_VERSION.getRevision() && ProjectFrame.getFrames().length > 0) {
+				JOptionPane.showMessageDialog(ProjectFrame.getFrames()[0], "This project may contain new features that this Maestro cannot use. It is suggested to upgrade this Maestro to load this project.", "Warning", JOptionPane.WARNING_MESSAGE);
+			}
 
 			sourceFile = SaveUtil.parseValue(songEle, "sourceFile", (File) null);
 			if (sourceFile == null)
