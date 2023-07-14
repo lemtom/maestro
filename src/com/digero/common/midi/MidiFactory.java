@@ -189,4 +189,17 @@ public class MidiFactory implements MidiConstants
 			return null;
 		}		
 	}
+
+	public static MidiEvent createEndOfTrackEvent(long tick) {
+		try
+		{
+			MetaMessage msg = new MetaMessage();
+			msg.setMessage(META_END_OF_TRACK, new byte[0], 0);
+			return new MidiEvent(msg, tick);
+		}
+		catch (InvalidMidiDataException e)
+		{
+			return null;
+		}
+	}
 }

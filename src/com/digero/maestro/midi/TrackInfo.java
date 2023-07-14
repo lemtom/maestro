@@ -205,6 +205,20 @@ public class TrackInfo implements MidiConstants
 							long bendTick = tick;
 							if (ne.getLengthMicros() < TimingInfo.getShortestNoteMicros(125))
 							{
+								/*
+								 TODO: While we know the note must not be shorter than TimingInfo.getShortestNoteMicros(125),
+								 it might not be allowed to become the new length either. But we do not now know yet what
+								 length it will allowed to be. This can become problem as this part of the bent note might be skipped later.
+								 Instead of handling bent notes like this, piece by piece every time the bend changes, we could
+								 after the TimingInfo has been established and we know the grid it will be laid onto,
+								 look at the note in its entirety, and determine where it should switch pitch in abc.
+								 Maybe we can put the bend info into the note event, and keep the full length, so we later
+								 have access to all the information we need to determine how to break it up into pitches.
+								 Only down side to that is that is that the bend wont be painted as bent in track-window,
+								 unless we code some custom painting of bent notes.
+								 ~ Aifel
+								*/
+								
 								// If the note is too short, just skip it. The new (bent) note will 
 								// replace it, so start the bent note at the same time this one started.
 								noteEvents.remove(ne);

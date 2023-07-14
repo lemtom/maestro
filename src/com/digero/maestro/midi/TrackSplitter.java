@@ -41,11 +41,13 @@ public class TrackSplitter {
 		Track[] oldTracks = sequence.getTracks();
 		Track newMetaTrack = expandedSequence.createTrack();
 		newMetaTrack.add(MidiFactory.createTrackNameEvent("META"));
+		long lastEOTTick = 0L;
 		for (int j = 0; j < oldTracks.length; j++) {
 			Track oldTrack = oldTracks[j];
 			
-			// Find the old name for the track we want to expand
+			// Find the old name and end of track for the track we want to expand
 			String oldTrackName = "";
+			MidiEvent oldEndOfTrack = null;
 			for (int i = 0; i < oldTrack.size(); i++) {
 				MidiEvent evt = oldTrack.get(i);
 				MidiMessage msg = evt.getMessage();
@@ -58,6 +60,11 @@ public class TrackSplitter {
 						if (tmp.length() > 0) {
 							oldTrackName = tmp;
 							break;
+						}
+					} else if (type == MidiConstants.META_END_OF_TRACK) {
+						oldEndOfTrack = evt;
+						if (evt.getTick() > lastEOTTick) {
+							lastEOTTick = evt.getTick(); 
 						}
 					}
 				}
@@ -140,6 +147,7 @@ public class TrackSplitter {
 							newTrack = expandedSequence.createTrack();
 							if (firstTrackUsingPorts == null) firstTrackUsingPorts = newTrack;
 							newTrack.add(MidiFactory.createTrackNameEvent(oldTrackName+" : "+trackCounter));
+							newTrack.add(oldEndOfTrack);
 							if (hasPorts) {
 								// We put the GM+ port change in every one of the new tracks if the old had it.
 								MidiEvent evtPort = MidiFactory.createPortEvent(port);
@@ -174,6 +182,9 @@ public class TrackSplitter {
 			}
 		}
 		
+		if (lastEOTTick > 0L) {
+			newMetaTrack.add(MidiFactory.createEndOfTrackEvent(lastEOTTick));
+		}		
 		return expandedSequence;
 	}
 
