@@ -640,7 +640,24 @@ public class SequenceInfo implements MidiConstants
 		{
 			Track track0 = song.getTracks()[0];
 			Track[] tracks = new Track[CHANNEL_COUNT];
-
+			
+			MidiEvent endOfTrack = null;
+			int j = track0.size()-1;
+			while (j >= 0) {
+				MidiEvent evt = track0.get(j);
+				if (evt.getMessage() instanceof MetaMessage) {
+					if (((MetaMessage) evt.getMessage()).getType() == META_END_OF_TRACK) {
+						endOfTrack = evt;
+						break;
+					}
+				}
+				j--;
+			}
+			if (endOfTrack == null) {
+				// This midi has no EOT, which is in violation of midi standard, so we make one at last tick.
+				endOfTrack = MidiFactory.createEndOfTrackEvent(track0.get(track0.size()-1).getTick());
+			}
+			
 			int trackNumber = 1;
 			int i = 0;
 			while (i < track0.size())
@@ -652,6 +669,8 @@ public class SequenceInfo implements MidiConstants
 					if (tracks[chan] == null)
 					{
 						tracks[chan] = song.createTrack();
+						
+						tracks[chan].add(endOfTrack);
 						
 						String trackName = "Track " + trackNumber;
 						
