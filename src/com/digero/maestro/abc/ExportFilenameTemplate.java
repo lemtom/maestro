@@ -224,9 +224,6 @@ public class ExportFilenameTemplate
 			}
 		}
 		
-		// This will be removed and re-added by exportAbcAs(), but adding it here so it previews in the settings menu
-		name = name + ".abc";
-		
 		return name;
 	}
 }
