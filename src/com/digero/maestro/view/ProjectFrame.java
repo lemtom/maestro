@@ -2261,23 +2261,28 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			if (!new File(folder).exists())
 				folder = defaultFolder;
 			
+			String fileName = "mySong.abc";
+			
 			if (exportFilenameTemplate.isEnabled())
 			{
-				exportFile = new File(folder, exportFilenameTemplate.formatName());
+				fileName = exportFilenameTemplate.formatName();
 			}
 			else
 			{
 				exportFile = abcSong.getSourceFile();
 				if (exportFile == null)
 				{
-					exportFile = new File(folder, abcSong.getSequenceInfo().getFileName());
+					fileName = abcSong.getSequenceInfo().getFileName();
+				} else {
+					fileName = exportFile.getName(); 
 				}
 			}
 
-			String fileName = exportFile.getName();
 			int dot = fileName.lastIndexOf('.');
 			if (dot > 0)
 				fileName = fileName.substring(0, dot);
+			else if (dot == 0)
+				fileName = "";
 			fileName = StringCleaner.cleanForFileName(fileName);
 			fileName += ".abc";
 

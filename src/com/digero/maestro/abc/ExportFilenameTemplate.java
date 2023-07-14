@@ -224,6 +224,8 @@ public class ExportFilenameTemplate
 			}
 		}
 		
+		name += ".abc";
+		
 		return name;
 	}
 }
