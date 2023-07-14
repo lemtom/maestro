@@ -29,7 +29,7 @@ public class ExportFilenameTemplate
 		private Settings(Preferences prefs)
 		{
 			exportFilenamePatternEnabled = prefs.getBoolean("exportFilenamePatternEnabled", false);
-			exportFilenamePattern = prefs.get("exportFilenamePattern", "$PartCount_$SongTitle");
+			exportFilenamePattern = prefs.get("exportFilenamePattern", "$PartCount - $SongTitle");
 			whitespaceReplaceText = prefs.get("whitespaceReplaceText", " ");
 		}
 
@@ -132,7 +132,7 @@ public class ExportFilenameTemplate
 		{
 			@Override public String getValue()
 			{
-				return Util.formatDuration(getMetadataSource().getSongLengthMicros());
+				return Util.formatDuration(getMetadataSource().getSongLengthMicros(), 0, '-');
 			}
 		});
 		variables.put("$SongComposer", new Variable("The song composer's name, as entered in the \"C:\" field")
