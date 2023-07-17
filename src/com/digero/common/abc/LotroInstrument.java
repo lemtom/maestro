@@ -117,6 +117,7 @@ public enum LotroInstrument
 	}
 
 	private static Pattern instrumentRegex;
+	private static Pattern instrumentRegexAggr;
 
 	public static Pair<LotroInstrument, MatchResult> matchInstrument(String str)
 	{
@@ -164,10 +165,63 @@ public enum LotroInstrument
 
 		return new Pair<>(instrument, result);
 	}
+	
+	public static Pair<LotroInstrument, MatchResult> matchInstrumentAggr(String str)
+	{
+		if (instrumentRegexAggr == null)
+		{
+			// Build a regex that contains a single capturing group for each instrument
+			// Each instrument's group matches its full name or any nicknames
+			StringBuilder regex = new StringBuilder();
+			regex.append("(?:");
+			for (LotroInstrument instrument : values)
+			{
+				if (instrument.ordinal() > 0)
+					regex.append('|');
+
+				regex.append('(');
+				regex.append(instrument.friendlyName.replace(" ", "[\\s_]*"));
+				for (String nickname : instrument.nicknameRegexes)
+					regex.append('|').append(nickname.replace(" ", "[\\s_]*").replaceAll("\\((?!\\?)", "(?:"));
+				regex.append(')');
+			}
+			regex.append(")");
+
+			instrumentRegexAggr = Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
+		}
+
+		MatchResult result = null;
+		Matcher m = instrumentRegexAggr.matcher(str);
+
+		// Iterate through the matches to find the last one
+		for (int i = 0; m.find(i); i = m.end())
+			result = m.toMatchResult();
+
+		if (result == null)
+			return null;
+
+		LotroInstrument instrument = null;
+		for (int g = 0; g < result.groupCount() && g < values.length; g++)
+		{
+			if (result.group(g + 1) != null)
+			{
+				instrument = values[g];
+				break;
+			}
+		}
+
+		return new Pair<>(instrument, result);
+	}
 
 	public static LotroInstrument findInstrumentName(String str, LotroInstrument defaultInstrument)
 	{
 		Pair<LotroInstrument, MatchResult> result = matchInstrument(str);
+		return (result != null) ? result.first : defaultInstrument;
+	}
+	
+	public static LotroInstrument findInstrumentNameAggressively(String str, LotroInstrument defaultInstrument)
+	{
+		Pair<LotroInstrument, MatchResult> result = matchInstrumentAggr(str);
 		return (result != null) ? result.first : defaultInstrument;
 	}
 }
