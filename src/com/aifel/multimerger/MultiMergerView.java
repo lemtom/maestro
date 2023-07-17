@@ -26,21 +26,7 @@ public class MultiMergerView extends JFrame {
 	private JButton btnSource;
 	private JButton btnJoin;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MultiMergerView frame = new MultiMergerView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+
 
 	/**
 	 * Create the frame.
