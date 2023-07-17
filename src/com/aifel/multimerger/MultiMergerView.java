@@ -16,15 +16,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+import java.awt.Dimension;
 
 public class MultiMergerView extends JFrame {
 
 	private JPanel contentPane;
-	private JTextArea textArea;
+	private JScrollPane txtAreaScroll;
 	private JScrollPane scrollPane;
 	private JButton btnDest;
 	private JButton btnSource;
 	private JButton btnJoin;
+	private JTextArea txtArea;
+	private JPanel folderPanel;
+	private JLabel lblSource;
+	private JLabel lblDest;
 
 
 
@@ -32,8 +37,10 @@ public class MultiMergerView extends JFrame {
 	 * Create the frame.
 	 */
 	public MultiMergerView() {
+		setTitle("ABC Merge Tool");
+		setMinimumSize(new Dimension(800, 400));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 500, 400);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -41,6 +48,9 @@ public class MultiMergerView extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		scrollPane = new JScrollPane();
+		scrollPane.setPreferredSize(new Dimension(400, 200));
+		scrollPane.setSize(new Dimension(300, 200));
+		scrollPane.setMinimumSize(new Dimension(300, 200));
 		contentPane.add(scrollPane, BorderLayout.WEST);
 		
 		JPanel panel_1 = new JPanel();
@@ -49,8 +59,12 @@ public class MultiMergerView extends JFrame {
 		JLabel lblNewLabel = new JLabel("Convert single part abc files into multi part abc files");
 		panel_1.add(lblNewLabel);
 		
+		JPanel south = new JPanel();
+		south.setLayout(new BorderLayout(0, 0));
+		contentPane.add(south, BorderLayout.SOUTH);
+		
 		JSplitPane splitPane = new JSplitPane();
-		contentPane.add(splitPane, BorderLayout.SOUTH);
+		south.add(splitPane, BorderLayout.SOUTH);
 		
 		btnSource = new JButton("Select folder with single part files");
 		splitPane.setLeftComponent(btnSource);
@@ -62,18 +76,31 @@ public class MultiMergerView extends JFrame {
 		});
 		splitPane.setRightComponent(btnDest);
 		
+		folderPanel = new JPanel();
+		south.add(folderPanel, BorderLayout.NORTH);
+		folderPanel.setLayout(new BorderLayout(0, 0));
+		
+		lblSource = new JLabel("Source:");
+		folderPanel.add(lblSource, BorderLayout.NORTH);
+		
+		lblDest = new JLabel("Dest:");
+		folderPanel.add(lblDest, BorderLayout.SOUTH);
+		
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.EAST);
 		
-		btnJoin = new JButton("Join");
+		btnJoin = new JButton("Join & save");
 		panel.add(btnJoin);
 		
-		textArea = new JTextArea();
-		textArea.setWrapStyleWord(true);
-		textArea.setLineWrap(true);
-		textArea.setText("Start by by selecting BOTH folders.\r\n\r\nThen mark 2 or more abc part files.\r\n\r\nThen click Join.\r\n\r\nThen repeat for other songs.\r\n\r\nBEWARE: It will overwrite files in destination folder, so best to start with a empty destination folder.");
-		contentPane.add(textArea, BorderLayout.CENTER);
-		textArea.setColumns(10);
+		txtAreaScroll = new JScrollPane();
+		contentPane.add(txtAreaScroll, BorderLayout.CENTER);
+		
+		txtArea = new JTextArea();
+		txtArea.setWrapStyleWord(true);
+		txtArea.setText("Start by selecting BOTH folders.\r\nThen mark 2 or more abc part files.\r\nThen click Join.\r\nThen repeat for other songs.\r\n\r\nBEWARE: It will overwrite files in destination folder, so best to start with a empty destination folder.");
+		txtArea.setLineWrap(true);
+		txtArea.setColumns(10);
+		txtAreaScroll.setViewportView(txtArea);
 	}
 
 	public JScrollPane getScrollPane() {
@@ -89,9 +116,21 @@ public class MultiMergerView extends JFrame {
 		return btnJoin;
 	}
 	public String getTextFieldText() {
-		return textArea.getText();
+		return txtArea.getText();
 	}
 	public void setTextFieldText(String text) {
-		textArea.setText(text);
+		txtArea.setText(text);
+	}
+	public String getLblSourceText() {
+		return lblSource.getText();
+	}
+	public void setLblSourceText(String text_1) {
+		lblSource.setText(text_1);
+	}
+	public String getLblDestText() {
+		return lblDest.getText();
+	}
+	public void setLblDestText(String text_2) {
+		lblDest.setText(text_2);
 	}
 }

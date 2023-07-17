@@ -20,6 +20,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileSystemView;
 
@@ -69,15 +70,16 @@ public class MultiMerger {
 	
 	void refresh () {
         Component c = getGui(sourceFolder.listFiles(new AbcFileFilter()),false);
+        frame.setLblSourceText("Source: "+sourceFolder.getAbsolutePath());
+        frame.setLblDestText("Destination: "+destFolder.getAbsolutePath());
         frame.getScrollPane().setViewportView(c);
-        frame.pack();
+        //frame.pack();
         frame.repaint();
 	}
 	
 	private void join() throws IOException {
 		List<File> theFiles = theList.getSelectedValuesList();
 		if (theFiles != null && theFiles.size() > 1) {
-			System.out.println("Joining..");
 			List<List<String>> oldContent = new ArrayList();
 			for (File theFile : theFiles) {
 				List<String> lines = Files.readAllLines(Paths.get(theFile.toURI()), StandardCharsets.UTF_8);
@@ -86,6 +88,8 @@ public class MultiMerger {
 			List<String> newContent = new ArrayList();
 			int x = 1;
 			int fileNo = 0;
+			String Q = "";
+			boolean mismatch = false;
 			for (List<String> lines : oldContent) {
 				boolean meta = true;
 				LotroInstrument instr = null;
@@ -95,8 +99,6 @@ public class MultiMerger {
 					if (infoMatcher.matches()) {
 						char type = Character.toUpperCase(infoMatcher.group(INFO_TYPE).charAt(0));
 						String value = infoMatcher.group(INFO_VALUE).trim();
-						//AbcField field = AbcField.fromString(InfoMatcher.group(INFO_TYPE) + xInfoMatcher.group(XINFO_COLON));
-						//AbcField field = AbcField.fromString(line);
 						
 						if (Character.compare(type, 'X') == 0) {
 							meta = false;
@@ -115,6 +117,11 @@ public class MultiMerger {
 									if (instr != null) line += "[["+instr+"]]";
 								}
 							}
+						} else if (Character.compare(type, 'Q') == 0) {
+							if (!"".equals(Q) && !Q.equals(value)) {
+								mismatch = true;
+							}
+							Q = value;
 						}
 					}
 					if (!isX && (!meta || x == 1)) {
@@ -123,12 +130,28 @@ public class MultiMerger {
 				}
 				fileNo++;
 			}
+			
+			if (mismatch) {
+				int misresult = JOptionPane.showConfirmDialog(frame, "All these files do not seem to belong to same song. Continue with merge?", "Tempo mismatch", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				
+				switch (misresult) {
+					case JOptionPane.YES_OPTION:
+						break;
+					case JOptionPane.NO_OPTION:
+						frame.setTextFieldText("Cancelled merge.");
+						return;
+					case JOptionPane.CANCEL_OPTION:
+						frame.setTextFieldText("Cancelled merge.");
+						return;
+				}
+			}
+			
 			String n1 = theFiles.get(0).getName();
 			int dot = n1.lastIndexOf('.');
 			if (dot > 0)
 				n1 = n1.substring(0, dot);
 			
-			String n2 = theFiles.get(1).getName();
+			String n2 = theFiles.get(theFiles.size()-1).getName();
 			dot = n2.lastIndexOf('.');
 			if (dot > 0)
 				n2 = n2.substring(0, dot);
@@ -137,16 +160,31 @@ public class MultiMerger {
 			if (newName.length() == 0) newName = "mySong";
 			newName += ".abc";
 			File newFile = new File(destFolder, newName);
+			if (newFile.exists()) {
+				int result = JOptionPane.showConfirmDialog(frame, "The file "+newFile.getAbsolutePath()+" exist already. Do you want to overwrite it?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				
+				switch (result) {
+					case JOptionPane.YES_OPTION:
+						break;
+					case JOptionPane.NO_OPTION:
+						frame.setTextFieldText("Cancelled save.");
+						return;
+					case JOptionPane.CANCEL_OPTION:
+						frame.setTextFieldText("Cancelled save.");
+						return;
+				}				
+			}
 			newFile.createNewFile();
 			FileWriter writer = new FileWriter(newFile); 
 			
-			frame.setTextFieldText("Writing new file:\n "+newFile.getAbsolutePath()+"\n The song has "+x+" parts.");
-			System.out.println("Writing new file:\n "+newName+"\n The song has "+x+" parts.");
+			frame.setTextFieldText("Writing new file:\n "+newFile.getAbsolutePath()+"\n\n The song has "+(x-1)+" parts.");
+			String info = "Writing new file:\n "+newFile.getAbsolutePath()+"\n\n The song has "+(x-1)+" parts.\n\n";
 			for (String line : newContent) {
 				writer.write(line + System.lineSeparator());
-				//System.out.println(line);
+				info += System.lineSeparator() + line;
 			}
 			writer.close();
+			frame.setTextFieldText(info);
 		} else {
 			frame.setTextFieldText("Please select at least 2 abc files..");
 		}
@@ -248,7 +286,7 @@ public class MultiMerger {
 				{
 					openFileChooser = new JFileChooser(sourceFolder);
 					openFileChooser.setMultiSelectionEnabled(false);
-					openFileChooser.setFileFilter(new ExtensionFileFilter("ABC files", "abc", "txt"));
+					//openFileChooser.setFileFilter(new ExtensionFileFilter("ABC files", "abc", "txt"));
 					openFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				}
 
@@ -280,6 +318,7 @@ public class MultiMerger {
 				if (result == JFileChooser.APPROVE_OPTION)
 				{
 					destFolder = openFileChooser.getSelectedFile();
+					refresh();
 				}
 			}
 		};
