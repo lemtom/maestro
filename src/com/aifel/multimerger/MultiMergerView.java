@@ -17,6 +17,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.Dimension;
+import javax.swing.BoxLayout;
+import java.awt.Component;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 public class MultiMergerView extends JFrame {
 
@@ -30,6 +34,8 @@ public class MultiMergerView extends JFrame {
 	private JPanel folderPanel;
 	private JLabel lblSource;
 	private JLabel lblDest;
+	private JButton btnTest;
+	private JSeparator separator;
 
 
 
@@ -67,9 +73,11 @@ public class MultiMergerView extends JFrame {
 		south.add(splitPane, BorderLayout.SOUTH);
 		
 		btnSource = new JButton("Select folder with single part files");
+		btnSource.setToolTipText("This is the folder where the old ABC files are.");
 		splitPane.setLeftComponent(btnSource);
 		
 		btnDest = new JButton("Select multi part destination folder");
+		btnDest.setToolTipText("This is the folder where you want the new ABC files to be. Its recommended that it is empty.");
 		btnDest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
@@ -88,9 +96,24 @@ public class MultiMergerView extends JFrame {
 		
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.EAST);
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
 		btnJoin = new JButton("Join & save");
+		btnJoin.setToolTipText("Join the selected ABC files into 1 ABC song and then save it.");
+		btnJoin.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.add(btnJoin);
+		
+		btnTest = new JButton("Test");
+		btnTest.setToolTipText("Open this song in Abc Player");
+		btnTest.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnTest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		
+		separator = new JSeparator();
+		panel.add(separator);
+		panel.add(btnTest);
 		
 		txtAreaScroll = new JScrollPane();
 		contentPane.add(txtAreaScroll, BorderLayout.CENTER);
@@ -139,5 +162,14 @@ public class MultiMergerView extends JFrame {
 	}
 	public void setBtnJoinEnabled(boolean enabled) {
 		btnJoin.setEnabled(enabled);
+	}
+	public boolean getBtnTestEnabled() {
+		return btnTest.isEnabled();
+	}
+	public void setBtnTestEnabled(boolean enabled_1) {
+		btnTest.setEnabled(enabled_1);
+	}
+	public JButton getBtnTest() {
+		return btnTest;
 	}
 }

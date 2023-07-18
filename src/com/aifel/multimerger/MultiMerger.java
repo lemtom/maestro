@@ -36,6 +36,7 @@ public class MultiMerger {
 	private ActionListener actionSource = getSourceActionListener();
 	private ActionListener actionDest = getDestActionListener();
 	private ActionListener actionJoin = getJoinActionListener();
+	private ActionListener actionTest = getTestActionListener();
 		
 	private static final Pattern INFO_PATTERN = Pattern.compile("^([A-Z]):\\s*(.*)\\s*$");
 	private static final int INFO_TYPE = 1;
@@ -45,6 +46,7 @@ public class MultiMerger {
 	private static MultiMerger logic = null;
 	
 	JList<File> theList = null; 
+	private String lastExport = null;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -64,6 +66,7 @@ public class MultiMerger {
 		frame.getBtnDest().addActionListener(actionDest);
 		frame.getBtnSource().addActionListener(actionSource);
 		frame.getBtnJoin().addActionListener(actionJoin);
+		frame.getBtnTest().addActionListener(actionTest);
 		frame.getScrollPane().getVerticalScrollBar().setUnitIncrement(22);
         refresh();
 	}
@@ -74,8 +77,13 @@ public class MultiMerger {
         frame.setLblDestText("Destination: "+destFolder.getAbsolutePath());
         frame.getScrollPane().setViewportView(c);
         frame.setBtnJoinEnabled(c != null);
+        refreshTest();
         //frame.pack();
         frame.repaint();
+	}
+	
+	private void refreshTest() {
+		frame.setBtnTestEnabled(lastExport != null);
 	}
 	
 	private void join() throws IOException {
@@ -161,9 +169,13 @@ public class MultiMerger {
 						break;
 					case JOptionPane.NO_OPTION:
 						frame.setTextFieldText("Cancelled merge.");
+						lastExport = null;
+						refreshTest();
 						return;
 					case JOptionPane.CANCEL_OPTION:
 						frame.setTextFieldText("Cancelled merge.");
+						lastExport = null;
+						refreshTest();
 						return;
 				}
 			}
@@ -190,9 +202,13 @@ public class MultiMerger {
 						break;
 					case JOptionPane.NO_OPTION:
 						frame.setTextFieldText("Cancelled save.");
+						lastExport = null;
+						refreshTest();
 						return;
 					case JOptionPane.CANCEL_OPTION:
 						frame.setTextFieldText("Cancelled save.");
+						lastExport = null;
+						refreshTest();
 						return;
 				}				
 			}
@@ -206,10 +222,21 @@ public class MultiMerger {
 				info += System.lineSeparator() + line;
 			}
 			writer.close();
+			lastExport = newFile.getAbsolutePath();
+			refreshTest();
 			frame.setTextFieldText(info);
 		} else {
 			frame.setTextFieldText("Please select at least 2 abc files..");
+			lastExport = null;
+			refreshTest();
 		}
+	}
+	
+	private void test() throws IOException {
+		if (lastExport == null) return;
+		String cmd = "javaw.exe -d64 -classpath . -jar AbcPlayer.jar "+lastExport.replace('\\', '/');
+		System.out.println(cmd);
+		Runtime.getRuntime().exec(cmd);
 	}
 	
 	private static String trimNonAbc(String text) {
@@ -383,6 +410,23 @@ public class MultiMerger {
 			{
 				try {
 					join();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					frame.setTextFieldText("An error occured:\n\n"+e1.toString());
+					lastExport = null;
+					refreshTest();
+				}
+			}
+		};
+	}
+	
+	private ActionListener getTestActionListener() {
+		return new ActionListener()
+		{
+			@Override public void actionPerformed(ActionEvent e)
+			{
+				try {
+					test();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 					frame.setTextFieldText("An error occured:\n\n"+e1.toString());
