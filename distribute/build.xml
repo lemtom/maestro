@@ -9,6 +9,7 @@
 	<property name="tools" location="tools" />
 	<property name="basename.AbcPlayer" value="AbcPlayer" />
 	<property name="basename.Maestro" value="Maestro" />
+	<property name="basename.AbcMergeTool" value="AbcMergeTool" />
 	<property file="${src}/com/digero/abcplayer/version.txt" />
 	<!-- For version.AbcPlayer -->
 	<property file="${src}/com/digero/maestro/version.txt" />
@@ -47,6 +48,7 @@
 		<copy file="msxfile.ico" todir="${build}" />
 		<copy file="Start Maestro.bat" todir="${build}" />
 		<copy file="Start AbcPlayer.bat" todir="${build}" />
+		<copy file="Start MergeTool.bat" todir="${build}" />
 		<copy file="Changes since Maestro 2.5.0.txt" todir="${build}" />
 		<copy todir="${build}">
 			<fileset dir="${target}" includes="*.jar" />
@@ -128,17 +130,16 @@
 	<target name="ZipFile" depends="preStuff">
 		<mkdir dir="${output}" />
 		<zip destfile="${output}/${basename.Maestro}_v${version.Maestro}.zip" basedir="${build}">
-			<!--include name="${basename.Maestro}64.exe" /-->
 			<include name="${basename.Maestro}.jar" />
-			<!--include name="${basename.AbcPlayer}64.exe" /-->
 			<include name="${basename.AbcPlayer}.jar" />
-			<!--include name="WinRun4J.jar" /-->
+			<include name="${basename.AbcMergeTool}.jar" />
 			<include name="LotroInstruments.sf2" />
 			<include name="midifile.ico" />
 			<include name="abcfile.ico" />
 			<include name="msxfile.ico" />
 			<include name="Start Maestro.bat" />
 			<include name="Start AbcPlayer.bat" />
+			<include name="Start MergeTool.bat" />
 			<include name="Changes since Maestro 2.5.0.txt" />
 		</zip>
 	</target>

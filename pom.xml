@@ -101,7 +101,7 @@
 									<mainClass>com.aifel.multimerger.MultiMerger</mainClass>
 								</manifest>
 							</archive>
-							<finalName>MergeTool</finalName>
+							<finalName>AbcMergeTool</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
