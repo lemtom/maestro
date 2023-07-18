@@ -31,11 +31,11 @@ import com.digero.common.abc.LotroInstrument;
 
 public class MultiMerger {
 	
-	public File sourceFolder = new File(System.getProperty("user.home"));
-	public File destFolder = new File(System.getProperty("user.home"));
-	public ActionListener actionSource = getSourceActionListener();
-	public ActionListener actionDest = getDestActionListener();
-	public ActionListener actionJoin = getJoinActionListener();
+	private File sourceFolder = new File(System.getProperty("user.home"));
+	private File destFolder = new File(System.getProperty("user.home"));
+	private ActionListener actionSource = getSourceActionListener();
+	private ActionListener actionDest = getDestActionListener();
+	private ActionListener actionJoin = getJoinActionListener();
 		
 	private static final Pattern INFO_PATTERN = Pattern.compile("^([A-Z]):\\s*(.*)\\s*$");
 	private static final int INFO_TYPE = 1;
@@ -68,7 +68,7 @@ public class MultiMerger {
         refresh();
 	}
 	
-	void refresh () {
+	private void refresh () {
         Component c = getGui(sourceFolder.listFiles(new AbcFileFilter()),false);
         frame.setLblSourceText("Source: "+sourceFolder.getAbsolutePath());
         frame.setLblDestText("Destination: "+destFolder.getAbsolutePath());
@@ -86,13 +86,28 @@ public class MultiMerger {
 				List<String> lines = Files.readAllLines(Paths.get(theFile.toURI()), StandardCharsets.UTF_8);
 				oldContent.add(lines);
 			}
+			
+			int numberOfParts = 0;
+			for (List<String> lines : oldContent) {
+				for (String line : lines) {
+					Matcher infoMatcher = INFO_PATTERN.matcher(line);
+					if (infoMatcher.matches()) {
+						char type = Character.toUpperCase(infoMatcher.group(INFO_TYPE).charAt(0));
+						if (type == 'X') {
+							numberOfParts++;
+						}
+					}
+				}
+			}
+			String badgerParts = getAllParts(numberOfParts);
+			
 			List<String> newContent = new ArrayList();
 			int x = 1;
 			int fileNo = 0;
 			String Q = "";
 			boolean mismatch = false;
-			for (List<String> lines : oldContent) {
-				boolean meta = true;
+			boolean meta = true;
+			for (List<String> lines : oldContent) {				
 				LotroInstrument instr = null;
 				for (String line : lines) {
 					Matcher infoMatcher = INFO_PATTERN.matcher(line);
@@ -102,6 +117,7 @@ public class MultiMerger {
 						String value = infoMatcher.group(INFO_VALUE).trim();
 						
 						if (type == 'X') {
+							if (meta) newContent.add(badgerParts); 
 							meta = false;
 							newContent.add("X: "+x);
 							newContent.add("%%Orig filename was "+theFiles.get(fileNo).getName());
@@ -117,6 +133,9 @@ public class MultiMerger {
 								} else if (instr == null) {
 									instr = LotroInstrument.findInstrumentNameAggressively(theFiles.get(fileNo).getName(), null);
 									if (instr != null) line += "[["+instr+"]]";// Double [[ means there is significant chance it got the instrument wrong
+									else if (theFiles.get(fileNo).getName().toLowerCase().contains("wind")) {
+										line += "[Wind]";
+									}
 								}
 							}
 						} else if (type == 'Q') {
@@ -159,7 +178,7 @@ public class MultiMerger {
 			if (dot > 0)
 				n2 = n2.substring(0, dot);
 			
-			String newName = getLongestCommonSubstring(n1, n2);
+			String newName = trimNonAbc(getLongestCommonSubstring(n1, n2));
 			if (newName.length() == 0) newName = "mySong";
 			newName += ".abc";
 			File newFile = new File(destFolder, newName);
@@ -193,7 +212,36 @@ public class MultiMerger {
 		}
 	}
 	
-	public JScrollPane getGui(File[] all, boolean vertical) {
+	private static String trimNonAbc(String text) {
+		// remove leading and trailing '-' '_' and trailing '('
+		text = text.trim();
+		if (text.length() == 0) return text;
+		if (text.endsWith("-") || text.endsWith("_") || text.endsWith("(")) {
+			text = text.substring(0, text.length() - 1);
+		}
+		if (text.startsWith("-") || text.startsWith("_")) {
+			text = text.substring(1, text.length());
+		}
+		return text;
+    }
+	
+	/**
+	 * 
+	 * @param x The number of parts
+	 * @return string for badger chapter songbooks
+	 */
+	private String getAllParts(int x) {
+		String str = "N: TS  ";
+		StringBuilder str2 = new StringBuilder();
+
+		for (int part = 1; part <= x; part++) {
+			str2.append("  ").append(part);
+		}
+		str += x+", ";
+		return str+str2;
+	}
+	
+	private JList getGui(File[] all, boolean vertical) {
 		if (all.length == 0) return null;
         theList = new JList<File>(all);
         theList.setCellRenderer(new FileRenderer(!vertical));
@@ -204,7 +252,7 @@ public class MultiMerger {
         } else {
         	theList.setVisibleRowCount(9);
         }
-        return new JScrollPane(theList);
+        return theList;
     }
 	
 	class AbcFileFilter implements FileFilter {
@@ -279,7 +327,7 @@ public class MultiMerger {
 	    }
 	}
 	
-	public ActionListener getSourceActionListener () {
+	private ActionListener getSourceActionListener () {
 		return new ActionListener()
 		{
 			JFileChooser openFileChooser;
@@ -304,7 +352,7 @@ public class MultiMerger {
 		};
 	}
 	
-	public ActionListener getDestActionListener () {
+	private ActionListener getDestActionListener () {
 		return new ActionListener()
 		{
 			JFileChooser openFileChooser;
