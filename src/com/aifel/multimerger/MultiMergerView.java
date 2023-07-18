@@ -133,4 +133,10 @@ public class MultiMergerView extends JFrame {
 	public void setLblDestText(String text_2) {
 		lblDest.setText(text_2);
 	}
+	public boolean getBtnJoinEnabled() {
+		return btnJoin.isEnabled();
+	}
+	public void setBtnJoinEnabled(boolean enabled) {
+		btnJoin.setEnabled(enabled);
+	}
 }

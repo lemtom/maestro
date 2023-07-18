@@ -28,7 +28,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.Border;
 
 import com.digero.common.abc.LotroInstrument;
-import com.digero.common.util.ExtensionFileFilter;
 
 public class MultiMerger {
 	
@@ -65,6 +64,7 @@ public class MultiMerger {
 		frame.getBtnDest().addActionListener(actionDest);
 		frame.getBtnSource().addActionListener(actionSource);
 		frame.getBtnJoin().addActionListener(actionJoin);
+		frame.getScrollPane().getVerticalScrollBar().setUnitIncrement(20);
         refresh();
 	}
 	
@@ -73,6 +73,7 @@ public class MultiMerger {
         frame.setLblSourceText("Source: "+sourceFolder.getAbsolutePath());
         frame.setLblDestText("Destination: "+destFolder.getAbsolutePath());
         frame.getScrollPane().setViewportView(c);
+        frame.setBtnJoinEnabled(c != null);
         //frame.pack();
         frame.repaint();
 	}
@@ -191,6 +192,7 @@ public class MultiMerger {
 	}
 	
 	public JScrollPane getGui(File[] all, boolean vertical) {
+		if (all.length == 0) return null;
         theList = new JList<File>(all);
         theList.setCellRenderer(new FileRenderer(!vertical));
 

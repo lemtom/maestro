@@ -86,6 +86,25 @@
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
+					<execution>
+						<id>MergeJar</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<classifier>merge</classifier>
+							<archive>
+								<index>true</index>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<mainClass>com.aifel.multimerger.MultiMerger</mainClass>
+								</manifest>
+							</archive>
+							<finalName>MergeTool</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
