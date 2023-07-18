@@ -871,7 +871,8 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
                         continue;
 
                     int[] sv = getSectionVelocity(ne);
-                    int velocity = (int) ((ne.velocity + deltaVolume + sv[0]) * 0.01f * (float) sv[1]);
+                    int velocity = getSourceNoteVelocity(ne);
+                    velocity = (int) ((velocity + deltaVolume + sv[0]) * 0.01f * (float) sv[1]);
 
                     Dynamics dynamicsRenderedInThisPass = null;
                     if (d == dynamicsValues.length)
@@ -994,6 +995,10 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 				}
 			}
 		}
+	}
+	
+	protected int getSourceNoteVelocity(NoteEvent note) {
+		return note.velocity;
 	}
 
 	protected int[] getSectionVelocity(NoteEvent note) {

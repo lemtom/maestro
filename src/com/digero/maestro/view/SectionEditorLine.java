@@ -10,6 +10,7 @@ class SectionEditorLine {
     JTextField transpose = new JTextField("0");
     JTextField velo = new JTextField("0");
     JCheckBox silent = new JCheckBox();
+    JCheckBox resetVelocities = new JCheckBox();
     JTextField fade = new JTextField("0");
     JCheckBox doubling0 = new JCheckBox();
     JCheckBox doubling1 = new JCheckBox();

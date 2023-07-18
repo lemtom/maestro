@@ -47,6 +47,8 @@ Maestro upgrades by Aifel of Laurelin, Elamond of Landroval and Karloman
 ================
 Version 2.5.0.116
 - Added an Abc Merge Tool. It can takes multiple single-part ABC files and merge them into one multi-part ABC song.
+- Added an option to section editor to reset volumes on source notes (e.g. midi notes),
+    so seen from Maestro there will be no volume variations in the midi file in the specified section (beside from section changes).
 
 Version 2.5.0.115
 - Space can now be used to play/pause.

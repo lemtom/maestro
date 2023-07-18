@@ -1162,7 +1162,8 @@ public class AbcExporter
 						}
 						
 						int[] sva = part.getSectionVolumeAdjust(t, ne);
-						int velocity = (int)((ne.velocity + part.getTrackVolumeAdjust(t) + sva[0])*0.01f*(float)sva[1]);
+						int velocity = part.getSectionNoteVelocity(t, ne);
+						velocity = (int)((velocity + part.getTrackVolumeAdjust(t) + sva[0])*0.01f*(float)sva[1]);
 						NoteEvent newNE = new NoteEvent(mappedNote, velocity, startTick, endTick, qtm);
 						if (!part.isDrumPart()) {
 							int origId = part.mapNoteFullOctaves(t, ne.note.id, ne.getStartTick());

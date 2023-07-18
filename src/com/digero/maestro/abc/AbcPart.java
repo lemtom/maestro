@@ -19,6 +19,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.digero.common.abc.Dynamics;
 import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.ITempoCache;
 import com.digero.common.midi.MidiConstants;
@@ -163,6 +164,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		        	SaveUtil.appendChildTextElement(sectionEle, "silence", String.valueOf(ps.silence));
 		        	SaveUtil.appendChildTextElement(sectionEle, "fade", String.valueOf(ps.fade));
 		        	SaveUtil.appendChildTextElement(sectionEle, "dialogLine", String.valueOf(ps.dialogLine));
+		        	SaveUtil.appendChildTextElement(sectionEle, "resetVelocities", String.valueOf(ps.resetVelocities));
 		        	if (!instrument.isPercussion) {
 			        	if (ps.doubling[0]) SaveUtil.appendChildTextElement(sectionEle, "double2OctDown", String.valueOf(ps.doubling[0]));
 			        	if (ps.doubling[1]) SaveUtil.appendChildTextElement(sectionEle, "double1OctDown", String.valueOf(ps.doubling[1]));
@@ -176,6 +178,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	        	PartSection ps = nonSection.get(t);
 	        	Element sectionEle = (Element) trackEle.appendChild(doc.createElement("nonSection"));
 	        	SaveUtil.appendChildTextElement(sectionEle, "silence", String.valueOf(ps.silence));
+	        	SaveUtil.appendChildTextElement(sectionEle, "resetVelocities", String.valueOf(ps.resetVelocities));
 	        	if (!instrument.isPercussion) {
 		        	if (ps.doubling[0]) SaveUtil.appendChildTextElement(sectionEle, "double2OctDown", String.valueOf(ps.doubling[0]));
 		        	if (ps.doubling[1]) SaveUtil.appendChildTextElement(sectionEle, "double1OctDown", String.valueOf(ps.doubling[1]));
@@ -300,6 +303,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					ps.doubling[1] = SaveUtil.parseValue(sectionEle, "double1OctDown", false);
 					ps.doubling[2] = SaveUtil.parseValue(sectionEle, "double1OctUp", false);
 					ps.doubling[3] = SaveUtil.parseValue(sectionEle, "double2OctUp", false);
+					ps.resetVelocities = SaveUtil.parseValue(sectionEle, "resetVelocities", false);
 					boolean fadeout = SaveUtil.parseValue(sectionEle, "fadeout", false);
 					int fade = SaveUtil.parseValue(sectionEle, "fade", 0);
 					if (fade != 0) {
@@ -334,6 +338,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				if (nonSectionEle != null) {
 					PartSection ps = new PartSection();
 					ps.silence = SaveUtil.parseValue(nonSectionEle, "silence", false);
+					ps.resetVelocities = SaveUtil.parseValue(nonSectionEle, "resetVelocities", false);
 					ps.doubling[0] = SaveUtil.parseValue(nonSectionEle, "double2OctDown", false);
 					ps.doubling[1] = SaveUtil.parseValue(nonSectionEle, "double1OctDown", false);
 					ps.doubling[2] = SaveUtil.parseValue(nonSectionEle, "double1OctUp", false);
@@ -871,6 +876,48 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 		
 		return secDoubling;
+	}
+	
+	/**
+	 * @param track
+	 * @param ne
+	 * @return velocity of the noteEvent, or is reset velocities active, then mezzoforte
+	 */	
+	public int getSectionNoteVelocity(int track, NoteEvent ne) {
+		SequenceInfo se = getSequenceInfo();
+		TreeMap<Integer, PartSection> tree = sections.get(track);
+		boolean isSection = false;
+		if (se != null && tree != null) {
+			SequenceDataCache data = se.getDataCache();
+			long barLengthTicks = data.getBarLengthTicks();
+
+			long startTick = barLengthTicks;
+			long endTick = data.getSongLengthTicks();
+
+			int bar = -1;
+			int curBar = 1;
+			for (long barTick = startTick; barTick <= endTick+barLengthTicks; barTick += barLengthTicks) {
+				if (ne.getStartTick() < barTick) {
+					bar = curBar;
+					break;
+				}
+				curBar += 1;
+			}
+			if (bar != -1) {
+				Entry<Integer, PartSection> entry = tree.floorEntry(bar);
+				if (entry != null) {
+					if (bar <= entry.getValue().endBar) {
+						isSection = true;
+						return entry.getValue().resetVelocities?Dynamics.DEFAULT.midiVol:ne.velocity;
+					}
+				}
+			}
+		}
+		if (se != null && !isSection && nonSection.get(track) != null) {
+			return nonSection.get(track).resetVelocities?Dynamics.DEFAULT.midiVol:ne.velocity;
+		}
+		
+		return ne.velocity;
 	}
 	
 	public int[] getSectionVolumeAdjust(int track, NoteEvent ne) {

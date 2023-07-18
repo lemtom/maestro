@@ -45,7 +45,7 @@ public class SectionEditor {
 		@SuppressWarnings("serial")
 		class SectionDialog extends JDialog {
 			
-			private final double[] LAYOUT_COLS = new double[] { 0.089,0.102,0.102,0.102,0.102,0.081,0.102,0.08,0.08,0.08,0.08 };
+			private final double[] LAYOUT_COLS = new double[] { 0.081,0.093,0.093,0.093,0.093,0.073,0.093,0.093,0.072,0.072,0.072,0.072 };
 			private double[] LAYOUT_ROWS;
 			private AbcPart abcPart;
 			private int track;
@@ -122,19 +122,19 @@ public class SectionEditor {
 		        */
 		        TableLayout layout = new TableLayout(LAYOUT_COLS, LAYOUT_ROWS);
 		        int vg = layout.getVGap();
-		        int w = 32 * rowHeight;
+		        int w = 34 * rowHeight;
 		        int h = (numberOfSections + 1)* rowHeight + 5 * auxHeight + (4 + numberOfSections) * vg;
 		        this.setSize(w,h);
 		        
 		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
 		        
 		        // Row 0
-		        panel.add(new JLabel("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>"), "0, 0, 6, 0, C, C");
+		        panel.add(new JLabel("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>"), "0, 0, 7, 0, C, C");
 		        JTextField octDouble = new JTextField("Octave doubling");
 		        octDouble.setEditable(false);
 		        octDouble.setHorizontalAlignment(JTextField.CENTER);
 //		        panel.add(octDouble, "7, 0, 10, 0, f, f");
-		        panel.add(new JLabel("Octave doubling"), "7, 0, 10, 0, c, c");
+		        panel.add(new JLabel("Octave doubling"), "8, 0, 11, 0, c, c");
 		        
 		        // Row 1
 		        panel.add(new JLabel("Enable"), "0, 1, c, c");
@@ -144,10 +144,11 @@ public class SectionEditor {
 		        panel.add(new JLabel("Volume"), "4, 1, c, c");
 		        panel.add(new JLabel("Silence"), "5, 1, c, c");
 		        panel.add(new JLabel("Fade %"), "6, 1, c, c");
-		        panel.add(new JLabel("2 down"), "7, 1, c, c");
-		        panel.add(new JLabel("1 down"), "8, 1, c, c");
-		        panel.add(new JLabel("1 up"), "9, 1, c, c");
-		        panel.add(new JLabel("2 up"), "10, 1, c, c");
+		        panel.add(new JLabel("Reset Vol"), "7, 1, c, c");
+		        panel.add(new JLabel("2 down"), "8, 1, c, c");
+		        panel.add(new JLabel("1 down"), "9, 1, c, c");
+		        panel.add(new JLabel("1 up"), "10, 1, c, c");
+		        panel.add(new JLabel("2 up"), "11, 1, c, c");
 		        JTextField nonSection = new JTextField("Rest of the track");
 		        nonSection.setEditable(false);
 		        nonSection.setHorizontalAlignment(JTextField.CENTER);
@@ -186,6 +187,7 @@ public class SectionEditor {
 			        		sectionInputs.get(number).velo.setText(String.valueOf(ps.volumeStep));
 			        		sectionInputs.get(number).silent.setSelected(ps.silence);
 			        		sectionInputs.get(number).fade.setText(String.valueOf(ps.fade));
+			        		sectionInputs.get(number).resetVelocities.setSelected(ps.resetVelocities);
 			        		sectionInputs.get(number).doubling0.setSelected(ps.doubling[0]);
 			        		sectionInputs.get(number).doubling1.setSelected(ps.doubling[1]);
 			        		sectionInputs.get(number).doubling2.setSelected(ps.doubling[2]);
@@ -197,6 +199,7 @@ public class SectionEditor {
 		        
 		        PartSection ps = abcPart.nonSection.get(track);
 		        nonSectionInput.silent.setSelected(ps != null && ps.silence);
+		        nonSectionInput.resetVelocities.setSelected(ps != null && ps.resetVelocities);
         		nonSectionInput.doubling0.setSelected(ps != null && ps.doubling[0]);
         		nonSectionInput.doubling1.setSelected(ps != null && ps.doubling[1]);
         		nonSectionInput.doubling2.setSelected(ps != null && ps.doubling[2]);
@@ -213,6 +216,7 @@ public class SectionEditor {
 		        String transpose = "<html><b> Transpose this section some octaves up or down. </b><br> Enter a positive or negative number. </html>";
 		        String velo = "<html><b> Offset the volume of this section. </b><br> Experiment to find the number that does what you want. <br> Normally a number from -250 to 250. </html>";
 		        String silent = "<html><b> Silence this section. </b></html>";
+		        String reset = "<html><b> Reset volumes from the source notes. </b></html>";
 		        String fade = "<html><b> Fade in/out the volume of this section. </b><br> 0 = no fading <br> 100 = fade out full <br> -100 = fade in full <br> 150 = fade out before section ends <br> Etc. etc.. </html>";
 		        String d0 = "<html><b> Double all notes in this section 2 octaves below.</b></html>";
 		        String d1 = "<html><b> Double all notes in this section 1 octave below.</b></html>";
@@ -220,6 +224,7 @@ public class SectionEditor {
 		        String d3 = "<html><b> Double all notes in this section 2 octaves above.</b></html>";
 		        
 		        for (int i = 0;i<numberOfSections;i++) {
+		        	sectionInputs.get(i).resetVelocities.setToolTipText(reset);
 		        	sectionInputs.get(i).fade.setToolTipText(fade);
 		        	sectionInputs.get(i).silent.setToolTipText(silent);
 		        	sectionInputs.get(i).velo.setToolTipText(velo);
@@ -245,22 +250,25 @@ public class SectionEditor {
 			        panel.add(sectionInputs.get(i).velo, "4,"+(firstRowIndex+i)+",f,f");
 			        panel.add(sectionInputs.get(i).silent, "5,"+(firstRowIndex+i)+",c,f");
 			        panel.add(sectionInputs.get(i).fade, "6,"+(firstRowIndex+i)+",f,f");
-			        panel.add(sectionInputs.get(i).doubling0, "7,"+(firstRowIndex+i)+",c,f");
-			        panel.add(sectionInputs.get(i).doubling1, "8,"+(firstRowIndex+i)+",c,f");
-			        panel.add(sectionInputs.get(i).doubling2, "9,"+(firstRowIndex+i)+",c,f");
-			        panel.add(sectionInputs.get(i).doubling3, "10,"+(firstRowIndex+i)+",c,f");
+			        panel.add(sectionInputs.get(i).resetVelocities, "7,"+(firstRowIndex+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling0, "8,"+(firstRowIndex+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling1, "9,"+(firstRowIndex+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling2, "10,"+(firstRowIndex+i)+",c,f");
+			        panel.add(sectionInputs.get(i).doubling3, "11,"+(firstRowIndex+i)+",c,f");
 		        }
 		        
 		        nonSectionInput.silent.setToolTipText(silent);
+		        nonSectionInput.resetVelocities.setToolTipText(reset);
 		        nonSectionInput.doubling0.setToolTipText(d0);
 	        	nonSectionInput.doubling1.setToolTipText(d1);
 	        	nonSectionInput.doubling2.setToolTipText(d2);
 	        	nonSectionInput.doubling3.setToolTipText(d3);
 	        	panel.add(nonSectionInput.silent, "5,"+(firstRowIndex+numberOfSections)+",c,f");
-		        panel.add(nonSectionInput.doubling0, "7,"+(firstRowIndex+numberOfSections)+",c,f");
-		        panel.add(nonSectionInput.doubling1, "8,"+(firstRowIndex+numberOfSections)+",c,f");
-		        panel.add(nonSectionInput.doubling2, "9,"+(firstRowIndex+numberOfSections)+",c,f");
-		        panel.add(nonSectionInput.doubling3, "10,"+(firstRowIndex+numberOfSections)+",c,f");
+	        	panel.add(nonSectionInput.resetVelocities, "7,"+(firstRowIndex+numberOfSections)+",c,f");
+		        panel.add(nonSectionInput.doubling0, "8,"+(firstRowIndex+numberOfSections)+",c,f");
+		        panel.add(nonSectionInput.doubling1, "9,"+(firstRowIndex+numberOfSections)+",c,f");
+		        panel.add(nonSectionInput.doubling2, "10,"+(firstRowIndex+numberOfSections)+",c,f");
+		        panel.add(nonSectionInput.doubling3, "11,"+(firstRowIndex+numberOfSections)+",c,f");
 		        
 		        copySections.getModel().addActionListener(e -> {
 					for (int i = 0; i < numberOfSections; i++) {
@@ -333,6 +341,7 @@ public class SectionEditor {
 									ps1.endBar = Integer.parseInt(sectionInputs.get(k).barB.getText());
 									ps1.silence = sectionInputs.get(k).silent.isSelected();
 									ps1.fade = Integer.parseInt(sectionInputs.get(k).fade.getText());
+									ps1.resetVelocities = sectionInputs.get(k).resetVelocities.isSelected();
 									ps1.doubling[0] = sectionInputs.get(k).doubling0.isSelected();
 									ps1.doubling[1] = sectionInputs.get(k).doubling1.isSelected();
 									ps1.doubling[2] = sectionInputs.get(k).doubling2.isSelected();
@@ -358,11 +367,12 @@ public class SectionEditor {
 					PartSection ps1 = new PartSection();
 					try {
 							ps1.silence = nonSectionInput.silent.isSelected();
+							ps1.resetVelocities = nonSectionInput.resetVelocities.isSelected();
 							ps1.doubling[0] = nonSectionInput.doubling0.isSelected();
 							ps1.doubling[1] = nonSectionInput.doubling1.isSelected();
 							ps1.doubling[2] = nonSectionInput.doubling2.isSelected();
 							ps1.doubling[3] = nonSectionInput.doubling3.isSelected();
-							if (ps1.silence || ps1.doubling[0] || ps1.doubling[1] || ps1.doubling[2] || ps1.doubling[3]) {
+							if (ps1.silence || ps1.resetVelocities || ps1.doubling[0] || ps1.doubling[1] || ps1.doubling[2] || ps1.doubling[3]) {
 								SectionDialog.this.abcPart.nonSection.set(SectionDialog.this.track, ps1);
 							} else {
 								SectionDialog.this.abcPart.nonSection.set(SectionDialog.this.track, null);
