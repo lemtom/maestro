@@ -64,7 +64,7 @@ public class MultiMerger {
 		frame.getBtnDest().addActionListener(actionDest);
 		frame.getBtnSource().addActionListener(actionSource);
 		frame.getBtnJoin().addActionListener(actionJoin);
-		frame.getScrollPane().getVerticalScrollBar().setUnitIncrement(20);
+		frame.getScrollPane().getVerticalScrollBar().setUnitIncrement(22);
         refresh();
 	}
 	
@@ -101,24 +101,25 @@ public class MultiMerger {
 						char type = Character.toUpperCase(infoMatcher.group(INFO_TYPE).charAt(0));
 						String value = infoMatcher.group(INFO_VALUE).trim();
 						
-						if (Character.compare(type, 'X') == 0) {
+						if (type == 'X') {
 							meta = false;
 							newContent.add("X: "+x);
 							newContent.add("%%Orig filename was "+theFiles.get(fileNo).getName());
 							x++;
 							isX = true;
-						} else if (Character.compare(type, 'T') == 0) {
+						} else if (type == 'T') {
 							instr = LotroInstrument.findInstrumentName(value, null);
 							if (instr == null) {
+								// instr was not found in the part name, lets check the filename
 								instr = LotroInstrument.findInstrumentName(theFiles.get(fileNo).getName(), null);
 								if (instr != null) {
 									line += "["+instr+"]";
 								} else if (instr == null) {
 									instr = LotroInstrument.findInstrumentNameAggressively(theFiles.get(fileNo).getName(), null);
-									if (instr != null) line += "[["+instr+"]]";
+									if (instr != null) line += "[["+instr+"]]";// Double [[ means there is significant chance it got the instrument wrong
 								}
 							}
-						} else if (Character.compare(type, 'Q') == 0) {
+						} else if (type == 'Q') {
 							if (!"".equals(Q) && !Q.equals(value)) {
 								mismatch = true;
 							}
@@ -126,6 +127,7 @@ public class MultiMerger {
 						}
 					}
 					if (!isX && (!meta || x == 1)) {
+						// X is not written here, and only header meta info from first file.
 						newContent.add(line);
 					}
 				}
@@ -133,7 +135,7 @@ public class MultiMerger {
 			}
 			
 			if (mismatch) {
-				int misresult = JOptionPane.showConfirmDialog(frame, "All these files do not seem to belong to same song. Continue with merge?", "Tempo mismatch", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				int misresult = JOptionPane.showConfirmDialog(frame, "All these files do not seem to belong to same song. Continue with merge?", "Tempo mismatch", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 				
 				switch (misresult) {
 					case JOptionPane.YES_OPTION:

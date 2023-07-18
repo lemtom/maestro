@@ -96,6 +96,7 @@ public class MultiMergerView extends JFrame {
 		contentPane.add(txtAreaScroll, BorderLayout.CENTER);
 		
 		txtArea = new JTextArea();
+		txtArea.setEditable(false);
 		txtArea.setWrapStyleWord(true);
 		txtArea.setText("Start by selecting BOTH folders.\r\nThen mark 2 or more abc part files.\r\nThen click Join.\r\nThen repeat for other songs.\r\n\r\nBEWARE: It will overwrite files in destination folder, so best to start with a empty destination folder.");
 		txtArea.setLineWrap(true);
