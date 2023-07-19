@@ -5,8 +5,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -23,14 +21,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
+import com.digero.common.util.Listener;
 import com.digero.maestro.abc.AbcPart;
+import com.digero.maestro.abc.AbcPartEvent;
+import com.digero.maestro.abc.AbcSongEvent;
 import com.digero.maestro.abc.PartSection;
+import com.digero.maestro.abc.AbcPartEvent.AbcPartProperty;
 
 import info.clearthought.layout.TableLayout;
-import info.clearthought.layout.TableLayoutConstants;
 
 public class SectionEditor {
 	
@@ -40,8 +39,11 @@ public class SectionEditor {
 	static String[] clipboardStart = new String[numberOfSections];
 	static String[] clipboardEnd = new String[numberOfSections];
 	static boolean[] clipboardEnabled = new boolean[numberOfSections];
+	private static JDialog openDialog = null;
 
 	public static void show(JFrame jf, NoteGraph noteGraph, AbcPart abcPart, int track, final boolean percussion, final ArrayList<DrumPanel> dPanels) {
+		if (openDialog != null) return;
+		
 		@SuppressWarnings("serial")
 		class SectionDialog extends JDialog {
 			
@@ -49,7 +51,7 @@ public class SectionEditor {
 			private double[] LAYOUT_ROWS;
 			private AbcPart abcPart;
 			private int track;
-			
+			private JLabel titleLabel = new JLabel();
 			
 			private List<SectionEditorLine> sectionInputs = new ArrayList<>(numberOfSections);
 			private SectionEditorLine nonSectionInput = new SectionEditorLine();
@@ -66,11 +68,17 @@ public class SectionEditor {
 		        this.track = track;
 		        //this.noteGraph = noteGraph;
 		        
+		        abcPart.getAbcSong().addSongListener(songListener);
+		        abcPart.addAbcListener(abcPartListener);
+		        
 		        SectionDialog.this.addWindowListener(new WindowAdapter() {
 
 		            @Override
 		            public void windowClosing(WindowEvent we) {
 		            	SectionEditor.lastLocation = SectionDialog.this.getLocation();
+		            	if (abcPart.getAbcSong() != null) abcPart.getAbcSong().removeSongListener(songListener);
+				        abcPart.removeAbcListener(abcPartListener);
+				        openDialog = null;
 		            }
 		        });
 		        
@@ -129,7 +137,8 @@ public class SectionEditor {
 		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
 		        
 		        // Row 0
-		        panel.add(new JLabel("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>"), "0, 0, 7, 0, C, C");
+		        titleLabel = new JLabel("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>");
+		        panel.add(titleLabel, "0, 0, 7, 0, C, C");
 		        JTextField octDouble = new JTextField("Octave doubling");
 		        octDouble.setEditable(false);
 		        octDouble.setHorizontalAlignment(JTextField.CENTER);
@@ -439,10 +448,42 @@ public class SectionEditor {
 		        this.setVisible(true);
 		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }
+		    
+		    private Listener<AbcPartEvent> abcPartListener = e -> {
+				if (e.getProperty() == AbcPartProperty.TITLE) {
+					titleLabel.setText("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>");
+				} else if (e.getProperty() == AbcPartProperty.INSTRUMENT) {
+					titleLabel.setText("<html><b> " + abcPart.getTitle() + ": </b> " + abcPart.getInstrument().toString()+" on track "+track + " </html>");
+					// have to close and reopen dialog to enable/disable doubling in case we switched between percussion and non-percussion.					
+				}
+			};
+		    
+		    private Listener<AbcSongEvent> songListener = new Listener<AbcSongEvent>()
+			{
+				@Override public void onEvent(AbcSongEvent e)
+				{
+					switch (e.getProperty()) {
+						case BEFORE_PART_REMOVED:
+							AbcPart deleted = e.getPart();
+							if (deleted.equals(abcPart)) {
+								// The abcPart for this editor is being deleted, lets close the dialog.
+								dispose();
+							}
+							break;
+						case SONG_CLOSING:
+							dispose();
+							break;
+						default:
+							break;
+					}
+				}
+			};
 		}
 
-		new SectionDialog(jf, noteGraph, "Section editor", true, abcPart, track);
+		openDialog = new SectionDialog(jf, noteGraph, "Section editor", false, abcPart, track);
 	}
+	
+	
 	
 	public static void clearClipboard() {
 		clipboardArmed = false;

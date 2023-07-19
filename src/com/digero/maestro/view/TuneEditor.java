@@ -5,8 +5,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -23,7 +21,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import com.digero.common.util.Listener;
 import com.digero.maestro.abc.AbcSong;
+import com.digero.maestro.abc.AbcSongEvent;
 import com.digero.maestro.abc.TuneLine;
 
 import info.clearthought.layout.TableLayout;
@@ -32,8 +32,11 @@ import info.clearthought.layout.TableLayoutConstants;
 public class TuneEditor {
 	
 	private static Point lastLocation = new Point(100, 100);
+	private static JDialog openDialog = null;
 
 	public static void show(JFrame jf, AbcSong abcSong) {
+		if (openDialog != null) return;
+		
 		@SuppressWarnings("serial")
 		class TuneDialog extends JDialog {
 			
@@ -50,11 +53,15 @@ public class TuneEditor {
 		        super(jf, title, modal);
 		        this.abcSong = abcSong;
 		        
+		        abcSong.addSongListener(songListener);
+		        
 		        TuneDialog.this.addWindowListener(new WindowAdapter() {
 
 		            @Override
 		            public void windowClosing(WindowEvent we) {
 		            	TuneEditor.lastLocation = TuneDialog.this.getLocation();
+		            	abcSong.removeSongListener(songListener);
+		            	openDialog = null;
 		            }
 		        });
 		        int rowHeight = 16;
@@ -295,8 +302,22 @@ public class TuneEditor {
 		        //this.setResizable(true);
 		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }
+		    
+		    private Listener<AbcSongEvent> songListener = new Listener<AbcSongEvent>()
+			{
+				@Override public void onEvent(AbcSongEvent e)
+				{
+					switch (e.getProperty()) {
+						case SONG_CLOSING:
+							dispose();
+							break;
+						default:
+							break;
+					}
+				}
+			};
 		}
 
-		new TuneDialog(jf, "Tune editor", true, abcSong);
+		openDialog = new TuneDialog(jf, "Tune editor", false, abcSong);
 	}
 }

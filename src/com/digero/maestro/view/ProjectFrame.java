@@ -1749,6 +1749,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			case EXPORT_FILE:
 				// Don't care
 				break;
+			case SONG_CLOSING:
+				// Don't care
+				break;
 			}
 
 			setAbcSongModified(true);

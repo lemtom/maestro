@@ -122,6 +122,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 	@Override public void discard()
 	{
+		fireChangeEvent(AbcSongProperty.SONG_CLOSING);
+		
 		if (partAutoNumberer != null)
 			partAutoNumberer.setParts(null);
 
