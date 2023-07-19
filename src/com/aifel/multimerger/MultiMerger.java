@@ -21,7 +21,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileSystemView;
 
 import javax.swing.border.EmptyBorder;
@@ -43,7 +42,6 @@ public class MultiMerger {
 	private static final int INFO_VALUE = 2;
 	
 	private static MultiMergerView frame = null;
-	private static MultiMerger logic = null;
 	
 	JList<File> theList = null; 
 	private String lastExport = null;
@@ -53,7 +51,7 @@ public class MultiMerger {
 			public void run() {
 				try {
 					frame = new MultiMergerView();
-					logic = new MultiMerger();
+					new MultiMerger();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -89,7 +87,7 @@ public class MultiMerger {
 	private void join() throws IOException {
 		List<File> theFiles = theList.getSelectedValuesList();
 		if (theFiles != null && theFiles.size() > 1) {
-			List<List<String>> oldContent = new ArrayList();
+			List<List<String>> oldContent = new ArrayList<List<String>>();
 			for (File theFile : theFiles) {
 				List<String> lines = Files.readAllLines(Paths.get(theFile.toURI()), StandardCharsets.UTF_8);
 				oldContent.add(lines);
@@ -109,7 +107,7 @@ public class MultiMerger {
 			}
 			String badgerParts = getAllParts(numberOfParts);
 			
-			List<String> newContent = new ArrayList();
+			List<String> newContent = new ArrayList<String>();
 			int x = 1;
 			int fileNo = 0;
 			String Q = "";
@@ -268,7 +266,7 @@ public class MultiMerger {
 		return str+str2;
 	}
 	
-	private JList getGui(File[] all, boolean vertical) {
+	private JList<File> getGui(File[] all, boolean vertical) {
 		if (all.length == 0) return null;
         theList = new JList<File>(all);
         theList.setCellRenderer(new FileRenderer(!vertical));
@@ -323,6 +321,7 @@ public class MultiMerger {
 		return str1.substring(endIndex-max+1,endIndex+1);
 	}
 
+	@SuppressWarnings("serial")
 	class FileRenderer extends DefaultListCellRenderer {
 
 	    private boolean pad;
@@ -334,7 +333,7 @@ public class MultiMerger {
 
 	    @Override
 	    public Component getListCellRendererComponent(
-	        JList list,
+	        JList<?> list,
 	        Object value,
 	        int index,
 	        boolean isSelected,
