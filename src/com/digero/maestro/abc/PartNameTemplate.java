@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.ListIterator;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 import com.digero.common.abc.LotroInstrument;
 import com.digero.common.util.Pair;
 import com.digero.common.util.Util;
+import com.digero.maestro.view.MiscSettings;
 import com.digero.maestro.view.SettingsDialog.MockMetadataSource;
 
 public class PartNameTemplate
@@ -21,14 +23,18 @@ public class PartNameTemplate
 	public static class Settings
 	{
 		private String partNamePattern;
+		
+		private final Preferences prefs;
 
 		private Settings(Preferences prefs)
 		{
+			this.prefs = prefs;
 			partNamePattern = prefs.get("partNamePattern", "$SongTitle ($SongLength) - $PartName");
 		}
 
 		public Settings(Settings source)
 		{
+			this.prefs = source.prefs;
 			copyFrom(source);
 		}
 
@@ -50,6 +56,19 @@ public class PartNameTemplate
 		public void setPartNamePattern(String partNamePattern)
 		{
 			this.partNamePattern = partNamePattern;
+		}
+		
+		public void restoreDefaults()
+		{
+			try {
+				prefs.clear();
+			} catch (BackingStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Settings fresh = new Settings(prefs);
+			this.copyFrom(fresh);
 		}
 	}
 
@@ -265,5 +284,10 @@ public class PartNameTemplate
 
 		this.currentAbcPart = null;
 		return name;
+	}
+	
+	public void restoreDefaultSettings()
+	{
+		settings.restoreDefaults();
 	}
 }

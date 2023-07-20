@@ -24,6 +24,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
@@ -56,11 +57,14 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	private static final int PAD = 4;
 
 	private boolean success = false;
+	private boolean settingPageReset = false;
+	private int settingPageResetIndex = -1;
 	private boolean numbererSettingsChanged = false;
 
 	private JTabbedPane tabPanel;
 
-	private PartAutoNumberer.Settings numSettings;
+	private PartAutoNumberer partNumberer;
+	private PartAutoNumberer.Settings partNumbererSettings;
 
 	private PartNameTemplate.Settings nameTemplateSettings;
 	private PartNameTemplate nameTemplate;
@@ -71,14 +75,16 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	private JLabel exportTemplateExampleLabel;
 
 	private SaveAndExportSettings saveSettings;
+	private MiscSettings miscSettings;
 
-	public SettingsDialog(JFrame owner, PartAutoNumberer.Settings numbererSettings, PartNameTemplate nameTemplate,
-			ExportFilenameTemplate exportTemplate, SaveAndExportSettings saveSettings)
+	public SettingsDialog(JFrame owner, PartAutoNumberer partNumberer, PartNameTemplate nameTemplate,
+			ExportFilenameTemplate exportTemplate, SaveAndExportSettings saveSettings, MiscSettings miscSettings)
 	{
 		super(owner, "Options", true);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-		this.numSettings = numbererSettings;
+		this.partNumberer = partNumberer;
+		this.partNumbererSettings = partNumberer.getSettingsCopy();
 
 		this.nameTemplate = nameTemplate;
 		this.nameTemplateSettings = nameTemplate.getSettingsCopy();
@@ -87,6 +93,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		this.exportTemplateSettings = exportTemplate.getSettingsCopy();
 
 		this.saveSettings = saveSettings;
+		this.miscSettings = miscSettings;
 
 		JButton okButton = new JButton("OK");
 		getRootPane().setDefaultButton(okButton);
@@ -95,6 +102,22 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			success = true;
 			SettingsDialog.this.setVisible(false);
 		});
+		
+		JButton resetButton = new JButton("Reset Page");
+		resetButton.addActionListener(e -> {
+			String page = tabPanel.getTitleAt(tabPanel.getSelectedIndex());
+			String title = "Reset '" + page + "' Settings?";
+			String message = "Are you sure you want to reset the " + page.toLowerCase() + " settings? No undo!";
+			int result = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null);
+			if (result == JOptionPane.YES_OPTION)
+			{
+				success = false;
+				settingPageReset = true;
+				settingPageResetIndex = tabPanel.getSelectedIndex();
+				SettingsDialog.this.setVisible(false);
+			}
+		});
+		
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setMnemonic('C');
 		cancelButton.addActionListener(e -> {
@@ -115,11 +138,12 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		});
 
 		JPanel buttonsPanel = new JPanel(new TableLayout(//
-				new double[] { 0.50, 0.50 },//
+				new double[] { 0.33, 0.33, 0.34 },//
 				new double[] { PREFERRED }));
 		((TableLayout) buttonsPanel.getLayout()).setHGap(PAD);
 		buttonsPanel.add(okButton, "0, 0, f, f");
 		buttonsPanel.add(cancelButton, "1, 0, f, f");
+		buttonsPanel.add(resetButton, "2, 0, f, f");
 		JPanel buttonsContainerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, PAD / 2));
 		buttonsContainerPanel.add(buttonsPanel);
 
@@ -191,9 +215,9 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				+ "<b>10</b>: number Lute parts as 1, 11, 21, etc.</html>");
 
 		final JComboBox<Integer> incrementComboBox = new JComboBox<>(new Integer[]{1, 10});
-		incrementComboBox.setSelectedItem(numSettings.getIncrement());
+		incrementComboBox.setSelectedItem(partNumbererSettings.getIncrement());
 		incrementComboBox.addActionListener(e -> {
-			int oldInc = numSettings.getIncrement();
+			int oldInc = partNumbererSettings.getIncrement();
 			int newInc = (Integer) incrementComboBox.getSelectedItem();
 			if (oldInc == newInc)
 				return;
@@ -201,9 +225,9 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			numbererSettingsChanged = true;
 			for (InstrumentSpinner spinner : instrumentSpinners)
 			{
-				int firstNumber = numSettings.getFirstNumber(spinner.instrument);
+				int firstNumber = partNumbererSettings.getFirstNumber(spinner.instrument);
 				firstNumber = (firstNumber * oldInc) / newInc;
-				numSettings.setFirstNumber(spinner.instrument, firstNumber);
+				partNumbererSettings.setFirstNumber(spinner.instrument, firstNumber);
 				spinner.setValue(firstNumber);
 
 				if (newInc == 1)
@@ -216,7 +240,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				}
 			}
 
-			numSettings.setIncrementByTen(newInc == 10);
+			partNumbererSettings.setIncrementByTen(newInc == 10);
 		});
 
 		TableLayout incrementPanelLayout = new TableLayout(//
@@ -249,7 +273,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 
 		public InstrumentSpinner(LotroInstrument instrument)
 		{
-			super(new SpinnerNumberModel(numSettings.getFirstNumber(instrument), 0, numSettings.isIncrementByTen() ? 10
+			super(new SpinnerNumberModel(partNumbererSettings.getFirstNumber(instrument), 0, partNumbererSettings.isIncrementByTen() ? 10
 					: 999, 1));
 
 			this.instrument = instrument;
@@ -263,7 +287,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 
 		@Override public void stateChanged(ChangeEvent e)
 		{
-			numSettings.setFirstNumber(instrument, (Integer) getValue());
+			partNumbererSettings.setFirstNumber(instrument, (Integer) getValue());
 			numbererSettingsChanged = true;
 		}
 	}
@@ -603,23 +627,23 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				+ "polyphony the song will consume.<br>"
 				+ "Stopped notes that are in release phase also counts.<br>"
 				+ "Enabling this might impact preview playback performance.</html>");
-		showMaxPolyphonyCheckBox.setSelected(saveSettings.showMaxPolyphony);
-		showMaxPolyphonyCheckBox.addActionListener(e -> saveSettings.showMaxPolyphony = showMaxPolyphonyCheckBox.isSelected());
+		showMaxPolyphonyCheckBox.setSelected(miscSettings.showMaxPolyphony);
+		showMaxPolyphonyCheckBox.addActionListener(e -> miscSettings.showMaxPolyphony = showMaxPolyphonyCheckBox.isSelected());
 		
 		final JCheckBox allBadgerCheckBox = new JCheckBox("Output all playable parts per default");
 		allBadgerCheckBox.setToolTipText("<html>Output max playable parts for extended songbooks.</html>");
-		allBadgerCheckBox.setSelected(saveSettings.allBadger);
-		allBadgerCheckBox.addActionListener(e -> saveSettings.allBadger = allBadgerCheckBox.isSelected());
-		allBadgerCheckBox.setEnabled(saveSettings.showBadger);
+		allBadgerCheckBox.setSelected(miscSettings.allBadger);
+		allBadgerCheckBox.addActionListener(e -> miscSettings.allBadger = allBadgerCheckBox.isSelected());
+		allBadgerCheckBox.setEnabled(miscSettings.showBadger);
 		
 		final JCheckBox showBadgerCheckBox = new JCheckBox("Support extended songbook");
 		showBadgerCheckBox.setToolTipText("<html>Output and show genre and mood fields<br>"
 				+ "that are used in extended songbooks:<br>"
 				+ "Badger Chapter, White Badger and Zedrock Chapter.</html>");
-		showBadgerCheckBox.setSelected(saveSettings.showBadger);
+		showBadgerCheckBox.setSelected(miscSettings.showBadger);
 		showBadgerCheckBox.addActionListener(e -> {
-			saveSettings.showBadger = showBadgerCheckBox.isSelected();
-			allBadgerCheckBox.setEnabled(saveSettings.showBadger);
+			miscSettings.showBadger = showBadgerCheckBox.isSelected();
+			allBadgerCheckBox.setEnabled(miscSettings.showBadger);
 		});
 		
 		final String defaultStr = "Default";
@@ -672,10 +696,10 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		}
 		themeBox.setEditable(false);
 		themeBox.addActionListener(e -> {
-			saveSettings.theme = (String) themeBox.getSelectedItem();
-			fontBox.setEnabled(!saveSettings.theme.equals(defaultStr));
+			miscSettings.theme = (String) themeBox.getSelectedItem();
+			fontBox.setEnabled(!miscSettings.theme.equals(defaultStr));
 		});
-		themeBox.setSelectedItem(saveSettings.theme);
+		themeBox.setSelectedItem(miscSettings.theme);
 		
 		fontBox.setToolTipText("<html>Select a font size. Only supported with a non-default theme. Must restart Maestro for it to take effect.</html>");
 		for (int i : Themer.fontSizes)
@@ -686,14 +710,14 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		fontBox.addActionListener(e -> {
 			try
 			{
-				saveSettings.fontSize = Integer.parseInt((String) fontBox.getSelectedItem());
+				miscSettings.fontSize = Integer.parseInt((String) fontBox.getSelectedItem());
 			}
 			catch(Exception ex)
 			{
 			}
 		});
-		fontBox.setSelectedItem(Integer.toString(saveSettings.fontSize));
-		fontBox.setEnabled(!saveSettings.theme.equals(defaultStr));
+		fontBox.setSelectedItem(Integer.toString(miscSettings.fontSize));
+		fontBox.setEnabled(!miscSettings.theme.equals(defaultStr));
 
 		TableLayout layout = new TableLayout();
 		layout.insertColumn(0, FILL);
@@ -752,6 +776,16 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	{
 		return success;
 	}
+	
+	public boolean isSettingPageReset()
+	{
+		return settingPageReset;
+	}
+	
+	public int getResetPageIndex()
+	{
+		return settingPageResetIndex;
+	}
 
 	public boolean isNumbererSettingsChanged()
 	{
@@ -760,7 +794,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 
 	public PartAutoNumberer.Settings getNumbererSettings()
 	{
-		return numSettings;
+		return partNumbererSettings;
 	}
 
 	public PartNameTemplate.Settings getNameTemplateSettings()
@@ -776,6 +810,10 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	public SaveAndExportSettings getSaveAndExportSettings()
 	{
 		return saveSettings;
+	}
+	
+	public MiscSettings getMiscSettings() {
+		return miscSettings;
 	}
 
 	public static class MockMetadataSource implements AbcMetadataSource, AbcPartMetadataSource

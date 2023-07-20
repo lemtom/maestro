@@ -37,7 +37,7 @@ public class Themer
 	
 	public static void SetLookAndFeel() throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException
 	{
-		SaveAndExportSettings settings = new SaveAndExportSettings(Preferences.userNodeForPackage(MaestroMain.class).node("saveAndExportSettings"));
+		MiscSettings settings = new MiscSettings(Preferences.userNodeForPackage(MaestroMain.class).node("miscSettings"), true);
 		String theme = settings.theme;
 		int fontSize = settings.fontSize;
 		boolean isDefaultTheme = false;

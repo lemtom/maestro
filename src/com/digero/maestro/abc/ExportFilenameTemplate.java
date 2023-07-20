@@ -7,12 +7,14 @@ import java.util.ListIterator;
 import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.digero.common.util.Pair;
 import com.digero.common.util.Util;
+import com.digero.maestro.abc.PartNameTemplate.Settings;
 import com.digero.maestro.view.SettingsDialog.MockMetadataSource;
 
 public class ExportFilenameTemplate
@@ -25,9 +27,12 @@ public class ExportFilenameTemplate
 		private boolean exportFilenamePatternEnabled;
 		private String exportFilenamePattern;
 		private String whitespaceReplaceText;
+		
+		private final Preferences prefs;
 
 		private Settings(Preferences prefs)
 		{
+			this.prefs = prefs;
 			exportFilenamePatternEnabled = prefs.getBoolean("exportFilenamePatternEnabled", false);
 			exportFilenamePattern = prefs.get("exportFilenamePattern", "$PartCount - $SongTitle");
 			whitespaceReplaceText = prefs.get("whitespaceReplaceText", " ");
@@ -35,10 +40,11 @@ public class ExportFilenameTemplate
 
 		public Settings(Settings source)
 		{
+			this.prefs = source.prefs;
 			copyFrom(source);
 		}
 
-		private void save(Preferences prefs)
+		private void save()
 		{
 			prefs.putBoolean("exportFilenamePatternEnabled", exportFilenamePatternEnabled);
 			prefs.put("exportFilenamePattern", exportFilenamePattern);
@@ -81,6 +87,19 @@ public class ExportFilenameTemplate
 		{
 			this.whitespaceReplaceText = whitespaceReplaceText;
 		}
+		
+		public void restoreDefaults()
+		{
+			try {
+				prefs.clear();
+			} catch (BackingStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Settings fresh = new Settings(prefs);
+			this.copyFrom(fresh);
+		}
 	}
 
 	public static abstract class Variable
@@ -106,7 +125,6 @@ public class ExportFilenameTemplate
 	}
 
 	private Settings settings;
-	private Preferences prefsNode;
 
 	private AbcMetadataSource metadata = null;
 
@@ -114,7 +132,6 @@ public class ExportFilenameTemplate
 
 	public ExportFilenameTemplate(Preferences prefsNode)
 	{
-		this.prefsNode = prefsNode;
 		this.settings = new Settings(prefsNode);
 
 		Comparator<String> caseInsensitiveStringComparator = String::compareToIgnoreCase;
@@ -166,7 +183,7 @@ public class ExportFilenameTemplate
 	public void setSettings(Settings settings)
 	{
 		this.settings.copyFrom(settings);
-		this.settings.save(prefsNode);
+		this.settings.save();
 	}
 
 	public AbcMetadataSource getMetadataSource()
@@ -227,5 +244,10 @@ public class ExportFilenameTemplate
 		name += ".abc";
 		
 		return name;
+	}
+	
+	public void restoreDefaultSettings()
+	{
+		settings.restoreDefaults();
 	}
 }
