@@ -105,7 +105,6 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		
 		JButton resetButton = new JButton("Reset Page");
 		resetButton.addActionListener(e -> {
-			System.out.println("Reset");
 			String page = tabPanel.getTitleAt(tabPanel.getSelectedIndex());
 			String title = "Reset '" + page + "' Settings?";
 			String message = "Are you sure you want to reset the " + page.toLowerCase() + " settings? No undo!";

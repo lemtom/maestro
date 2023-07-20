@@ -1129,7 +1129,6 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		}
 		else if (dialog.isSettingPageReset())
 		{
-			System.out.println("restoring defaults: " + dialog.getResetPageIndex());
 			switch(dialog.getResetPageIndex())
 			{
 			case 0: // part auto numberer
