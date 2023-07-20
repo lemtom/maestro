@@ -1,5 +1,6 @@
 package com.digero.maestro.view;
 
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class SaveAndExportSettings
@@ -7,15 +8,11 @@ public class SaveAndExportSettings
 	public boolean promptSaveNewSong = true;
 	public boolean showExportFileChooser = false;
 	public boolean skipSilenceAtStart = true;
-	public boolean showPruned = false;
-	public int stereoPan = 100;
-	private final Preferences prefs;
-	public boolean showMaxPolyphony = false;
-	public boolean showBadger = false;
-	public boolean allBadger = false;
+	//public boolean showPruned = false;
 	public boolean convertABCStringsToBasicAscii = true;
-	public String theme = "Default";
-	public int fontSize = 12;
+	
+	private final Preferences prefs;
+	
 
 	public SaveAndExportSettings(Preferences prefs)
 	{
@@ -23,14 +20,8 @@ public class SaveAndExportSettings
 		promptSaveNewSong = prefs.getBoolean("promptSaveNewSong", promptSaveNewSong);
 		showExportFileChooser = prefs.getBoolean("showExportFileChooser", showExportFileChooser);
 		skipSilenceAtStart = prefs.getBoolean("skipSilenceAtStart", skipSilenceAtStart);
-		showPruned = prefs.getBoolean("showPruned", showPruned);
-		stereoPan = prefs.getInt("stereoPan", stereoPan);
-		showMaxPolyphony = prefs.getBoolean("showMaxPolyphony", showMaxPolyphony);
-		showBadger = prefs.getBoolean("showBadger", showBadger);
-		allBadger = prefs.getBoolean("allBadger", allBadger);
+		//showPruned = prefs.getBoolean("showPruned", showPruned);
 		convertABCStringsToBasicAscii = prefs.getBoolean("convertABCStringsToBasicAscii", convertABCStringsToBasicAscii);
-		theme = prefs.get("theme", theme);
-		fontSize = prefs.getInt("fontSize", fontSize);
 	}
 
 	public SaveAndExportSettings(SaveAndExportSettings that)
@@ -44,14 +35,8 @@ public class SaveAndExportSettings
 		promptSaveNewSong = that.promptSaveNewSong;
 		showExportFileChooser = that.showExportFileChooser;
 		skipSilenceAtStart = that.skipSilenceAtStart;
-		showPruned = that.showPruned;
-		stereoPan = that.stereoPan;
-		showMaxPolyphony = that.showMaxPolyphony;
-		showBadger = that.showBadger;
-		allBadger = that.allBadger;
+		//showPruned = that.showPruned;
 		convertABCStringsToBasicAscii = that.convertABCStringsToBasicAscii;
-		theme = that.theme;
-		fontSize = that.fontSize;
 	}
 
 	public void saveToPrefs()
@@ -59,14 +44,21 @@ public class SaveAndExportSettings
 		prefs.putBoolean("promptSaveNewSong", promptSaveNewSong);
 		prefs.putBoolean("showExportFileChooser", showExportFileChooser);
 		prefs.putBoolean("skipSilenceAtStart", skipSilenceAtStart);
-		prefs.putBoolean("showPruned", showPruned);
-		prefs.putInt("stereoPan", stereoPan);
-		prefs.putBoolean("showMaxPolyphony", showMaxPolyphony);
-		prefs.putBoolean("showBadger", showBadger);
-		prefs.putBoolean("allBadger", allBadger);
+		//prefs.putBoolean("showPruned", showPruned);
 		prefs.putBoolean("convertABCStringsToBasicAscii", convertABCStringsToBasicAscii);
-		prefs.put("theme", theme);
-		prefs.putInt("fontSize", fontSize);
+	}
+	
+	public void restoreDefaults()
+	{
+		try {
+			prefs.clear();
+		} catch (BackingStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		SaveAndExportSettings fresh = new SaveAndExportSettings(prefs);
+		this.copyFrom(fresh);
 	}
 
 	public SaveAndExportSettings getCopy()

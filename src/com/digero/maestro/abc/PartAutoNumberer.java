@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import com.digero.common.abc.LotroInstrument;
@@ -19,9 +20,11 @@ public class PartAutoNumberer
 	{
 		private Map<LotroInstrument, Integer> firstNumber = new HashMap<>();
 		private boolean incrementByTen;
+		private final Preferences prefs;
 
 		private Settings(Preferences prefs)
 		{
+			this.prefs = prefs;
 			incrementByTen = prefs.getBoolean("incrementByTen", true);
 			int x10 = incrementByTen ? 1 : 10;
 
@@ -32,29 +35,29 @@ public class PartAutoNumberer
 				prefs.remove(prefsKey(LotroInstrument.MOOR_COWBELL));
 			}
 
-			init(prefs, LotroInstrument.LUTE_OF_AGES, prefs.getInt("Lute", 1 * x10)); // Lute was renamed to Lute of Ages
-			init(prefs, LotroInstrument.BASIC_LUTE, LotroInstrument.LUTE_OF_AGES);
-			init(prefs, LotroInstrument.BASIC_HARP, 2 * x10);
-			init(prefs, LotroInstrument.MISTY_MOUNTAIN_HARP, LotroInstrument.BASIC_HARP);
-			init(prefs, LotroInstrument.BASIC_THEORBO, 3 * x10);
-			init(prefs, LotroInstrument.BASIC_FLUTE, 4 * x10);
-			init(prefs, LotroInstrument.BASIC_CLARINET, 5 * x10);
-			init(prefs, LotroInstrument.BASIC_HORN, 6 * x10);
-			init(prefs, LotroInstrument.BASIC_BAGPIPE, 7 * x10);
-			init(prefs, LotroInstrument.BASIC_PIBGORN, LotroInstrument.BASIC_BAGPIPE);
-			init(prefs, LotroInstrument.BASIC_BASSOON, LotroInstrument.BASIC_BAGPIPE);
-			init(prefs, LotroInstrument.LONELY_MOUNTAIN_BASSOON, LotroInstrument.BASIC_BAGPIPE);
-			init(prefs, LotroInstrument.BRUSQUE_BASSOON, LotroInstrument.BASIC_BAGPIPE);
-			init(prefs, LotroInstrument.BASIC_DRUM, 8 * x10);
-			init(prefs, LotroInstrument.BASIC_COWBELL, LotroInstrument.BASIC_DRUM);
-			init(prefs, LotroInstrument.MOOR_COWBELL, LotroInstrument.BASIC_DRUM);
-			init(prefs, LotroInstrument.BASIC_FIDDLE, 9 * x10);
-			init(prefs, LotroInstrument.BARDIC_FIDDLE, LotroInstrument.BASIC_FIDDLE);
-			init(prefs, LotroInstrument.STUDENT_FIDDLE, LotroInstrument.BASIC_FIDDLE);
-			init(prefs, LotroInstrument.STUDENT_FX_FIDDLE, LotroInstrument.STUDENT_FIDDLE);
-			init(prefs, LotroInstrument.LONELY_MOUNTAIN_FIDDLE, LotroInstrument.BASIC_FIDDLE);
-			init(prefs, LotroInstrument.SPRIGHTLY_FIDDLE, LotroInstrument.BASIC_FIDDLE);
-			init(prefs, LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE, LotroInstrument.BASIC_FIDDLE);
+			init(LotroInstrument.LUTE_OF_AGES, prefs.getInt("Lute", 1 * x10)); // Lute was renamed to Lute of Ages
+			init(LotroInstrument.BASIC_LUTE, LotroInstrument.LUTE_OF_AGES);
+			init(LotroInstrument.BASIC_HARP, 2 * x10);
+			init(LotroInstrument.MISTY_MOUNTAIN_HARP, LotroInstrument.BASIC_HARP);
+			init(LotroInstrument.BASIC_THEORBO, 3 * x10);
+			init(LotroInstrument.BASIC_FLUTE, 4 * x10);
+			init(LotroInstrument.BASIC_CLARINET, 5 * x10);
+			init(LotroInstrument.BASIC_HORN, 6 * x10);
+			init(LotroInstrument.BASIC_BAGPIPE, 7 * x10);
+			init(LotroInstrument.BASIC_PIBGORN, LotroInstrument.BASIC_BAGPIPE);
+			init(LotroInstrument.BASIC_BASSOON, LotroInstrument.BASIC_BAGPIPE);
+			init(LotroInstrument.LONELY_MOUNTAIN_BASSOON, LotroInstrument.BASIC_BAGPIPE);
+			init(LotroInstrument.BRUSQUE_BASSOON, LotroInstrument.BASIC_BAGPIPE);
+			init(LotroInstrument.BASIC_DRUM, 8 * x10);
+			init(LotroInstrument.BASIC_COWBELL, LotroInstrument.BASIC_DRUM);
+			init(LotroInstrument.MOOR_COWBELL, LotroInstrument.BASIC_DRUM);
+			init(LotroInstrument.BASIC_FIDDLE, 9 * x10);
+			init(LotroInstrument.BARDIC_FIDDLE, LotroInstrument.BASIC_FIDDLE);
+			init(LotroInstrument.STUDENT_FIDDLE, LotroInstrument.BASIC_FIDDLE);
+			init(LotroInstrument.STUDENT_FX_FIDDLE, LotroInstrument.STUDENT_FIDDLE);
+			init(LotroInstrument.LONELY_MOUNTAIN_FIDDLE, LotroInstrument.BASIC_FIDDLE);
+			init(LotroInstrument.SPRIGHTLY_FIDDLE, LotroInstrument.BASIC_FIDDLE);
+			init(LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE, LotroInstrument.BASIC_FIDDLE);
 
 			assert (firstNumber.size() == LotroInstrument.values().length);
 		}
@@ -98,17 +101,17 @@ public class PartAutoNumberer
 			return instrument.toString();
 		}
 
-		private void init(Preferences prefs, LotroInstrument instrument, int defaultValue)
+		private void init(LotroInstrument instrument, int defaultValue)
 		{
 			firstNumber.put(instrument, prefs.getInt(prefsKey(instrument), defaultValue));
 		}
 
-		private void init(Preferences prefs, LotroInstrument instruments, LotroInstrument copyDefaultFrom)
+		private void init(LotroInstrument instruments, LotroInstrument copyDefaultFrom)
 		{
-			init(prefs, instruments, firstNumber.get(copyDefaultFrom));
+			init(instruments, firstNumber.get(copyDefaultFrom));
 		}
 
-		private void save(Preferences prefs)
+		private void save()
 		{
 			for (Entry<LotroInstrument, Integer> entry : firstNumber.entrySet())
 			{
@@ -119,6 +122,7 @@ public class PartAutoNumberer
 
 		public Settings(Settings source)
 		{
+			prefs = source.prefs;
 			copyFrom(source);
 		}
 
@@ -152,16 +156,31 @@ public class PartAutoNumberer
 		{
 			return firstNumber.get(instrument);
 		}
+		
+		public void restoreDefaults()
+		{
+			try {
+				prefs.clear();
+			} catch (BackingStoreException e) {
+				e.printStackTrace();
+			}
+			
+			Settings fresh = new Settings(prefs);
+			this.copyFrom(fresh);
+		}
 	}
 
 	private Settings settings;
-	private Preferences prefsNode;
 	private List<? extends NumberedAbcPart> parts = null;
 
 	public PartAutoNumberer(Preferences prefsNode)
 	{
-		this.prefsNode = prefsNode;
 		this.settings = new Settings(prefsNode);
+	}
+	
+	public void restoreDefaultSettings()
+	{
+		settings.restoreDefaults();
 	}
 
 	public Settings getSettingsCopy()
@@ -187,7 +206,7 @@ public class PartAutoNumberer
 	public void setSettings(Settings settings)
 	{
 		this.settings.copyFrom(settings);
-		this.settings.save(prefsNode);
+		this.settings.save();
 	}
 
 	public void setParts(List<? extends NumberedAbcPart> parts)

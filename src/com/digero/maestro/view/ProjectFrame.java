@@ -147,6 +147,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private PartNameTemplate partNameTemplate;
 	private ExportFilenameTemplate exportFilenameTemplate;
 	private SaveAndExportSettings saveSettings;
+	private MiscSettings miscSettings;
 	private boolean usingNativeVolume;
 
 	private JPanel content;
@@ -262,6 +263,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		partNameTemplate = new PartNameTemplate(prefs.node("partNameTemplate"));
 		exportFilenameTemplate = new ExportFilenameTemplate(prefs.node("exportFilenameTemplate"));
 		saveSettings = new SaveAndExportSettings(prefs.node("saveAndExportSettings"));
+		miscSettings = new MiscSettings(prefs.node("miscSettings"), true /* Fallback if miscSettings is empty. Maestro 2.5.0.115 and earlier save misc settings in saveAndExportSettings */);
 
 		usingNativeVolume = MaestroMain.isNativeVolumeSupported();
 		if (usingNativeVolume)
@@ -647,7 +649,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		});
 		numerateButton.setToolTipText("Auto assign numbers to identical instrument part titles.");
 		
-		if (saveSettings.showBadger) {
+		if (miscSettings.showBadger) {
 			songInfoLayout = new TableLayout(//
 				new double[] { PREFERRED, FILL },//
 				new double[] { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED });
@@ -1102,8 +1104,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 	private void doSettingsDialog(int tab)
 	{
-		SettingsDialog dialog = new SettingsDialog(ProjectFrame.this, partAutoNumberer.getSettingsCopy(),
-				partNameTemplate, exportFilenameTemplate, saveSettings.getCopy());
+		SettingsDialog dialog = new SettingsDialog(ProjectFrame.this, partAutoNumberer,
+				partNameTemplate, exportFilenameTemplate, saveSettings.getCopy(), miscSettings.getCopy());
 		dialog.setActiveTab(tab);
 		dialog.setVisible(true);
 		if (dialog.isSuccess())
@@ -1114,12 +1116,40 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				partAutoNumberer.renumberAllParts();
 			}
 			partNameTemplate.setSettings(dialog.getNameTemplateSettings());
-			exportFilenameTemplate.setSettings(dialog.getExportFilenameTemplateSettings());
 			partPanel.settingsChanged();
+			
+			exportFilenameTemplate.setSettings(dialog.getExportFilenameTemplateSettings());
 
 			saveSettings.copyFrom(dialog.getSaveAndExportSettings());
 			saveSettings.saveToPrefs();
 			onSaveAndExportSettingsChanged();
+			
+			miscSettings.copyFrom(dialog.getMiscSettings());
+			miscSettings.saveToPrefs();
+		}
+		else if (dialog.isSettingPageReset())
+		{
+			System.out.println("restoring defaults: " + dialog.getResetPageIndex());
+			switch(dialog.getResetPageIndex())
+			{
+			case 0: // part auto numberer
+				partAutoNumberer.restoreDefaultSettings();
+				partAutoNumberer.renumberAllParts();
+				break;
+			case 1: // part naming
+				partNameTemplate.restoreDefaultSettings();
+				partPanel.settingsChanged();
+				break;
+			case 2: // file naming
+				exportFilenameTemplate.restoreDefaultSettings();
+				break;
+			case 3: // save and export
+				saveSettings.restoreDefaults();
+				break;
+			case 4: // misc
+				miscSettings.restoreDefaults();
+				break;
+			}
 		}
 		currentSettingsDialogTab = dialog.getActiveTab();
 		dialog.dispose();
@@ -1149,14 +1179,14 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		//if (abcSong != null)
 		//	abcSong.setShowPruned(saveSettings.showPruned);
 		
-		noteCountLabel.setVisible(saveSettings.showMaxPolyphony);
-		if (!saveSettings.showMaxPolyphony) {
+		noteCountLabel.setVisible(miscSettings.showMaxPolyphony);
+		if (!miscSettings.showMaxPolyphony) {
 			maxNoteCount = 0;
 			maxNoteCountTotal = 0;
 		}
 		if (abcSong != null) {
-			abcSong.setAllOut(saveSettings.showBadger && saveSettings.allBadger);
-			abcSong.setBadger(saveSettings.showBadger);
+			abcSong.setAllOut(miscSettings.showBadger && miscSettings.allBadger);
+			abcSong.setBadger(miscSettings.showBadger);
 		}
 		updateButtons(false);
 	}
@@ -1205,8 +1235,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	{
 		@Override public void setPan(int pan)
 		{
-			if (pan != saveSettings.stereoPan) {
-				saveSettings.stereoPan = pan;
+			if (pan != prefs.getInt("stereoPan", 100)) {
+				prefs.putInt("stereoPan", pan);
 				SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
 
 				boolean running = curSequencer.isRunning();
@@ -1222,7 +1252,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		@Override public int getPan()
 		{
-			return saveSettings.stereoPan;
+			return prefs.getInt("stereoPan", 100);
 		}
 	}
 
@@ -1265,8 +1295,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	}
 	
 	private void updateNoteCount () {
-		noteCountLabel.setVisible(saveSettings.showMaxPolyphony);
-		if (!saveSettings.showMaxPolyphony) {
+		noteCountLabel.setVisible(miscSettings.showMaxPolyphony);
+		if (!miscSettings.showMaxPolyphony) {
 			return;
 		}
 		if (midiModeRadioButton.isSelected()) {
@@ -1473,16 +1503,16 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			transcriberField.setEnabled(midiLoaded);
 			moodField.setEnabled(midiLoaded);
 			genreField.setEnabled(midiLoaded);
-			if (saveSettings.showBadger) {
+			if (miscSettings.showBadger) {
 				songInfoLayout.setRow(new double[] { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED });
 			} else {
 				songInfoLayout.setRow(new double[] { PREFERRED, PREFERRED, PREFERRED });
 			}
 			songInfoLayout.layoutContainer(songInfoPanel);
-			moodField.setVisible(saveSettings.showBadger);
-			genreField.setVisible(saveSettings.showBadger);
-			moodLabel.setVisible(saveSettings.showBadger);
-			genreLabel.setVisible(saveSettings.showBadger);
+			moodField.setVisible(miscSettings.showBadger);
+			genreField.setVisible(miscSettings.showBadger);
+			moodLabel.setVisible(miscSettings.showBadger);
+			genreLabel.setVisible(miscSettings.showBadger);
 			transposeSpinner.setEnabled(midiLoaded);
 			tempoSpinner.setEnabled(midiLoaded);
 			tuneEditorButton.setEnabled(midiLoaded);
@@ -1897,8 +1927,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		try
 		{
 			abcSong = new AbcSong(file, partAutoNumberer, partNameTemplate, exportFilenameTemplate, openFileResolver);
-			abcSong.setAllOut(saveSettings.showBadger && saveSettings.allBadger);
-			abcSong.setBadger(saveSettings.showBadger);
+			abcSong.setAllOut(miscSettings.showBadger && miscSettings.allBadger);
+			abcSong.setBadger(miscSettings.showBadger);
 			abcSong.addSongListener(abcSongListener);
 			for (AbcPart part : abcSong.getParts())
 			{
@@ -2151,7 +2181,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			abcSong.setSkipSilenceAtStart(saveSettings.skipSilenceAtStart);
 			//abcSong.setShowPruned(saveSettings.showPruned);
 			AbcExporter exporter = abcSong.getAbcExporter();
-			exporter.stereoPan = saveSettings.stereoPan;
+			exporter.stereoPan = prefs.getInt("stereoPan", 100);
 			SequenceInfo previewSequenceInfo = SequenceInfo.fromAbcParts(exporter, !failedToLoadLotroInstruments);
 
 			long tick = sequencer.getTickPosition();
