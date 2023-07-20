@@ -1,10 +1,13 @@
 package com.digero.maestro.abc;
 
 import org.w3c.dom.Element;
-
 import com.digero.common.abc.LotroInstrument;
 import com.digero.common.midi.MidiConstants;
 
+/**
+ * A drummap used for when loading abc as source.
+ * Drum sounds will per default map to themselves.
+ */
 public class PassThroughDrumNoteMap extends DrumNoteMap
 {
 	@Override protected byte getDefaultMapping(byte noteId)

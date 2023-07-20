@@ -60,9 +60,8 @@ public class DrumNoteMap implements IDiscardable
 
 	public byte get(byte midiNoteId)
 	{
-		// Map hasn't been initialized yet, use defaults
-		if (map == null)
-			return getDefaultMapping(midiNoteId);
+		// If map hasn't been initialized yet, use failback
+		ensureMap();
 
 		return map[midiNoteId];
 	}
