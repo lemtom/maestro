@@ -17,8 +17,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -71,8 +69,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.xml.transform.TransformerException;
@@ -179,6 +175,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private JMenuItem saveExpandedMidiMenuItem;
 	private JMenuItem closeProject;
 
+	private JPanel partsListPanel;
 	private JList<AbcPartMetadataSource> partsList;
 	private JButton newPartButton;
 	private JButton deletePartButton;
@@ -685,7 +682,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		partsButtonPanel.add(newPartButton);
 		partsButtonPanel.add(deletePartButton);
 		
-		JPanel partsListPanel = new JPanel(new BorderLayout(HGAP, VGAP));
+		partsListPanel = new JPanel(new BorderLayout(HGAP, VGAP));
 		partsListPanel.setBorder(BorderFactory.createTitledBorder("Song Parts"));
 		partsListPanel.add(partsButtonPanel, BorderLayout.NORTH);
 		partsListPanel.add(partsListScrollPane, BorderLayout.CENTER);
@@ -1544,6 +1541,25 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		}
 	};
 	
+	private boolean updatePartCountPending = false;
+	
+	public void updatePartCountIndicator() {
+		if (!updatePartCountPending)
+		{
+			updatePartCountPending = true;
+			SwingUtilities.invokeLater(() -> {
+				String partListTitle = "Song Parts";
+				if (abcSong != null)
+				{
+					partListTitle = partListTitle + " (Count: " + abcSong.getPartCount() + ")";
+				}
+				
+				partsListPanel.setBorder(BorderFactory.createTitledBorder(partListTitle));
+				updatePartCountPending = false;
+			});
+		}
+	}
+	
 	public void updateDelayButton () {
 		if (partsList.getSelectedIndex() != -1 && partPanel != null && partPanel.getAbcPart() != null && partPanel.getAbcPart().delay != 0) {
 			delayButton.setForeground(new Color(0.2f, 0.8f, 0.2f));//green
@@ -1705,6 +1721,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				partsList.ensureIndexIsVisible(idx);
 				partsList.repaint();
 				updateButtons(false);
+				updatePartCountIndicator();
 				maxNoteCountTotal = 0;
 				maxNoteCount = 0;
 				break;
@@ -1743,6 +1760,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 				partsList.repaint();
 				updateButtons(false);
+				updatePartCountIndicator();
 				maxNoteCountTotal = 0;
 				maxNoteCount = 0;
 				break;
@@ -1904,6 +1922,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		setAbcSongModified(false);
 		updateButtons(false);
 		updateTitle();
+		updatePartCountIndicator();
 		partPanel.setNote("");
 		partPanel.noteVisible(false);
 
