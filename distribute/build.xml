@@ -46,6 +46,7 @@
 		<copy file="abcfile.ico" todir="${build}" />
 		<copy file="midifile.ico" todir="${build}" />
 		<copy file="msxfile.ico" todir="${build}" />
+		<!--copy file="abcmergetool.ico" todir="${build}" /-->
 		<copy file="Start Maestro.bat" todir="${build}" />
 		<copy file="Start AbcPlayer.bat" todir="${build}" />
 		<copy file="Start MergeTool.bat" todir="${build}" />
@@ -137,6 +138,7 @@
 			<include name="midifile.ico" />
 			<include name="abcfile.ico" />
 			<include name="msxfile.ico" />
+			<!--include name="abcmergetool.ico" /-->
 			<include name="Start Maestro.bat" />
 			<include name="Start AbcPlayer.bat" />
 			<include name="Start MergeTool.bat" />

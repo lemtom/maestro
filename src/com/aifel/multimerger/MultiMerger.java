@@ -2,10 +2,12 @@ package com.aifel.multimerger;
 
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -27,6 +30,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.Border;
 
 import com.digero.common.abc.LotroInstrument;
+import com.digero.common.icons.IconLoader;
 
 public class MultiMerger {
 	
@@ -66,6 +70,19 @@ public class MultiMerger {
 		frame.getBtnJoin().addActionListener(actionJoin);
 		frame.getBtnTest().addActionListener(actionTest);
 		frame.getScrollPane().getVerticalScrollBar().setUnitIncrement(22);
+		/*
+		try
+		{
+			List<Image> icons = new ArrayList<>();
+			icons.add(ImageIO.read(new FileInputStream("abcmergetool.ico")));
+			frame.setIconImages(icons);
+		}
+		catch (Exception ex)
+		{
+			// Ignore
+			ex.printStackTrace();
+		}
+		*/
         refresh();
 	}
 	
