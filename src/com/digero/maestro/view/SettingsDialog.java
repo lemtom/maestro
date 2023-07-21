@@ -905,7 +905,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			return "N: TS  1,   4";
 		}
 		
-		@Override public int getPartCount()
+		@Override public int getActivePartCount()
 		{
 			return 5;
 		}

@@ -817,7 +817,10 @@ public class AbcExporter
 
 		for (AbcPart part : parts)
 		{
-			exportPartToAbc(part, exportStartTick, exportEndTick, out, delayEnabled);
+			if (part.getEnabledTrackCount() > 0)
+			{
+				exportPartToAbc(part, exportStartTick, exportEndTick, out, delayEnabled);
+			}
 		}
 	}
 

@@ -170,7 +170,7 @@ public class ExportFilenameTemplate
 		{
 			@Override public String getValue()
 			{
-				return String.format("%02d", getMetadataSource().getPartCount());
+				return String.format("%02d", getMetadataSource().getActivePartCount());
 			}
 		});
 	}
