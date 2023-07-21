@@ -615,11 +615,11 @@ public class SequenceInfo implements MidiConstants
 			}
 		}
 		for (int i = 0; i<16; i++) {
-			yamahaDrumSwitches.get(i).put(-1l, yamahaDrumChannels[i]);
+			yamahaDrumSwitches.get(i).put(-1L, yamahaDrumChannels[i]);
 			if (i == DRUM_CHANNEL) {
-				mmaDrumSwitches.get(i).put(-1l, true);
+				mmaDrumSwitches.get(i).put(-1L, true);
 			} else if (i != DRUM_CHANNEL) {
-				mmaDrumSwitches.get(i).put(-1l, false);
+				mmaDrumSwitches.get(i).put(-1L, false);
 			}
 		}
 		if (fileName.endsWith(".abc") || fileName.endsWith(".ABC") || fileName.endsWith(".txt") || fileName.endsWith(".TXT") || fileName.endsWith(".Abc") || fileName.endsWith(".Txt")) {
@@ -935,7 +935,7 @@ public class SequenceInfo implements MidiConstants
 		return sequence2;
 	}
 	
-	private class PatchEntry {
+	private static class PatchEntry {
 		public List<MidiEvent> bank = new ArrayList<>();
 		public List<MidiEvent> patch = new ArrayList<>();
 		public List<MidiEvent> sysex = new ArrayList<>();

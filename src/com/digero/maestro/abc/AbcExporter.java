@@ -139,7 +139,7 @@ public class AbcExporter
 		return qtm.tickToMicros(getExportEndTick());
 	}
 
-	public class ExportTrackInfo
+	public static class ExportTrackInfo
 	{
 		public final int trackNumber;
 		public final AbcPart part;
@@ -1689,7 +1689,7 @@ public class AbcExporter
 		return new Pair<>(startTick, endTick);
 	}
 	
-	private class Triplet<T, U, V> {
+	private static class Triplet<T, U, V> {
 
 	    public final T first;
 	    public final U second;

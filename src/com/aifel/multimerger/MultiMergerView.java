@@ -1,26 +1,20 @@
 package com.aifel.multimerger;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
-import java.awt.FlowLayout;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JSplitPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import java.awt.Component;
 import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 
 public class MultiMergerView extends JFrame {
 
@@ -78,9 +72,7 @@ public class MultiMergerView extends JFrame {
 		
 		btnDest = new JButton("Select multi part destination folder");
 		btnDest.setToolTipText("This is the folder where you want the new ABC files to be. Its recommended that it is empty.");
-		btnDest.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
+		btnDest.addActionListener(arg0 -> {
 		});
 		splitPane.setRightComponent(btnDest);
 		
@@ -106,9 +98,7 @@ public class MultiMergerView extends JFrame {
 		btnTest = new JButton("Test");
 		btnTest.setToolTipText("Open this song in Abc Player");
 		btnTest.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btnTest.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
+		btnTest.addActionListener(arg0 -> {
 		});
 		
 		separator = new JSeparator();

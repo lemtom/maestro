@@ -444,6 +444,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		for (AbcPart part : parts) {
 			if (part.delay != 0) {
 				delayEnabled = true;
+				break;
 			}
 		}
 		try (FileOutputStream out = new FileOutputStream(exportFile))

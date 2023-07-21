@@ -250,13 +250,13 @@ public class HighlightAbcNotesFrame extends JFrame
 		@Override public boolean getScrollableTracksViewportWidth()
 		{
 			Container parent = SwingUtilities.getUnwrappedParent(this);
-			return (parent instanceof JViewport) ? (parent.getWidth() > getPreferredSize().width) : false;
+			return parent instanceof JViewport && (parent.getWidth() > getPreferredSize().width);
 		}
 
 		@Override public boolean getScrollableTracksViewportHeight()
 		{
 			Container parent = SwingUtilities.getUnwrappedParent(this);
-			return (parent instanceof JViewport) ? (parent.getHeight() > textArea.getPreferredSize().height) : false;
+			return parent instanceof JViewport && (parent.getHeight() > textArea.getPreferredSize().height);
 		}
 	}
 

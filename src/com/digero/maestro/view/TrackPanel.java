@@ -847,7 +847,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		noteGraph.discard();
 	}
 
-	private class TrackTransposeModel extends SpinnerNumberModel
+	private static class TrackTransposeModel extends SpinnerNumberModel
 	{
 		public TrackTransposeModel(int value, int minimum, int maximum, int stepSize)
 		{

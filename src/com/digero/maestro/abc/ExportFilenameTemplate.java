@@ -19,8 +19,8 @@ import com.digero.maestro.view.SettingsDialog.MockMetadataSource;
 
 public class ExportFilenameTemplate
 {
-	public static final String spaceReplaceChars[] = {" ", "_", "-"};
-	public static final String spaceReplaceLabels[] = {"Don't Replace", "_ (Underscore)", "- (Dash)"};
+	public static final String[] spaceReplaceChars = {" ", "_", "-"};
+	public static final String[] spaceReplaceLabels = {"Don't Replace", "_ (Underscore)", "- (Dash)"};
 	
 	public static class Settings
 	{

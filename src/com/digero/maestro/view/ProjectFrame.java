@@ -926,26 +926,22 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		updateButtons(true);
 		
 		// Add support for using spacebar for pause/play.
-		ActionListener spaceBarListener = new ActionListener()
-		{
-			public void actionPerformed(ActionEvent ae)
+		ActionListener spaceBarListener = ae -> {
+			if (!sequencer.isLoaded())
 			{
-				if (!sequencer.isLoaded())
-				{
-					return;
-				}
-				SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
-
-				boolean running = !curSequencer.isRunning();
-				if (abcPreviewMode && running)
-				{
-					if (!refreshPreviewSequence(true))
-						running = false;
-				}
-
-				curSequencer.setRunning(running);
-				updateButtons(false);
+				return;
 			}
+			SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
+
+			boolean running = !curSequencer.isRunning();
+			if (abcPreviewMode && running)
+			{
+				if (!refreshPreviewSequence(true))
+					running = false;
+			}
+
+			curSequencer.setRunning(running);
+			updateButtons(false);
 		};
 		this.getRootPane().registerKeyboardAction(spaceBarListener, KeyStroke.getKeyStroke(' '), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
