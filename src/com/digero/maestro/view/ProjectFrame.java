@@ -1533,28 +1533,17 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			double[] LAYOUT_COLS_DYN = new double[] { partsList.getFixedCellWidth() + 32, FILL };
 			tableLayout.setColumn(LAYOUT_COLS_DYN);// This call is attempt of fix for no delete button on MacOS part 2
 			
+			String partListTitle = "Song Parts";
+			if (abcSong != null)
+			{
+				partListTitle = partListTitle + " (Count: " + abcSong.getActivePartCount() + ")";
+			}
+			
+			partsListPanel.setBorder(BorderFactory.createTitledBorder(partListTitle));
+			
 			updateButtonsPending = false;
 		}
 	};
-	
-	private boolean updatePartCountPending = false;
-	
-	public void updatePartCountIndicator() {
-		if (!updatePartCountPending)
-		{
-			updatePartCountPending = true;
-			SwingUtilities.invokeLater(() -> {
-				String partListTitle = "Song Parts";
-				if (abcSong != null)
-				{
-					partListTitle = partListTitle + " (Count: " + abcSong.getPartCount() + ")";
-				}
-				
-				partsListPanel.setBorder(BorderFactory.createTitledBorder(partListTitle));
-				updatePartCountPending = false;
-			});
-		}
-	}
 	
 	public void updateDelayButton () {
 		if (partsList.getSelectedIndex() != -1 && partPanel != null && partPanel.getAbcPart() != null && partPanel.getAbcPart().delay != 0) {
@@ -1717,7 +1706,6 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				partsList.ensureIndexIsVisible(idx);
 				partsList.repaint();
 				updateButtons(false);
-				updatePartCountIndicator();
 				maxNoteCountTotal = 0;
 				maxNoteCount = 0;
 				break;
@@ -1756,7 +1744,6 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 				partsList.repaint();
 				updateButtons(false);
-				updatePartCountIndicator();
 				maxNoteCountTotal = 0;
 				maxNoteCount = 0;
 				break;
@@ -1918,7 +1905,6 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		setAbcSongModified(false);
 		updateButtons(false);
 		updateTitle();
-		updatePartCountIndicator();
 		partPanel.setNote("");
 		partPanel.noteVisible(false);
 

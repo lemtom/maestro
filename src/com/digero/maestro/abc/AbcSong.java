@@ -560,9 +560,19 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		return str+str2;
 	}
 	
-	@Override public int getPartCount()
+	@Override public int getActivePartCount()
 	{
-		return getParts().size();
+		// TODO: Cache this to not have to recalculate
+		ListModelWrapper<AbcPart> prts = getParts();
+		int counter = 0;
+		for (AbcPart part : prts)
+		{
+			if (part.getEnabledTrackCount() > 0)
+			{
+				counter++;
+			}
+		}
+		return counter;
 	}
 
 	@Override public String getTranscriber()

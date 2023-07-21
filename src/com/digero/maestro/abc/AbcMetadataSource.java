@@ -22,7 +22,7 @@ public interface AbcMetadataSource
 	
 	String getAllParts();
 	
-	int getPartCount();
+	int getActivePartCount();
 	
 	String getBadgerTitle();
 }
