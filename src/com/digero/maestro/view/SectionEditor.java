@@ -5,6 +5,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -14,11 +16,13 @@ import java.util.TreeMap;
 
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -70,6 +74,19 @@ public class SectionEditor {
 		        
 		        abcPart.getAbcSong().addSongListener(songListener);
 		        abcPart.addAbcListener(abcPartListener);
+		        
+		        // Add support for using spacebar for pause/play.
+				ActionListener spaceBarListener = new ActionListener()
+				{
+					public void actionPerformed(ActionEvent ae)
+					{	
+						// Not pretty but is what I got to work
+						//jf.getRootPane().dispatchEvent(ae);
+						ActionListener al = jf.getRootPane().getActionForKeyStroke(KeyStroke.getKeyStroke(' '));
+						if (al != null) al.actionPerformed(ae);
+					}
+				};
+		        this.getRootPane().registerKeyboardAction(spaceBarListener, KeyStroke.getKeyStroke(' '), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		        
 		        SectionDialog.this.addWindowListener(new WindowAdapter() {
 
