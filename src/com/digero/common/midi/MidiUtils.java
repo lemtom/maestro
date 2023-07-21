@@ -166,7 +166,7 @@ public class MidiUtils {
         if (tempo <= 0) {
             tempo = 1;
         }
-        return ((double) 60000000l) / tempo;
+        return ((double) 60000000L) / tempo;
     }
     
     /** return if the given message is a meta tempo message */

@@ -75,17 +75,17 @@ public class TrackSplitter {
 			
 			// This hash map contains a map from instrument name into new track.
 			// This instrument name is prepended with the channel if its a GM+ format midi.
-			HashMap<String, Track> newTracks = new HashMap<String, Track>();
+			HashMap<String, Track> newTracks = new HashMap<>();
 			
 			// Making a list of which notes are playing, the note will map into an instrument, so that the Midi OFF event gets put on same track as its midi ON event.
 			HashMap<Integer, String>[] notesOn = new HashMap[16];
 			for (int i = 0; i < 16; i++) {
-				notesOn[i] = new HashMap<Integer, String>();
+				notesOn[i] = new HashMap<>();
 			}
 			
 			// GM+ stuff
 			int port = portMap.get(j);
-			List<MidiEvent> portPrograms = new ArrayList<MidiEvent>();// Program changes within specific port, they will later be put into 'firstTrackUsingPorts'
+			List<MidiEvent> portPrograms = new ArrayList<>();// Program changes within specific port, they will later be put into 'firstTrackUsingPorts'
 			Track firstTrackUsingPorts = null;// The first of the new expanded tracks, this will come to contain GM+ port program changes.
 			
 			// Iterate over all midi events in old track
@@ -141,7 +141,7 @@ public class TrackSplitter {
 					// then we place it in one of the new tracks, which each represent an instrument.
 					// If not associated with an instrument, then it is put in track 0, where we keep all the meta, sysex, bank changes and normal program changes..
 					if (instr != null && !"".equals(instr)) {
-						String trackID = hasPorts?(Integer.toString(channel)+instr):instr;// If its not a Cakewalk midi then we lumps all of same instr together, regardless of channel.
+						String trackID = hasPorts?(channel +instr):instr;// If its not a Cakewalk midi then we lumps all of same instr together, regardless of channel.
 						Track newTrack = newTracks.get(trackID);
 						if (newTrack == null) {
 							newTrack = expandedSequence.createTrack();

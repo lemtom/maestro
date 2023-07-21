@@ -76,15 +76,11 @@ public class SectionEditor {
 		        abcPart.addAbcListener(abcPartListener);
 		        
 		        // Add support for using spacebar for pause/play.
-				ActionListener spaceBarListener = new ActionListener()
-				{
-					public void actionPerformed(ActionEvent ae)
-					{	
-						// Not pretty but is what I got to work
-						//jf.getRootPane().dispatchEvent(ae);
-						ActionListener al = jf.getRootPane().getActionForKeyStroke(KeyStroke.getKeyStroke(' '));
-						if (al != null) al.actionPerformed(ae);
-					}
+				ActionListener spaceBarListener = ae -> {
+					// Not pretty but is what I got to work
+					//jf.getRootPane().dispatchEvent(ae);
+					ActionListener al = jf.getRootPane().getActionForKeyStroke(KeyStroke.getKeyStroke(' '));
+					if (al != null) al.actionPerformed(ae);
 				};
 		        this.getRootPane().registerKeyboardAction(spaceBarListener, KeyStroke.getKeyStroke(' '), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		        
@@ -376,6 +372,7 @@ public class SectionEditor {
 									for (PartSection psC : tm.values()) {
 										if (!(ps1.startBar > psC.endBar || ps1.endBar < psC.startBar)) {
 											soFarSoGood = false;
+											break;
 										}
 									}
 									if (ps1.startBar > 0 && ps1.startBar <= ps1.endBar && soFarSoGood) {

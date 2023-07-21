@@ -2,12 +2,10 @@ package com.aifel.multimerger;
 
 import java.awt.Component;
 import java.awt.EventQueue;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +16,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -30,7 +27,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.Border;
 
 import com.digero.common.abc.LotroInstrument;
-import com.digero.common.icons.IconLoader;
 
 public class MultiMerger {
 	
@@ -51,15 +47,13 @@ public class MultiMerger {
 	private String lastExport = null;
 
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					frame = new MultiMergerView();
-					new MultiMerger();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		EventQueue.invokeLater(() -> {
+			try {
+				frame = new MultiMergerView();
+				new MultiMerger();
+				frame.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
@@ -104,7 +98,7 @@ public class MultiMerger {
 	private void join() throws IOException {
 		List<File> theFiles = theList.getSelectedValuesList();
 		if (theFiles != null && theFiles.size() > 1) {
-			List<List<String>> oldContent = new ArrayList<List<String>>();
+			List<List<String>> oldContent = new ArrayList<>();
 			for (File theFile : theFiles) {
 				List<String> lines = Files.readAllLines(Paths.get(theFile.toURI()), StandardCharsets.UTF_8);
 				oldContent.add(lines);
@@ -124,7 +118,7 @@ public class MultiMerger {
 			}
 			String badgerParts = getAllParts(numberOfParts);
 			
-			List<String> newContent = new ArrayList<String>();
+			List<String> newContent = new ArrayList<>();
 			int x = 1;
 			int fileNo = 0;
 			String Q = "";
@@ -231,15 +225,15 @@ public class MultiMerger {
 			FileWriter writer = new FileWriter(newFile); 
 			
 			frame.setTextFieldText("Writing new file:\n "+newFile.getAbsolutePath()+"\n\n The song has "+(x-1)+" parts.");
-			String info = "Writing new file:\n "+newFile.getAbsolutePath()+"\n\n The song has "+(x-1)+" parts.\n\n";
+			StringBuilder info = new StringBuilder("Writing new file:\n " + newFile.getAbsolutePath() + "\n\n The song has " + (x - 1) + " parts.\n\n");
 			for (String line : newContent) {
 				writer.write(line + System.lineSeparator());
-				info += System.lineSeparator() + line;
+				info.append(System.lineSeparator()).append(line);
 			}
 			writer.close();
 			lastExport = newFile.getAbsolutePath();
 			refreshTest();
-			frame.setTextFieldText(info);
+			frame.setTextFieldText(info.toString());
 		} else {
 			frame.setTextFieldText("Please select at least 2 abc files..");
 			lastExport = null;
@@ -285,7 +279,7 @@ public class MultiMerger {
 	
 	private JList<File> getGui(File[] all, boolean vertical) {
 		if (all.length == 0) return null;
-        theList = new JList<File>(all);
+        theList = new JList<>(all);
         theList.setCellRenderer(new FileRenderer(!vertical));
 
         if (!vertical) {
@@ -297,7 +291,7 @@ public class MultiMerger {
         return theList;
     }
 	
-	class AbcFileFilter implements FileFilter {
+	static class AbcFileFilter implements FileFilter {
 
 		public boolean accept(File file) {
 	        String name = file.getName().toLowerCase();
@@ -339,6 +333,7 @@ public class MultiMerger {
 	}
 
 	@SuppressWarnings("serial")
+	static
 	class FileRenderer extends DefaultListCellRenderer {
 
 	    private boolean pad;
@@ -420,33 +415,25 @@ public class MultiMerger {
 	}
 	
 	private ActionListener getJoinActionListener() {
-		return new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				try {
-					join();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-					frame.setTextFieldText("An error occured:\n\n"+e1.toString());
-					lastExport = null;
-					refreshTest();
-				}
+		return e -> {
+			try {
+				join();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				frame.setTextFieldText("An error occured:\n\n"+ e1);
+				lastExport = null;
+				refreshTest();
 			}
 		};
 	}
 	
 	private ActionListener getTestActionListener() {
-		return new ActionListener()
-		{
-			@Override public void actionPerformed(ActionEvent e)
-			{
-				try {
-					test();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-					frame.setTextFieldText("An error occured:\n\n"+e1.toString());
-				}
+		return e -> {
+			try {
+				test();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				frame.setTextFieldText("An error occured:\n\n"+ e1);
 			}
 		};
 	}

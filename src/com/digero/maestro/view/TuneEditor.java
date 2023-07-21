@@ -60,15 +60,11 @@ public class TuneEditor {
 		        abcSong.addSongListener(songListener);
 		        
 		        // Add support for using spacebar for pause/play.
-				ActionListener spaceBarListener = new ActionListener()
-				{
-					public void actionPerformed(ActionEvent ae)
-					{	
-						// Not pretty but is what I got to work
-						//jf.getRootPane().dispatchEvent(ae);
-						ActionListener al = jf.getRootPane().getActionForKeyStroke(KeyStroke.getKeyStroke(' '));
-						if (al != null) al.actionPerformed(ae);
-					}
+				ActionListener spaceBarListener = ae -> {
+					// Not pretty but is what I got to work
+					//jf.getRootPane().dispatchEvent(ae);
+					ActionListener al = jf.getRootPane().getActionForKeyStroke(KeyStroke.getKeyStroke(' '));
+					if (al != null) al.actionPerformed(ae);
 				};
 		        this.getRootPane().registerKeyboardAction(spaceBarListener, KeyStroke.getKeyStroke(' '), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		        
@@ -252,6 +248,7 @@ public class TuneEditor {
 									for (TuneLine psC : tm.values()) {
 										if (!(ps.startBar > psC.endBar || ps.endBar < psC.startBar)) {
 											soFarSoGood = false;
+											break;
 										}
 									}
 									if (ps.startBar > 0 && ps.startBar <= ps.endBar && soFarSoGood) {
@@ -320,17 +317,13 @@ public class TuneEditor {
 		        //System.err.println(Thread.currentThread().getName()); Swing event thread
 		    }
 		    
-		    private Listener<AbcSongEvent> songListener = new Listener<AbcSongEvent>()
-			{
-				@Override public void onEvent(AbcSongEvent e)
-				{
-					switch (e.getProperty()) {
-						case SONG_CLOSING:
-							dispose();
-							break;
-						default:
-							break;
-					}
+		    private Listener<AbcSongEvent> songListener = e -> {
+				switch (e.getProperty()) {
+					case SONG_CLOSING:
+						dispose();
+						break;
+					default:
+						break;
 				}
 			};
 		}

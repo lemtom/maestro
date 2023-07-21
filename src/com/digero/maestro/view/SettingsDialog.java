@@ -399,7 +399,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		
 		JLabel whitespaceLabel = new JLabel("<html><b>Replace spaces in variables with:</b></html>");
 		
-		JComboBox<String> replaceWhitespaceComboBox = new JComboBox<String>(ExportFilenameTemplate.spaceReplaceLabels);
+		JComboBox<String> replaceWhitespaceComboBox = new JComboBox<>(ExportFilenameTemplate.spaceReplaceLabels);
 		String replaceText = exportTemplateSettings.getWhitespaceReplaceText();
 		int selectedIndex = 0;
 		exportTemplateSettings.setWhitespaceReplaceText(ExportFilenameTemplate.spaceReplaceChars[0]);

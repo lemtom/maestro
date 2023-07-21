@@ -592,7 +592,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 		return timingInfoByTick;
 	}
 
-	class TimingInfoEvent
+	static class TimingInfoEvent
 	{
 		public final long tick;
 		public final long micros;
