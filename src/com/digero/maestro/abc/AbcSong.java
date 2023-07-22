@@ -750,6 +750,16 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	{
 		return sourceFile;
 	}
+	
+	public String getSourceFilename()
+	{
+		String ret = "ERROR";
+		if (sourceFile != null)
+		{
+			ret = sourceFile.getName();
+		}
+		return ret;
+	}
 
 	public File getSaveFile()
 	{

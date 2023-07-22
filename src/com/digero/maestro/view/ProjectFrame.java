@@ -52,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -902,9 +903,13 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		midiPartsAndControls.add(partPanel, BorderLayout.CENTER);
 		midiPartsAndControls.add(playControlPanel, BorderLayout.SOUTH);
 		midiPartsAndControls.setBorder(BorderFactory.createTitledBorder("Part Settings"));
-
-		add(abcPartsAndSettings, "0, 0");
-		add(midiPartsAndControls, "1, 0");
+		
+		JSplitPane topLevelSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, abcPartsAndSettings, midiPartsAndControls);
+		topLevelSplitPane.setBorder(BorderFactory.createEmptyBorder());
+		topLevelSplitPane.setContinuousLayout(true);
+		topLevelSplitPane.setFocusable(false);
+		
+		add(topLevelSplitPane, "0, 0, 1, 0");
 		
 		final FileFilterDropListener dropListener = new FileFilterDropListener(false, "mid", "midi", "kar", "abc", "txt",
 				AbcSong.MSX_FILE_EXTENSION_NO_DOT);

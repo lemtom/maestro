@@ -25,4 +25,6 @@ public interface AbcMetadataSource
 	int getActivePartCount();
 	
 	String getBadgerTitle();
+	
+	String getSourceFilename();
 }

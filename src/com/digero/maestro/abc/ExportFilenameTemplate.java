@@ -19,14 +19,15 @@ import com.digero.maestro.view.SettingsDialog.MockMetadataSource;
 
 public class ExportFilenameTemplate
 {
-	public static final String[] spaceReplaceChars = {" ", "_", "-"};
-	public static final String[] spaceReplaceLabels = {"Don't Replace", "_ (Underscore)", "- (Dash)"};
+	public static final String[] spaceReplaceChars = {" ", "", "_", "-"};
+	public static final String[] spaceReplaceLabels = {"Don't Replace", "Remove Spaces", "_ (Underscore)", "- (Dash)"};
 	
 	public static class Settings
 	{
 		private boolean exportFilenamePatternEnabled;
 		private String exportFilenamePattern;
 		private String whitespaceReplaceText;
+		private boolean partCountZeroPadded;
 		
 		private final Preferences prefs;
 
@@ -36,6 +37,7 @@ public class ExportFilenameTemplate
 			exportFilenamePatternEnabled = prefs.getBoolean("exportFilenamePatternEnabled", false);
 			exportFilenamePattern = prefs.get("exportFilenamePattern", "$PartCount - $SongTitle");
 			whitespaceReplaceText = prefs.get("whitespaceReplaceText", " ");
+			partCountZeroPadded = prefs.getBoolean("partCountZeroPadded", true);
 		}
 
 		public Settings(Settings source)
@@ -49,6 +51,7 @@ public class ExportFilenameTemplate
 			prefs.putBoolean("exportFilenamePatternEnabled", exportFilenamePatternEnabled);
 			prefs.put("exportFilenamePattern", exportFilenamePattern);
 			prefs.put("whitespaceReplaceText", whitespaceReplaceText);
+			prefs.putBoolean("partCountZeroPadded", partCountZeroPadded);
 		}
 
 		private void copyFrom(Settings source)
@@ -56,6 +59,7 @@ public class ExportFilenameTemplate
 			this.exportFilenamePatternEnabled = source.exportFilenamePatternEnabled;
 			this.exportFilenamePattern = source.exportFilenamePattern;
 			this.whitespaceReplaceText = source.whitespaceReplaceText;
+			this.partCountZeroPadded = source.partCountZeroPadded;
 		}
 		
 		public boolean isExportFilenamePatternEnabled()
@@ -86,6 +90,16 @@ public class ExportFilenameTemplate
 		public void setWhitespaceReplaceText(String whitespaceReplaceText)
 		{
 			this.whitespaceReplaceText = whitespaceReplaceText;
+		}
+		
+		public boolean isPartCountZeroPadded()
+		{
+			return partCountZeroPadded;
+		}
+		
+		public void setPartCountZeroPadded(boolean zeroPadded)
+		{
+			partCountZeroPadded = zeroPadded;
 		}
 		
 		public void restoreDefaults()
@@ -170,7 +184,14 @@ public class ExportFilenameTemplate
 		{
 			@Override public String getValue()
 			{
-				return String.format("%02d", getMetadataSource().getActivePartCount());
+				return String.format(settings.partCountZeroPadded? "%02d" : "%d", getMetadataSource().getActivePartCount());
+			}
+		});
+		variables.put("$SourceFile", new Variable("Source file name (midi or ABC)")
+		{
+			@Override public String getValue()
+			{
+				return getMetadataSource().getSourceFilename().replaceAll("\\.", " ");
 			}
 		});
 	}
@@ -217,6 +238,10 @@ public class ExportFilenameTemplate
 	public String formatName(ExportFilenameTemplate.Settings settings)
 	{
 		String name = settings.getExportFilenamePattern();
+		
+		// hacky but it works - save and restore later
+		boolean zeroPad = this.settings.partCountZeroPadded;
+		this.settings.partCountZeroPadded = settings.partCountZeroPadded;
 
 		// Find all variables starting with $
 		Pattern regex = Pattern.compile("\\$[A-Za-z]+");
@@ -240,6 +265,8 @@ public class ExportFilenameTemplate
 				name = name.substring(0, match.first) + value + name.substring(match.second);
 			}
 		}
+		
+		this.settings.partCountZeroPadded = zeroPad;
 		
 		name += ".abc";
 		
