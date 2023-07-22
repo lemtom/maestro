@@ -62,7 +62,6 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 
 	private JTabbedPane tabPanel;
 
-	private PartAutoNumberer partNumberer;
 	private PartAutoNumberer.Settings partNumbererSettings;
 
 	private PartNameTemplate.Settings nameTemplateSettings;
@@ -82,7 +81,6 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		super(owner, "Options", true);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-		this.partNumberer = partNumberer;
 		this.partNumbererSettings = partNumberer.getSettingsCopy();
 
 		this.nameTemplate = nameTemplate;
