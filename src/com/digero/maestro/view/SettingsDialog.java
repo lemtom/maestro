@@ -395,7 +395,9 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	
 	private JPanel createExportTemplatePanel()
 	{
-		JLabel patternLabel = new JLabel("<html><b><u>Pattern for ABC export filename</b></u></html>");
+		JLabel pageLabel = new JLabel("<html><b><u>ABC filename settings</b></u></html>");
+		
+		JLabel patternLabel = new JLabel("<html><b>Custom pattern for exported filename:</b></html>");
 		
 		JLabel whitespaceLabel = new JLabel("<html><b>Replace spaces in variables with:</b></html>");
 		
@@ -417,6 +419,15 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		replaceWhitespaceComboBox.addActionListener(e -> 
 		{
 			exportTemplateSettings.setWhitespaceReplaceText(ExportFilenameTemplate.spaceReplaceChars[replaceWhitespaceComboBox.getSelectedIndex()]);
+			updateExportFilenameExample();
+		});
+		
+		JCheckBox zeroPadPartCountCheckbox = new JCheckBox("Zero-pad part count to two digits");
+		zeroPadPartCountCheckbox.setSelected(exportTemplateSettings.isPartCountZeroPadded());
+		zeroPadPartCountCheckbox.addActionListener(e ->
+		{
+			boolean selected = zeroPadPartCountCheckbox.isSelected();
+			exportTemplateSettings.setPartCountZeroPadded(selected);
 			updateExportFilenameExample();
 		});
 
@@ -443,7 +454,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			}
 		});
 		
-		JCheckBox enablePatternExportCheckBox = new JCheckBox("Enable pattern for ABC export filenames");
+		JCheckBox enablePatternExportCheckBox = new JCheckBox("Enable custom pattern for generating ABC filenames");
 		enablePatternExportCheckBox.setSelected(exportTemplateSettings.isExportFilenamePatternEnabled());
 		enablePatternExportCheckBox.addActionListener(e ->
 		{
@@ -451,6 +462,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			exportTemplateSettings.setExportFilenamePatternEnabled(selected);
 			replaceWhitespaceComboBox.setEnabled(selected);
 			exportNameTextField.setEditable(selected);
+			zeroPadPartCountCheckbox.setEnabled(selected);
 		});
 		
 		exportTemplateExampleLabel = new JLabel(".abc");
@@ -470,7 +482,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		panel.setBorder(BorderFactory.createEmptyBorder(PAD, PAD, PAD, PAD));
 		
 		layout.insertRow(++row, PREFERRED);
-		panel.add(patternLabel, "0, " + row + ", 1, " + row);
+		panel.add(pageLabel, "0, " + row + ", 1, " + row);
 		
 		layout.insertRow(++row, PREFERRED);
 		panel.add(enablePatternExportCheckBox, "0, " + row + ", 1, " + row);
@@ -478,6 +490,12 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		layout.insertRow(++row, PREFERRED);
 		panel.add(whitespaceLabel, "0, " + row);
 		panel.add(replaceWhitespaceComboBox, "1, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(zeroPadPartCountCheckbox, "0, " + row + ", 1, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(patternLabel, "0, " + row + ", 1, " + row);
 		
 		layout.insertRow(++row, PREFERRED);
 		panel.add(exportNameTextField, "0, " + row + ", 1, " + row);
@@ -522,6 +540,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		exportTemplate.setMetadataSource(mockMetadata);
 
 		String exampleText = exportTemplate.formatName(exportTemplateSettings);
+		exampleText = "Example filename:  " + exampleText;
 		String exampleTextEllipsis = Util.ellipsis(exampleText, exportTemplateExampleLabel.getWidth(),
 				exportTemplateExampleLabel.getFont());
 
