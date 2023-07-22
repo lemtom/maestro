@@ -187,6 +187,13 @@ public class ExportFilenameTemplate
 				return String.format(settings.partCountZeroPadded? "%02d" : "%d", getMetadataSource().getActivePartCount());
 			}
 		});
+		variables.put("$SourceFile", new Variable("Source file name (midi or ABC)")
+		{
+			@Override public String getValue()
+			{
+				return getMetadataSource().getSourceFilename();
+			}
+		});
 	}
 
 	public Settings getSettingsCopy()

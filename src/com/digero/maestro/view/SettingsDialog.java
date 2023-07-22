@@ -933,5 +933,10 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		public String getBadgerTitle() {
 			return "N: Title: "+getComposer()+" - "+getSongTitle();
 		}
+
+		@Override
+		public String getSourceFilename() {
+			return "Example Midi.mid";
+		}
 	}
 }
