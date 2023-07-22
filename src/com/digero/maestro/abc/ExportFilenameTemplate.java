@@ -191,7 +191,7 @@ public class ExportFilenameTemplate
 		{
 			@Override public String getValue()
 			{
-				return getMetadataSource().getSourceFilename();
+				return getMetadataSource().getSourceFilename().replaceAll("\\.", " ");
 			}
 		});
 	}
