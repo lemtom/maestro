@@ -252,7 +252,6 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			while (sequenceInfo == null)
 			{
 				String name = sourceFile.getName().toLowerCase();
-				System.out.println("name of file in msx: " + name);
 				boolean isAbc = name.endsWith(".abc") || name.endsWith(".txt");
 
 				try
