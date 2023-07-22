@@ -54,7 +54,9 @@ Version 2.5.0.116
 - Option in section editor to set all note volumes to default.
 - Added a warning if you try to open a MSX project file created on a newer version of Maestro with an older version.
 - Fix that when installing Maestro fresh, the drummap could be empty.
-- Maestro can now be used while Section and Tune editors are open. 
+- Maestro can now be used while Section and Tune editors are open.
+- Trim non-active parts from ABC export
+- The part list can now be resized
 
 Version 2.5.0.115
 - Space can now be used to play/pause.
