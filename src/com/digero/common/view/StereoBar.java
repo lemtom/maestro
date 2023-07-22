@@ -12,6 +12,7 @@ import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class StereoBar extends JPanel
 {
 	private static final int PTR_WIDTH = 12;

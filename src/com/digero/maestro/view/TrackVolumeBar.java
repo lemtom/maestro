@@ -23,6 +23,7 @@ import com.digero.common.abc.Dynamics;
 import com.digero.common.util.IDiscardable;
 import com.digero.common.util.Util;
 
+@SuppressWarnings("serial")
 public class TrackVolumeBar extends JPanel implements IDiscardable
 {
 	private static final int PTR_WIDTH = 6;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.ListIterator;
-import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.prefs.BackingStoreException;
@@ -14,7 +13,6 @@ import java.util.regex.Pattern;
 
 import com.digero.common.util.Pair;
 import com.digero.common.util.Util;
-import com.digero.maestro.abc.PartNameTemplate.Settings;
 import com.digero.maestro.view.SettingsDialog.MockMetadataSource;
 
 public class ExportFilenameTemplate

@@ -1,6 +1,5 @@
 package com.digero.maestro;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -15,9 +14,6 @@ import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-
 import com.digero.common.util.Version;
 import com.digero.maestro.view.ProjectFrame;
 import com.digero.maestro.view.Themer;

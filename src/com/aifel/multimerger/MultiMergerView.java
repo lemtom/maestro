@@ -8,14 +8,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JTextArea;
 import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import java.awt.Component;
 import javax.swing.JSeparator;
 
+@SuppressWarnings("serial")
 public class MultiMergerView extends JFrame {
 
 	private JPanel contentPane;

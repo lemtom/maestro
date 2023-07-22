@@ -2,6 +2,7 @@ package com.digero.maestro.abc;
 
 import java.util.EventObject;
 
+@SuppressWarnings("serial")
 public class AbcSongEvent extends EventObject
 {
 	public enum AbcSongProperty

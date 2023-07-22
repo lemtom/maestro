@@ -36,6 +36,7 @@ import com.digero.common.midi.SequencerWrapper;
 import com.digero.common.util.Listener;
 import com.digero.common.view.InstrumentComboBox;
 
+@SuppressWarnings("serial")
 public class TrackListPanel extends JPanel implements Listener<SequencerEvent>, TableLayoutConstants
 {
 	public static final int TRACKLIST_ROWHEIGHT = 18;

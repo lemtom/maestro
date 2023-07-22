@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import com.digero.common.abc.LotroInstrument;
 import com.digero.common.util.Pair;
 import com.digero.common.util.Util;
-import com.digero.maestro.view.MiscSettings;
 import com.digero.maestro.view.SettingsDialog.MockMetadataSource;
 
 public class PartNameTemplate

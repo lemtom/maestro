@@ -78,9 +78,9 @@ public class TrackSplitter {
 			HashMap<String, Track> newTracks = new HashMap<>();
 			
 			// Making a list of which notes are playing, the note will map into an instrument, so that the Midi OFF event gets put on same track as its midi ON event.
-			HashMap<Integer, String>[] notesOn = new HashMap[16];
+			List<HashMap<Integer, String>> notesOn = new ArrayList<HashMap<Integer, String>>();
 			for (int i = 0; i < 16; i++) {
-				notesOn[i] = new HashMap<>();
+				notesOn.add(new HashMap<>());
 			}
 			
 			// GM+ stuff
@@ -112,21 +112,21 @@ public class TrackSplitter {
 							// This is a genuine midi ON event
 							instr = fetchInstrName(tick, channel, port, j);
 							if (instr != null && !"".equals(instr)) {
-								notesOn[channel].put(note, instr);
+								notesOn.get(channel).put(note, instr);
 							}
 						} else if (!on) {
 							// This is a genuine midi OFF event
-							instr = notesOn[channel].remove(note);
+							instr = notesOn.get(channel).remove(note);
 						} else {
 							// This is a midi ON event that might act as a midi OFF
-							instr = notesOn[channel].remove(note);
+							instr = notesOn.get(channel).remove(note);
 							if (instr == null) {
 								// Its not preceded by a midi ON, so we treat is as a midi ON although, its silent.
 								// TODO: Consider to remove it, cause Maestro will assign +pppp+ to it,
 								// and it will become audible which is probably not what the midi maker intended.
 								instr = fetchInstrName(tick, channel, port, j);
 								if (instr != null && !"".equals(instr)) {
-									notesOn[channel].put(note, instr);
+									notesOn.get(channel).put(note, instr);
 								}
 							}
 						}

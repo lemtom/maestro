@@ -3,8 +3,6 @@ package com.digero.maestro.view;
 import java.awt.Font;
 import java.util.prefs.Preferences;
 
-import javax.swing.InputMap;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.StyleContext;

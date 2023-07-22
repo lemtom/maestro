@@ -1,6 +1,5 @@
 package com.digero.common.abc;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 

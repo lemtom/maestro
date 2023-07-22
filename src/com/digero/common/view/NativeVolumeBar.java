@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 import com.digero.common.midi.VolumeTransceiver;
 
+@SuppressWarnings("serial")
 public class NativeVolumeBar extends JPanel
 {
 	private static final int PTR_WIDTH = 12;

@@ -12,8 +12,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -58,14 +56,13 @@ import com.digero.abcplayer.AbcPlayer;
 import com.digero.common.abctomidi.AbcInfo;
 import com.digero.common.abctomidi.AbcRegion;
 import com.digero.common.midi.Note;
-import com.digero.common.midi.SequencerEvent;
 import com.digero.common.midi.SequencerEvent.SequencerProperty;
 import com.digero.common.midi.SequencerWrapper;
-import com.digero.common.util.Listener;
 import com.digero.common.util.NullCaret;
 import com.digero.common.util.Util;
 import com.digero.common.view.ColorTable;
 
+@SuppressWarnings("serial")
 public class HighlightAbcNotesFrame extends JFrame
 {
 	private SequencerWrapper sequencer;

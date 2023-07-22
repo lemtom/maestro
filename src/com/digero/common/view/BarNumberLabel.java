@@ -9,6 +9,7 @@ import com.digero.common.midi.SequencerWrapper;
 import com.digero.common.util.IDiscardable;
 import com.digero.common.util.Listener;
 
+@SuppressWarnings("serial")
 public class BarNumberLabel extends JLabel implements Listener<SequencerEvent>, IDiscardable
 {
 	private IBarNumberCache barNumberCache;

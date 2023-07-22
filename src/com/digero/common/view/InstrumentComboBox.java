@@ -22,7 +22,7 @@ import javax.swing.event.ListDataListener;
 import com.digero.common.abc.LotroInstrument;
 import com.digero.common.abc.LotroInstrumentGroup;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "serial" })
 public class InstrumentComboBox extends JComboBox<LotroInstrument>
 {
 	private final List<Object> items;

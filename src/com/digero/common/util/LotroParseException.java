@@ -1,5 +1,6 @@
 package com.digero.common.util;
 
+@SuppressWarnings("serial")
 public class LotroParseException extends ParseException
 {
 	public LotroParseException(String message, String fileName, int line, int column)

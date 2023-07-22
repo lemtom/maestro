@@ -244,7 +244,7 @@ public class HashGenerator
 		System.out.println("Listing files " + (include ? "included" : "not included") + " in hash file: ");
 		for (Map.Entry<File, Hash> entry : sourceHashes.entrySet())
 		{
-			boolean isInList = existingHashes.contains(entry.getKey());
+			boolean isInList = existingHashes.contains(entry.getValue());// Changed from getKey to getValue  (by Aifel)
 			if (include == isInList)
 			{
 				System.out.println(entry.getKey().getAbsolutePath());

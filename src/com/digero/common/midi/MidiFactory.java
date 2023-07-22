@@ -1,6 +1,5 @@
 package com.digero.common.midi;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import javax.sound.midi.InvalidMidiDataException;

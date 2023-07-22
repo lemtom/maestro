@@ -1,5 +1,6 @@
 package com.digero.maestro.abc;
 
+@SuppressWarnings("serial")
 public class AbcConversionException extends Exception
 {
 	public AbcConversionException()

@@ -1,5 +1,6 @@
 package com.digero.common.util;
 
+@SuppressWarnings("serial")
 public class ParseException extends Exception
 {
 	public ParseException(String message, String fileName, int line, int column)
