@@ -50,13 +50,13 @@ Version 2.5.0.116
 - Added an option to section editor to reset volumes on source notes (e.g. midi notes),
     so seen from Maestro there will be no volume variations in the midi file in the specified section (beside from section changes).
 - Add ability to reset setting pages. Each page has gotten a Reset Page button.
-- Add part count indicator to Song Parts title text
+- Add part count indicator to Song Parts title text.
 - Option in section editor to set all note volumes to default.
 - Added a warning if you try to open a MSX project file created on a newer version of Maestro with an older version.
 - Fix that when installing Maestro fresh, the drummap could be empty.
 - Maestro can now be used while Section and Tune editors are open.
-- Trim non-active parts from ABC export
-- The part list can now be resized
+- Trim non-active parts from ABC export.
+- The part list can now be resized.
 
 Version 2.5.0.115
 - Space can now be used to play/pause.
@@ -65,7 +65,7 @@ Version 2.5.0.115
 - Internal refactoring and update java target to JRE 8.
 - New menu option to save a midi, which will expand tracks to only have 1 instrument per track.
     After saving the new midi, it will ask if you would like to load the new expanded midi.
-- Add support for using pattern to define export ABC filename 
+- Add support for using pattern to define export ABC filename. 
 
 Version 2.5.0.114
 - Fix missing file in MSI install.
