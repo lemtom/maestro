@@ -14,6 +14,7 @@
 	<!-- For version.AbcPlayer -->
 	<property file="${src}/com/digero/maestro/version.txt" />
 	<!-- For version.Maestro -->
+	<property name="version.AbcMergeTool" value="${version.AbcPlayer}" />
 	<condition property="isWindows">
 		<os family="windows" />
 	</condition>
@@ -108,6 +109,7 @@
 			<arg value="-nologo" />
 			<arg value="-dMaestroVersion=${version.Maestro}" />
 			<arg value="-dAbcPlayerVersion=${version.AbcPlayer}" />
+			<arg value="-dAbcMergeToolVersion=${version.AbcMergeTool}" />
 			<arg value="-o" />
 			<arg value="${build}/MaestroInstaller.wixobj" />
 			<arg value="MaestroInstaller.wix" />

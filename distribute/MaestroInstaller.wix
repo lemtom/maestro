@@ -34,6 +34,8 @@
 		<Property Id="MaestroVersion">$(var.MaestroVersion)</Property>
 		<Property Id="AbcPlayerAppName">$(var.AbcPlayerAppName)</Property>
 		<Property Id="AbcPlayerVersion">$(var.AbcPlayerVersion)</Property>
+		<Property Id="AbcMergeToolAppName">$(var.AbcMergeToolAppName)</Property>
+		<Property Id="AbcMergeToolVersion">$(var.AbcMergeToolVersion)</Property>
 
 		<!-- Installer UI -->
 		<UI>
@@ -261,7 +263,6 @@
 				Description="Files required by both $(var.MaestroAppName) and $(var.AbcPlayerAppName).">
 			<ComponentRef Id="LotroInstruments.sf2" />
 			<ComponentRef Id="aifel_changelog.txt" />
-			<!--ComponentRef Id="wr4j" /-->
 		</Feature>
 
 		<Feature Id="Maestro"
