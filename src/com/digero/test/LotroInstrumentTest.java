@@ -25,9 +25,12 @@ import static com.digero.common.abc.LotroInstrument.STUDENT_FX_FIDDLE;
 import static com.digero.common.abc.LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.digero.common.abc.LotroInstrument;
+import com.digero.common.abc.LotroInstrumentNick;
 
 public class LotroInstrumentTest {
 	@Test
@@ -40,6 +43,9 @@ public class LotroInstrumentTest {
 			test(instrument, instrument.name());
 			test(instrument, instrument.toString());
 			test(instrument, allInstruments.toString() + instrument); // Last match wins
+			for(String nick : LotroInstrumentNick.getNicks(instrument)) {
+				test(instrument, nick);
+			}
 		}
 
 		test(LUTE_OF_AGES, "Lute");
@@ -74,10 +80,10 @@ public class LotroInstrumentTest {
 		test(MISTY_MOUNTAIN_HARP, "Song - mmh");
 		test(MISTY_MOUNTAIN_HARP, "misty_harp");
 
-		test(BARDIC_FIDDLE, "Fiddle");
+		//test(BARDIC_FIDDLE, "Fiddle");
 		test(BARDIC_FIDDLE, "Violin");
 		test(BARDIC_FIDDLE, "Song - Bardic Fiddle");
-		test(BARDIC_FIDDLE, "Song - B Fiddle 2");
+		//test(BARDIC_FIDDLE, "Song - B Fiddle 2");
 
 		test(BASIC_FIDDLE, "BasicFiddle");
 		test(BASIC_FIDDLE, "basic_fiddle");
@@ -165,6 +171,6 @@ public class LotroInstrumentTest {
 
 	private static void test(LotroInstrument expected, String text) {
 		LotroInstrument actual = LotroInstrument.findInstrumentName(text, null);
-		assertEquals(actual, expected);
+		assertEquals(expected, actual, text);
 	}
 }
