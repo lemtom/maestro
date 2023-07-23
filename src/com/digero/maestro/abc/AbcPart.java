@@ -629,10 +629,8 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		{
 			Integer[] result2 = matchNick(previous, title);
 			if (result2 != null) {
-				System.out.println(previous+": replaceTitleInstrument result2 "+typeNumber);
 				if (isTypeNumberMatchingTitle() && typeNumber != -1) {
 					typeNumber = 0;
-					System.out.println("isTypeNumberMatchingTitle == true: "+replacementName);
 					setTitle(replacementName);
 				} else {
 					setTitle(title.substring(0, result2[0]) + replacementName + title.substring(result2[1]));
@@ -649,9 +647,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		else
 		{
 			MatchResult m = result.second;
-			System.out.println(previous+": replaceTitleInstrument result1 "+typeNumber);
 			if (isTypeNumberMatchingTitle() && typeNumber != -1) {
-				System.out.println("isTypeNumberMatchingTitle == true: "+replacementName);
 				typeNumber = 0;
 				setTitle(replacementName);
 			} else {
