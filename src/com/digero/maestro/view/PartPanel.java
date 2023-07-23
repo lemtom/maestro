@@ -134,8 +134,9 @@ public class PartPanel extends JPanel implements ICompileConstants, TableLayoutC
             if (abcPart != null)
             {
                 LotroInstrument newInstrument = (LotroInstrument) instrumentComboBox.getSelectedItem();
+                LotroInstrument oldInstrument = abcPart.getInstrument();
                 PartPanel.this.partAutoNumberer.setInstrument(abcPart, newInstrument);
-                abcPart.replaceTitleInstrument(newInstrument);
+                abcPart.replaceTitleInstrument(newInstrument, oldInstrument);
                 nameTextField.setText(abcPart.getTitle());
                 updateTracksVisible();
             }

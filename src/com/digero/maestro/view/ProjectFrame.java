@@ -143,6 +143,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private PartAutoNumberer partAutoNumberer;
 	private PartNameTemplate partNameTemplate;
 	private ExportFilenameTemplate exportFilenameTemplate;
+	private InstrNameSettings instrNameSettings;
 	private SaveAndExportSettings saveSettings;
 	private MiscSettings miscSettings;
 	private boolean usingNativeVolume;
@@ -260,6 +261,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		partAutoNumberer = new PartAutoNumberer(prefs.node("partAutoNumberer"));
 		partNameTemplate = new PartNameTemplate(prefs.node("partNameTemplate"));
 		exportFilenameTemplate = new ExportFilenameTemplate(prefs.node("exportFilenameTemplate"));
+		instrNameSettings = new InstrNameSettings(prefs.node("instrNameSettings"));
 		saveSettings = new SaveAndExportSettings(prefs.node("saveAndExportSettings"));
 		miscSettings = new MiscSettings(prefs.node("miscSettings"), true /* Fallback if miscSettings is empty. Maestro 2.5.0.115 and earlier save misc settings in saveAndExportSettings */);
 
@@ -1103,7 +1105,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 	private void doSettingsDialog(int tab)
 	{
 		SettingsDialog dialog = new SettingsDialog(ProjectFrame.this, partAutoNumberer,
-				partNameTemplate, exportFilenameTemplate, saveSettings.getCopy(), miscSettings.getCopy());
+				partNameTemplate, exportFilenameTemplate, saveSettings.getCopy(), miscSettings.getCopy(), instrNameSettings.getCopy());
 		dialog.setActiveTab(tab);
 		dialog.setVisible(true);
 		if (dialog.isSuccess())
@@ -1118,6 +1120,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			
 			exportFilenameTemplate.setSettings(dialog.getExportFilenameTemplateSettings());
 
+			instrNameSettings.copyFrom(dialog.getInstrNameSettings());
+			instrNameSettings.saveToPrefs();
+			
 			saveSettings.copyFrom(dialog.getSaveAndExportSettings());
 			saveSettings.saveToPrefs();
 			onSaveAndExportSettingsChanged();
@@ -1140,10 +1145,13 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			case 2: // file naming
 				exportFilenameTemplate.restoreDefaultSettings();
 				break;
-			case 3: // save and export
+			case 3: // instr naming
+				instrNameSettings.restoreDefaults();
+				break;	
+			case 4: // save and export
 				saveSettings.restoreDefaults();
 				break;
-			case 4: // misc
+			case 5: // misc
 				miscSettings.restoreDefaults();
 				break;
 			}
@@ -1931,7 +1939,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		try
 		{
-			abcSong = new AbcSong(file, partAutoNumberer, partNameTemplate, exportFilenameTemplate, openFileResolver);
+			abcSong = new AbcSong(file, partAutoNumberer, partNameTemplate, exportFilenameTemplate, instrNameSettings, openFileResolver);
 			abcSong.setAllOut(miscSettings.showBadger && miscSettings.allBadger);
 			abcSong.setBadger(miscSettings.showBadger);
 			abcSong.addSongListener(abcSongListener);

@@ -37,7 +37,7 @@ public class LotroInstrumentNick {
 			"TravellerFiddle", "TrustyFiddle", "TTFiddle", "ViolonV", "TTF", "GeigeDR"
 	};
 	static String[] BARDIC = {
-			"BardenGeige", "ViolonBarde"
+			"Bardic", "BardenGeige", "ViolonBarde"
 	};
 	static String[] BASICF = {
 			"ViolonBase", "StFiedel"

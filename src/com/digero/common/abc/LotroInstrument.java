@@ -42,7 +42,7 @@ public enum LotroInstrument
 	BASIC_THEORBO            ( "Basic Theorbo",             false, MidiInstrument.ACOUSTIC_BASS,       -1,      false,   -12.0f, "Theorbo", "Theo", "Bass", "theorbe", "théorbe"),
 	TRAVELLERS_TRUSTY_FIDDLE ( "Traveller's Trusty Fiddle", false, MidiInstrument.PIZZICATO_STRINGS,    1,      false,    -3.0f, "Travell?er'?s? (Trusty)? Fiddle", "Trusty Fiddle", "TT Fiddle", "(fidèle)? violon (de)? voyageur", "violon v", "TTF", "geige des reisenden", "geige dr"),
 
-	BARDIC_FIDDLE            ( "Bardic Fiddle",              true, MidiInstrument.VIOLIN,               1,      false,     6.0f, "Violin", "Barden-? Geige", "violon (de)? barde"),
+	BARDIC_FIDDLE            ( "Bardic Fiddle",              true, MidiInstrument.VIOLIN,               1,      false,     6.0f, "Bardic", "Violin", "Barden-? Geige", "violon (de)? barde"),
 	BASIC_FIDDLE             ( "Basic Fiddle",               true, MidiInstrument.VIOLA,                1,      false,     6.25f, "Violon (de)? base", "standard-? fiedel", "st fiedel"),
 	LONELY_MOUNTAIN_FIDDLE   ( "Lonely Mountain Fiddle",     true, MidiInstrument.SYNTH_STRING_2,       1,      false,     5.5f, "Lonely Fiddle", "LM Fiddle", "LMF", "LM fidel", "LM geige", "Violon (du)? Mont solitaire", "violon ms", "geige (vom)? Einsamen ?Berg", "geige eb"),
 	SPRIGHTLY_FIDDLE         ( "Sprightly Fiddle",          false, MidiInstrument.FIDDLE,               1,      false,   -10.0f, "Muntere Geige", "Muntere G", "Violon alerte", "Violon A", "Sprightly", "SP Fiddle"),

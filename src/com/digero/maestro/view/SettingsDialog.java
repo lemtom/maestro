@@ -6,6 +6,8 @@ import info.clearthought.layout.TableLayoutConstants;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import com.digero.common.abc.LotroInstrument;
+import com.digero.common.abc.LotroInstrumentNick;
 import com.digero.common.midi.NoteFilterSequencerWrapper;
 import com.digero.common.util.Util;
 import com.digero.maestro.abc.AbcMetadataSource;
@@ -71,12 +74,14 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	private ExportFilenameTemplate.Settings exportTemplateSettings;
 	private ExportFilenameTemplate exportTemplate;
 	private JLabel exportTemplateExampleLabel;
+	
+	private InstrNameSettings instrNameSettings;
 
 	private SaveAndExportSettings saveSettings;
 	private MiscSettings miscSettings;
 
 	public SettingsDialog(JFrame owner, PartAutoNumberer partNumberer, PartNameTemplate nameTemplate,
-			ExportFilenameTemplate exportTemplate, SaveAndExportSettings saveSettings, MiscSettings miscSettings)
+			ExportFilenameTemplate exportTemplate, SaveAndExportSettings saveSettings, MiscSettings miscSettings, InstrNameSettings instrNameSettings)
 	{
 		super(owner, "Options", true);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -89,6 +94,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		this.exportTemplate = exportTemplate;
 		this.exportTemplateSettings = exportTemplate.getSettingsCopy();
 
+		this.instrNameSettings = instrNameSettings;
 		this.saveSettings = saveSettings;
 		this.miscSettings = miscSettings;
 
@@ -148,6 +154,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		tabPanel.addTab("ABC Part Numbering", createNumberingPanel()); // NUMBERING_TAB
 		tabPanel.addTab("ABC Part Naming", createNameTemplatePanel()); // NAME_TEMPLATE_TAB
 		tabPanel.addTab("ABC File Naming", createExportTemplatePanel());
+		tabPanel.addTab("Instrument names", createInstrNamePanel());
 		tabPanel.addTab("Save & Export", createSaveAndExportSettingsPanel()); // SAVE_EXPORT_TAB
 		tabPanel.addTab("Misc", createMiscPanel()); // MISC_TAB
 
@@ -262,6 +269,90 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		numberingPanel.add(incrementTitle, "0, 3");
 		numberingPanel.add(incrementPanel, "0, 4, F, F");
 		return numberingPanel;
+	}
+	
+	private JPanel createInstrNamePanel() {
+		JLabel instrumentsTitle = new JLabel("<html><b><u>Instrument naming</u></b></html>");
+
+		TableLayout instrumentsLayout = new TableLayout(//
+				new double[] { PREFERRED, PREFERRED, 2 * PAD, PREFERRED, PREFERRED },//
+				new double[] { });
+		instrumentsLayout.setHGap(PAD);
+		instrumentsLayout.setVGap(3);
+		JPanel instrNamePanel = new JPanel(instrumentsLayout);
+		instrNamePanel.setBorder(BorderFactory.createEmptyBorder(0, PAD, 0, 0));
+
+		final List<InstrumentDropdown> instrumentDropdowns = new ArrayList<>();
+		LotroInstrument[] instruments = LotroInstrument.values();
+		for (int i = 0; i < instruments.length; i++)
+		{
+			LotroInstrument inst = instruments[i];
+
+			int row = i;
+			int col = 0;
+			if (i >= (instruments.length + 1) / 2)
+			{
+				row -= (instruments.length + 1) / 2;
+				col = 3;
+			}
+			else
+			{
+				instrumentsLayout.insertRow(row, PREFERRED);
+			}
+			InstrumentDropdown dropdown = new InstrumentDropdown(inst);
+			
+			
+			instrumentDropdowns.add(dropdown);
+			instrNamePanel.add(dropdown, col + ", " + row);
+			instrNamePanel.add(new JLabel(inst.toString() + " "), (col + 1) + ", " + row);
+		}
+
+		TableLayout numberingLayout = new TableLayout(//
+				new double[] { FILL },//
+				new double[] { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED });
+
+		numberingLayout.setVGap(PAD);
+		JPanel numberingPanel = new JPanel(numberingLayout);
+		numberingPanel.setBorder(BorderFactory.createEmptyBorder(PAD, PAD, PAD, PAD));
+
+		numberingPanel.add(instrumentsTitle, "0, 0");
+		numberingPanel.add(instrNamePanel, "0, 1, L, F");		
+		
+		return instrNamePanel;
+	}
+	
+	private class InstrumentDropdown extends JComboBox<String>  implements ItemListener
+	{
+		private LotroInstrument instrument;
+
+		public InstrumentDropdown(LotroInstrument instrument)
+		{
+			super();
+
+			this.instrument = instrument;
+			setEditable(true);
+			addItem(instrNameSettings.getInstrNick(instrument));
+			addItem(instrument.friendlyName);
+			for(String nick : LotroInstrumentNick.getNicks(instrument)) {
+				addItem(nick);
+			}
+			addItemListener(this);
+		}
+		
+		@Override public void addItem(String item) {
+			if (item == null) return;
+			int count = getItemCount();
+			for (int i = 0; i < count; i++) {
+				if (item.equals(getItemAt(i))) {
+					return;
+				}
+			}
+			super.addItem(item);
+		}
+
+		@Override public void itemStateChanged(ItemEvent arg0) {
+			instrNameSettings.setInstrNick(instrument, (String) getSelectedItem());
+		}
 	}
 
 	private class InstrumentSpinner extends JSpinner implements ChangeListener
@@ -821,6 +912,10 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	public ExportFilenameTemplate.Settings getExportFilenameTemplateSettings()
 	{
 		return exportTemplateSettings;
+	}
+	
+	public InstrNameSettings getInstrNameSettings() {
+		return instrNameSettings;
 	}
 
 	public SaveAndExportSettings getSaveAndExportSettings()

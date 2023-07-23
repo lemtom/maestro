@@ -25,8 +25,6 @@ import static com.digero.common.abc.LotroInstrument.STUDENT_FX_FIDDLE;
 import static com.digero.common.abc.LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 import com.digero.common.abc.LotroInstrument;

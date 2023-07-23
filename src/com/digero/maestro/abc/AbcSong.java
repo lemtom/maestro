@@ -46,6 +46,7 @@ import com.digero.maestro.util.FileResolver;
 import com.digero.maestro.util.ListModelWrapper;
 import com.digero.maestro.util.SaveUtil;
 import com.digero.maestro.util.XmlUtil;
+import com.digero.maestro.view.InstrNameSettings;
 import com.digero.maestro.view.ProjectFrame;
 
 public class AbcSong implements IDiscardable, AbcMetadataSource
@@ -82,6 +83,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	private final PartAutoNumberer partAutoNumberer;
 	private final PartNameTemplate partNameTemplate;
 	private final ExportFilenameTemplate exportFilenameTemplate;
+	private final InstrNameSettings instrNameSettings;
 	private QuantizedTimingInfo timingInfo;
 	private AbcExporter abcExporter;
 	private File sourceFile; // The MIDI or ABC file that this song was loaded from
@@ -94,7 +96,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 	boolean mixDirty = true;
 
 	public AbcSong(File file, PartAutoNumberer partAutoNumberer, PartNameTemplate partNameTemplate,
-			ExportFilenameTemplate exportFilenameTemplate, FileResolver fileResolver)
+			ExportFilenameTemplate exportFilenameTemplate, InstrNameSettings instrNameSettings, FileResolver fileResolver)
 			throws IOException, InvalidMidiDataException, ParseException, SAXException
 	{
 		sourceFile = file;
@@ -107,6 +109,8 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		
 		this.exportFilenameTemplate = exportFilenameTemplate;
 		this.exportFilenameTemplate.setMetadataSource(this);
+		
+		this.instrNameSettings = instrNameSettings;
 
 		String fileName = file.getName().toLowerCase();
 		fromXmlFile = fileName.endsWith(MSX_FILE_EXTENSION);
@@ -1012,6 +1016,10 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 			}
 		}
 		return treeChanges;
+	}
+
+	public InstrNameSettings getInstrNameSettings() {
+		return instrNameSettings;
 	}
 
 	/*public boolean isKept(long tickStart) {

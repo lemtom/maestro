@@ -39,6 +39,7 @@ import com.digero.maestro.midi.SequenceInfo;
 import com.digero.maestro.midi.TrackInfo;
 import com.digero.maestro.util.SaveUtil;
 import com.digero.maestro.util.XmlUtil;
+import com.digero.maestro.view.InstrNameSettings;
 
 public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscardable
 {
@@ -65,14 +66,16 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	public ArrayList<PartSection> nonSection;
 	public ArrayList<boolean[]> sectionsModified;
 	public int delay = 0;//ms
-	private int typeNumber = 0;
+	private int typeNumber = 0;// -1 for when instr do not match or string dont start with instr, 0 when instr match but no number, positive number when it has number.
+	private final InstrNameSettings instrNameSettings;
 
 	public AbcPart(AbcSong abcSong)
 	{
 		this.abcSong = abcSong;
 		abcSong.addSongListener(songListener);
 		this.instrument = LotroInstrument.DEFAULT_INSTRUMENT;
-		this.title = this.instrument.toString();
+		this.instrNameSettings = abcSong.getInstrNameSettings();
+		this.title = instrNameSettings.getInstrNick(instrument);
 
 		int t = getTrackCount();
 		this.trackTranspose = new int[t];
@@ -268,6 +271,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			partNumber = SaveUtil.parseValue(ele, "@id", partNumber);
 			title = SaveUtil.parseValue(ele, "title", title);
 			instrument = SaveUtil.parseValue(ele, "instrument", instrument);
+			typeNumber = getTypeNumberMatchingTitle();//must be after instr and title
 			delay = SaveUtil.parseValue(ele, "delay", 0);
 			for (Element trackEle : XmlUtil.selectElements(ele, "track"))
 			{
@@ -616,27 +620,42 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 	}
 
-	public void replaceTitleInstrument(LotroInstrument replacement)
+	public void replaceTitleInstrument(LotroInstrument replacement, LotroInstrument previous)
 	{
 		stripTypeNumber();
 		Pair<LotroInstrument, MatchResult> result = LotroInstrument.matchInstrument(title);
+		String replacementName = instrNameSettings.getInstrNick(replacement);
 		if (result == null)
 		{
+			Integer[] result2 = matchNick(previous, title);
+			if (result2 != null) {
+				System.out.println(previous+": replaceTitleInstrument result2 "+typeNumber);
+				if (isTypeNumberMatchingTitle() && typeNumber != -1) {
+					typeNumber = 0;
+					System.out.println("isTypeNumberMatchingTitle == true: "+replacementName);
+					setTitle(replacementName);
+				} else {
+					setTitle(title.substring(0, result2[0]) + replacementName + title.substring(result2[1]));
+				}
+				return;
+			}
 			// No instrument currently in title
 			if (title.isEmpty())
-				setTitle(replacement.toString());
+				setTitle(replacementName);
 			else {
-				setTitle(replacement + " " + title);
+				setTitle(replacementName + " " + title);
 			}
 		}
 		else
 		{
 			MatchResult m = result.second;
-			if (isTypeNumberMatchingTitle()) {
+			System.out.println(previous+": replaceTitleInstrument result1 "+typeNumber);
+			if (isTypeNumberMatchingTitle() && typeNumber != -1) {
+				System.out.println("isTypeNumberMatchingTitle == true: "+replacementName);
 				typeNumber = 0;
-				setTitle(replacement.toString());
+				setTitle(replacementName);
 			} else {
-				setTitle(title.substring(0, m.start()) + replacement + title.substring(m.end()));
+				setTitle(title.substring(0, m.start()) + replacementName + title.substring(m.end()));
 			}
 		}
 	}
@@ -701,10 +720,39 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 	}
 	
+	private Integer[] matchNick(LotroInstrument instr, String title) {
+		String nick = instrNameSettings.getInstrNick(instr);
+		if (title.contains(nick)) {
+			int startingPosition = title.indexOf(nick);
+		    int endingPosition = startingPosition + nick.length();
+		    Integer[] result = {startingPosition, endingPosition};
+		    return result;
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @return -1 for when instr do not match or string dont start with instr, 0 when instr match but no postfix, positive number when it has number.
+	 */
 	public int getTypeNumberMatchingTitle() {
 		Pair<LotroInstrument, MatchResult> result = LotroInstrument.matchInstrument(title);
 		
 		if (result == null) {
+			Integer[] result2 = matchNick(instrument, title);
+			if (result2 != null) {
+				if (result2[0] != 0) return -1;
+				String ending = title.substring(result2[1]);
+				
+				if (ending.length() == 0) return 0;
+				
+				try {
+					int endsWith = Integer.parseInt(ending.trim());
+					return endsWith;
+				} catch (NumberFormatException e) {
+					return -1;
+				}
+			}
 			return -1;
 		} else if (result.first.equals(instrument)) {
 			if (result.second.start() != 0) return -1;
