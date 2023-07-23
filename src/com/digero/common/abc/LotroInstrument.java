@@ -35,32 +35,32 @@ import com.digero.maestro.abc.LotroCombiDrumInfo;
 public enum LotroInstrument
 {
 	//                         friendlyName               sustain  midi                             octave  percussion  dBAdjust nicknameRegexes
-	BASIC_HARP               ( "Basic Harp",                false, MidiInstrument.ORCHESTRA_HARP,       0,      false,     6.0f, "Harp", "harfe", "harpe", "harpe (de)? base"),
-	MISTY_MOUNTAIN_HARP      ( "Misty Mountain Harp",       false, MidiInstrument.CLEAN_ELEC_GUITAR,    0,      false,   -12.5f, "Misty Harp", "MM Harp", "MMH", "Harpe (des)? monts brumeux"),
-	BASIC_LUTE               ( "Basic Lute",                false, MidiInstrument.STEEL_STRING_GUITAR,  0,      false,   -19.0f, "New Lute", "LuteB", "Banjo", "Luth (de)? base"),
-	LUTE_OF_AGES             ( "Lute of Ages",              false, MidiInstrument.NYLON_GUITAR,         0,      false,     0.0f, "Lute", "Age Lute", "LuteA", "LOA", "Guitar", "laute", "luth", "luth (des)? siècles"),
+	BASIC_HARP               ( "Basic Harp",                false, MidiInstrument.ORCHESTRA_HARP,       0,      false,     6.0f, "Harp", "harfe", "harpe", "harpe (de)? base", "standard-? harfe"),
+	MISTY_MOUNTAIN_HARP      ( "Misty Mountain Harp",       false, MidiInstrument.CLEAN_ELEC_GUITAR,    0,      false,   -12.5f, "Misty Harp", "MM Harp", "MMH", "Harpe (des)? monts brumeux", "Harpe MB", "harfe dn", "harfe des nebelgebirges"),
+	BASIC_LUTE               ( "Basic Lute",                false, MidiInstrument.STEEL_STRING_GUITAR,  0,      false,   -19.0f, "New Lute", "LuteB", "Banjo", "Luth (de)? base", "Luth B", "Standard-? laute", "st laute"),
+	LUTE_OF_AGES             ( "Lute of Ages",              false, MidiInstrument.NYLON_GUITAR,         0,      false,     0.0f, "Lute", "Age Lute", "LuteA", "LOA", "Guitar", "laute", "luth", "luth (des)? siècles", "luth (des)? siecles", "laute vz", "laute vergangener zeiten"),
 	BASIC_THEORBO            ( "Basic Theorbo",             false, MidiInstrument.ACOUSTIC_BASS,       -1,      false,   -12.0f, "Theorbo", "Theo", "Bass", "theorbe", "théorbe"),
-	TRAVELLERS_TRUSTY_FIDDLE ( "Traveller's Trusty Fiddle", false, MidiInstrument.PIZZICATO_STRINGS,    1,      false,    -3.0f, "Travell?er'?s? (Trusty)? Fiddle", "Trusty Fiddle", "TT Fiddle", "violon (de)? voyageur"),
+	TRAVELLERS_TRUSTY_FIDDLE ( "Traveller's Trusty Fiddle", false, MidiInstrument.PIZZICATO_STRINGS,    1,      false,    -3.0f, "Travell?er'?s? (Trusty)? Fiddle", "Trusty Fiddle", "TT Fiddle", "(fidèle)? violon (de)? voyageur", "violon v", "TTF", "geige des reisenden", "geige dr"),
 
-	BARDIC_FIDDLE            ( "Bardic Fiddle",              true, MidiInstrument.VIOLIN,               1,      false,     6.0f, "Fiddle", "Violin", "Barden-?Geige", "violon (de)? barde"),
-	BASIC_FIDDLE             ( "Basic Fiddle",               true, MidiInstrument.VIOLA,                1,      false,     6.25f, "Violon (de)? base"),
-	LONELY_MOUNTAIN_FIDDLE   ( "Lonely Mountain Fiddle",     true, MidiInstrument.SYNTH_STRING_2,       1,      false,     5.5f, "Lonely Fiddle", "LM Fiddle", "LM fidel", "LM geige", "Violon (du)? Mont solitaire"),
-	SPRIGHTLY_FIDDLE         ( "Sprightly Fiddle",          false, MidiInstrument.FIDDLE,               1,      false,   -10.0f, "Muntere Geige", "Violon alerte"),
-	STUDENT_FIDDLE           ( "Student's Fiddle",           true, MidiInstrument.GUITAR_FRET_NOISE,    1,      false,     0.0f, "Student'?s? Fiddle", "Violon d'études"),
+	BARDIC_FIDDLE            ( "Bardic Fiddle",              true, MidiInstrument.VIOLIN,               1,      false,     6.0f, "Violin", "Barden-? Geige", "violon (de)? barde"),
+	BASIC_FIDDLE             ( "Basic Fiddle",               true, MidiInstrument.VIOLA,                1,      false,     6.25f, "Violon (de)? base", "standard-? fiedel", "st fiedel"),
+	LONELY_MOUNTAIN_FIDDLE   ( "Lonely Mountain Fiddle",     true, MidiInstrument.SYNTH_STRING_2,       1,      false,     5.5f, "Lonely Fiddle", "LM Fiddle", "LMF", "LM fidel", "LM geige", "Violon (du)? Mont solitaire", "violon ms", "geige (vom)? Einsamen ?Berg", "geige eb"),
+	SPRIGHTLY_FIDDLE         ( "Sprightly Fiddle",          false, MidiInstrument.FIDDLE,               1,      false,   -10.0f, "Muntere Geige", "Muntere G", "Violon alerte", "Violon A", "Sprightly", "SP Fiddle"),
+	STUDENT_FIDDLE           ( "Student's Fiddle",           true, MidiInstrument.GUITAR_FRET_NOISE,    1,      false,     0.0f, "Student'?s? Fiddle", "Violon d'études", "Violon DE", "Stud Fiddle", "schül(er)?fiedel", "schul(er)?fiedel"),
 
 	BASIC_BAGPIPE            ( "Basic Bagpipe",              true, MidiInstrument.BAG_PIPE,             1,      false,    -1.5f, "Bag pipes?", "Pipes?", "dudelsack", "sack", "cornemuse", "cornemuse (de)? base"),
-	BASIC_BASSOON            ( "Basic Bassoon",              true, MidiInstrument.BASSOON,              0,      false,     5.0f, "Bassoon"),
-	BRUSQUE_BASSOON          ( "Brusque Bassoon",           false, MidiInstrument.OBOE,                 0,      false,     5.0f, "Brusk Bassoon", "Schroffes Fagott"),
-	LONELY_MOUNTAIN_BASSOON  ( "Lonely Mountain Bassoon",    true, MidiInstrument.SYNTH_BRASS_2,        0,      false,     5.0f, "Lonely Bassoon", "LM Bassoon", "Fagott (vom)? Einsamen ?Berg", "fagott", "Basson (du)? Mont Solitaire"),
+	BASIC_BASSOON            ( "Basic Bassoon",              true, MidiInstrument.BASSOON,              0,      false,     5.0f, "Bassoon", "standard-? fagott", "st fagott", "basson (de)? base"),
+	BRUSQUE_BASSOON          ( "Brusque Bassoon",           false, MidiInstrument.OBOE,                 0,      false,     5.0f, "Brusk Bassoon", "Schroffes (Fagott)?", "Brusque"),
+	LONELY_MOUNTAIN_BASSOON  ( "Lonely Mountain Bassoon",    true, MidiInstrument.SYNTH_BRASS_2,        0,      false,     5.0f, "Lonely Bassoon", "LM Bassoon", "LMB", "Fagott (vom)? Einsamen ?Berg", "fagott eb", "Basson (du)? Mont Solitaire", "Basson ms"),
 	BASIC_CLARINET           ( "Basic Clarinet",             true, MidiInstrument.CLARINET,             1,      false,    -2.0f, "Clarinet", "Clari", "klarinette", "clarinette", "clarinette (de)? base"),
-	BASIC_FLUTE              ( "Basic Flute",                true, MidiInstrument.FLUTE,                2,      false,    -3.5f, "Flute", "flöte", "flût", "flût (de)? base"),
+	BASIC_FLUTE              ( "Basic Flute",                true, MidiInstrument.FLUTE,                2,      false,    -3.5f, "Flute", "flöte", "floete", "flût", "flût (de)? base", "flut", "flut (de)? (base)?"),
 	BASIC_HORN               ( "Basic Horn",                 true, MidiInstrument.ENGLISH_HORN,         0,      false,    -2.0f, "Horn", "cor", "cor (de)? base"),
 	BASIC_PIBGORN            ( "Basic Pibgorn",              true, MidiInstrument.CHARANG,              2,      false,    -3.5f, "Pibgorn"),
 
-	BASIC_COWBELL            ( "Basic Cowbell",             false, MidiInstrument.WOODBLOCK,            0,       true,     0.0f, "Cowbell", "glocke", "cloche (de)? vache"),
-	MOOR_COWBELL             ( "Moor Cowbell",              false, MidiInstrument.STEEL_DRUMS,          0,       true,     0.0f, "More Cowbell"),
+	BASIC_COWBELL            ( "Basic Cowbell",             false, MidiInstrument.WOODBLOCK,            0,       true,     0.0f, "Cowbell", "glocke", "cloche (de)? (vache)?","kuhglocke"),
+	MOOR_COWBELL             ( "Moor Cowbell",              false, MidiInstrument.STEEL_DRUMS,          0,       true,     0.0f, "More Cowbell", "Moor", "moorkuh-? glocke"),
 	BASIC_DRUM               ( "Basic Drum",                false, MidiInstrument.SYNTH_DRUM,           0,       true,     0.0f, "Drums?", "trommel", "tambour"),
-	STUDENT_FX_FIDDLE        ( "Student's FX Fiddle",       false, MidiInstrument.GUITAR_FRET_NOISE,    0,       true,     0.0f, "Student'?s? FX Fiddle", "Student'?s? FX");
+	STUDENT_FX_FIDDLE        ( "Student's FX Fiddle",       false, MidiInstrument.GUITAR_FRET_NOISE,    0,       true,     0.0f, "Student'?s? FX Fiddle", "Student'?s? FX", "ST FX Fiddle");
 // @formatter:on
 	
 	private static final LotroInstrument[] values = values();
