@@ -23,13 +23,13 @@
 	</condition>
 
 	<target name="mvn_windows" if="isWindows">
-		<exec dir=".." executable="cmd">
+		<exec dir=".." executable="cmd" failonerror="true">
 			<arg line="/c mvn clean install" />
 		</exec>
 	</target>
 
 	<target name="mvn_unix" if="isUnix">
-		<exec dir=".." executable="sh">
+		<exec dir=".." executable="sh" failonerror="true">
 			<arg line="-c 'mvn clean install'" />
 		</exec>
 	</target>
