@@ -25,7 +25,7 @@ public class LotroInstrumentNick {
 			"MistyHarp", "MMHarp", "MMH", "HarpeMB", "HarfeDN"
 	};
 	static String[] BLUTE = {
-			"LuteB", "LuthB", "StLaute"
+			"LuteB", "BLute", "LuthB", "StLaute"
 	};
 	static String[] LOA = {
 			"AgeLute", "LuteA", "LOA", "Laute", "Luth", "LuthSiecles", "LauteVZ"
@@ -37,7 +37,7 @@ public class LotroInstrumentNick {
 			"TravellerFiddle", "TrustyFiddle", "TTFiddle", "ViolonV", "TTF", "GeigeDR"
 	};
 	static String[] BARDIC = {
-			"Bardic", "BardenGeige", "ViolonBarde"
+			"Bardic", "BardenGeige", "ViolonBarde", "BrdFiddle"
 	};
 	static String[] BASICF = {
 			"ViolonBase", "StFiedel"
@@ -73,7 +73,7 @@ public class LotroInstrumentNick {
 			"Horn", "Cor"
 	};
 	static String[] PIB = {
-			"Pibgorn"
+			"Pibgorn", "Pib"
 	};
 	static String[] COWB = {
 			"Cowbell", "Glocke", "Cloche", "Kuhglocke"

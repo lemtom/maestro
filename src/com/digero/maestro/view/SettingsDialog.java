@@ -272,8 +272,6 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	}
 	
 	private JPanel createInstrNamePanel() {
-		JLabel instrumentsTitle = new JLabel("<html><b><u>Instrument naming</u></b></html>");
-
 		TableLayout instrumentsLayout = new TableLayout(//
 				new double[] { PREFERRED, PREFERRED, 2 * PAD, PREFERRED, PREFERRED },//
 				new double[] { });
@@ -312,13 +310,13 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 				new double[] { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED });
 
 		numberingLayout.setVGap(PAD);
-		JPanel numberingPanel = new JPanel(numberingLayout);
-		numberingPanel.setBorder(BorderFactory.createEmptyBorder(PAD, PAD, PAD, PAD));
-
-		numberingPanel.add(instrumentsTitle, "0, 0");
-		numberingPanel.add(instrNamePanel, "0, 1, L, F");		
+		JPanel backPanel = new JPanel(numberingLayout);
+		backPanel.setBorder(BorderFactory.createEmptyBorder(PAD, PAD, PAD, PAD));
+		JLabel instrumentsTitle = new JLabel("<html><b><u>Default instrument naming</u></b></html>");
+		backPanel.add(instrumentsTitle, "0, 0, C, F");
+		backPanel.add(instrNamePanel, "0, 1, L, F");		
 		
-		return instrNamePanel;
+		return backPanel;
 	}
 	
 	private class InstrumentDropdown extends JComboBox<String>  implements ItemListener
