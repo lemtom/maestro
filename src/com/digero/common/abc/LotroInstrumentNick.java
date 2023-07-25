@@ -40,7 +40,7 @@ public class LotroInstrumentNick {
 			"Bardic", "BardenGeige", "ViolonBarde", "BrdFiddle"
 	};
 	static String[] BASICF = {
-			"ViolonBase", "StFiedel"
+			"ViolonBase", "StFiedel", "BscFiddle"
 	};
 	static String[] LMF = {
 			"LMF", "LonelyFiddle", "LMFiddle", "GeigeEB", "ViolonMS"
@@ -55,7 +55,7 @@ public class LotroInstrumentNick {
 			"Bagpipe", "Pipes", "Dudelsack", "Sack", "Cornemuse"
 	};
 	static String[] BAS_B = {
-			"StFagott", "BassonBase"
+			"StFagott", "BassonBase", "BscBassoon"
 	};
 	static String[] BRU_B = {
 			"Schroffes", "Brusque"
