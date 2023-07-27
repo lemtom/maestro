@@ -2,6 +2,7 @@ package com.digero.common.midi;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
@@ -57,6 +58,16 @@ public class SynthesizerFactory
 	{
 		if (lotroSoundbank == null)
 		{
+			if (!soundFontFile.exists()) {
+				String folder = ".";
+				try {
+					// Find the path to the jar file we are executing in
+					folder = new File(SynthesizerFactory.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+				soundFontFile = new File(folder, "LotroInstruments.sf2");
+			}
 			try
 			{
 				lotroSoundbank = MidiSystem.getSoundbank(soundFontFile);
