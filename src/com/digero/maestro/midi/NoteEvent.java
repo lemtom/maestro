@@ -23,7 +23,6 @@
 package com.digero.maestro.midi;
 
 import com.digero.common.midi.ITempoCache;
-import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.Note;
 
 public class NoteEvent implements Comparable<NoteEvent>
