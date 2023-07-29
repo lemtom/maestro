@@ -237,13 +237,13 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 		}
 		
 		// Setup default banks for extensions:
-		for (int i = 0; i < 16;i++) {
+		for (int i = 0; i < CHANNEL_COUNT;i++) {
 			mapPatch.put(i, -1, 0);
 			mapLSB.put(i, -1, 0);
 		}
 		if (standard == "XG" && yamahaDrumChannels != null) {
 			// Bank 127 is implicit the default on drum channels in XG.
-			for (int i = 0; i < 16;i++) {
+			for (int i = 0; i < CHANNEL_COUNT;i++) {
 				if (yamahaDrumChannels[i]) mapMSB.put(i, -1, 127);
 				else mapMSB.put(i, -1, 0);
 			}
@@ -267,7 +267,7 @@ public class SequenceDataCache implements MidiConstants, ITempoCache, IBarNumber
 			mapMSB.put(14, -1, 121);
 			mapMSB.put(15, -1, 121);
 		} else {
-			for (int i = 0; i < 16;i++) {
+			for (int i = 0; i < CHANNEL_COUNT;i++) {
 				mapMSB.put(i, -1, 0);
 			}
 		}
