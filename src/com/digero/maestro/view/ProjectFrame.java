@@ -20,6 +20,9 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -2611,5 +2614,22 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			if (e.getID() == FocusEvent.FOCUS_GAINED)
 				selectAll();
 		}
+	}
+	
+	/**
+	 * 
+	 * Will output what all threads are doing.
+	 * 
+	 * @param lockedMonitors
+	 * @param lockedSynchronizers
+	 * @return A string ready to be printed out
+	 */
+	private static String threadDump(boolean lockedMonitors, boolean lockedSynchronizers) {
+	    StringBuffer threadDump = new StringBuffer(System.lineSeparator());
+	    ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+	    for(ThreadInfo threadInfo : threadMXBean.dumpAllThreads(lockedMonitors, lockedSynchronizers)) {
+	        threadDump.append(threadInfo.toString());
+	    }
+	    return threadDump.toString();
 	}
 }

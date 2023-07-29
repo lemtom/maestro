@@ -168,7 +168,7 @@ public class VolumeTransceiver implements Transceiver, MidiConstants
 		    System.err.println("SYSEX : "+sb.toString());
 		    */
 		    
-			if ((sysex[3] & 0xFF) == 0x04 && (sysex[4] & 0xFF) == 0x01) {
+			if (sysex.length > 4 && (sysex[1] & 0xFF) == SYSEX_UNIVERSAL_REALTIME && (sysex[3] & 0xFF) == 0x04 && (sysex[4] & 0xFF) == 0x01) {
 				//System.out.println("Ignored SysEx device volume command.");
 				return;
 			}
