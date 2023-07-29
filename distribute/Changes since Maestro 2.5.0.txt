@@ -47,6 +47,8 @@ Maestro upgrades by Aifel of Laurelin, Elamond of Landroval and Karloman
 ================
 Version 2.5.0.117
 - Ability to customize instrument names for default part naming.
+- Option in section-editor to exclude notes with specified pan.
+    For example it can be set to not play notes that are panned left.
 
 Version 2.5.0.116
 - Added an Abc Merge Tool. It can takes multiple single-part ABC files and merge them into one multi-part ABC song.

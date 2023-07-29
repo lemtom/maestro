@@ -204,7 +204,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache
 						}
 					} else {
 						for(NoteEvent note : abcPart.getTrackEvents(t)) {
-							if (abcPart.getAudible(t, note.getStartTick())) {
+							if (abcPart.getAudible(t, note.getStartTick()) && abcPart.shouldPlay(note, t)) {
 								note.combinePrioritiesScoreMultiplier = scoreMultiplier;
 								eventList.add(note);
 							}

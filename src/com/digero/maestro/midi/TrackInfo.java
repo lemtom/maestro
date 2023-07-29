@@ -6,10 +6,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NavigableMap;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -77,14 +79,17 @@ public class TrackInfo implements MidiConstants
 		instrumentExtensions = new HashSet<>();
 		noteEvents = new ArrayList<>();
 		notesInUse = new TreeSet<>();
-		List<NoteEvent>[] notesOn = new List[16];
+		List<NoteEvent>[] notesOn = new List[CHANNEL_COUNT];
 		int notesNotTurnedOff = 0;
 
 		int minVelocity = Integer.MAX_VALUE;
 		int maxVelocity = Integer.MIN_VALUE;
 		
 		
-		int[] pitchBend = new int[16];
+		int[] pitchBend = new int[CHANNEL_COUNT];
+		MapByChannel panMap = createPanMap(track);
+		
+		
 		for (int j = 0, sz = track.size(); j < sz; j++)
 		{
 			MidiEvent evt = track.get(j);
@@ -147,7 +152,8 @@ public class TrackInfo implements MidiConstants
 						}
 
 						NoteEvent ne = new NoteEvent(note, velocity, tick, tick, sequenceCache);
-
+						ne.setMidiPan(panMap.get(c, tick));// We don't set this in constructor as only MIDI notes will get this set, abc notes not.
+						
 						Iterator<NoteEvent> onIter = notesOn[c].iterator();
 						while (onIter.hasNext())
 						{
@@ -230,6 +236,7 @@ public class TrackInfo implements MidiConstants
 							if (bn != null)
 							{
 								NoteEvent bne = new NoteEvent(bn, ne.velocity, bendTick, bendTick, sequenceCache);
+								bne.setMidiPan(ne.midiPan);								
 								noteEvents.add(bne);
 								bentNotes.add(bne);
 							}
@@ -300,6 +307,24 @@ public class TrackInfo implements MidiConstants
 		noteEvents = Collections.unmodifiableList(noteEvents);
 		notesInUse = Collections.unmodifiableSortedSet(notesInUse);
 		instruments = Collections.unmodifiableSet(instruments);
+	}
+
+	private MapByChannel createPanMap(Track track) {
+		MapByChannel panMap = new MapByChannel(PAN_CENTER);
+		for (int j = 0, sz = track.size(); j < sz; j++)
+		{
+			MidiEvent evt = track.get(j);
+			MidiMessage msg = evt.getMessage();
+			
+			if (msg instanceof ShortMessage) {
+				ShortMessage m = (ShortMessage) msg;
+				int cmd = m.getCommand();
+				if (cmd == ShortMessage.CONTROL_CHANGE && m.getData1() == PAN_CONTROL) {
+					panMap.put(m.getChannel(), evt.getTick(), m.getData2());
+				}
+			}
+		}
+		return panMap;
 	}
 
 	public TrackInfo(SequenceInfo parent, int trackNumber, String name, LotroInstrument instrument,
@@ -496,5 +521,41 @@ public class TrackInfo implements MidiConstants
 	public int getMaxVelocity()
 	{
 		return maxVelocity;
+	}
+	
+	/**
+	 * Map by channel
+	 */
+	private static class MapByChannel
+	{
+		private NavigableMap<Long, Integer>[] map;
+		private int defaultValue;
+
+		@SuppressWarnings("unchecked")//
+		public MapByChannel(int defaultValue)
+		{
+			map = new NavigableMap[CHANNEL_COUNT];
+			this.defaultValue = defaultValue;
+		}
+
+		public void put(int channel, long tick, Integer value)
+		{
+			if (map[channel] == null)
+				map[channel] = new TreeMap<>();
+
+			map[channel].put(tick, value);
+		}
+
+		public int get(int channel, long tick)
+		{
+			if (map[channel] == null)
+				return defaultValue;
+
+			Entry<Long, Integer> entry = map[channel].floorEntry(tick);
+			if (entry == null) // No changes before this tick
+				return defaultValue;
+
+			return entry.getValue();
+		}		
 	}
 }

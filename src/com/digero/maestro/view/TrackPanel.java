@@ -465,7 +465,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 					continue;
 				}
 				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id, ne.getStartTick());
-				if (mn != null && mn.id == Note.G3.id) {
+				if (mn != null && abcPart.shouldPlay(ne, trackInfo.getTrackNumber()) && mn.id == Note.G3.id) {
 					g3count += 1;
 				}
 			}		
@@ -483,7 +483,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 					continue;
 				}
 				Note mn = abcPart.mapNote(trackInfo.getTrackNumber(), ne.note.id, ne.getStartTick());
-				if (mn != null && (mn.id == Note.A2.id || mn.id == Note.A3.id || mn.id == Note.A4.id)) {
+				if (mn != null && abcPart.shouldPlay(ne, trackInfo.getTrackNumber()) && (mn.id == Note.A2.id || mn.id == Note.A3.id || mn.id == Note.A4.id)) {
 					acount += 1;
 				}
 			}		
@@ -902,7 +902,7 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 		
 		@Override protected boolean audibleNote(NoteEvent ne)
 		{
-			return abcPart.getAudible(trackInfo.getTrackNumber(), ne.getStartTick());
+			return abcPart.getAudible(trackInfo.getTrackNumber(), ne.getStartTick()) && abcPart.shouldPlay(ne, trackInfo.getTrackNumber());
 		}
 		
 		@Override protected boolean[] getSectionsModified() {

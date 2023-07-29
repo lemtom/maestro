@@ -1127,8 +1127,12 @@ public class AbcExporter
 					for (NoteEvent ne : listOfNotes) {
 						Note possibleCombiNote = part.mapNote(t, ne.note.id, ne.getStartTick());
 						if (possibleCombiNote != null && possibleCombiNote.id > part.getInstrument().highestPlayable.id && possibleCombiNote.id <= LotroCombiDrumInfo.maxCombi.id) {
-							extraList.add(LotroCombiDrumInfo.getId1(ne, possibleCombiNote));
-							extraList.add(LotroCombiDrumInfo.getId2(ne, possibleCombiNote));
+							NoteEvent extra1 = LotroCombiDrumInfo.getId1(ne, possibleCombiNote);
+							NoteEvent extra2 = LotroCombiDrumInfo.getId2(ne, possibleCombiNote);
+							extra1.setMidiPan(ne.midiPan);
+							extra2.setMidiPan(ne.midiPan);
+							extraList.add(extra1);
+							extraList.add(extra2);
 							removeList.add(ne);
 						} else if (possibleCombiNote != null && possibleCombiNote.id > LotroCombiDrumInfo.maxCombi.id) {
 							// Just for safety, should never land here.
@@ -1153,7 +1157,7 @@ public class AbcExporter
 						mappedNote = part.mapNote(t, ne.note.id, ne.getStartTick());
 					}
 					
-					if (mappedNote != null)
+					if (mappedNote != null && part.shouldPlay(ne, t))
 					{
 						assert mappedNote.id >= part.getInstrument().lowestPlayable.id : mappedNote;
 						assert mappedNote.id <= part.getInstrument().highestPlayable.id : mappedNote;

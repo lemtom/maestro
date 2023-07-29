@@ -23,6 +23,7 @@
 package com.digero.maestro.midi;
 
 import com.digero.common.midi.ITempoCache;
+import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.Note;
 
 public class NoteEvent implements Comparable<NoteEvent>
@@ -31,6 +32,7 @@ public class NoteEvent implements Comparable<NoteEvent>
 
 	public final Note note;
 	public final int velocity;
+	public int midiPan = -1;
 
 	private long startTick;
 	private long endTick;
@@ -206,6 +208,10 @@ public class NoteEvent implements Comparable<NoteEvent>
 	
 	public String printout() {
 		return "Note " + note.id + " dura " + getFullLengthTicks() + " |";
+	}
+
+	public void setMidiPan(int pan) {
+		midiPan = pan;
 	}
 
 	/*public boolean isPruned(AbcPart abcPart) {

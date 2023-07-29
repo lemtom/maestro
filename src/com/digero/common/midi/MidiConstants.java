@@ -33,6 +33,7 @@ public interface MidiConstants
 	int HIGHEST_NOTE_ID = 127;
 	int NOTE_COUNT = HIGHEST_NOTE_ID - LOWEST_NOTE_ID + 1;
 	int MAX_VOLUME = 127;
+	int PAN_CENTER = 64;
 
 	byte PAN_CONTROL = 0x0A;
 	byte REVERB_CONTROL = 0x5B;

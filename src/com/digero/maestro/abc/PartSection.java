@@ -8,8 +8,8 @@ public class PartSection {
 	public boolean silence = false;
 	public int dialogLine = -1;
     public Boolean[] doubling = {false,false,false,false};
-	
-	// inclusive:
+
+    // inclusive:
 	public int startBar = 0;
 	public int endBar = 0;
 }

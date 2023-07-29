@@ -404,7 +404,7 @@ public class DrumPanel extends JPanel implements IDiscardable, TableLayoutConsta
 		
 		@Override protected boolean audibleNote(NoteEvent ne)
 		{
-			return abcPart.getAudible(trackInfo.getTrackNumber(), ne.getStartTick());
+			return abcPart.getAudible(trackInfo.getTrackNumber(), ne.getStartTick()) && abcPart.shouldPlay(ne, trackInfo.getTrackNumber());
 		}
 		
 		@Override protected int getSourceNoteVelocity(NoteEvent note)

@@ -15,6 +15,7 @@ import java.util.TreeMap;
 
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -109,7 +110,7 @@ public class SectionEditor {
 		        JPanel panel=new JPanel();
 		        
 		        // 2 header rows, sections, remainder section, bottom buttons
-		        LAYOUT_ROWS = new double[2+numberOfSections+1+1];
+		        LAYOUT_ROWS = new double[2+numberOfSections+1+1+1];
 		        // Set the index of the first row to 2. Rows 0 and 1 are titles and headers
 		        final int firstRowIndex = 2;
 		        LAYOUT_ROWS[0] = auxHeight;
@@ -118,7 +119,8 @@ public class SectionEditor {
 		        {
 		        	LAYOUT_ROWS[i + firstRowIndex] = rowHeight;
 		        }
-		        LAYOUT_ROWS[numberOfSections + firstRowIndex + 1] = auxHeight;
+		        LAYOUT_ROWS[numberOfSections + firstRowIndex + 1] = auxHeight;//Checkboxes for panning
+		        LAYOUT_ROWS[numberOfSections + firstRowIndex + 1 + 1] = rowHeight;
 		        
 //		        LAYOUT_ROWS[0] = TableLayoutConstants.PREFERRED;
 //		        LAYOUT_ROWS[1] = 20;
@@ -143,7 +145,7 @@ public class SectionEditor {
 		        TableLayout layout = new TableLayout(LAYOUT_COLS, LAYOUT_ROWS);
 		        int vg = layout.getVGap();
 		        int w = 34 * rowHeight;
-		        int h = (numberOfSections + 1)* rowHeight + 5 * auxHeight + (4 + numberOfSections) * vg;
+		        int h = (numberOfSections + 1)* rowHeight + 5 * auxHeight + (4 + numberOfSections) * vg + rowHeight;
 		        this.setSize(w,h);
 		        
 		        panel.setLayout(new TableLayout(LAYOUT_COLS, LAYOUT_ROWS));
@@ -156,6 +158,19 @@ public class SectionEditor {
 		        octDouble.setHorizontalAlignment(JTextField.CENTER);
 //		        panel.add(octDouble, "7, 0, 10, 0, f, f");
 		        panel.add(new JLabel("Octave doubling"), "8, 0, 11, 0, c, c");
+		        
+		        // Last row
+		        JLabel panLabel = new JLabel("<html> Only play notes panned:</html>");
+		        JCheckBox left = new JCheckBox("Left");
+		        JCheckBox center = new JCheckBox("Center");
+		        JCheckBox right = new JCheckBox("Right");
+		        left.setSelected(abcPart.playLeft[track]);
+		        center.setSelected(abcPart.playCenter[track]);
+		        right.setSelected(abcPart.playRight[track]);
+		        panel.add(panLabel, "1, "+(firstRowIndex + 2 + numberOfSections)+", 4, "+(firstRowIndex + 2 + numberOfSections)+", f, f");
+		        panel.add(left, "5, "+(firstRowIndex + 2 + numberOfSections)+", 6, "+(firstRowIndex + 2 + numberOfSections)+", f, f");
+		        panel.add(center, "7, "+(firstRowIndex + 2 + numberOfSections)+", 8, "+(firstRowIndex + 2 + numberOfSections)+", f, f");
+		        panel.add(right, "9, "+(firstRowIndex + 2 + numberOfSections)+", 10, "+(firstRowIndex + 2 + numberOfSections)+", f, f");
 		        
 		        // Row 1
 		        panel.add(new JLabel("Enable"), "0, 1, c, c");
@@ -415,9 +430,12 @@ public class SectionEditor {
 
 						SectionDialog.this.abcPart.sectionsModified.set(SectionDialog.this.track, booleanArray);
 					}
+					
+					abcPart.playLeft[track] = left.isSelected();
+					abcPart.playCenter[track] = center.isSelected();
+					abcPart.playRight[track] = right.isSelected();
+			        
 					SectionDialog.this.abcPart.sectionEdited(SectionDialog.this.track);
-					//SectionDialog.this.noteGraph.repaint();
-					//System.err.println(Thread.currentThread().getName());
 				});
 		        okButton.setToolTipText("<html><b> Apply the effects. </b><br> Note that non-applied effects will not be remembered when closing dialog.<br> Sections that are not enabled will likewise also not be remembered. </html>");
 		        panel.add(okButton, "8,"+(firstRowIndex + 1 + numberOfSections)+", 9, "+(firstRowIndex + 1 + numberOfSections)+",f,f");

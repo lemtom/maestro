@@ -49,6 +49,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	private int[] trackTranspose;
 	private boolean[] trackEnabled;
 	private boolean[] trackPriority;
+	public boolean[] playLeft;
+	public boolean[] playCenter;
+	public boolean[] playRight;
 	private int[] trackVolumeAdjust;
 	private DrumNoteMap[] drumNoteMap;
 	private StudentFXNoteMap[] fxNoteMap;
@@ -81,6 +84,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		this.trackTranspose = new int[t];
 		this.trackEnabled = new boolean[t];
 		this.trackPriority = new boolean[t];
+		this.playLeft = new boolean[t];
+		this.playCenter = new boolean[t];
+		this.playRight = new boolean[t];
+		
 		this.trackVolumeAdjust = new int[t];
 		this.drumNoteMap = new DrumNoteMap[t];
 		this.fxNoteMap = new StudentFXNoteMap[t];
@@ -91,6 +98,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			this.sections.add(null);
 			this.nonSection.add(null);
 			this.sectionsModified.add(null);
+			this.playLeft[i] = true;
+			this.playCenter[i] = true;
+			this.playRight[i] = true;
 		}
 	}
 
@@ -152,6 +162,10 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				SaveUtil.appendChildTextElement(trackEle, "volumeAdjust", String.valueOf(trackVolumeAdjust[t]));
 			if (abcSong.isMixTiming() && abcSong.isPriorityActive() && trackPriority[t])
 				SaveUtil.appendChildTextElement(trackEle, "combinePriority", String.valueOf(QuantizedTimingInfo.COMBINE_PRIORITY_MULTIPLIER));// Hardcoded to 4 for now, change QTM and UI if messing with this
+			
+			trackEle.setAttribute("playLeft", String.valueOf(playLeft[t]));
+			trackEle.setAttribute("playCenter", String.valueOf(playCenter[t]));
+			trackEle.setAttribute("playRight", String.valueOf(playRight[t]));
 			
 			TreeMap<Integer, PartSection> tree = sections.get(t);
 	        if (tree != null) {
@@ -273,6 +287,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			instrument = SaveUtil.parseValue(ele, "instrument", instrument);
 			typeNumber = getTypeNumberMatchingTitle();//must be after instr and title
 			delay = SaveUtil.parseValue(ele, "delay", 0);
+			
 			for (Element trackEle : XmlUtil.selectElements(ele, "track"))
 			{
 				
@@ -360,7 +375,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 					// Hardcoded to 4 for now, change QTM and UI if messing with this
 					trackPriority[t] = true;
 				}
-				
+				playLeft[t] = SaveUtil.parseValue(trackEle, "@playLeft", true);
+				playCenter[t] = SaveUtil.parseValue(trackEle, "@playCenter", true);
+				playRight[t] = SaveUtil.parseValue(trackEle, "@playRight", true);
 
 				if (instrument.isPercussion)
 				{
@@ -497,6 +514,23 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 		}
 	}
 	
+	public boolean shouldPlay(NoteEvent ne, int track) {
+		if (ne.midiPan == -1) {
+			// This should never happen, all midi note events should have pan set.
+			return true;
+		}
+		if (!playCenter[track] && ne.midiPan == MidiConstants.PAN_CENTER) {
+			return false;
+		}
+		if (!playLeft[track] && ne.midiPan < MidiConstants.PAN_CENTER) {
+			return false;
+		}
+		if (!playRight[track] && ne.midiPan > MidiConstants.PAN_CENTER) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 *  
 	 * @param track
@@ -520,7 +554,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 			{
 				for (NoteEvent ne : getTrackEvents(t))
 				{
-					if (mapNote(t, ne.note.id, ne.getStartTick()) != null)
+					if (mapNote(t, ne.note.id, ne.getStartTick()) != null && shouldPlay(ne, t))
 					{
 						if (ne.getStartTick() < startTick)
 							startTick = ne.getStartTick();
@@ -553,7 +587,7 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 				while (iter.hasPrevious())
 				{
 					NoteEvent ne = iter.previous();
-					if (mapNote(t, ne.note.id, ne.getStartTick()) != null)
+					if (mapNote(t, ne.note.id, ne.getStartTick()) != null && shouldPlay(ne, t))
 					{
 						long noteEndTick;
 						if (!accountForSustain || instrument.isSustainable(ne.note.id))
