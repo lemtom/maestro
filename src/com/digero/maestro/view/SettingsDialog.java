@@ -312,7 +312,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		numberingLayout.setVGap(PAD);
 		JPanel backPanel = new JPanel(numberingLayout);
 		backPanel.setBorder(BorderFactory.createEmptyBorder(PAD, PAD, PAD, PAD));
-		JLabel instrumentsTitle = new JLabel("<html><b><u>Default instrument naming</u></b></html>");
+		JLabel instrumentsTitle = new JLabel("<html><b><u>Default instrument naming for parts</u></b></html>");
 		backPanel.add(instrumentsTitle, "0, 0, C, F");
 		backPanel.add(instrNamePanel, "0, 1, L, F");		
 		
