@@ -79,7 +79,7 @@ public class LotroInstrumentNick {
 			"Cowbell", "Glocke", "Cloche", "Kuhglocke"
 	};
 	static String[] MOOR = {
-			"Moor"
+			"Moor", "MoorBell"
 	};
 	static String[] DRUM = {
 			"Drums", "Trommel", "Tambour"
