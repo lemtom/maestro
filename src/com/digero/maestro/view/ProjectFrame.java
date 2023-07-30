@@ -1107,60 +1107,74 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 	private void doSettingsDialog(int tab)
 	{
-		SettingsDialog dialog = new SettingsDialog(ProjectFrame.this, partAutoNumberer,
-				partNameTemplate, exportFilenameTemplate, saveSettings.getCopy(), miscSettings.getCopy(), instrNameSettings.getCopy());
-		dialog.setActiveTab(tab);
-		dialog.setVisible(true);
-		if (dialog.isSuccess())
+		boolean showSettingsAgain = false;
+		int x = -1, y = -1;
+		do
 		{
-			if (dialog.isNumbererSettingsChanged())
+			showSettingsAgain = false;
+			SettingsDialog dialog = new SettingsDialog(ProjectFrame.this, partAutoNumberer,
+					partNameTemplate, exportFilenameTemplate, saveSettings.getCopy(), miscSettings.getCopy(), instrNameSettings.getCopy());
+			if (x > 0 && y > 0)
 			{
-				partAutoNumberer.setSettings(dialog.getNumbererSettings());
-				partAutoNumberer.renumberAllParts();
+				dialog.setLocation(x, y);
 			}
-			partNameTemplate.setSettings(dialog.getNameTemplateSettings());
-			partPanel.settingsChanged();
-			
-			exportFilenameTemplate.setSettings(dialog.getExportFilenameTemplateSettings());
-
-			instrNameSettings.copyFrom(dialog.getInstrNameSettings());
-			instrNameSettings.saveToPrefs();
-			
-			saveSettings.copyFrom(dialog.getSaveAndExportSettings());
-			saveSettings.saveToPrefs();
-			onSaveAndExportSettingsChanged();
-			
-			miscSettings.copyFrom(dialog.getMiscSettings());
-			miscSettings.saveToPrefs();
-		}
-		else if (dialog.isSettingPageReset())
-		{
-			switch(dialog.getResetPageIndex())
+			dialog.setActiveTab(tab);
+			dialog.setVisible(true);
+			if (dialog.isSuccess())
 			{
-			case 0: // part auto numberer
-				partAutoNumberer.restoreDefaultSettings();
-				partAutoNumberer.renumberAllParts();
-				break;
-			case 1: // part naming
-				partNameTemplate.restoreDefaultSettings();
+				if (dialog.isNumbererSettingsChanged())
+				{
+					partAutoNumberer.setSettings(dialog.getNumbererSettings());
+					partAutoNumberer.renumberAllParts();
+				}
+				partNameTemplate.setSettings(dialog.getNameTemplateSettings());
 				partPanel.settingsChanged();
-				break;
-			case 2: // file naming
-				exportFilenameTemplate.restoreDefaultSettings();
-				break;
-			case 3: // instr naming
-				instrNameSettings.restoreDefaults();
-				break;	
-			case 4: // save and export
-				saveSettings.restoreDefaults();
-				break;
-			case 5: // misc
-				miscSettings.restoreDefaults();
-				break;
+				
+				exportFilenameTemplate.setSettings(dialog.getExportFilenameTemplateSettings());
+
+				instrNameSettings.copyFrom(dialog.getInstrNameSettings());
+				instrNameSettings.saveToPrefs();
+
+				saveSettings.copyFrom(dialog.getSaveAndExportSettings());
+				saveSettings.saveToPrefs();
+				onSaveAndExportSettingsChanged();
+				
+				miscSettings.copyFrom(dialog.getMiscSettings());
+				miscSettings.saveToPrefs();
 			}
-		}
-		currentSettingsDialogTab = dialog.getActiveTab();
-		dialog.dispose();
+			else if (dialog.isSettingPageReset())
+			{
+				tab = dialog.getResetPageIndex();
+				switch(tab)
+				{
+				case 0: // part auto numberer
+					partAutoNumberer.restoreDefaultSettings();
+					partAutoNumberer.renumberAllParts();
+					break;
+				case 1: // part naming
+					partNameTemplate.restoreDefaultSettings();
+					partPanel.settingsChanged();
+					break;
+				case 2: // file naming
+					exportFilenameTemplate.restoreDefaultSettings();
+					break;
+				case 3: // instr naming
+					instrNameSettings.restoreDefaults();
+					break;	
+				case 4: // save and export
+					saveSettings.restoreDefaults();
+					break;
+				case 5: // misc
+					miscSettings.restoreDefaults();
+					break;
+				}
+				showSettingsAgain = true;
+				x = dialog.getLocation().x;
+				y = dialog.getLocation().y;
+			}
+			currentSettingsDialogTab = dialog.getActiveTab();
+			dialog.dispose();
+		} while (showSettingsAgain);
 	}
 
 	private void onSaveAndExportSettingsChanged()
@@ -2423,7 +2437,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		File saveFile = abcSong.getSaveFile();
 		File allowOverwriteFile = allowOverwriteSaveFile ? saveFile : null;
 
-		if (saveFile == null)
+		if (saveFile == null || exportFilenameTemplate.isEnabled())
 		{
 			String defaultFolder;
 			if (abcSong.getExportFile() != null)
@@ -2434,14 +2448,23 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 			String folder = prefs.get("saveDialogFolder", defaultFolder);
 			if (!new File(folder).exists())
 				folder = defaultFolder;
+			
+			String fileName = "mySong.msx";
+			
+			if (exportFilenameTemplate.isEnabled())
+			{
+				fileName = exportFilenameTemplate.formatName();
+			}
+			else
+			{
+				saveFile = abcSong.getExportFile();
+				if (saveFile == null)
+					saveFile = abcSong.getSourceFile();
+				if (saveFile == null)
+					saveFile = new File(folder, abcSong.getSequenceInfo().getFileName());
+				fileName = saveFile.getName();
+			}
 
-			saveFile = abcSong.getExportFile();
-			if (saveFile == null)
-				saveFile = abcSong.getSourceFile();
-			if (saveFile == null)
-				saveFile = new File(folder, abcSong.getSequenceInfo().getFileName());
-
-			String fileName = saveFile.getName();
 			int dot = fileName.lastIndexOf('.');
 			if (dot > 0)
 				fileName = fileName.substring(0, dot);

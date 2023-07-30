@@ -770,8 +770,10 @@ public class TrackPanel extends JPanel implements IDiscardable, TableLayoutConst
 				if (result != JOptionPane.OK_OPTION)
 					continue;
 			}
-		} while (false);
-
+			
+			break;
+		} while (true);
+		
 		try
 		{
 			abcPart.getDrumMap(trackInfo.getTrackNumber()).save(saveFile);
