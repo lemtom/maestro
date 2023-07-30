@@ -49,6 +49,10 @@ Version 2.5.0.117
 - Ability to customize instrument names for default part naming.
 - Option in section-editor to exclude notes with specified pan.
     For example it can be set to not play notes that are panned left.
+- Support for importing and exporting part numbering configurations.
+- Re-open settings at the same page if "reset page" was used.
+- Fix bug where "overwrite" confirmation for exporting drum maps would still overwrite if cancel was selected.
+- The msx filename for saving Maestro projects will be built from the ABC filename export pattern if it is enabled.
 
 Version 2.5.0.116
 - Added an Abc Merge Tool. It can takes multiple single-part ABC files and merge them into one multi-part ABC song.
