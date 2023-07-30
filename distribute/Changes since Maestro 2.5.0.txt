@@ -47,6 +47,7 @@ Maestro upgrades by Aifel of Laurelin, Elamond of Landroval and Karloman
 ================
 Version 2.5.0.117
 - Ability to customize instrument names for default part naming.
+- Possible fix for not finding the sf2 soundfont when starting by clicking on the jar.
 - Option in section-editor to exclude notes with specified pan.
     For example it can be set to not play notes that are panned left.
 - Support for importing and exporting part numbering configurations.
