@@ -23,6 +23,7 @@ public class ExportFilenameTemplate
 	public static class Settings
 	{
 		private boolean exportFilenamePatternEnabled;
+		private boolean alwaysRegenerateFromPattern;
 		private String exportFilenamePattern;
 		private String whitespaceReplaceText;
 		private boolean partCountZeroPadded;
@@ -33,6 +34,7 @@ public class ExportFilenameTemplate
 		{
 			this.prefs = prefs;
 			exportFilenamePatternEnabled = prefs.getBoolean("exportFilenamePatternEnabled", false);
+			alwaysRegenerateFromPattern = prefs.getBoolean("alwaysRegenerateFromPattern", false);
 			exportFilenamePattern = prefs.get("exportFilenamePattern", "$PartCount - $SongTitle");
 			whitespaceReplaceText = prefs.get("whitespaceReplaceText", " ");
 			partCountZeroPadded = prefs.getBoolean("partCountZeroPadded", true);
@@ -47,6 +49,7 @@ public class ExportFilenameTemplate
 		private void save()
 		{
 			prefs.putBoolean("exportFilenamePatternEnabled", exportFilenamePatternEnabled);
+			prefs.putBoolean("alwaysRegenerateFromPattern", alwaysRegenerateFromPattern);
 			prefs.put("exportFilenamePattern", exportFilenamePattern);
 			prefs.put("whitespaceReplaceText", whitespaceReplaceText);
 			prefs.putBoolean("partCountZeroPadded", partCountZeroPadded);
@@ -55,6 +58,7 @@ public class ExportFilenameTemplate
 		private void copyFrom(Settings source)
 		{
 			this.exportFilenamePatternEnabled = source.exportFilenamePatternEnabled;
+			this.alwaysRegenerateFromPattern = source.alwaysRegenerateFromPattern;
 			this.exportFilenamePattern = source.exportFilenamePattern;
 			this.whitespaceReplaceText = source.whitespaceReplaceText;
 			this.partCountZeroPadded = source.partCountZeroPadded;
@@ -68,6 +72,16 @@ public class ExportFilenameTemplate
 		public void setExportFilenamePatternEnabled(boolean exportFilenamePatternEnabled)
 		{
 			this.exportFilenamePatternEnabled = exportFilenamePatternEnabled;
+		}
+		
+		public boolean shouldAlwaysRegenerateFromPattern()
+		{
+			return alwaysRegenerateFromPattern;
+		}
+		
+		public void setAlwaysRegenerateFromPattern(boolean alwaysRegenerateFromPattern)
+		{
+			this.alwaysRegenerateFromPattern = alwaysRegenerateFromPattern;
 		}
 
 		public String getExportFilenamePattern()
@@ -227,6 +241,11 @@ public class ExportFilenameTemplate
 	public boolean isEnabled()
 	{
 		return settings.isExportFilenamePatternEnabled();
+	}
+	
+	public boolean shouldRegenerateFilename()
+	{
+		return settings.isExportFilenamePatternEnabled() && settings.shouldAlwaysRegenerateFromPattern();
 	}
 
 	public String formatName()

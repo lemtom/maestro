@@ -9,7 +9,7 @@ public class MiscSettings
 	public boolean showMaxPolyphony = true;
 	public boolean showBadger = false;
 	public boolean allBadger = false;
-	public String theme = "Default";
+	public String theme = "Flat Light";
 	public int fontSize = 12;
 	
 	private final Preferences prefs;

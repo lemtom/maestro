@@ -163,7 +163,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		tabPanel = new JTabbedPane();
 		tabPanel.addTab("ABC Part Numbering", createNumberingPanel()); // NUMBERING_TAB
 		tabPanel.addTab("ABC Part Naming", createNameTemplatePanel()); // NAME_TEMPLATE_TAB
-		tabPanel.addTab("ABC File Naming", createExportTemplatePanel());
+		tabPanel.addTab("File Naming", createExportTemplatePanel());
 		tabPanel.addTab("Instrument names", createInstrNamePanel());
 		tabPanel.addTab("Save & Export", createSaveAndExportSettingsPanel()); // SAVE_EXPORT_TAB
 		tabPanel.addTab("Misc", createMiscPanel()); // MISC_TAB
@@ -624,7 +624,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 	
 	private JPanel createExportTemplatePanel()
 	{
-		JLabel pageLabel = new JLabel("<html><b><u>ABC filename settings</b></u></html>");
+		JLabel pageLabel = new JLabel("<html><b><u>ABC and MSX filename settings</b></u></html>");
 		
 		JLabel patternLabel = new JLabel("<html><b>Custom pattern for exported filename:</b></html>");
 		
@@ -683,7 +683,16 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			}
 		});
 		
-		JCheckBox enablePatternExportCheckBox = new JCheckBox("Enable custom pattern for generating ABC filenames");
+		JCheckBox alwaysRegenerateCheckBox = new JCheckBox("Always regenerate filenames using pattern, even if a filename exists");
+		alwaysRegenerateCheckBox.setSelected(exportTemplateSettings.shouldAlwaysRegenerateFromPattern());
+		alwaysRegenerateCheckBox.setEnabled(exportTemplateSettings.isExportFilenamePatternEnabled());
+		alwaysRegenerateCheckBox.addActionListener(e ->
+		{
+			boolean selected = alwaysRegenerateCheckBox.isSelected();
+			exportTemplateSettings.setAlwaysRegenerateFromPattern(selected);
+		});
+		
+		JCheckBox enablePatternExportCheckBox = new JCheckBox("Enable custom pattern for generating filenames");
 		enablePatternExportCheckBox.setSelected(exportTemplateSettings.isExportFilenamePatternEnabled());
 		enablePatternExportCheckBox.addActionListener(e ->
 		{
@@ -692,6 +701,7 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 			replaceWhitespaceComboBox.setEnabled(selected);
 			exportNameTextField.setEditable(selected);
 			zeroPadPartCountCheckbox.setEnabled(selected);
+			alwaysRegenerateCheckBox.setEnabled(selected);
 		});
 		
 		exportTemplateExampleLabel = new JLabel(".abc");
@@ -715,6 +725,9 @@ public class SettingsDialog extends JDialog implements TableLayoutConstants
 		
 		layout.insertRow(++row, PREFERRED);
 		panel.add(enablePatternExportCheckBox, "0, " + row + ", 1, " + row);
+		
+		layout.insertRow(++row, PREFERRED);
+		panel.add(alwaysRegenerateCheckBox, "0, " + row + ", 1, " + row);
 		
 		layout.insertRow(++row, PREFERRED);
 		panel.add(whitespaceLabel, "0, " + row);
