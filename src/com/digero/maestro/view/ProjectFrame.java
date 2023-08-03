@@ -2317,7 +2317,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		File exportFile = abcSong.getExportFile();
 		File allowOverwriteFile = allowOverwriteExportFile ? exportFile : null;
 
-		if (exportFile == null || exportFilenameTemplate.isEnabled())
+		if (exportFile == null || exportFilenameTemplate.shouldRegenerateFilename())
 		{
 			String defaultFolder = Util.getLotroMusicPath(false).getAbsolutePath();
 			String folder = prefs.get("exportDialogFolder", defaultFolder);
@@ -2437,7 +2437,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		File saveFile = abcSong.getSaveFile();
 		File allowOverwriteFile = allowOverwriteSaveFile ? saveFile : null;
 
-		if (saveFile == null || exportFilenameTemplate.isEnabled())
+		if (saveFile == null || exportFilenameTemplate.shouldRegenerateFilename())
 		{
 			String defaultFolder;
 			if (abcSong.getExportFile() != null)
