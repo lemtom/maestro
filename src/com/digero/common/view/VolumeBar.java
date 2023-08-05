@@ -1,5 +1,7 @@
 package com.digero.common.view;
 
+import static com.digero.common.midi.MidiConstants.MAX_VOLUME;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
@@ -16,8 +18,7 @@ import javax.swing.JPanel;
 import com.digero.common.midi.VolumeTransceiver;
 
 @SuppressWarnings("serial")
-public class VolumeBar extends JPanel
-{
+public class VolumeBar extends JPanel {
 	private static final int PTR_WIDTH = 12;
 	private static final int PTR_HEIGHT = 12;
 	private static final int BAR_HEIGHT = 6;
@@ -29,8 +30,7 @@ public class VolumeBar extends JPanel
 	private VolumeTransceiver volumizer;
 	private boolean useInvertedColors;
 
-	public VolumeBar(VolumeTransceiver volumizer)
-	{
+	public VolumeBar(VolumeTransceiver volumizer) {
 		this.volumizer = volumizer;
 
 		MouseHandler mouseHandler = new MouseHandler();
@@ -42,8 +42,8 @@ public class VolumeBar extends JPanel
 		setPreferredSize(sz);
 	}
 
-	@Override protected void paintComponent(Graphics g)
-	{
+	@Override
+	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
 		Graphics2D g2 = (Graphics2D) g;
@@ -83,38 +83,32 @@ public class VolumeBar extends JPanel
 		g2.drawOval(left, 0, PTR_WIDTH - 1, PTR_HEIGHT - 1);
 	}
 
-	public void setUseInvertedColors(boolean useInvertedColors)
-	{
+	public void setUseInvertedColors(boolean useInvertedColors) {
 		this.useInvertedColors = useInvertedColors;
 	}
 
-	public boolean isUseInvertedColors()
-	{
+	public boolean isUseInvertedColors() {
 		return useInvertedColors;
 	}
 
-	private class MouseHandler implements MouseListener, MouseMotionListener
-	{
-		private int getPosition(int x)
-		{
-			int pos = (x + 1 - SIDE_PAD) * VolumeTransceiver.MAX_VOLUME / (getWidth() - 2 * SIDE_PAD);
-			if (pos < 0)
-			{
+	private class MouseHandler implements MouseListener, MouseMotionListener {
+		private int getPosition(int x) {
+			int pos = (x + 1 - SIDE_PAD) * MAX_VOLUME / (getWidth() - 2 * SIDE_PAD);
+			if (pos < 0) {
 				pos = 0;
 			}
-			if (pos > VolumeTransceiver.MAX_VOLUME)
-			{
-				pos = VolumeTransceiver.MAX_VOLUME;
+			if (pos > MAX_VOLUME) {
+				pos = MAX_VOLUME;
 			}
 			return pos;
 		}
 
-		@Override public void mouseClicked(MouseEvent e)
-		{
+		@Override
+		public void mouseClicked(MouseEvent e) {
 		}
 
-		@Override public void mousePressed(MouseEvent e)
-		{
+		@Override
+		public void mousePressed(MouseEvent e) {
 			if (!VolumeBar.this.isEnabled())
 				return;
 			volumizer.setVolume(getPosition(e.getX()));
@@ -122,28 +116,28 @@ public class VolumeBar extends JPanel
 			requestFocus();
 		}
 
-		@Override public void mouseReleased(MouseEvent e)
-		{
+		@Override
+		public void mouseReleased(MouseEvent e) {
 		}
 
-		@Override public void mouseDragged(MouseEvent e)
-		{
+		@Override
+		public void mouseDragged(MouseEvent e) {
 			if (!VolumeBar.this.isEnabled())
 				return;
 			volumizer.setVolume(getPosition(e.getX()));
 			repaint();
 		}
 
-		@Override public void mouseMoved(MouseEvent e)
-		{
+		@Override
+		public void mouseMoved(MouseEvent e) {
 		}
 
-		@Override public void mouseEntered(MouseEvent e)
-		{
+		@Override
+		public void mouseEntered(MouseEvent e) {
 		}
 
-		@Override public void mouseExited(MouseEvent e)
-		{
+		@Override
+		public void mouseExited(MouseEvent e) {
 		}
 	}
 }

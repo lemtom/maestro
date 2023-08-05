@@ -1,5 +1,7 @@
 package com.digero.maestro.view;
 
+import static javax.swing.SwingConstants.CENTER;
+
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -11,6 +13,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.swing.JButton;
@@ -132,7 +135,7 @@ public class TuneEditor {
 		        	tuneInputs.add(l);
 		        }
 		        
-		        TreeMap<Integer, TuneLine> tree = abcSong.tuneBars;
+		        SortedMap<Integer, TuneLine> tree = abcSong.tuneBars;
 		        if (tree != null) {
 			        int number = 0;
 			        boolean useDialogLineNumbers = true;
@@ -175,10 +178,10 @@ public class TuneEditor {
 		        	tuneInputs.get(i).barA.setToolTipText(barA);
 		        	tuneInputs.get(i).enable.setToolTipText(enable);
 		        	
-		        	tuneInputs.get(i).barA.setHorizontalAlignment(JTextField.CENTER);
-		        	tuneInputs.get(i).barB.setHorizontalAlignment(JTextField.CENTER);
-		        	tuneInputs.get(i).transpose.setHorizontalAlignment(JTextField.CENTER);
-		        	tuneInputs.get(i).tempo.setHorizontalAlignment(JTextField.CENTER);
+		        	tuneInputs.get(i).barA.setHorizontalAlignment(CENTER);
+		        	tuneInputs.get(i).barB.setHorizontalAlignment(CENTER);
+		        	tuneInputs.get(i).transpose.setHorizontalAlignment(CENTER);
+		        	tuneInputs.get(i).tempo.setHorizontalAlignment(CENTER);
 		        	
 		        	panel.add(tuneInputs.get(i).enable, "0,"+(3+i)+",C,C");
 			        panel.add(tuneInputs.get(i).barA, "1,"+(3+i)+",f,f");
@@ -214,7 +217,7 @@ public class TuneEditor {
 		        
 		        JTextField help = new JTextField("Help");
 		        help.setEditable(false);
-		        help.setHorizontalAlignment(JTextField.CENTER);
+		        help.setHorizontalAlignment(CENTER);
 		        help.setToolTipText("<html><b>Enabled sections must have no overlap.<br>Bar numbers are inclusive and use original MIDI bars.<br>"
 		        		+ "No decimal numbers allowed, only whole numbers.<br>Bar numbers must be positive and greater than zero.<br>"
 		        		+ "Clicking APPLY will also disable faulty sections.<br><br>Warning: If 'Remove initial silence' is enabled or the<br>"

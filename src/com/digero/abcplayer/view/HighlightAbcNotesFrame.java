@@ -42,6 +42,7 @@ import javax.swing.JTextArea;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.plaf.TextUI;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
@@ -102,7 +103,7 @@ public class HighlightAbcNotesFrame extends JFrame
 	{
 		super(AbcPlayer.APP_NAME);
 
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		addWindowListener(new WindowAdapter()
 		{
 			@Override public void windowOpened(WindowEvent e)

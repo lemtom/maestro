@@ -65,6 +65,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -266,7 +267,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 			volumeTransceiver = null;
 		} else {
 			volumeTransceiver = new VolumeTransceiver();
-			volumeTransceiver.setVolume(prefs.getInt("volumizer", VolumeTransceiver.MAX_VOLUME));
+			volumeTransceiver.setVolume(prefs.getInt("volumizer", MidiConstants.MAX_VOLUME));
 		}
 		volumeBar = new NativeVolumeBar(new NativeVolumeBar.Callback() {
 			@Override
@@ -355,8 +356,8 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		titleLabel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
 		trackListPanel = new TrackListPanel(sequencer, this);
-		JScrollPane trackListScroller = new JScrollPane(trackListPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane trackListScroller = new JScrollPane(trackListPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		trackListScroller.getVerticalScrollBar().setUnitIncrement(TrackListPanel.TRACKLIST_ROWHEIGHT);
 		trackListScroller.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.GRAY));
 
@@ -919,7 +920,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 			return false;
 		}
 
-		if (fileList.size() == 0)
+		if (fileList.isEmpty())
 			return false;
 
 		for (File file : fileList) {
@@ -958,7 +959,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	}
 
 	private void appendSongDialog() {
-		if (this.abcData == null || this.abcData.size() == 0) {
+		if (this.abcData == null || this.abcData.isEmpty()) {
 			openSongDialog();
 			return;
 		}
@@ -973,7 +974,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	}
 
 	private void saveSongDialog() {
-		if (this.abcData == null || this.abcData.size() == 0) {
+		if (this.abcData == null || this.abcData.isEmpty()) {
 			Toolkit.getDefaultToolkit().beep();
 			return;
 		}
@@ -1008,7 +1009,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	}
 
 	private boolean openSongFromCommandLine(String[] args) {
-		mainWindow.setExtendedState(mainWindow.getExtendedState() & ~JFrame.ICONIFIED);
+		mainWindow.setExtendedState(mainWindow.getExtendedState() & ~ICONIFIED);
 
 		if (args.length > 0) {
 			File[] argFiles = new File[args.length];
@@ -1160,7 +1161,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	}
 
 	private boolean appendSong(List<FileAndData> appendData) {
-		if (this.abcData == null || this.abcData.size() == 0) {
+		if (this.abcData == null || this.abcData.isEmpty()) {
 			return openSong(appendData);
 		}
 
@@ -1329,7 +1330,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 					prefs.get("exportFileDialog.currentDirectory", Util.getUserMusicPath().getAbsolutePath()));
 
 			File openedFile = null;
-			if (abcData.size() > 0)
+			if (!abcData.isEmpty())
 				openedFile = abcData.get(0).file;
 
 			if (openedFile != null) {
@@ -1514,7 +1515,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
 	private void exportMp3() {
 		File openedFile = null;
-		if (abcData.size() > 0)
+		if (!abcData.isEmpty())
 			openedFile = abcData.get(0).file;
 
 		Preferences mp3Prefs = prefs.node("mp3");
@@ -1659,7 +1660,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 
 	private void exportMp3New() {
 		File openedFile = null;
-		if (abcData.size() > 0)
+		if (!abcData.isEmpty())
 			openedFile = abcData.get(0).file;
 
 		Preferences mp3Prefs = prefs.node("mp3");

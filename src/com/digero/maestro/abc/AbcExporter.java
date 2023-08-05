@@ -53,7 +53,7 @@ public class AbcExporter
 	private long exportStartTick;
 	private long exportEndTick;
 	private int lastChannelUsedInPreview = -1;
-	private final static long PRE_TICK = -1L;
+	private static final long PRE_TICK = -1L;
 	
 	public int stereoPan = 100;// zero is mono, 100 is very wide.
 
@@ -1352,7 +1352,7 @@ public class AbcExporter
 			} else {				
 				List<NoteEvent> deadnotes = curChord.prune(part.getInstrument().sustainable, part.getInstrument() == LotroInstrument.BASIC_DRUM);
 				removeNotes(events, deadnotes, part);
-				if (deadnotes.size() > 0) {
+				if (!deadnotes.isEmpty()) {
 					// One of the tiedTo notes that was pruned might be the events.get(i) note,
 					// so we go one step back and re-process events.get(i)
 					i--;

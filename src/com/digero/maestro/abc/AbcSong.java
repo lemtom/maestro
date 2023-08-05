@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -798,7 +799,7 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 
 	@Override public long getSongLengthMicros()
 	{
-		if (parts.size() == 0 || sequenceInfo == null)
+		if (parts.isEmpty() || sequenceInfo == null)
 			return 0;
 
 		try
@@ -998,9 +999,9 @@ public class AbcSong implements IDiscardable, AbcMetadataSource
 		return tuneTrans;
 	}
 	
-	public TreeMap<Long, Integer> getTuneTempoChanges() {
+	public SortedMap<Long, Integer> getTuneTempoChanges() {
 		SequenceInfo se = getSequenceInfo();
-		TreeMap<Integer, TuneLine> tree = tuneBars;
+		SortedMap<Integer, TuneLine> tree = tuneBars;
 		TreeMap<Long, Integer> treeChanges = new TreeMap<>();
 		if (se != null && tree != null) {
 			SequenceDataCache data = se.getDataCache();

@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -970,7 +971,7 @@ public class NoteGraph extends JPanel implements Listener<SequencerEvent>, IDisc
 
 		@Override public void mouseDragged(MouseEvent e)
 		{
-			if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0)
+			if ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0)
 			{
 				if (!isDragCanceled(e))
 				{

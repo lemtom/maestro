@@ -1,5 +1,7 @@
 package com.digero.common.util;
 
+import static java.awt.Frame.MAXIMIZED_BOTH;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -323,14 +325,14 @@ public final class Util
 
 		frame.setBounds(x, y, width, height);
 
-		int maximized = prefs.getInt("maximized", 0) & JFrame.MAXIMIZED_BOTH;
-		frame.setExtendedState((frame.getExtendedState() & ~JFrame.MAXIMIZED_BOTH) | maximized);
+		int maximized = prefs.getInt("maximized", 0) & MAXIMIZED_BOTH;
+		frame.setExtendedState((frame.getExtendedState() & ~MAXIMIZED_BOTH) | maximized);
 
 		frame.addComponentListener(new ComponentAdapter()
 		{
 			@Override public void componentResized(ComponentEvent e)
 			{
-				if ((frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0)
+				if ((frame.getExtendedState() & MAXIMIZED_BOTH) == 0)
 				{
 					prefs.putInt("width", frame.getWidth());
 					prefs.putInt("height", frame.getHeight());
@@ -339,7 +341,7 @@ public final class Util
 
 			@Override public void componentMoved(ComponentEvent e)
 			{
-				if ((frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0)
+				if ((frame.getExtendedState() & MAXIMIZED_BOTH) == 0)
 				{
 					prefs.putInt("x", frame.getX());
 					prefs.putInt("y", frame.getY());
@@ -347,7 +349,7 @@ public final class Util
 			}
 		});
 
-		frame.addWindowStateListener(e -> prefs.putInt("maximized", e.getNewState() & JFrame.MAXIMIZED_BOTH));
+		frame.addWindowStateListener(e -> prefs.putInt("maximized", e.getNewState() & MAXIMIZED_BOTH));
 	}
 
 	public static String formatDuration(long micros)

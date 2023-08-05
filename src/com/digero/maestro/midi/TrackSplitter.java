@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -27,7 +28,7 @@ public class TrackSplitter {
 	private SequenceDataCache sequenceCache = null;
 	private boolean isGM = true;
 	
-	public Sequence split (Sequence sequence, SequenceDataCache sequenceCache, String standard, boolean[] rolandDrumChannels, ArrayList<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean[] yamahaDrumChannels, ArrayList<TreeMap<Long, Boolean>> mmaDrumSwitches, TreeMap<Integer, Integer> portMap) throws InvalidMidiDataException {
+	public Sequence split (Sequence sequence, SequenceDataCache sequenceCache, String standard, boolean[] rolandDrumChannels, List<TreeMap<Long, Boolean>> yamahaDrumSwitches, boolean[] yamahaDrumChannels, List<TreeMap<Long, Boolean>> mmaDrumSwitches, SortedMap<Integer, Integer> portMap) throws InvalidMidiDataException {
 
 		this.sequenceCache = sequenceCache;
 		
@@ -78,7 +79,7 @@ public class TrackSplitter {
 			HashMap<String, Track> newTracks = new HashMap<>();
 			
 			// Making a list of which notes are playing, the note will map into an instrument, so that the Midi OFF event gets put on same track as its midi ON event.
-			List<HashMap<Integer, String>> notesOn = new ArrayList<HashMap<Integer, String>>();
+			List<HashMap<Integer, String>> notesOn = new ArrayList<>();
 			for (int i = 0; i < 16; i++) {
 				notesOn.add(new HashMap<>());
 			}

@@ -65,9 +65,9 @@ public class AbcPart implements AbcPartMetadataSource, NumberedAbcPart, IDiscard
 	private final ListenerList<AbcPartEvent> listeners = new ListenerList<>();
 	private Preferences drumPrefs = Preferences.userNodeForPackage(AbcPart.class).node("drums");
 	
-	public ArrayList<TreeMap<Integer, PartSection>> sections;
-	public ArrayList<PartSection> nonSection;
-	public ArrayList<boolean[]> sectionsModified;
+	public List<TreeMap<Integer, PartSection>> sections;
+	public List<PartSection> nonSection;
+	public List<boolean[]> sectionsModified;
 	public int delay = 0;//ms
 	private int typeNumber = 0;// -1 for when instr do not match or string dont start with instr, 0 when instr match but no number, positive number when it has number.
 	private final InstrNameSettings instrNameSettings;
