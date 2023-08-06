@@ -128,7 +128,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		} catch (IOException ex) {
 		}
 
-		if(!openPort() && args != null && args.length > 0 && args[0].length() > 3) {
+		if (!openPort() && args != null && args.length > 0 && args[0].length() > 3) {
 			sendArgsToPort(args);
 			return;
 		}
@@ -212,9 +212,14 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 	private NativeVolumeBar volumeBar;
 	private VolumeTransceiver volumeTransceiver;
 
-	private ImageIcon playIcon, pauseIcon, stopIcon;
-	private ImageIcon playIconDisabled, pauseIconDisabled, stopIconDisabled;
-	private JButton playButton, stopButton;
+	private ImageIcon playIcon;
+	private ImageIcon pauseIcon;
+	private ImageIcon stopIcon;
+	private ImageIcon playIconDisabled;
+	private ImageIcon pauseIconDisabled;
+	private ImageIcon stopIconDisabled;
+	private JButton playButton;
+	private JButton stopButton;
 
 	private JCheckBoxMenuItem lotroErrorsMenuItem;
 	private JCheckBoxMenuItem stereoMenuItem;
@@ -1259,7 +1264,7 @@ public class AbcPlayer extends JFrame implements TableLayoutConstants, MidiConst
 		}
 
 		String title = APP_NAME;
-		if (fileNames.toString() != "")
+		if (!"".equals(fileNames.toString()))
 			title += " - " + fileNames;
 
 		setTitle(title);

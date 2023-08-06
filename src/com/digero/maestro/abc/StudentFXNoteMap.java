@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -16,7 +15,6 @@ import com.digero.common.midi.MidiConstants;
 import com.digero.common.util.ParseException;
 import com.digero.common.util.Version;
 import com.digero.maestro.util.SaveUtil;
-import com.digero.maestro.util.XmlUtil;
 
 public class StudentFXNoteMap extends DrumNoteMap {
 	public static final String FILE_SUFFIX = "studentfxmap.txt";
@@ -62,6 +60,7 @@ public class StudentFXNoteMap extends DrumNoteMap {
 		set((byte) midiNoteId, (byte) value);
 	}
 
+	@Override
 	public void set(byte midiNoteId, byte value) {
 		if (get(midiNoteId) != value) {
 			ensureMap();
@@ -73,11 +72,6 @@ public class StudentFXNoteMap extends DrumNoteMap {
 	@Override
 	protected byte getDefaultMapping(byte noteId) {
 		return DISABLED_NOTE_ID;
-	}
-
-	private void ensureMap() {
-		if (map == null)
-			map = getFailsafeDefault();
 	}
 
 	@Override
@@ -93,15 +87,6 @@ public class StudentFXNoteMap extends DrumNoteMap {
 	public void removeChangeListener(ChangeListener listener) {
 		if (listeners != null)
 			listeners.remove(listener);
-	}
-
-	private void fireChangeEvent() {
-		if (listeners != null) {
-			ChangeEvent e = new ChangeEvent(this);
-			for (ChangeListener l : listeners) {
-				l.stateChanged(e);
-			}
-		}
 	}
 
 	@Override
@@ -130,22 +115,7 @@ public class StudentFXNoteMap extends DrumNoteMap {
 
 	@Override
 	public void load(Preferences prefs) {
-		setLoadedByteArray(prefs.getByteArray(MAP_PREFS_KEY, null));
-	}
-
-	private void setLoadedByteArray(byte[] bytes) {
-		if (bytes != null && bytes.length == MidiConstants.NOTE_COUNT) {
-			map = bytes;
-			byte[] failsafe = null;
-			for (int i = 0; i < map.length; i++) {
-				if (map[i] != DISABLED_NOTE_ID && !LotroInstrument.STUDENT_FX_FIDDLE.isPlayable(map[i])) {
-					if (failsafe == null) {
-						failsafe = getFailsafeDefault();
-					}
-					map[i] = failsafe[i];
-				}
-			}
-		}
+		setLoadedByteArray(prefs.getByteArray(MAP_PREFS_KEY, null), LotroInstrument.STUDENT_FX_FIDDLE);
 	}
 
 	@Override
@@ -170,25 +140,10 @@ public class StudentFXNoteMap extends DrumNoteMap {
 		try {
 			boolean isPassthrough = SaveUtil.parseValue(ele, "@isPassthrough", false);
 			StudentFXNoteMap retVal = isPassthrough ? new PassThroughFXNoteMap() : new StudentFXNoteMap();
-			retVal.loadFromXmlInternal(ele, fileVersion);
+			retVal.loadFromXmlInternal(ele, fileVersion, LotroInstrument.STUDENT_FX_FIDDLE);
 			return retVal;
 		} catch (XPathExpressionException e) {
 			throw new RuntimeException(e);
-		}
-	}
-
-	private void loadFromXmlInternal(Element ele, Version fileVersion) throws ParseException, XPathExpressionException {
-		if (map == null)
-			map = new byte[MidiConstants.NOTE_COUNT];
-
-		Arrays.fill(map, DISABLED_NOTE_ID);
-
-		for (Element noteEle : XmlUtil.selectElements(ele, "note")) {
-			int midiId = SaveUtil.parseValue(noteEle, "@id", DISABLED_NOTE_ID);
-			byte lotroId = SaveUtil.parseValue(noteEle, "@lotroId", DISABLED_NOTE_ID);
-			if (midiId >= 0 && midiId < map.length && LotroInstrument.STUDENT_FX_FIDDLE.isPlayable(lotroId)) {
-				map[midiId] = lotroId;
-			}
 		}
 	}
 

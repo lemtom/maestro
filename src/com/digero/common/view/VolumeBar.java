@@ -15,6 +15,7 @@ import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JPanel;
 
+import com.digero.common.midi.MidiConstants;
 import com.digero.common.midi.VolumeTransceiver;
 
 @SuppressWarnings("serial")
@@ -49,7 +50,7 @@ public class VolumeBar extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		int ptrPos = SIDE_PAD + (getWidth() - 2 * SIDE_PAD) * volumizer.getVolume() / VolumeTransceiver.MAX_VOLUME;
+		int ptrPos = SIDE_PAD + (getWidth() - 2 * SIDE_PAD) * volumizer.getVolume() / MidiConstants.MAX_VOLUME;
 
 		final int x = 0;
 		final int y = (PTR_HEIGHT - BAR_HEIGHT) / 2;

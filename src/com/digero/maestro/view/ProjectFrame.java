@@ -132,7 +132,8 @@ import info.clearthought.layout.TableLayoutConstants;
 
 @SuppressWarnings("serial")
 public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompileConstants {
-	private static final int HGAP = 4, VGAP = 4;
+	private static final int HGAP = 4;
+	private static final int VGAP = 4;
 	private static final double[] LAYOUT_COLS = new double[] { 180, FILL };
 	private static final double[] LAYOUT_ROWS = new double[] { FILL };
 	private static TableLayout tableLayout = new TableLayout(LAYOUT_COLS, LAYOUT_ROWS);
@@ -251,17 +252,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		ToolTipManager.sharedInstance().setDismissDelay(8000);
 
-		InputMap im = (InputMap) UIManager.get("Button.focusInputMap");
-		if (im != null) {
-			im.put(KeyStroke.getKeyStroke("pressed SPACE"), "none");
-			im.put(KeyStroke.getKeyStroke("released SPACE"), "none");
-		}
-
-		im = (InputMap) UIManager.get("CheckBox.focusInputMap");
-		if (im != null) {
-			im.put(KeyStroke.getKeyStroke("pressed SPACE"), "none");
-			im.put(KeyStroke.getKeyStroke("released SPACE"), "none");
-		}
+		handleInputMaps();
 
 		String welcomeMessage = formatInfoMessage("Hello Maestro",
 				"Drag and drop a MIDI or ABC file to open it.\n" + "Or use File > Open.");
@@ -277,17 +268,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 						 * settings in saveAndExportSettings
 						 */);
 
-		usingNativeVolume = MaestroMain.isNativeVolumeSupported();
-		if (usingNativeVolume) {
-			volumeTransceiver = null;
-			abcVolumeTransceiver = null;
-		} else {
-			volumeTransceiver = new VolumeTransceiver();
-			volumeTransceiver.setVolume(prefs.getInt("volumizer", NativeVolumeBar.MAX_VOLUME));
-
-			abcVolumeTransceiver = new VolumeTransceiver();
-			abcVolumeTransceiver.setVolume(volumeTransceiver.getVolume());
-		}
+		checkVolumeTransceiver();
 
 		try {
 			sequencer = new NoteFilterSequencerWrapper();
@@ -317,15 +298,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 		// SWING stuff starts here
 
-		try {
-			List<Image> icons = new ArrayList<>();
-			icons.add(ImageIO.read(IconLoader.class.getResourceAsStream("maestro_16.png")));
-			icons.add(ImageIO.read(IconLoader.class.getResourceAsStream("maestro_32.png")));
-			setIconImages(icons);
-		} catch (Exception ex) {
-			// Ignore
-			ex.printStackTrace();
-		}
+		loadIcons();
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
@@ -360,202 +333,40 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		content = new JPanel(tableLayout, false);
 		setContentPane(content);
 
-		songTitleField = new JTextField();
-		songTitleField.setToolTipText("Song Title");
-		songTitleField.getDocument().addDocumentListener(new SimpleDocumentListener() {
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				if (abcSong != null)
-					abcSong.setTitle(songTitleField.getText());
-			}
-		});
+		generateSongTitleField();
 
-		composerField = new JTextField();
-		composerField.setToolTipText("Song Composer");
-		composerField.getDocument().addDocumentListener(new SimpleDocumentListener() {
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				if (abcSong != null)
-					abcSong.setComposer(composerField.getText());
-			}
-		});
+		generateComposerField();
 
-		genreField = new JTextField();
-		genreField.setToolTipText("Song Genre(s)");
-		genreField.getDocument().addDocumentListener(new SimpleDocumentListener() {
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				if (abcSong != null)
-					abcSong.setGenre(genreField.getText());
-			}
-		});
+		generateGenreField();
 
-		moodField = new JTextField();
-		moodField.setToolTipText("Song Mood(s)");
-		moodField.getDocument().addDocumentListener(new SimpleDocumentListener() {
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				if (abcSong != null)
-					abcSong.setMood(moodField.getText());
-			}
-		});
+		generateMoodField();
 
-		transcriberField = new JTextField(prefs.get("transcriber", ""));
-		transcriberField.setToolTipText("Song Transcriber (your name)");
-		transcriberFieldListener = new PrefsDocumentListener(prefs, "transcriber");
-		transcriberField.getDocument().addDocumentListener(transcriberFieldListener);
-		transcriberField.getDocument().addDocumentListener(new SimpleDocumentListener() {
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				if (abcSong != null)
-					abcSong.setTranscriber(transcriberField.getText());
-			}
-		});
+		generateTranscriberField();
 
-		keySignatureField = new MyFormattedTextField(KeySignature.C_MAJOR, 5);
-		keySignatureField.setToolTipText("<html>Adjust the key signature of the ABC file. "
-				+ "This only affects the display, not the sound of the exported file.<br>"
-				+ "Examples: C maj, Eb maj, F# min</html>");
-		if (SHOW_KEY_FIELD) {
-			keySignatureField.addPropertyChangeListener("value", evt -> {
-				if (abcSong != null)
-					abcSong.setKeySignature((KeySignature) keySignatureField.getValue());
+		generateKeySignatureField();
 
-			});
-		}
+		generateTimeSignatureField();
 
-		timeSignatureField = new MyFormattedTextField(TimeSignature.FOUR_FOUR, 5);
-		timeSignatureField.setToolTipText("<html>Adjust the time signature of the ABC file.<br><br>"
-				+ "This only affects the display, not the sound of the exported file.<br>"
-				+ "Examples: 4/4, 3/8, 2/2</html>");
-		timeSignatureField.addPropertyChangeListener("value", evt -> {
-			if (abcSong != null)
-				abcSong.setTimeSignature((TimeSignature) timeSignatureField.getValue());
-		});
+		generateTransposeSpinner();
 
-		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -48, 48, 1));
-		transposeSpinner
-				.setToolTipText("<html>Transpose the entire song by semitones.<br>" + "12 semitones = 1 octave</html>");
-		transposeSpinner.addChangeListener(e -> {
-			if (abcSong != null)
-				abcSong.setTranspose(getTranspose());
-		});
+		generateTempoSpinner();
 
-		tempoSpinner = new JSpinner(new SpinnerNumberModel(MidiConstants.DEFAULT_TEMPO_BPM /* value */, 8 /* min */,
-				960 /* max */, 1 /* step */));
-		tempoSpinner.setToolTipText("<html>Tempo in beats per minute.<br><br>"
-				+ "This number represents the <b>Main Tempo</b>, which is the tempo that covers<br>"
-				+ "the largest portion of the song. If parts of the song play at a different tempo,<br>"
-				+ "they will all be adjusted proportionally.</html>");
-		tempoSpinner.addChangeListener(e -> {
-			if (abcSong != null) {
-				abcSong.setTempoBPM((Integer) tempoSpinner.getValue());
+		generateResetTempoButton();
 
-				abcSequencer.setTempoFactor(abcSong.getTempoFactor());
+		generateTripletCheckBox();
 
-				if (abcSequencer.isRunning()) {
-					float delta = abcPreviewTempoFactor / abcSequencer.getTempoFactor();
-					if (Math.max(delta, 1 / delta) > 1.5f)
-						refreshPreviewSequence(false);
-				}
-			} else {
-				abcSequencer.setTempoFactor(1.0f);
-			}
-		});
+		generateMixCheckBox();
 
-		resetTempoButton = new JButton("Reset");
-		resetTempoButton.setMargin(new Insets(2, 8, 2, 8));
-		resetTempoButton.setToolTipText("Set the tempo back to the source file's tempo");
-		resetTempoButton.addActionListener(e -> {
-			if (abcSong == null) {
-				tempoSpinner.setValue(MidiConstants.DEFAULT_TEMPO_BPM);
-			} else {
-				float tempoFactor = abcSequencer.getTempoFactor();
-				tempoSpinner.setValue(abcSong.getSequenceInfo().getPrimaryTempoBPM());
-				if (tempoFactor != 1.0f)
-					refreshPreviewSequence(false);
-			}
-			tempoSpinner.requestFocus();
-		});
+		generatePrioCheckBox();
 
-		tripletCheckBox = new JCheckBox("Triplets/swing rhythm");
-		tripletCheckBox.setToolTipText("<html>Tweak the timing to allow for triplets or a swing rhythm.<br><br>"
-				+ "This can cause short/fast notes to incorrectly be detected as triplets.<br>"
-				+ "Leave it unchecked unless the song has triplets or a swing rhythm.</html>");
-		tripletCheckBox.addActionListener(e -> {
-			if (abcSong != null)
-				abcSong.setTripletTiming(tripletCheckBox.isSelected());
-
-			if (abcSequencer.isRunning())
-				refreshPreviewSequence(false);
-		});
-
-		mixCheckBox = new JCheckBox("Mix Timings");
-		mixCheckBox.setToolTipText("<html>Allow Maestro to detect which notes<br>"
-				+ "that differs from the above triplet/swing setting.<br><br>"
-				+ "It is done per part, so some notes in a parts might export as swing/tuplets<br>"
-				+ "while other parts at same time export even notes.</html>");
-		mixCheckBox.addActionListener(e -> {
-			if (abcSong != null)
-				abcSong.setMixTiming(mixCheckBox.isSelected());
-
-			if (abcSequencer.isRunning())
-				refreshPreviewSequence(false);
-		});
-
-		prioCheckBox = new JCheckBox("Combine Priorities");
-		prioCheckBox.setToolTipText("<html>This allow to set track priority for Mix Timings.<br><br>"
-				+ "Checkboxes will appear when combining tracks,<br>"
-				+ "those enabled will prioritize the timings of those" + "tracks over non-prioritized tracks.</html>");
-		prioCheckBox.addActionListener(e -> {
-			if (abcSong != null)
-				abcSong.setPriorityActive(prioCheckBox.isSelected());
-
-			if (abcSequencer.isRunning())
-				refreshPreviewSequence(false);
-		});
-
-		exportButton = new JButton(); // Label set in onSaveAndExportSettingsChanged()
-		exportButton.setToolTipText("<html><b>Export ABC</b><br>(Ctrl+E)</html>");
-		exportButton.setIcon(IconLoader.getImageIcon("abcfile_32.png"));
-		exportButton.setDisabledIcon(IconLoader.getDisabledIcon("abcfile_32.png"));
-		exportButton.setHorizontalAlignment(SwingConstants.LEFT);
-		exportButton.getModel().addChangeListener(new ChangeListener() {
-			private boolean pressed = false;
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (exportButton.getModel().isPressed() != pressed) {
-					pressed = exportButton.getModel().isPressed();
-					if (pressed)
-						exportSuccessfulLabel.setVisible(false);
-				}
-			}
-		});
-		exportButton.addActionListener(e -> exportAbc());
+		generateExportButton();
 
 		exportSuccessfulLabel = new JLabel("Exported");
 		exportSuccessfulLabel.setIcon(IconLoader.getImageIcon("check_16.png"));
 		exportSuccessfulLabel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
 		exportSuccessfulLabel.setVisible(false);
 
-		partsList = new JList<>();
-		partsList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		partsList.getSelectionModel().addListSelectionListener(e -> {
-			AbcPart abcPart = (AbcPart) partsList.getSelectedValue();
-			sequencer.getFilter().onAbcPartChanged(abcPart != null);
-			abcSequencer.getFilter().onAbcPartChanged(abcPart != null);
-			partPanel.setAbcPart(abcPart);
-			if (abcPart != null) {
-				updateButtons(false);
-			} else {
-				updateDelayButton();
-				if (partsList.getModel().getSize() > 0) {
-					// If ctrl-clicking to deselect this will ensure something is selected
-					partsList.setSelectedIndex(0);
-				}
-			}
-		});
+		generatePartsList();
 		// Using this class as prototype cell content will set the Jlist width to be at
 		// least big enough to display LM bassoon,
 		// and since this list determines the width of the flowlayout where the delete
@@ -587,158 +398,22 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 															// part 1
 		partsList.setVisibleRowCount(8);
 
-		// Wrap the part list in a panel that forces the list to the top
-		// Fixes a swing bug where clicking after the end of the list will select the
-		// last element
-		JPanel partListWrapperPanel = new JPanel(new BorderLayout());
-		partListWrapperPanel.add(partsList, BorderLayout.NORTH);
-		partListWrapperPanel.setBackground(partsList.getBackground());
+		JScrollPane partsListScrollPane = wrapPartsList();
 
-		// Remove focus from text boxes if area under parts is clicked
-		partListWrapperPanel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				getRootPane().requestFocus();
-			}
-		});
-		JScrollPane partsListScrollPane = new JScrollPane(partListWrapperPanel, VERTICAL_SCROLLBAR_ALWAYS,
-				HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		generateNewPartButton();
 
-		newPartButton = new JButton("New Part");
-		newPartButton.addActionListener(e -> {
-			if (abcSong != null)
-				abcSong.createNewPart();
-		});
+		generateDeletePartButton();
 
-		deletePartButton = new JButton("Delete");
-		deletePartButton.addActionListener(e -> {
-			if (abcSong != null) {
-				if (abcSong.getParts().size() == 1) {
-					// When deleting last past, make sure a new part is replacing it, so something
-					// is selected
-					AbcPart deleteMe = (AbcPart) partsList.getSelectedValue();
-					abcSong.createNewPart();
-					abcSong.deletePart(deleteMe);
-				} else if (abcSong.getParts().size() > 1) {
-					abcSong.deletePart((AbcPart) partsList.getSelectedValue());
-				}
-			}
-		});
+		generateDelayButton();
 
-		delayButton = new JButton("Delay Part");
-		delayButton.addActionListener(e -> {
-			if (partsList.getSelectedValue() != null) {
-				DelayDialog.show(ProjectFrame.this, (AbcPart) partsList.getSelectedValue());
-			}
-		});
-		delayButton.setToolTipText("Open a small dialog to edit delay on part.");
+		generateNumerateButton();
 
-		numerateButton = new JButton("Numerate");
-		numerateButton.addActionListener(e -> {
-			if (abcSong != null)
-				abcSong.assignNumbersToSimilarPartTypes();
-		});
-		numerateButton.setToolTipText("Auto assign numbers to identical instrument part titles.");
+		generateSongInfoLayout();
+		generateSongInfoPanel();
 
-		if (miscSettings.showBadger) {
-			songInfoLayout = new TableLayout(//
-					new double[] { PREFERRED, FILL }, //
-					new double[] { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED });
-		} else {
-			songInfoLayout = new TableLayout(//
-					new double[] { PREFERRED, FILL }, //
-					new double[] { PREFERRED, PREFERRED, PREFERRED });
-		}
-		songInfoLayout.setHGap(HGAP);
-		songInfoLayout.setVGap(VGAP);
-		songInfoPanel = new JPanel(songInfoLayout);
-		{
-			int row = 0;
-			songInfoPanel.add(new JLabel("T:"), "0, " + row);
-			songInfoPanel.add(songTitleField, "1, " + row);
-			row++;
-			songInfoPanel.add(new JLabel("C:"), "0, " + row);
-			songInfoPanel.add(composerField, "1, " + row);
-			row++;
-			songInfoPanel.add(new JLabel("Z:"), "0, " + row);
-			songInfoPanel.add(transcriberField, "1, " + row);
-			row++;
-			songInfoPanel.add(genreLabel, "0, " + row);
-			songInfoPanel.add(genreField, "1, " + row);
-			row++;
-			songInfoPanel.add(moodLabel, "0, " + row);
-			songInfoPanel.add(moodField, "1, " + row);
+		generatePartsListPanel(partsListScrollPane);
 
-			songInfoPanel.setBorder(BorderFactory.createTitledBorder("Song Info"));
-		}
-
-		JPanel partsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, HGAP, VGAP));
-		partsButtonPanel.add(newPartButton);
-		partsButtonPanel.add(deletePartButton);
-
-		partsListPanel = new JPanel(new BorderLayout(HGAP, VGAP));
-		partsListPanel.setBorder(BorderFactory.createTitledBorder("Song Parts"));
-		partsListPanel.add(partsButtonPanel, BorderLayout.NORTH);
-		partsListPanel.add(partsListScrollPane, BorderLayout.CENTER);
-		GridLayout delayGrid = new GridLayout(2, 1);
-		JPanel delayPanel = new JPanel(delayGrid);
-		delayPanel.add(delayButton);
-		delayPanel.add(numerateButton);
-		partsListPanel.add(delayPanel, BorderLayout.SOUTH);
-
-		TableLayout settingsLayout = new TableLayout(//
-				new double[] { PREFERRED, PREFERRED, FILL }, //
-				new double[] {});
-		settingsLayout.setVGap(VGAP);
-		settingsLayout.setHGap(HGAP);
-
-		JPanel settingsPanel = new JPanel(settingsLayout);
-		settingsPanel.setBorder(BorderFactory.createTitledBorder("Export Settings"));
-
-		{
-			int row = 0;
-			settingsLayout.insertRow(row, PREFERRED);
-			settingsPanel.add(new JLabel("Transpose:"), "0, " + row);
-			settingsPanel.add(transposeSpinner, "1, " + row);
-
-			row++;
-			settingsLayout.insertRow(row, PREFERRED);
-			settingsPanel.add(new JLabel("Main Tempo:"), "0, " + row);
-			settingsPanel.add(tempoSpinner, "1, " + row);
-			settingsPanel.add(resetTempoButton, "2, " + row + ", L, F");
-
-			row++;
-			settingsLayout.insertRow(row, PREFERRED);
-			settingsPanel.add(new JLabel("Meter:"), "0, " + row);
-			settingsPanel.add(timeSignatureField, "1, " + row + ", 2, " + row + ", L, F");
-
-			if (SHOW_KEY_FIELD) {
-				row++;
-				settingsLayout.insertRow(row, PREFERRED);
-				settingsPanel.add(new JLabel("Key:"), "0, " + row);
-				settingsPanel.add(keySignatureField, "1, " + row + ", 2, " + row + ", L, F");
-			}
-
-			row++;
-			settingsLayout.insertRow(row, PREFERRED);
-			settingsPanel.add(tripletCheckBox, "0, " + row + ", 2, " + row + ", L, C");
-
-			row++;
-			settingsLayout.insertRow(row, PREFERRED);
-			settingsPanel.add(mixCheckBox, "0, " + row + ", 2, " + row + ", L, C");
-
-			row++;
-			settingsLayout.insertRow(row, PREFERRED);
-			settingsPanel.add(prioCheckBox, "0, " + row + ", 2, " + row + ", C, C");
-
-			row++;
-			settingsLayout.insertRow(row, PREFERRED);
-			settingsPanel.add(exportSuccessfulLabel, "0, " + row + ", 2, " + row + ", F, F");
-
-			row++;
-			settingsLayout.insertRow(row, PREFERRED);
-			settingsPanel.add(exportButton, "0, " + row + ", 2, " + row + ", F, F");
-		}
+		JPanel settingsPanel = generateSettingsPanel();
 
 		if (!SHOW_TEMPO_SPINNER)
 			tempoSpinner.setEnabled(false);
@@ -747,74 +422,15 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		if (!SHOW_KEY_FIELD)
 			keySignatureField.setEnabled(false);
 
-		volumeBar = new NativeVolumeBar(new VolumeManager());
-		JPanel volumePanel = new JPanel(new TableLayout(//
-				new double[] { PREFERRED }, //
-				new double[] { PREFERRED, PREFERRED }));
-		volumePanel.add(new JLabel("Volume"), "0, 0, c, c");
-		volumePanel.add(volumeBar, "0, 1, f, c");
+		JPanel volumePanel = generateVolumePanel();
 
-		// stereoBar = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 100);
-		stereoBar = new StereoBar(new PanManager());
-		JPanel stereoPanel = new JPanel(new TableLayout(//
-				new double[] { PREFERRED }, //
-				new double[] { PREFERRED, PREFERRED }));
-		stereoPanel.add(new JLabel("Stereo"), "0, 0, c, c");
-		stereoPanel.add(stereoBar, "0, 1, f, c");
+		JPanel stereoPanel = generateStereoPanel();
 
-		ActionListener modeButtonListener = e -> {
-			updatePreviewMode(abcModeRadioButton.isSelected());
-			if (partPanel != null) {
-				partPanel.repaint();
-			}
-		};
-
-		midiModeRadioButton = new JRadioButton("Original");
-		midiModeRadioButton.addActionListener(modeButtonListener);
-		midiModeRadioButton.setMargin(new Insets(1, 5, 1, 5));
-
-		abcModeRadioButton = new JRadioButton("ABC Preview");
-		abcModeRadioButton.addActionListener(modeButtonListener);
-		abcModeRadioButton.setMargin(new Insets(1, 5, 1, 5));
-
-		ButtonGroup modeButtonGroup = new ButtonGroup();
-		modeButtonGroup.add(abcModeRadioButton);
-		modeButtonGroup.add(midiModeRadioButton);
-
-		midiModeRadioButton.setSelected(true);
-		abcPreviewMode = abcModeRadioButton.isSelected();
+		generateModeButtons();
 
 		final Insets playControlButtonMargin = new Insets(5, 20, 5, 20);
 
-		playButton = new JButton(playIcon);
-		playButton.setDisabledIcon(playIconDisabled);
-		playButton.setMargin(playControlButtonMargin);
-		playButton.addActionListener(e -> {
-			SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
-
-			boolean running = !curSequencer.isRunning();
-			if (abcPreviewMode && running) {
-				if (!refreshPreviewSequence(true))
-					running = false;
-			}
-
-			curSequencer.setRunning(running);
-			updateButtons(false);
-		});
-
-		stopButton = new JButton(stopIcon);
-		stopButton.setDisabledIcon(stopIconDisabled);
-		stopButton.setToolTipText("Stop");
-		stopButton.setMargin(playControlButtonMargin);
-		stopButton.addActionListener(e -> {
-			abcSequencer.stop();
-			sequencer.stop();
-			abcSequencer.reset(false);
-			sequencer.reset(false);
-			maxNoteCountTotal = 0;
-			maxNoteCount = 0;
-			updateNoteCountLabel();
-		});
+		generatePlayStopButtons(stopIcon, stopIconDisabled, playControlButtonMargin);
 
 		tuneEditorButton = new JButton();
 		tuneEditorButton.setText("T");
@@ -845,31 +461,9 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		abcBarLabel.setToolTipText("ABC Preview Bar number");
 		abcBarLabel.setVisible(!midiBarLabel.isVisible());
 
-		JPanel playControlPanel = new JPanel(new TableLayout(//
-				new double[] { PREFERRED, 0.50, 4, PREFERRED, 4, 0.25, 0.25, PREFERRED, PREFERRED, 4 }, //
-				new double[] { PREFERRED, 4, PREFERRED }));
-		playControlPanel.add(playButtonPanel, "3, 0, 3, 2, C, C");
-		playControlPanel.add(tuneEditorButton, "0, 0, 0, 2, L, C");
-		playControlPanel.add(modeButtonPanel, "1, 0, 1, 2, C, F");
-		playControlPanel.add(volumePanel, "5, 0, 5, 2, C, C");
-		playControlPanel.add(stereoPanel, "6, 0, 6, 2, C, C");
-		playControlPanel.add(midiPositionLabel, "8, 0, R, B");
-		playControlPanel.add(abcPositionLabel, "8, 0, R, B");
-		playControlPanel.add(midiBarLabel, "8, 2, R, T");
-		playControlPanel.add(abcBarLabel, "8, 2, R, T");
+		JPanel playControlPanel = generatePlayControlPanel(volumePanel, stereoPanel, modeButtonPanel, playButtonPanel);
 
-		JPanel flowP = new JPanel(new FlowLayout());
-		noteButton.addActionListener(e -> partPanel.noteToggle());
-		noteButton.setToolTipText("<html>Show notepad where custom notes can be entered.<br>"
-				+ "Will be saved in msx project file.</html>");
-		// playControlPanel.add(noteButton, "6, 2, C, C");
-
-		zoom.addActionListener(e -> partPanel.zoom());
-		// playControlPanel.add(zoom, "7, 2, C, C");
-
-		flowP.add(zoom);
-		flowP.add(noteButton);
-		playControlPanel.add(flowP, "7, 2, C, C");
+		playControlPanel.add(generateFlowPanel(), "7, 2, C, C");
 
 		noteCountLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		noteCountLabel.setBorder(new EmptyBorder(0, 0, 0, 20));// top,left,bottom,right
@@ -879,27 +473,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 				+ "Stopped notes that are in release phase also counts.</html>");
 		playControlPanel.add(noteCountLabel, "7, 0, 7, 0, L, C");
 
-		JPanel abcPartsAndSettings = new JPanel(new BorderLayout(HGAP, VGAP));
-		abcPartsAndSettings.add(songInfoPanel, BorderLayout.NORTH);
-		JPanel partsListAndColorizer = new JPanel(new BorderLayout(HGAP, VGAP));
-		partsListAndColorizer.add(partsListPanel, BorderLayout.CENTER);
-		if (SHOW_COLORIZER)
-			partsListAndColorizer.add(new Colorizer(partPanel), BorderLayout.SOUTH);
-		abcPartsAndSettings.add(partsListAndColorizer, BorderLayout.CENTER);
-		abcPartsAndSettings.add(settingsPanel, BorderLayout.SOUTH);
-
-		JPanel midiPartsAndControls = new JPanel(new BorderLayout(HGAP, VGAP));
-		midiPartsAndControls.add(partPanel, BorderLayout.CENTER);
-		midiPartsAndControls.add(playControlPanel, BorderLayout.SOUTH);
-		midiPartsAndControls.setBorder(BorderFactory.createTitledBorder("Part Settings"));
-
-		JSplitPane topLevelSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, abcPartsAndSettings,
-				midiPartsAndControls);
-		topLevelSplitPane.setBorder(BorderFactory.createEmptyBorder());
-		topLevelSplitPane.setContinuousLayout(true);
-		topLevelSplitPane.setFocusable(false);
-
-		add(topLevelSplitPane, "0, 0, 1, 0");
+		add(generateTopLevelSplitPane(settingsPanel, playControlPanel), "0, 0, 1, 0");
 
 		final FileFilterDropListener dropListener = new FileFilterDropListener(false, "mid", "midi", "kar", "abc",
 				"txt", AbcSong.MSX_FILE_EXTENSION_NO_DOT);
@@ -921,21 +495,7 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		updateButtons(true);
 
 		// Add support for using spacebar for pause/play.
-		ActionListener spaceBarListener = ae -> {
-			if (!sequencer.isLoaded()) {
-				return;
-			}
-			SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
-
-			boolean running = !curSequencer.isRunning();
-			if (abcPreviewMode && running) {
-				if (!refreshPreviewSequence(true))
-					running = false;
-			}
-
-			curSequencer.setRunning(running);
-			updateButtons(false);
-		};
+		ActionListener spaceBarListener = generateSpaceBarListener();
 		this.getRootPane().registerKeyboardAction(spaceBarListener, KeyStroke.getKeyStroke(' '),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
 
@@ -949,6 +509,583 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		};
 		addMouseListener(listenForFocus);
 
+	}
+
+	private ActionListener generateSpaceBarListener() {
+		return ae -> {
+			if (!sequencer.isLoaded()) {
+				return;
+			}
+			updateSequencer();
+		};
+	}
+
+	private void updateSequencer() {
+		SequencerWrapper curSequencer = abcPreviewMode ? abcSequencer : sequencer;
+
+		boolean running = !curSequencer.isRunning();
+
+		if (abcPreviewMode && running) {
+			if (!refreshPreviewSequence(true))
+				running = false;
+		}
+
+		curSequencer.setRunning(running);
+		updateButtons(false);
+	}
+
+	private JSplitPane generateTopLevelSplitPane(JPanel settingsPanel, JPanel playControlPanel) {
+		JPanel abcPartsAndSettings = new JPanel(new BorderLayout(HGAP, VGAP));
+		abcPartsAndSettings.add(songInfoPanel, BorderLayout.NORTH);
+		JPanel partsListAndColorizer = new JPanel(new BorderLayout(HGAP, VGAP));
+		partsListAndColorizer.add(partsListPanel, BorderLayout.CENTER);
+		if (SHOW_COLORIZER)
+			partsListAndColorizer.add(new Colorizer(partPanel), BorderLayout.SOUTH);
+		abcPartsAndSettings.add(partsListAndColorizer, BorderLayout.CENTER);
+		abcPartsAndSettings.add(settingsPanel, BorderLayout.SOUTH);
+
+		JPanel midiPartsAndControls = new JPanel(new BorderLayout(HGAP, VGAP));
+		midiPartsAndControls.add(partPanel, BorderLayout.CENTER);
+		midiPartsAndControls.add(playControlPanel, BorderLayout.SOUTH);
+		midiPartsAndControls.setBorder(BorderFactory.createTitledBorder("Part Settings"));
+
+		JSplitPane topLevelSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, abcPartsAndSettings,
+				midiPartsAndControls);
+		topLevelSplitPane.setBorder(BorderFactory.createEmptyBorder());
+		topLevelSplitPane.setContinuousLayout(true);
+		topLevelSplitPane.setFocusable(false);
+		return topLevelSplitPane;
+	}
+
+	private JPanel generateFlowPanel() {
+		JPanel flowP = new JPanel(new FlowLayout());
+		noteButton.addActionListener(e -> partPanel.noteToggle());
+		noteButton.setToolTipText("<html>Show notepad where custom notes can be entered.<br>"
+				+ "Will be saved in msx project file.</html>");
+		// playControlPanel.add(noteButton, "6, 2, C, C");
+
+		zoom.addActionListener(e -> partPanel.zoom());
+		// playControlPanel.add(zoom, "7, 2, C, C");
+
+		flowP.add(zoom);
+		flowP.add(noteButton);
+		return flowP;
+	}
+
+	private JPanel generatePlayControlPanel(JPanel volumePanel, JPanel stereoPanel, JPanel modeButtonPanel,
+			JPanel playButtonPanel) {
+		JPanel playControlPanel = new JPanel(new TableLayout(//
+				new double[] { PREFERRED, 0.50, 4, PREFERRED, 4, 0.25, 0.25, PREFERRED, PREFERRED, 4 }, //
+				new double[] { PREFERRED, 4, PREFERRED }));
+		playControlPanel.add(playButtonPanel, "3, 0, 3, 2, C, C");
+		playControlPanel.add(tuneEditorButton, "0, 0, 0, 2, L, C");
+		playControlPanel.add(modeButtonPanel, "1, 0, 1, 2, C, F");
+		playControlPanel.add(volumePanel, "5, 0, 5, 2, C, C");
+		playControlPanel.add(stereoPanel, "6, 0, 6, 2, C, C");
+		playControlPanel.add(midiPositionLabel, "8, 0, R, B");
+		playControlPanel.add(abcPositionLabel, "8, 0, R, B");
+		playControlPanel.add(midiBarLabel, "8, 2, R, T");
+		playControlPanel.add(abcBarLabel, "8, 2, R, T");
+		return playControlPanel;
+	}
+
+	private void generatePlayStopButtons(Icon stopIcon, Icon stopIconDisabled, final Insets playControlButtonMargin) {
+		playButton = new JButton(playIcon);
+		playButton.setDisabledIcon(playIconDisabled);
+		playButton.setMargin(playControlButtonMargin);
+		playButton.addActionListener(e -> updateSequencer());
+
+		stopButton = new JButton(stopIcon);
+		stopButton.setDisabledIcon(stopIconDisabled);
+		stopButton.setToolTipText("Stop");
+		stopButton.setMargin(playControlButtonMargin);
+		stopButton.addActionListener(e -> {
+			abcSequencer.stop();
+			sequencer.stop();
+			abcSequencer.reset(false);
+			sequencer.reset(false);
+			maxNoteCountTotal = 0;
+			maxNoteCount = 0;
+			updateNoteCountLabel();
+		});
+	}
+
+	private void generateModeButtons() {
+		ActionListener modeButtonListener = e -> {
+			updatePreviewMode(abcModeRadioButton.isSelected());
+			if (partPanel != null) {
+				partPanel.repaint();
+			}
+		};
+
+		midiModeRadioButton = new JRadioButton("Original");
+		midiModeRadioButton.addActionListener(modeButtonListener);
+		midiModeRadioButton.setMargin(new Insets(1, 5, 1, 5));
+
+		abcModeRadioButton = new JRadioButton("ABC Preview");
+		abcModeRadioButton.addActionListener(modeButtonListener);
+		abcModeRadioButton.setMargin(new Insets(1, 5, 1, 5));
+
+		ButtonGroup modeButtonGroup = new ButtonGroup();
+		modeButtonGroup.add(abcModeRadioButton);
+		modeButtonGroup.add(midiModeRadioButton);
+
+		midiModeRadioButton.setSelected(true);
+		abcPreviewMode = abcModeRadioButton.isSelected();
+	}
+
+	private JPanel generateStereoPanel() {
+		// stereoBar = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 100);
+		stereoBar = new StereoBar(new PanManager());
+		JPanel stereoPanel = new JPanel(new TableLayout(//
+				new double[] { PREFERRED }, //
+				new double[] { PREFERRED, PREFERRED }));
+		stereoPanel.add(new JLabel("Stereo"), "0, 0, c, c");
+		stereoPanel.add(stereoBar, "0, 1, f, c");
+		return stereoPanel;
+	}
+
+	private JPanel generateVolumePanel() {
+		volumeBar = new NativeVolumeBar(new VolumeManager());
+		JPanel volumePanel = new JPanel(new TableLayout(//
+				new double[] { PREFERRED }, //
+				new double[] { PREFERRED, PREFERRED }));
+		volumePanel.add(new JLabel("Volume"), "0, 0, c, c");
+		volumePanel.add(volumeBar, "0, 1, f, c");
+		return volumePanel;
+	}
+
+	private JPanel generateSettingsPanel() {
+		TableLayout settingsLayout = new TableLayout(//
+				new double[] { PREFERRED, PREFERRED, FILL }, //
+				new double[] {});
+		settingsLayout.setVGap(VGAP);
+		settingsLayout.setHGap(HGAP);
+
+		return createSettingsPanel(settingsLayout);
+	}
+
+	/**
+	 * @param partsListScrollPane
+	 */
+	private void generatePartsListPanel(JScrollPane partsListScrollPane) {
+		JPanel partsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, HGAP, VGAP));
+		partsButtonPanel.add(newPartButton);
+		partsButtonPanel.add(deletePartButton);
+
+		partsListPanel = new JPanel(new BorderLayout(HGAP, VGAP));
+		partsListPanel.setBorder(BorderFactory.createTitledBorder("Song Parts"));
+		partsListPanel.add(partsButtonPanel, BorderLayout.NORTH);
+		partsListPanel.add(partsListScrollPane, BorderLayout.CENTER);
+
+		GridLayout delayGrid = new GridLayout(2, 1);
+		JPanel delayPanel = new JPanel(delayGrid);
+		delayPanel.add(delayButton);
+		delayPanel.add(numerateButton);
+		partsListPanel.add(delayPanel, BorderLayout.SOUTH);
+	}
+
+	private void generateSongInfoLayout() {
+		if (miscSettings.showBadger) {
+			songInfoLayout = new TableLayout(//
+					new double[] { PREFERRED, FILL }, //
+					new double[] { PREFERRED, PREFERRED, PREFERRED, PREFERRED, PREFERRED });
+		} else {
+			songInfoLayout = new TableLayout(//
+					new double[] { PREFERRED, FILL }, //
+					new double[] { PREFERRED, PREFERRED, PREFERRED });
+		}
+		songInfoLayout.setHGap(HGAP);
+		songInfoLayout.setVGap(VGAP);
+	}
+
+	private void generateNumerateButton() {
+		numerateButton = new JButton("Numerate");
+		numerateButton.addActionListener(e -> {
+			if (abcSong != null)
+				abcSong.assignNumbersToSimilarPartTypes();
+		});
+		numerateButton.setToolTipText("Auto assign numbers to identical instrument part titles.");
+	}
+
+	private void generateDelayButton() {
+		delayButton = new JButton("Delay Part");
+		delayButton.addActionListener(e -> {
+			if (partsList.getSelectedValue() != null) {
+				DelayDialog.show(ProjectFrame.this, (AbcPart) partsList.getSelectedValue());
+			}
+		});
+		delayButton.setToolTipText("Open a small dialog to edit delay on part.");
+	}
+
+	private void generateDeletePartButton() {
+		deletePartButton = new JButton("Delete");
+		deletePartButton.addActionListener(e -> {
+			if (abcSong != null) {
+				if (abcSong.getParts().size() == 1) {
+					// When deleting last past, make sure a new part is replacing it, so something
+					// is selected
+					AbcPart deleteMe = (AbcPart) partsList.getSelectedValue();
+					abcSong.createNewPart();
+					abcSong.deletePart(deleteMe);
+				} else if (abcSong.getParts().size() > 1) {
+					abcSong.deletePart((AbcPart) partsList.getSelectedValue());
+				}
+			}
+		});
+	}
+
+	private void generateNewPartButton() {
+		newPartButton = new JButton("New Part");
+		newPartButton.addActionListener(e -> {
+			if (abcSong != null)
+				abcSong.createNewPart();
+		});
+	}
+
+	/**
+	 * Wrap the part list in a panel that forces the list to the top. Fixes a swing
+	 * bug where clicking after the end of the list will select the last element
+	 */
+	private JScrollPane wrapPartsList() {
+		JPanel partListWrapperPanel = new JPanel(new BorderLayout());
+		partListWrapperPanel.add(partsList, BorderLayout.NORTH);
+		partListWrapperPanel.setBackground(partsList.getBackground());
+
+		// Remove focus from text boxes if area under parts is clicked
+		partListWrapperPanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				getRootPane().requestFocus();
+			}
+		});
+		return new JScrollPane(partListWrapperPanel, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	}
+
+	private void generatePartsList() {
+		partsList = new JList<>();
+		partsList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		partsList.getSelectionModel().addListSelectionListener(e -> {
+			AbcPart abcPart = (AbcPart) partsList.getSelectedValue();
+			sequencer.getFilter().onAbcPartChanged(abcPart != null);
+			abcSequencer.getFilter().onAbcPartChanged(abcPart != null);
+			partPanel.setAbcPart(abcPart);
+			if (abcPart != null) {
+				updateButtons(false);
+			} else {
+				updateDelayButton();
+				if (partsList.getModel().getSize() > 0) {
+					// If ctrl-clicking to deselect this will ensure something is selected
+					partsList.setSelectedIndex(0);
+				}
+			}
+		});
+	}
+
+	private void generateExportButton() {
+		exportButton = new JButton(); // Label set in onSaveAndExportSettingsChanged()
+		exportButton.setToolTipText("<html><b>Export ABC</b><br>(Ctrl+E)</html>");
+		exportButton.setIcon(IconLoader.getImageIcon("abcfile_32.png"));
+		exportButton.setDisabledIcon(IconLoader.getDisabledIcon("abcfile_32.png"));
+		exportButton.setHorizontalAlignment(SwingConstants.LEFT);
+		exportButton.getModel().addChangeListener(new ChangeListener() {
+			private boolean pressed = false;
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (exportButton.getModel().isPressed() != pressed) {
+					pressed = exportButton.getModel().isPressed();
+					if (pressed)
+						exportSuccessfulLabel.setVisible(false);
+				}
+			}
+		});
+		exportButton.addActionListener(e -> exportAbc());
+	}
+
+	private void generatePrioCheckBox() {
+		prioCheckBox = new JCheckBox("Combine Priorities");
+		prioCheckBox.setToolTipText("<html>This allow to set track priority for Mix Timings.<br><br>"
+				+ "Checkboxes will appear when combining tracks,<br>"
+				+ "those enabled will prioritize the timings of those" + "tracks over non-prioritized tracks.</html>");
+		prioCheckBox.addActionListener(e -> {
+			if (abcSong != null)
+				abcSong.setPriorityActive(prioCheckBox.isSelected());
+
+			if (abcSequencer.isRunning())
+				refreshPreviewSequence(false);
+		});
+	}
+
+	private void generateMixCheckBox() {
+		mixCheckBox = new JCheckBox("Mix Timings");
+		mixCheckBox.setToolTipText("<html>Allow Maestro to detect which notes<br>"
+				+ "that differs from the above triplet/swing setting.<br><br>"
+				+ "It is done per part, so some notes in a parts might export as swing/tuplets<br>"
+				+ "while other parts at same time export even notes.</html>");
+		mixCheckBox.addActionListener(e -> {
+			if (abcSong != null)
+				abcSong.setMixTiming(mixCheckBox.isSelected());
+
+			if (abcSequencer.isRunning())
+				refreshPreviewSequence(false);
+		});
+	}
+
+	private void generateTripletCheckBox() {
+		tripletCheckBox = new JCheckBox("Triplets/swing rhythm");
+		tripletCheckBox.setToolTipText("<html>Tweak the timing to allow for triplets or a swing rhythm.<br><br>"
+				+ "This can cause short/fast notes to incorrectly be detected as triplets.<br>"
+				+ "Leave it unchecked unless the song has triplets or a swing rhythm.</html>");
+		tripletCheckBox.addActionListener(e -> {
+			if (abcSong != null)
+				abcSong.setTripletTiming(tripletCheckBox.isSelected());
+
+			if (abcSequencer.isRunning())
+				refreshPreviewSequence(false);
+		});
+	}
+
+	private void generateResetTempoButton() {
+		resetTempoButton = new JButton("Reset");
+		resetTempoButton.setMargin(new Insets(2, 8, 2, 8));
+		resetTempoButton.setToolTipText("Set the tempo back to the source file's tempo");
+		resetTempoButton.addActionListener(e -> {
+			if (abcSong == null) {
+				tempoSpinner.setValue(MidiConstants.DEFAULT_TEMPO_BPM);
+			} else {
+				float tempoFactor = abcSequencer.getTempoFactor();
+				tempoSpinner.setValue(abcSong.getSequenceInfo().getPrimaryTempoBPM());
+				if (tempoFactor != 1.0f)
+					refreshPreviewSequence(false);
+			}
+			tempoSpinner.requestFocus();
+		});
+	}
+
+	private void generateTempoSpinner() {
+		tempoSpinner = new JSpinner(new SpinnerNumberModel(MidiConstants.DEFAULT_TEMPO_BPM /* value */, 8 /* min */,
+				960 /* max */, 1 /* step */));
+		tempoSpinner.setToolTipText("<html>Tempo in beats per minute.<br><br>"
+				+ "This number represents the <b>Main Tempo</b>, which is the tempo that covers<br>"
+				+ "the largest portion of the song. If parts of the song play at a different tempo,<br>"
+				+ "they will all be adjusted proportionally.</html>");
+		tempoSpinner.addChangeListener(e -> {
+			if (abcSong != null) {
+				abcSong.setTempoBPM((Integer) tempoSpinner.getValue());
+
+				abcSequencer.setTempoFactor(abcSong.getTempoFactor());
+
+				if (abcSequencer.isRunning()) {
+					float delta = abcPreviewTempoFactor / abcSequencer.getTempoFactor();
+					if (Math.max(delta, 1 / delta) > 1.5f)
+						refreshPreviewSequence(false);
+				}
+			} else {
+				abcSequencer.setTempoFactor(1.0f);
+			}
+		});
+	}
+
+	private void generateTransposeSpinner() {
+		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -48, 48, 1));
+		transposeSpinner
+				.setToolTipText("<html>Transpose the entire song by semitones.<br>" + "12 semitones = 1 octave</html>");
+		transposeSpinner.addChangeListener(e -> {
+			if (abcSong != null)
+				abcSong.setTranspose(getTranspose());
+		});
+	}
+
+	private void generateTimeSignatureField() {
+		timeSignatureField = new MyFormattedTextField(TimeSignature.FOUR_FOUR, 5);
+		timeSignatureField.setToolTipText("<html>Adjust the time signature of the ABC file.<br><br>"
+				+ "This only affects the display, not the sound of the exported file.<br>"
+				+ "Examples: 4/4, 3/8, 2/2</html>");
+		timeSignatureField.addPropertyChangeListener("value", evt -> {
+			if (abcSong != null)
+				abcSong.setTimeSignature((TimeSignature) timeSignatureField.getValue());
+		});
+	}
+
+	private void generateKeySignatureField() {
+		keySignatureField = new MyFormattedTextField(KeySignature.C_MAJOR, 5);
+		keySignatureField.setToolTipText("<html>Adjust the key signature of the ABC file. "
+				+ "This only affects the display, not the sound of the exported file.<br>"
+				+ "Examples: C maj, Eb maj, F# min</html>");
+		if (SHOW_KEY_FIELD) {
+			keySignatureField.addPropertyChangeListener("value", evt -> {
+				if (abcSong != null)
+					abcSong.setKeySignature((KeySignature) keySignatureField.getValue());
+
+			});
+		}
+	}
+
+	private void generateTranscriberField() {
+		transcriberField = new JTextField(prefs.get("transcriber", ""));
+		transcriberField.setToolTipText("Song Transcriber (your name)");
+		transcriberFieldListener = new PrefsDocumentListener(prefs, "transcriber");
+		transcriberField.getDocument().addDocumentListener(transcriberFieldListener);
+		transcriberField.getDocument().addDocumentListener(new SimpleDocumentListener() {
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (abcSong != null)
+					abcSong.setTranscriber(transcriberField.getText());
+			}
+		});
+	}
+
+	private void generateMoodField() {
+		moodField = new JTextField();
+		moodField.setToolTipText("Song Mood(s)");
+		moodField.getDocument().addDocumentListener(new SimpleDocumentListener() {
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (abcSong != null)
+					abcSong.setMood(moodField.getText());
+			}
+		});
+	}
+
+	private void generateGenreField() {
+		genreField = new JTextField();
+		genreField.setToolTipText("Song Genre(s)");
+		genreField.getDocument().addDocumentListener(new SimpleDocumentListener() {
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (abcSong != null)
+					abcSong.setGenre(genreField.getText());
+			}
+		});
+	}
+
+	private void generateComposerField() {
+		composerField = new JTextField();
+		composerField.setToolTipText("Song Composer");
+		composerField.getDocument().addDocumentListener(new SimpleDocumentListener() {
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (abcSong != null)
+					abcSong.setComposer(composerField.getText());
+			}
+		});
+	}
+
+	private void generateSongTitleField() {
+		songTitleField = new JTextField();
+		songTitleField.setToolTipText("Song Title");
+		songTitleField.getDocument().addDocumentListener(new SimpleDocumentListener() {
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (abcSong != null)
+					abcSong.setTitle(songTitleField.getText());
+			}
+		});
+	}
+
+	private void loadIcons() {
+		try {
+			List<Image> icons = new ArrayList<>();
+			icons.add(ImageIO.read(IconLoader.class.getResourceAsStream("maestro_16.png")));
+			icons.add(ImageIO.read(IconLoader.class.getResourceAsStream("maestro_32.png")));
+			setIconImages(icons);
+		} catch (Exception ex) {
+			// Ignore
+			ex.printStackTrace();
+		}
+	}
+
+	private void checkVolumeTransceiver() {
+		usingNativeVolume = MaestroMain.isNativeVolumeSupported();
+		if (usingNativeVolume) {
+			volumeTransceiver = null;
+			abcVolumeTransceiver = null;
+		} else {
+			volumeTransceiver = new VolumeTransceiver();
+			volumeTransceiver.setVolume(prefs.getInt("volumizer", NativeVolumeBar.MAX_VOLUME));
+
+			abcVolumeTransceiver = new VolumeTransceiver();
+			abcVolumeTransceiver.setVolume(volumeTransceiver.getVolume());
+		}
+	}
+
+	private void handleInputMaps() {
+		InputMap im = (InputMap) UIManager.get("Button.focusInputMap");
+		if (im != null) {
+			im.put(KeyStroke.getKeyStroke("pressed SPACE"), "none");
+			im.put(KeyStroke.getKeyStroke("released SPACE"), "none");
+		}
+
+		im = (InputMap) UIManager.get("CheckBox.focusInputMap");
+		if (im != null) {
+			im.put(KeyStroke.getKeyStroke("pressed SPACE"), "none");
+			im.put(KeyStroke.getKeyStroke("released SPACE"), "none");
+		}
+	}
+
+	private JPanel createSettingsPanel(TableLayout settingsLayout) {
+		JPanel settingsPanel = new JPanel(settingsLayout);
+		settingsPanel.setBorder(BorderFactory.createTitledBorder("Export Settings"));
+		fillSettingsPanel(settingsLayout, settingsPanel);
+		return settingsPanel;
+	}
+
+	private void fillSettingsPanel(TableLayout settingsLayout, JPanel settingsPanel) {
+		int row = 0;
+		settingsLayout.insertRow(row, PREFERRED);
+		settingsPanel.add(new JLabel("Transpose:"), "0, " + row);
+		settingsPanel.add(transposeSpinner, "1, " + row);
+		row++;
+		settingsLayout.insertRow(row, PREFERRED);
+		settingsPanel.add(new JLabel("Main Tempo:"), "0, " + row);
+		settingsPanel.add(tempoSpinner, "1, " + row);
+		settingsPanel.add(resetTempoButton, "2, " + row + ", L, F");
+		row++;
+		settingsLayout.insertRow(row, PREFERRED);
+		settingsPanel.add(new JLabel("Meter:"), "0, " + row);
+		settingsPanel.add(timeSignatureField, "1, " + row + ", 2, " + row + ", L, F");
+		if (SHOW_KEY_FIELD) {
+			row++;
+			settingsLayout.insertRow(row, PREFERRED);
+			settingsPanel.add(new JLabel("Key:"), "0, " + row);
+			settingsPanel.add(keySignatureField, "1, " + row + ", 2, " + row + ", L, F");
+		}
+		row++;
+		settingsLayout.insertRow(row, PREFERRED);
+		settingsPanel.add(tripletCheckBox, "0, " + row + ", 2, " + row + ", L, C");
+		row++;
+		settingsLayout.insertRow(row, PREFERRED);
+		settingsPanel.add(mixCheckBox, "0, " + row + ", 2, " + row + ", L, C");
+		row++;
+		settingsLayout.insertRow(row, PREFERRED);
+		settingsPanel.add(prioCheckBox, "0, " + row + ", 2, " + row + ", C, C");
+		row++;
+		settingsLayout.insertRow(row, PREFERRED);
+		settingsPanel.add(exportSuccessfulLabel, "0, " + row + ", 2, " + row + ", F, F");
+		row++;
+		settingsLayout.insertRow(row, PREFERRED);
+		settingsPanel.add(exportButton, "0, " + row + ", 2, " + row + ", F, F");
+	}
+
+	private void generateSongInfoPanel() {
+		songInfoPanel = new JPanel(songInfoLayout);
+		int row = 0;
+		songInfoPanel.add(new JLabel("T:"), "0, " + row);
+		songInfoPanel.add(songTitleField, "1, " + row);
+		row++;
+		songInfoPanel.add(new JLabel("C:"), "0, " + row);
+		songInfoPanel.add(composerField, "1, " + row);
+		row++;
+		songInfoPanel.add(new JLabel("Z:"), "0, " + row);
+		songInfoPanel.add(transcriberField, "1, " + row);
+		row++;
+		songInfoPanel.add(genreLabel, "0, " + row);
+		songInfoPanel.add(genreField, "1, " + row);
+		row++;
+		songInfoPanel.add(moodLabel, "0, " + row);
+		songInfoPanel.add(moodField, "1, " + row);
+		songInfoPanel.setBorder(BorderFactory.createTitledBorder("Song Info"));
 	}
 
 	private static void discardObject(IDiscardable object) {
@@ -1082,7 +1219,8 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 
 	private void doSettingsDialog(int tab) {
 		boolean showSettingsAgain = false;
-		int x = -1, y = -1;
+		int x = -1;
+		int y = -1;
 		do {
 			showSettingsAgain = false;
 			SettingsDialog dialog = new SettingsDialog(ProjectFrame.this, partAutoNumberer, partNameTemplate,
@@ -1258,21 +1396,6 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 		}
 	}
 
-	private void updateNoteCount() {
-		noteCountLabel.setVisible(miscSettings.showMaxPolyphony);
-		if (!miscSettings.showMaxPolyphony) {
-			return;
-		}
-		if (midiModeRadioButton.isSelected()) {
-			maxNoteCount = 0;
-			maxNoteCountTotal = 0;
-		} else {
-			maxNoteCount = LotroSequencerWrapper.getNoteCount();
-			maxNoteCountTotal = Math.max(maxNoteCountTotal, maxNoteCount);
-		}
-		updateNoteCountLabel();
-	}
-
 	private void updateNoteCountLabel() {
 		String totalColor = "<font>";
 		if (maxNoteCountTotal > 63) {
@@ -1328,6 +1451,21 @@ public class ProjectFrame extends JFrame implements TableLayoutConstants, ICompi
 					echoingPosition = false;
 				}
 			}
+		}
+
+		private void updateNoteCount() {
+			noteCountLabel.setVisible(miscSettings.showMaxPolyphony);
+			if (!miscSettings.showMaxPolyphony) {
+				return;
+			}
+			if (midiModeRadioButton.isSelected()) {
+				maxNoteCount = 0;
+				maxNoteCountTotal = 0;
+			} else {
+				maxNoteCount = LotroSequencerWrapper.getNoteCount();
+				maxNoteCountTotal = Math.max(maxNoteCountTotal, maxNoteCount);
+			}
+			updateNoteCountLabel();
 		}
 	}
 

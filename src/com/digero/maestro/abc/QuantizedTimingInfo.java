@@ -71,7 +71,7 @@ public class QuantizedTimingInfo implements ITempoCache, IBarNumberCache {
 		 */
 		Collection<SequenceDataCache.TempoEvent> origTempos = source.getDataCache().getTempoEvents().values();
 
-		TreeMap<Long, Integer> changeTree = (TreeMap<Long, Integer>) song.getTuneTempoChanges();
+		NavigableMap<Long, Integer> changeTree = song.getTuneTempoChanges();
 		ArrayList<SequenceDataCache.TempoEvent> combinedTempos = new ArrayList<>();
 
 		for (SequenceDataCache.TempoEvent midiTempo : origTempos) {

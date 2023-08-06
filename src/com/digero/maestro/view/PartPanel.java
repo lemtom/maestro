@@ -52,7 +52,8 @@ import com.digero.maestro.view.TrackPanel.TrackDimensions;
 
 @SuppressWarnings("serial")
 public class PartPanel extends JPanel implements ICompileConstants, TableLayoutConstants {
-	private static final int HGAP = 4, VGAP = 4;
+	private static final int HGAP = 4;
+	private static final int VGAP = 4;
 
 	private AbcPart abcPart;
 	private PartAutoNumberer partAutoNumberer;
